@@ -31,8 +31,8 @@ public class ChatLine
         this.updateCounterCreated = updateCounter;
         this.chatLineID = lineID;
 
-        this.location = DoubleTransition.builder().start(0.0D).end(1.0D).amountOfSteps(100).autoTransformator(( ForwardNothing ) () -> true).build();
-        this.opacity = DoubleTransition.builder().start(50).end(255).amountOfSteps(200).autoTransformator((ForwardNothing) () -> location.get() > 0.5).build();
+        this.location = DoubleTransition.builder().start(0.0D).end(1.0D).amountOfSteps(200).autoTransformator(( ForwardNothing ) () -> true).build();
+        this.opacity = DoubleTransition.builder().start(50).end(255).amountOfSteps(400).autoTransformator((ForwardNothing) () -> location.get() > 0.5).build();
     }
 
     public IChatComponent getChatComponent()

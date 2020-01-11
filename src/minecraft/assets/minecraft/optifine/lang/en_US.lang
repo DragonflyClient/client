@@ -120,7 +120,7 @@ of.options.CHUNK_LOADING.tooltip.1=Chunk Loading
 of.options.CHUNK_LOADING.tooltip.2=  Default - unstable FPS when loading chunks
 of.options.CHUNK_LOADING.tooltip.3=  Smooth - stable FPS
 of.options.CHUNK_LOADING.tooltip.4=  Multi-Core - stable FPS, 3x faster world loading
-of.options.CHUNK_LOADING.tooltip.5=Smooth and Multi-Core remove the stuttering and 
+of.options.CHUNK_LOADING.tooltip.5=Smooth and Multi-Core remove the stuttering and
 of.options.CHUNK_LOADING.tooltip.6=freezes caused by chunk loading.
 of.options.CHUNK_LOADING.tooltip.7=Multi-Core can speed up 3x the world loading and
 of.options.CHUNK_LOADING.tooltip.8=increase FPS by using a second CPU core.
@@ -241,12 +241,12 @@ of.options.CUSTOM_FONTS.tooltip.3=  OFF - uses default font, faster
 of.options.CUSTOM_FONTS.tooltip.4=The custom fonts are supplied by the current
 of.options.CUSTOM_FONTS.tooltip.5=texture pack
 
-of.options.CUSTOM_COLORS=Custom Colors
-of.options.CUSTOM_COLORS.tooltip.1=Custom Colors
-of.options.CUSTOM_COLORS.tooltip.2=  ON - uses custom colors (default), slower
-of.options.CUSTOM_COLORS.tooltip.3=  OFF - uses default colors, faster
-of.options.CUSTOM_COLORS.tooltip.4=The custom colors are supplied by the current
-of.options.CUSTOM_COLORS.tooltip.5=texture pack
+of.options.CUSTOM_COLORS=Custom Colours
+of.options.CUSTOM_COLORS.tooltip.1=Custom Colours
+of.options.CUSTOM_COLORS.tooltip.2=  ON - uses custom colours (default), slower
+of.options.CUSTOM_COLORS.tooltip.3=  OFF - uses default colours, faster
+of.options.CUSTOM_COLORS.tooltip.4=The custom colours are supplied by the current
+of.options.CUSTOM_COLORS.tooltip.5=resource pack
 
 of.options.SWAMP_COLORS=Swamp Colors
 of.options.SWAMP_COLORS.tooltip.1=Swamp Colors
