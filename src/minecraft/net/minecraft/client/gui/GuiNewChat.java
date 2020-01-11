@@ -196,7 +196,7 @@ public class GuiNewChat extends Gui implements Tickable
                     GlStateManager.translate(-3.0F, 0.0F, 0.0F);
                     int totalHeight = amountOfSeperateLines * fontHeight + amountOfSeperateLines;
                     int visibleHeight = visibleChatLines * fontHeight + visibleChatLines;
-                    int yPosition = this.scrollPos * visibleHeight / amountOfSeperateLines;
+                    int yPosition = ( int ) ( this.scrollPos * visibleHeight / amountOfSeperateLines * 0.9);
                     int scrollBarHeight = visibleHeight * visibleHeight / totalHeight;
 
                     if (totalHeight != visibleHeight) {

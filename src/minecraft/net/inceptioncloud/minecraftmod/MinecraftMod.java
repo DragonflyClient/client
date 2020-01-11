@@ -51,6 +51,22 @@ public class MinecraftMod
     private List<Tickable> tickables = Lists.newArrayList();
 
     /**
+     * The amount of ticks that have been executed in the current second.
+     */
+    private int ticks = 0;
+
+    /**
+     * When the first tick of the second was recorded. Used for calculating reasons.
+     */
+    private long firstTick = 0;
+
+    /**
+     * The last amount of mod ticks per second.
+     */
+    @Getter
+    private int lastTPS = 0;
+
+    /**
      * Minecraft Mod Constructor.
      * <p>
      * Called when loading the Minecraft client.
@@ -63,27 +79,19 @@ public class MinecraftMod
 
         auth();
 
-        new Timer().schedule(new TimerTask()
+        new Timer().scheduleAtFixedRate(new TimerTask()
         {
             @Override
             public void run ()
             {
                 try {
-                    Thread.sleep(1);
                     tick();
+                    recordTick();
                 } catch (Exception exception) {
                     LogManager.getLogger().error("Inception Cloud Mod Tick failed!", exception);
                 }
             }
         }, 0, 1);
-    }
-
-    /**
-     * Called when the Minecraft client's graphics are initialized.
-     */
-    public void initializeGraphics ()
-    {
-        fontRenderer = new CustomFontRenderer("Product Sans Medium", Font.PLAIN, 45);
     }
 
     /**
@@ -93,6 +101,30 @@ public class MinecraftMod
     {
         new ArrayList<>(modTransitions).forEach(Transition::tick);
         new ArrayList<>(tickables).forEach(Tickable::modTick);
+    }
+
+    /**
+     * Record the procedure of the tick for the debug screen.
+     */
+    private void recordTick ()
+    {
+        ticks++;
+
+        if (firstTick == 0)
+            firstTick = System.currentTimeMillis();
+        else if (System.currentTimeMillis() - firstTick >= 1000) {
+            lastTPS = ticks;
+            firstTick = 0;
+            ticks = 0;
+        }
+    }
+
+    /**
+     * Called when the Minecraft client's graphics are initialized.
+     */
+    public void initializeGraphics ()
+    {
+        fontRenderer = new CustomFontRenderer("Product Sans Medium", Font.PLAIN, 45);
     }
 
     /**
