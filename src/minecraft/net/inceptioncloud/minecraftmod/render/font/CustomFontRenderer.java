@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.render.font;
 
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class CustomFontRenderer
+public class CustomFontRenderer implements IFontRenderer
 {
     /**
      * Contains all already loaded fonts.
@@ -25,18 +26,34 @@ public class CustomFontRenderer
     private final UnicodeFont unicodeFont;
     private final int[] colorCodes = new int[32];
 
-    private final Minecraft mc = Minecraft.getMinecraft();
-
+    @Getter
     private int fontType, size;
+
+    @Getter
     private String fontName;
 
     private float kerning;
 
+    /**
+     * CustomFontRenderer Constructor
+     *
+     * @param fontName Font name (name of .ttf file in fonts/..)
+     * @param fontType Font type (Plain, Bold, ..)
+     * @param size Font size
+     */
     public CustomFontRenderer (String fontName, int fontType, int size)
     {
         this(fontName, fontType, size, 0);
     }
 
+    /**
+     * Full Constructor
+     *
+     * @param fontName Font name (name of .ttf file in fonts/..)
+     * @param fontType Font type (Plain, Bold, ..)
+     * @param size Font size
+     * @param kerning The space between the letters
+     */
     public CustomFontRenderer (String fontName, int fontType, int size, float kerning)
     {
         // Load the graphics environment
@@ -61,6 +78,7 @@ public class CustomFontRenderer
         this.kerning = kerning;
 
         this.unicodeFont.addAsciiGlyphs();
+        //noinspection unchecked
         this.unicodeFont.getEffects().add(new ColorEffect(java.awt.Color.WHITE));
 
         try {
@@ -89,6 +107,46 @@ public class CustomFontRenderer
         }
     }
 
+    /**
+     * Draw a left-justified string at the given location with a specific color.
+     *
+     * @see #drawString(String, float, float, int, boolean) Parameter Description
+     */
+    @Override
+    public int drawString (final String text, final int x, final int y, final int color)
+    {
+        return drawString(text, ( float ) x, ( float ) y, color);
+    }
+
+    /**
+     * Draw a left-justified string at the given location with a specific color.
+     * An optional shadow can be drawn.
+     *
+     * @param text       The text to draw
+     * @param x          The x location
+     * @param y          The y location
+     * @param color      The color
+     * @param dropShadow Whether to draw a shadow
+     *
+     * @return The end x-value
+     */
+    @Override
+    public int drawString (final String text, final float x, final float y, final int color, final boolean dropShadow)
+    {
+        return drawStringWithShadow(text, x, y, color);
+    }
+
+    /**
+     * Draw a left-justified string at the given location with a specific color.
+     * An optional shadow can be drawn.
+     *
+     * @param text       The text to draw
+     * @param x          The x location
+     * @param y          The y location
+     * @param color      The color
+     *
+     * @return The end x-value
+     */
     public int drawString (String text, float x, float y, int color)
     {
         x *= 2.0F;
@@ -117,19 +175,18 @@ public class CustomFontRenderer
                 x = originalX;
             }
             if (c == '\n') {
-                y += getHeight(Character.toString(c)) * 2.0F;
+                y += getSpecificHeight(Character.toString(c)) * 2.0F;
             }
             if (c != '\247' && ( index == 0 || index == characters.length - 1 || characters[index - 1] != '\247' )) {
                 unicodeFont.drawString(x, y, Character.toString(c), new org.newdawn.slick.Color(currentColor));
-                x += ( getWidth(Character.toString(c)) * 2.0F );
+                x += ( getStringWidth(Character.toString(c)) * 2.0F );
             } else if (c == ' ') {
                 x += unicodeFont.getSpaceWidth();
             } else if (c == '\247' && index != characters.length - 1) {
                 int codeIndex = "0123456789abcdefg".indexOf(text.charAt(index + 1));
                 if (codeIndex < 0) continue;
 
-                int col = this.colorCodes[codeIndex];
-                currentColor = col;
+                currentColor = this.colorCodes[codeIndex];
             }
 
             index++;
@@ -146,51 +203,82 @@ public class CustomFontRenderer
         return ( int ) x;
     }
 
+    /**
+     * Draw a left-justified string at the given location with a specific color and
+     * a shadow.
+     *
+     * @see #drawString(String, float, float, int, boolean) Parameter Description
+     */
+    @Override
     public int drawStringWithShadow (String text, float x, float y, int color)
     {
         drawString(StringUtils.stripControlCodes(text), x + 0.5F, y + 0.5F, 0x000000);
         return drawString(text, x, y, color);
     }
 
-    public void drawCenteredString (String text, float x, float y, int color)
-    {
-        drawString(text, x - ( int ) ( getWidth(text) / 2D ), y, color);
-    }
-
-    public void drawCenteredStringWithShadow (String text, float x, float y, int color)
-    {
-        drawCenteredString(StringUtils.stripControlCodes(text), x + 0.5F, y + 0.5F, color);
-        drawCenteredString(text, x, y, color);
-    }
-
-    public float getWidth (String s)
+    /**
+     * Get the width of a string in the current font.
+     *
+     * @param text The text
+     *
+     * @return The width in pixels
+     */
+    @Override
+    public int getStringWidth (String text)
     {
         float width = 0.0F;
 
-        String str = StringUtils.stripControlCodes(s);
+        String str = StringUtils.stripControlCodes(text);
         for (char c : str.toCharArray()) {
             width += unicodeFont.getWidth(Character.toString(c)) + this.kerning;
         }
 
-        return width / 2.0F;
+        return ( int ) ( width / 2.0F );
     }
 
-    public float getCharWidth (char c)
+    /**
+     * @param c The character
+     *
+     * @return {@link #getCharWidthFloat(char)} rounded to an integer value.
+     */
+    @Override
+    public int getCharWidth (char c)
     {
         return unicodeFont.getWidth(String.valueOf(c));
     }
 
-    public float getHeight (String s)
+    /**
+     * @return The default character height
+     */
+    @Override
+    public int getHeight ()
     {
-        return unicodeFont.getHeight(s) / 2.0F;
+        return unicodeFont.getLineHeight();
     }
 
-    public UnicodeFont getFont ()
+    /**
+     * The exact with of the specific char in the current font.
+     *
+     * @param c The character
+     *
+     * @return The width in pixels
+     */
+    @Override
+    public float getCharWidthFloat (final char c)
     {
-        return this.unicodeFont;
+        return getCharWidth(c);
     }
 
-    public String trimStringToWidth (String par1Str, int par2)
+    /**
+     * Trims the given string to be equal or less wide than the given width.
+     *
+     * @param text  The text
+     * @param width The target with
+     *
+     * @return The trimmed string
+     */
+    @Override
+    public String trimStringToWidth (String text, int width)
     {
         StringBuilder var4 = new StringBuilder();
         float var5 = 0.0F;
@@ -199,8 +287,8 @@ public class CustomFontRenderer
         boolean var8 = false;
         boolean var9 = false;
 
-        for (int var10 = var6 ; var10 >= 0 && var10 < par1Str.length() && var5 < ( float ) par2 ; var10 += var7) {
-            char var11 = par1Str.charAt(var10);
+        for (int var10 = var6 ; var10 >= 0 && var10 < text.length() && var5 < ( float ) width ; var10 += var7) {
+            char var11 = text.charAt(var10);
             float var12 = this.getCharWidth(var11);
 
             if (var8) {
@@ -223,7 +311,7 @@ public class CustomFontRenderer
                 }
             }
 
-            if (var5 > ( float ) par2) {
+            if (var5 > ( float ) width) {
                 break;
             } else {
                 var4.append(var11);
@@ -231,5 +319,38 @@ public class CustomFontRenderer
         }
 
         return var4.toString();
+    }
+
+    /**
+     * @return {@link #unicodeFont}
+     */
+    public UnicodeFont getFont ()
+    {
+        return this.unicodeFont;
+    }
+
+    /**
+     * @return The specific height of a char sequence
+     */
+    public float getSpecificHeight (String s)
+    {
+        return unicodeFont.getHeight(s) / 2.0F;
+    }
+
+    /**
+     * Draw a center-justified string.
+     */
+    public void drawCenteredString (String text, float x, float y, int color)
+    {
+        drawString(text, x - ( int ) ( getStringWidth(text) / 2D ), y, color);
+    }
+
+    /**
+     * Draw a center-justified string with shadow.
+     */
+    public void drawCenteredStringWithShadow (String text, float x, float y, int color)
+    {
+        drawCenteredString(StringUtils.stripControlCodes(text), x + 0.5F, y + 0.5F, color);
+        drawCenteredString(text, x, y, color);
     }
 }

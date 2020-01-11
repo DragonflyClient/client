@@ -149,6 +149,11 @@ public class GuiNewChat extends Gui implements Tickable
 
                     Color rectColor = new Color(0, 0, 0, 80);
                     drawRect(-2, ( int ) -height - border, l + 4, border, rectColor.getRGB());
+                }
+
+                /* Open-Chat Title */
+                {
+                    int border = ( int ) Math.min(getBorderAmount(), ( height / 10 ) * getBorderAmount());
 
                     Color lineColor = new Color(0, 0, 0, 200);
                     drawRect(-2, ( int ) ( ( -height - border ) - ( chatOpening.get() * 15 ) ), l + 4, ( int ) ( -height - border ), lineColor.getRGB());
@@ -375,7 +380,7 @@ public class GuiNewChat extends Gui implements Tickable
      */
     public boolean getChatOpen ()
     {
-        return this.mc.currentScreen instanceof GuiChat;
+        return this.mc.currentScreen != null && this.mc.currentScreen instanceof GuiChat;
     }
 
     /**
