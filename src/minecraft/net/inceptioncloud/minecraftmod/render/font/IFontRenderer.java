@@ -75,4 +75,15 @@ public interface IFontRenderer
      * @return The trimmed string
      */
     String trimStringToWidth (String text, int width);
+
+    /**
+     * Trims the given string to be equal or less wide than the given width.
+     *
+     * @param text  The text
+     * @param width The target with
+     * @param reverse Whether to reverse the string
+     *
+     * @return The trimmed string
+     */
+    String trimStringToWidth (String text, int width, boolean reverse);
 }

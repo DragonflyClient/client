@@ -573,7 +573,7 @@ public class WorldRenderer
         }
     }
 
-    public WorldRenderer pos(double p_181662_1_, double p_181662_3_, double p_181662_5_)
+    public WorldRenderer pos(double x, double y, double z)
     {
         if (Config.isShaders())
         {
@@ -585,30 +585,30 @@ public class WorldRenderer
         switch (WorldRenderer.WorldRenderer$2.field_181661_a[this.field_181677_f.getType().ordinal()])
         {
             case 1:
-                this.byteBuffer.putFloat(i, (float)(p_181662_1_ + this.xOffset));
-                this.byteBuffer.putFloat(i + 4, (float)(p_181662_3_ + this.yOffset));
-                this.byteBuffer.putFloat(i + 8, (float)(p_181662_5_ + this.zOffset));
+                this.byteBuffer.putFloat(i, (float)(x + this.xOffset));
+                this.byteBuffer.putFloat(i + 4, (float)(y + this.yOffset));
+                this.byteBuffer.putFloat(i + 8, (float)(z + this.zOffset));
                 break;
 
             case 2:
             case 3:
-                this.byteBuffer.putInt(i, Float.floatToRawIntBits((float)(p_181662_1_ + this.xOffset)));
-                this.byteBuffer.putInt(i + 4, Float.floatToRawIntBits((float)(p_181662_3_ + this.yOffset)));
-                this.byteBuffer.putInt(i + 8, Float.floatToRawIntBits((float)(p_181662_5_ + this.zOffset)));
+                this.byteBuffer.putInt(i, Float.floatToRawIntBits((float)(x + this.xOffset)));
+                this.byteBuffer.putInt(i + 4, Float.floatToRawIntBits((float)(y + this.yOffset)));
+                this.byteBuffer.putInt(i + 8, Float.floatToRawIntBits((float)(z + this.zOffset)));
                 break;
 
             case 4:
             case 5:
-                this.byteBuffer.putShort(i, (short)((int)(p_181662_1_ + this.xOffset)));
-                this.byteBuffer.putShort(i + 2, (short)((int)(p_181662_3_ + this.yOffset)));
-                this.byteBuffer.putShort(i + 4, (short)((int)(p_181662_5_ + this.zOffset)));
+                this.byteBuffer.putShort(i, (short)((int)(x + this.xOffset)));
+                this.byteBuffer.putShort(i + 2, (short)((int)(y + this.yOffset)));
+                this.byteBuffer.putShort(i + 4, (short)((int)(z + this.zOffset)));
                 break;
 
             case 6:
             case 7:
-                this.byteBuffer.put(i, (byte)((int)(p_181662_1_ + this.xOffset)));
-                this.byteBuffer.put(i + 1, (byte)((int)(p_181662_3_ + this.yOffset)));
-                this.byteBuffer.put(i + 2, (byte)((int)(p_181662_5_ + this.zOffset)));
+                this.byteBuffer.put(i, (byte)((int)(x + this.xOffset)));
+                this.byteBuffer.put(i + 1, (byte)((int)(y + this.yOffset)));
+                this.byteBuffer.put(i + 2, (byte)((int)(z + this.zOffset)));
         }
 
         this.func_181667_k();

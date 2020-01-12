@@ -3,6 +3,7 @@ package net.minecraft.client.gui;
 import com.google.common.collect.Lists;
 import net.inceptioncloud.minecraftmod.MinecraftMod;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
+import net.inceptioncloud.minecraftmod.render.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
@@ -76,6 +77,8 @@ public class GuiNewChat extends Gui implements Tickable
             int amountOfSeperateLines = this.seperateChatLines.size();
             float f = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
 
+            final IFontRenderer fontRenderer = MinecraftMod.getInstance().getFontRendererMaster().getCurrent();
+
             if (amountOfSeperateLines > 0) {
 
                 if (this.getChatOpen()) {
@@ -119,20 +122,20 @@ public class GuiNewChat extends Gui implements Tickable
                                 String s = chatline.getChatComponent().getFormattedText();
                                 GlStateManager.enableBlend();
 
-                                final int min = -this.mc.fontRendererObj.getStringWidth(s);
+                                final int min = -fontRenderer.getStringWidth(s);
                                 final int add = -min + getBorderAmount() - 2;
                                 final int stringX = ( int ) ( min + ( ( add ) * chatline.getLocation().get() ) );
                                 final int copyCurrentY = currentY;
 
                                 Color fontColor = new Color(255, 255, 255, chatline.getOpacity().castToInt());
-                                stringsToDraw.add(() -> mc.fontRendererObj.drawStringWithShadow(s, stringX, copyCurrentY - 8, fontColor.getRGB()));
+                                stringsToDraw.add(() -> fontRenderer.drawString(s, stringX, copyCurrentY - 8, fontColor.getRGB(), true));
 
 //                                final int min = currentY;
 //                                final int max = -8;
 //                                final int stringY = ( int ) ( min + ( max * chatline.getLocation().get()));
 //
 //                                Color fontColor = new Color(255, 255, 255, chatline.getOpacity().castToInt());
-//                                stringsToDraw.add(() -> mc.fontRendererObj.drawStringWithShadow(s, 0, stringY, fontColor.getRGB()));
+//                                stringsToDraw.add(() -> fontRenderer.drawStringWithShadow(s, 0, stringY, fontColor.getRGB()));
 
                                 currentY -= ( int ) ( 9 * chatline.getLocation().get() );
                                 currentHeight += 9;
@@ -166,42 +169,38 @@ public class GuiNewChat extends Gui implements Tickable
                     String s3 = InceptionCloudVersion.IDENTIFIER;
                     String whole = s1 + s2 + " " + s3;
 
-                    Color color1 = new Color(235, 59, 90, 10 + ( int ) ( titleTransition.get() * 245));
-                    Color color2 = new Color(165, 94, 234, 10 + ( int ) ( titleTransition.get() * 245));
-                    Color color3 = new Color(69, 170, 242, 10 + ( int ) ( titleTransition.get() * 245));
-                    Color alpha = new Color(255, 255, 255, 10 + ( int ) ( titleTransition.get() * 245));
+                    Color color1 = new Color(235, 59, 90, 10 + ( int ) ( titleTransition.get() * 245 ));
+                    Color color2 = new Color(165, 94, 234, 10 + ( int ) ( titleTransition.get() * 245 ));
+                    Color color3 = new Color(69, 170, 242, 10 + ( int ) ( titleTransition.get() * 245 ));
+                    Color alpha = new Color(255, 255, 255, 10 + ( int ) ( titleTransition.get() * 245 ));
 
-                    int base = -mc.fontRendererObj.getStringWidth(whole);
-                    int addition = mc.fontRendererObj.getStringWidth(whole) + getBorderAmount() - 2;
-                    int textX = base + (int) (addition * titleTransition.get());
+                    int base = -fontRenderer.getStringWidth(whole);
+                    int addition = fontRenderer.getStringWidth(whole) + getBorderAmount() - 2;
+                    int textX = base + ( int ) ( addition * titleTransition.get() );
 
-                    mc.fontRendererObj.drawStringWithShadow(s1, textX, ( int ) ( -height - border - 11), color1.getRGB());
-                    mc.fontRendererObj.drawStringWithShadow(s2, textX + mc.fontRendererObj.getStringWidth(s1), ( int ) ( -height - border - 11), color2.getRGB());
-                    mc.fontRendererObj.drawStringWithShadow(s3, textX + mc.fontRendererObj.getStringWidth(s1 + s2 + " "), ( int ) ( -height - border - 11), color3.getRGB());
+                    fontRenderer.drawString(s1, textX, ( int ) ( -height - border - 11 ), color1.getRGB(), true);
+                    fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), ( int ) ( -height - border - 11 ), color2.getRGB(), true);
+                    fontRenderer.drawString(s3, textX + fontRenderer.getStringWidth(s1 + s2 + " "), ( int ) ( -height - border - 11 ), color3.getRGB(), true);
 
                     String string = "§7" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
-                    base = -mc.fontRendererObj.getStringWidth(string);
+                    base = -fontRenderer.getStringWidth(string);
                     addition = l + 4 - getBorderAmount() + 2;
-                    textX = base + (int) (addition * titleTransition.get());
-                    mc.fontRendererObj.drawStringWithShadow(string, textX, ( int ) ( -height - border - 11), alpha.getRGB());
+                    textX = base + ( int ) ( addition * titleTransition.get() );
+                    fontRenderer.drawString(string, textX, ( int ) ( -height - border - 11 ), alpha.getRGB(), true);
                 }
 
                 /* Draw the messages over the background */
                 {
-                    GlStateManager.enableBlend();
-                    GlStateManager.enableAlpha();
+                    GlStateManager.color(1F, 1F, 1F, 1F);
                     stringsToDraw.forEach(Runnable::run);
                 }
 
-                GlStateManager.disableAlpha();
-                GlStateManager.disableBlend();
-
                 if (chatOpen) {
-                    int fontHeight = this.mc.fontRendererObj.FONT_HEIGHT;
+                    int fontHeight = fontRenderer.getHeight();
                     GlStateManager.translate(-3.0F, 0.0F, 0.0F);
                     int totalHeight = amountOfSeperateLines * fontHeight + amountOfSeperateLines;
                     int visibleHeight = visibleChatLines * fontHeight + visibleChatLines;
-                    int yPosition = ( int ) ( this.scrollPos * visibleHeight / amountOfSeperateLines * 0.9);
+                    int yPosition = ( int ) ( this.scrollPos * visibleHeight / amountOfSeperateLines * 0.9 );
                     int scrollBarHeight = visibleHeight * visibleHeight / totalHeight;
 
                     if (totalHeight != visibleHeight) {
@@ -250,7 +249,7 @@ public class GuiNewChat extends Gui implements Tickable
         }
 
         int i = MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale());
-        List<IChatComponent> list = GuiUtilRenderComponents.func_178908_a(component, i, this.mc.fontRendererObj, false, false);
+        List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, MinecraftMod.getInstance().getFontRendererMaster().getCurrent(), false, false);
         boolean chatOpen = this.getChatOpen();
 
         for (IChatComponent ichatcomponent : list) {
@@ -333,9 +332,7 @@ public class GuiNewChat extends Gui implements Tickable
      */
     public IChatComponent getChatComponent (int p_146236_1_, int p_146236_2_)
     {
-        if (!this.getChatOpen()) {
-            return null;
-        } else {
+        if (this.getChatOpen()) {
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaleFactor();
             float f = this.getChatScale();
@@ -347,8 +344,8 @@ public class GuiNewChat extends Gui implements Tickable
             if (j >= 0 && k >= 0) {
                 int l = Math.min(this.getLineCount(), this.seperateChatLines.size());
 
-                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < this.mc.fontRendererObj.FONT_HEIGHT * l + l) {
-                    int i1 = k / this.mc.fontRendererObj.FONT_HEIGHT + this.scrollPos;
+                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < MinecraftMod.getInstance().getFontRendererMaster().getCurrent().getHeight() * l + l) {
+                    int i1 = k / MinecraftMod.getInstance().getFontRendererMaster().getCurrent().getHeight() + this.scrollPos;
 
                     if (i1 >= 0 && i1 < this.seperateChatLines.size()) {
                         ChatLine chatline = this.seperateChatLines.get(i1);
@@ -356,7 +353,7 @@ public class GuiNewChat extends Gui implements Tickable
 
                         for (IChatComponent ichatcomponent : chatline.getChatComponent()) {
                             if (ichatcomponent instanceof ChatComponentText) {
-                                j1 += this.mc.fontRendererObj.getStringWidth(GuiUtilRenderComponents.func_178909_a(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
+                                j1 += MinecraftMod.getInstance().getFontRendererMaster().getCurrent().getStringWidth(GuiUtilRenderComponents.func_178909_a(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
 
                                 if (j1 > j) {
                                     return ichatcomponent;
@@ -364,15 +361,11 @@ public class GuiNewChat extends Gui implements Tickable
                             }
                         }
                     }
-
-                    return null;
-                } else {
-                    return null;
                 }
-            } else {
-                return null;
             }
         }
+
+        return null;
     }
 
     /**

@@ -14,33 +14,30 @@ public class GuiScreenAddServer extends GuiScreen
     private GuiTextField serverIPField;
     private GuiTextField serverNameField;
     private GuiButton serverResourcePacks;
-    private Predicate<String> field_181032_r = new Predicate<String>()
+    private Predicate<String> field_181032_r = p_apply_1_ ->
     {
-        public boolean apply(String p_apply_1_)
+        if (p_apply_1_.length() == 0)
         {
-            if (p_apply_1_.length() == 0)
+            return true;
+        }
+        else
+        {
+            String[] astring = p_apply_1_.split(":");
+
+            if (astring.length == 0)
             {
                 return true;
             }
             else
             {
-                String[] astring = p_apply_1_.split(":");
-
-                if (astring.length == 0)
+                try
                 {
+                    String s = IDN.toASCII(astring[0]);
                     return true;
                 }
-                else
+                catch (IllegalArgumentException var4)
                 {
-                    try
-                    {
-                        String s = IDN.toASCII(astring[0]);
-                        return true;
-                    }
-                    catch (IllegalArgumentException var4)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
         }
@@ -78,7 +75,7 @@ public class GuiScreenAddServer extends GuiScreen
         this.serverIPField = new GuiTextField(1, this.fontRendererObj, this.width / 2 - 100, 106, 200, 20);
         this.serverIPField.setMaxStringLength(128);
         this.serverIPField.setText(this.serverData.serverIP);
-        this.serverIPField.func_175205_a(this.field_181032_r);
+        this.serverIPField.setValidator(s -> field_181032_r.apply(s));
         ((GuiButton)this.buttonList.get(0)).enabled = this.serverIPField.getText().length() > 0 && this.serverIPField.getText().split(":").length > 0 && this.serverNameField.getText().length() > 0;
     }
 
