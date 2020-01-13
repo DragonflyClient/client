@@ -40,11 +40,13 @@ public class GuiNewChat extends Gui implements Tickable
         MinecraftMod.getInstance().handleTickable(this);
     }
 
-    public static int calculateChatboxWidth (float p_146233_0_)
+    public static int calculateChatboxWidth (float chatWidthSetting)
     {
         int i = 320;
         int j = 40;
-        return MathHelper.floor_float(p_146233_0_ * ( float ) ( i - j ) + ( float ) j);
+
+        // 1F * 280 + 40
+        return MathHelper.floor_float(chatWidthSetting * ( float ) ( i - j ) + ( float ) j);
     }
 
     public static int calculateChatboxHeight (float p_146243_0_)
@@ -65,7 +67,8 @@ public class GuiNewChat extends Gui implements Tickable
 
         if (difference > factor)
             height += targetHeight > height ? difference * factor : -( difference * factor );
-        else height = targetHeight;
+        else
+            height = targetHeight;
     }
 
     public void drawChat (int updateTimes)
@@ -76,7 +79,6 @@ public class GuiNewChat extends Gui implements Tickable
             int visibleChatLines = 0;
             int amountOfSeperateLines = this.seperateChatLines.size();
             float f = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
-
             final IFontRenderer fontRenderer = MinecraftMod.getInstance().getFontRendererMaster().getCurrent();
 
             if (amountOfSeperateLines > 0) {
@@ -128,17 +130,20 @@ public class GuiNewChat extends Gui implements Tickable
                                 final int copyCurrentY = currentY;
 
                                 Color fontColor = new Color(255, 255, 255, chatline.getOpacity().castToInt());
-                                stringsToDraw.add(() -> fontRenderer.drawString(s, stringX, copyCurrentY - 8, fontColor.getRGB(), true));
+                                stringsToDraw.add(() ->
+                                {
+                                    fontRenderer.drawStringWithShadow(s, stringX, copyCurrentY - 8, fontColor.getRGB());
+//                                    drawRect(
+//                                        stringX,
+//                                        copyCurrentY - 8,
+//                                        stringX + fontRenderer.getStringWidth(s),
+//                                        copyCurrentY - 8 + fontRenderer.getHeight(),
+//                                        new Color(255, 0, 0, 100).getRGB()
+//                                    );
+                                });
 
-//                                final int min = currentY;
-//                                final int max = -8;
-//                                final int stringY = ( int ) ( min + ( max * chatline.getLocation().get()));
-//
-//                                Color fontColor = new Color(255, 255, 255, chatline.getOpacity().castToInt());
-//                                stringsToDraw.add(() -> fontRenderer.drawStringWithShadow(s, 0, stringY, fontColor.getRGB()));
-
-                                currentY -= ( int ) ( 9 * chatline.getLocation().get() );
-                                currentHeight += 9;
+                                currentY -= ( int ) ( fontRenderer.getHeight() * chatline.getLocation().get() );
+                                currentHeight += fontRenderer.getHeight();
                             }
                         }
                     }
@@ -242,7 +247,7 @@ public class GuiNewChat extends Gui implements Tickable
         logger.info("[CHAT] " + component.getUnformattedText());
     }
 
-    private void setChatLine (IChatComponent component, int id, int updateCounter, boolean p_146237_4_)
+    private void setChatLine (IChatComponent component, int id, int updateCounter, boolean displayOnly)
     {
         if (id != 0) {
             this.deleteChatLine(id);
@@ -265,7 +270,7 @@ public class GuiNewChat extends Gui implements Tickable
             this.seperateChatLines.remove(this.seperateChatLines.size() - 1);
         }
 
-        if (!p_146237_4_) {
+        if (!displayOnly) {
             this.chatMessages.add(0, new ChatLine(updateCounter, component, id));
 
             while (this.chatMessages.size() > 100) {
@@ -330,14 +335,14 @@ public class GuiNewChat extends Gui implements Tickable
     /**
      * Gets the chat component under the mouse
      */
-    public IChatComponent getChatComponent (int p_146236_1_, int p_146236_2_)
+    public IChatComponent getChatComponent (int p1, int p2)
     {
         if (this.getChatOpen()) {
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaleFactor();
             float f = this.getChatScale();
-            int j = p_146236_1_ / i - 3;
-            int k = p_146236_2_ / i - 27;
+            int j = p1 / i - 3;
+            int k = p2 / i - 27;
             j = MathHelper.floor_float(( float ) j / f);
             k = MathHelper.floor_float(( float ) k / f);
 
@@ -353,7 +358,7 @@ public class GuiNewChat extends Gui implements Tickable
 
                         for (IChatComponent ichatcomponent : chatline.getChatComponent()) {
                             if (ichatcomponent instanceof ChatComponentText) {
-                                j1 += MinecraftMod.getInstance().getFontRendererMaster().getCurrent().getStringWidth(GuiUtilRenderComponents.func_178909_a(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
+                                j1 += MinecraftMod.getInstance().getFontRendererMaster().getCurrent().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
 
                                 if (j1 > j) {
                                     return ichatcomponent;

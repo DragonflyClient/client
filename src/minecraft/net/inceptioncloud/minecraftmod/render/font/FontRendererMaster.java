@@ -3,6 +3,7 @@ package net.inceptioncloud.minecraftmod.render.font;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import net.inceptioncloud.minecraftmod.MinecraftMod;
+import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -29,12 +30,12 @@ public class FontRendererMaster
      */
     public IFontRenderer retrieveOrBuild (String name, int type, int size)
     {
-        FontRendererInfo info = new FontRendererInfo(name, type, size);
+        final FontRendererInfo info = new FontRendererInfo(name, type, size);
 
         if (cache.containsKey(info))
             return cache.get(info);
 
-        CustomFontRenderer fontRenderer = CustomFontRenderer.create(info.name, info.size, info.type == Font.BOLD, info.type == Font.ITALIC, false);
+        final CustomFontRenderer fontRenderer = CustomFontRenderer.create(info.name, info.size, info.type == Font.BOLD, info.type == Font.ITALIC, false);
         cache.put(info, fontRenderer);
 
         return fontRenderer;
@@ -45,8 +46,8 @@ public class FontRendererMaster
      */
     public IFontRenderer getCurrent ()
     {
-        return MinecraftMod.getInstance().getFontRendererMaster().retrieveOrBuild("Product Sans", Font.PLAIN, 19);
-//        return mc.fontRendererObj;
+        return MinecraftMod.getInstance().getFontRendererMaster().retrieveOrBuild("Product Sans Medium", Font.PLAIN, 19);
+//        return Minecraft.getMinecraft().fontRendererObj;
     }
 
     /**

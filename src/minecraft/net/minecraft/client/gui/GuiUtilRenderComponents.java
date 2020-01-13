@@ -11,21 +11,31 @@ import net.minecraft.util.IChatComponent;
 
 public class GuiUtilRenderComponents
 {
-    public static String func_178909_a(String p_178909_0_, boolean p_178909_1_)
+    /**
+     * Remove the formatting colors from the text if it was configured in the chat settings and it
+     * the color isn't forced.
+     *
+     * @param text The text
+     * @param forceColor True to always keep the color, false to use the value from the chat settings
+     * @return The result
+     */
+    public static String removeTextColorsIfConfigured (String text, boolean forceColor)
     {
-        return !p_178909_1_ && !Minecraft.getMinecraft().gameSettings.chatColours ? EnumChatFormatting.getTextWithoutFormattingCodes(p_178909_0_) : p_178909_0_;
+        return !forceColor && !Minecraft.getMinecraft().gameSettings.chatColours ? EnumChatFormatting.getTextWithoutFormattingCodes(text) : text;
     }
 
-    public static List<IChatComponent> splitText (IChatComponent textComponent, int maxTextLenght, IFontRenderer fontRenderer, boolean trimSpace, boolean forceTextColor)
+    public static List<IChatComponent> splitText (IChatComponent original, int maxTextLenght, IFontRenderer ignored /* NOTE: This parameter is unnecessary because the Minecraft Font Renderer is used to split the text */,
+                                                  boolean trimSpace, boolean forceTextColor)
     {
+        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         int i = 0;
-        IChatComponent ichatcomponent = new ChatComponentText("");
-        List<IChatComponent> list = Lists.<IChatComponent>newArrayList();
-        List<IChatComponent> list1 = Lists.newArrayList(textComponent);
+        IChatComponent currentComponent = new ChatComponentText("");
+        List<IChatComponent> newList = Lists.newArrayList();
+        List<IChatComponent> listWithOriginal = Lists.newArrayList(original);
 
-        for (int j = 0; j < ((List)list1).size(); ++j)
+        for (int j = 0 ; j < listWithOriginal.size(); ++j)
         {
-            IChatComponent ichatcomponent1 = (IChatComponent)list1.get(j);
+            IChatComponent ichatcomponent1 = listWithOriginal.get(j);
             String s = ichatcomponent1.getUnformattedTextForChat();
             boolean flag = false;
 
@@ -36,11 +46,11 @@ public class GuiUtilRenderComponents
                 s = s.substring(0, k + 1);
                 ChatComponentText chatcomponenttext = new ChatComponentText(s1);
                 chatcomponenttext.setChatStyle(ichatcomponent1.getChatStyle().createShallowCopy());
-                list1.add(j + 1, chatcomponenttext);
+                listWithOriginal.add(j + 1, chatcomponenttext);
                 flag = true;
             }
 
-            String s4 = func_178909_a(ichatcomponent1.getChatStyle().getFormattingCode() + s, forceTextColor);
+            String s4 = removeTextColorsIfConfigured(ichatcomponent1.getChatStyle().getFormattingCode() + s, forceTextColor);
             String s5 = s4.endsWith("\n") ? s4.substring(0, s4.length() - 1) : s4;
             int i1 = fontRenderer.getStringWidth(s5);
             ChatComponentText chatcomponenttext1 = new ChatComponentText(s5);
@@ -74,7 +84,7 @@ public class GuiUtilRenderComponents
 
                     ChatComponentText chatcomponenttext2 = new ChatComponentText(s3);
                     chatcomponenttext2.setChatStyle(ichatcomponent1.getChatStyle().createShallowCopy());
-                    list1.add(j + 1, chatcomponenttext2);
+                    listWithOriginal.add(j + 1, chatcomponenttext2);
                 }
 
                 i1 = fontRenderer.getStringWidth(s2);
@@ -86,7 +96,7 @@ public class GuiUtilRenderComponents
             if (i + i1 <= maxTextLenght)
             {
                 i += i1;
-                ichatcomponent.appendSibling(chatcomponenttext1);
+                currentComponent.appendSibling(chatcomponenttext1);
             }
             else
             {
@@ -95,13 +105,13 @@ public class GuiUtilRenderComponents
 
             if (flag)
             {
-                list.add(ichatcomponent);
+                newList.add(currentComponent);
                 i = 0;
-                ichatcomponent = new ChatComponentText("");
+                currentComponent = new ChatComponentText("");
             }
         }
 
-        list.add(ichatcomponent);
-        return list;
+        newList.add(currentComponent);
+        return newList;
     }
 }

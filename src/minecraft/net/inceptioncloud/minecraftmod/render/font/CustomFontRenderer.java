@@ -241,14 +241,11 @@ public class CustomFontRenderer implements IFontRenderer
     @Override
     public int getStringWidth (final String text)
     {
-
         if (text == null) {
             return 0;
         }
+
         int width = 0;
-
-        GlyphPage currentPage;
-
         int size = text.length();
 
         boolean on = false;
@@ -271,18 +268,13 @@ public class CustomFontRenderer implements IFontRenderer
                     boldStyle = false;
                     italicStyle = false;
                 }
-                i++;
+//                i++;
                 on = false;
             } else {
                 if (on) i--;
 
-                if (Arrays.asList('.', ':').contains(character)) {
-                    width += 18;
-                } else {
-                    character = text.charAt(i);
-                    currentPage = getCurrentGlyphPage();
-                    width += currentPage.getWidth(character) - 8;
-                }
+                character = text.charAt(i);
+                width += getCharWidthFloat(character);
             }
         }
 
@@ -306,7 +298,7 @@ public class CustomFontRenderer implements IFontRenderer
     @Override
     public int getHeight ()
     {
-        return regularGlyphPage.getMaxFontHeight() / 2;
+        return ( int ) ( regularGlyphPage.getMaxFontHeight() / 2.2D );
     }
 
     /**
@@ -319,7 +311,7 @@ public class CustomFontRenderer implements IFontRenderer
     @Override
     public float getCharWidthFloat (final char c)
     {
-        return getStringWidth(Character.toString(c));
+        return getCurrentGlyphPage().getWidth(c) - 8;
     }
 
     /**
@@ -369,11 +361,15 @@ public class CustomFontRenderer implements IFontRenderer
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        for (int i = 0 ; i < text.length() ; ++i) {
-            char c0 = text.charAt(i);
+        for (int charIndex = 0 ; charIndex < text.length() ; ++charIndex) {
+            char currentChar = text.charAt(charIndex);
 
-            if (c0 == 167 && i + 1 < text.length()) {
-                int i1 = "0123456789abcdefklmnor".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(i + 1));
+            if (currentChar == 167 /* = § */ && charIndex + 1 < text.length()) {
+                /* NOTE: This would be a temporary fix if the § has been doubled */
+//                if (text.charAt(charIndex + 1) == 167)
+//                    continue;
+
+                int i1 = "0123456789abcdefklmnor".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(charIndex + 1));
 
                 if (i1 < 16) {
                     this.randomStyle = false;
@@ -412,23 +408,23 @@ public class CustomFontRenderer implements IFontRenderer
                     GlStateManager.color(this.red, this.blue, this.green, this.alpha);
                 }
 
-                ++i;
+                ++charIndex;
             } else {
                 glyphPage = getCurrentGlyphPage();
                 glyphPage.bindTexture();
 
-                float f = glyphPage.drawChar(c0, posX, posY);
+                float f = glyphPage.drawChar(currentChar, posX, posY);
 
                 if (f != -1)
-                    doDraw(f, glyphPage);
+                    finishDraw(f, glyphPage);
                 else {
                     final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
                     final float factor = 2.1F;
 
                     glScaled(factor, factor, factor);
 
-                    fontRenderer.setPosX(( posX / factor ) + 1).setPosY(( posY / factor ) + 2).renderUnicodeChar(c0, false);
-                    this.posX += fontRenderer.getCharWidthFloat(c0) * factor;
+                    fontRenderer.setPosX(( posX / factor ) + 1).setPosY(( posY / factor ) + 2).renderUnicodeChar(currentChar, false);
+                    this.posX += fontRenderer.getCharWidthFloat(currentChar) * factor;
 
                     glScaled(1 / factor, 1 / factor, 1 / factor);
                 }
@@ -440,7 +436,7 @@ public class CustomFontRenderer implements IFontRenderer
         glPopMatrix();
     }
 
-    private void doDraw (float f, GlyphPage glyphPage)
+    private void finishDraw (float f, GlyphPage glyphPage)
     {
         if (this.strikethroughStyle) {
             Tessellator tessellator = Tessellator.getInstance();
@@ -546,10 +542,8 @@ public class CustomFontRenderer implements IFontRenderer
                 if (on) i--;
 
                 character = text.charAt(i);
-
                 currentPage = getCurrentGlyphPage();
-
-                width += ( currentPage.getWidth(character) - 8 ) / 2;
+                width += ( currentPage.getWidth(character) - 8 ) / 1;
             }
 
             if (i > width) {
