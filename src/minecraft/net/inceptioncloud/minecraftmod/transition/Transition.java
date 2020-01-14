@@ -40,7 +40,7 @@ public abstract class Transition
      * 0 = nothing
      * -1 = backward
      */
-    public int direction = 0;
+    protected int direction = 0;
 
     /**
      * The default transition constructor.

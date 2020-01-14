@@ -8,7 +8,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
-import net.inceptioncloud.minecraftmod.render.font.CustomFontRenderer;
+import net.inceptioncloud.minecraftmod.render.font.FontRendererMaster;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.Minecraft;
@@ -16,7 +16,6 @@ import net.minecraft.util.Session;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.Display;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.net.Proxy;
@@ -35,10 +34,10 @@ public class MinecraftMod
     private static MinecraftMod instance;
 
     /**
-     * The custom Inception Cloud Mod font renderer.
+     * The Font Renderer Mapper.
      */
     @Getter
-    private CustomFontRenderer fontRenderer;
+    private final FontRendererMaster fontRendererMaster;
 
     /**
      * All transitions handled by the mod.
@@ -74,6 +73,7 @@ public class MinecraftMod
     public MinecraftMod ()
     {
         instance = this;
+        fontRendererMaster = new FontRendererMaster();
 
         Display.setTitle(InceptionCloudVersion.FULL_VERSION + " | Minecraft Mod 1.8.8");
 
@@ -91,7 +91,7 @@ public class MinecraftMod
                     LogManager.getLogger().error("Inception Cloud Mod Tick failed!", exception);
                 }
             }
-        }, 0, 1);
+        }, 0, 5);
     }
 
     /**
@@ -124,7 +124,6 @@ public class MinecraftMod
      */
     public void initializeGraphics ()
     {
-        fontRenderer = new CustomFontRenderer("Product Sans Medium", Font.PLAIN, 45);
     }
 
     /**
@@ -161,6 +160,7 @@ public class MinecraftMod
      */
     public void handleTransition (Transition transition)
     {
+        LogManager.getLogger().info("Mod is now handling Transition " + transition.getClass().getSimpleName());
         modTransitions.add(transition);
     }
 
@@ -171,6 +171,7 @@ public class MinecraftMod
      */
     public void handleTickable (Tickable tickable)
     {
+        LogManager.getLogger().info("Mod is now handling Tickable " + tickable.getClass().getSimpleName());
         tickables.add(tickable);
     }
 }

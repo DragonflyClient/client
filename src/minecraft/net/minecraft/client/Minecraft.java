@@ -4,7 +4,6 @@ import com.google.common.collect.*;
 import com.google.common.util.concurrent.*;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
-import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.inceptioncloud.minecraftmod.MinecraftMod;
@@ -768,7 +767,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 }
 
                 if (!flag) {
-                    Iterator iterator = set.iterator();
+                    Iterator<DisplayMode> iterator = set.iterator();
                     DisplayMode displaymode3;
 
                     while (true) {
@@ -776,7 +775,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                             continue label53;
                         }
 
-                        displaymode3 = ( DisplayMode ) iterator.next();
+                        displaymode3 = iterator.next();
 
                         if (displaymode3.getBitsPerPixel() == 32 && displaymode3.getWidth() == displaymode1.getWidth() / 2 && displaymode3.getHeight() == displaymode1.getHeight() / 2) {
                             break;

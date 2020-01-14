@@ -3,8 +3,8 @@ package net.minecraft.client.gui;
 import com.google.common.collect.Lists;
 import net.inceptioncloud.minecraftmod.MinecraftMod;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
+import net.inceptioncloud.minecraftmod.render.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
-import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,6 +17,7 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.function.IntSupplier;
 
 public class GuiNewChat extends Gui implements Tickable
 {
@@ -25,12 +26,48 @@ public class GuiNewChat extends Gui implements Tickable
     private final List<String> sentMessages = Lists.newArrayList();
     private final List<ChatLine> chatMessages = Lists.newArrayList();
     private final List<ChatLine> seperateChatLines = Lists.newArrayList();
-    private final DoubleTransition chatOpening = DoubleTransition.builder().start(0).end(1).amountOfSteps(100).autoTransformator(( ForwardBackward ) this::getChatOpen).build();
-    private final DoubleTransition titleTransition = DoubleTransition.builder().start(0).end(1).amountOfSteps(100).autoTransformator(( ForwardBackward ) chatOpening::isAtEnd).build();
     private int scrollPos;
-    private int targetHeight = 0;
-    private double height = 0;
+    private static int targetHeight = 0;
+    private static double height = 0;
     private boolean isScrolled;
+
+    /**
+     * The transition that draws the title background.
+     */
+    private static final DoubleTransition titleBackground = DoubleTransition.builder().start(0).end(1).amountOfSteps(15).autoTransformator(new IntSupplier()
+    {
+        @Override
+        public int getAsInt ()
+        {
+            if (!getChatOpen())
+                return -1;
+
+            if (GuiChat.getDirection() == 1 && Math.abs(targetHeight - height) < 10)
+                return 1;
+
+            if (GuiChat.getDirection() == -1 && titleText.isAtStart())
+                return -1;
+
+            return 0;
+        }
+    }).build();
+
+    /**
+     * The transition that moves the title text.
+     */
+    private static final DoubleTransition titleText = DoubleTransition.builder().start(0).end(1).amountOfSteps(15).autoTransformator(() ->
+    {
+        if (!getChatOpen())
+            return -1;
+
+        if (GuiChat.getDirection() == 1 && titleBackground.isAtEnd())
+            return 1;
+
+        if (GuiChat.getDirection() == -1)
+            return -1;
+
+        return 0;
+    }).build();
 
     public GuiNewChat (Minecraft mcIn)
     {
@@ -39,18 +76,20 @@ public class GuiNewChat extends Gui implements Tickable
         MinecraftMod.getInstance().handleTickable(this);
     }
 
-    public static int calculateChatboxWidth (float p_146233_0_)
+    public static int calculateChatboxWidth (float chatWidthSetting)
     {
         int i = 320;
         int j = 40;
-        return MathHelper.floor_float(p_146233_0_ * ( float ) ( i - j ) + ( float ) j);
+
+        // 1F * 280 + 40
+        return MathHelper.floor_float(chatWidthSetting * ( float ) ( i - j ) + ( float ) j);
     }
 
-    public static int calculateChatboxHeight (float p_146243_0_)
+    public static int calculateChatboxHeight (float chatHeightSetting)
     {
         int i = 180;
         int j = 20;
-        return MathHelper.floor_float(p_146243_0_ * ( float ) ( i - j ) + ( float ) j);
+        return MathHelper.floor_float(chatHeightSetting * ( float ) ( i - j ) + ( float ) j);
     }
 
     /**
@@ -60,11 +99,12 @@ public class GuiNewChat extends Gui implements Tickable
     public void modTick ()
     {
         final double difference = Math.abs(targetHeight - height);
-        final double factor = 0.02;
+        final double factor = 0.05;
 
         if (difference > factor)
             height += targetHeight > height ? difference * factor : -( difference * factor );
-        else height = targetHeight;
+        else
+            height = targetHeight;
     }
 
     public void drawChat (int updateTimes)
@@ -75,10 +115,11 @@ public class GuiNewChat extends Gui implements Tickable
             int visibleChatLines = 0;
             int amountOfSeperateLines = this.seperateChatLines.size();
             float f = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
+            final IFontRenderer fontRenderer = MinecraftMod.getInstance().getFontRendererMaster().getCurrent();
 
             if (amountOfSeperateLines > 0) {
 
-                if (this.getChatOpen()) {
+                if (getChatOpen()) {
                     chatOpen = true;
                 }
 
@@ -119,23 +160,26 @@ public class GuiNewChat extends Gui implements Tickable
                                 String s = chatline.getChatComponent().getFormattedText();
                                 GlStateManager.enableBlend();
 
-                                final int min = -this.mc.fontRendererObj.getStringWidth(s);
+                                final int min = -fontRenderer.getStringWidth(s);
                                 final int add = -min + getBorderAmount() - 2;
                                 final int stringX = ( int ) ( min + ( ( add ) * chatline.getLocation().get() ) );
                                 final int copyCurrentY = currentY;
 
                                 Color fontColor = new Color(255, 255, 255, chatline.getOpacity().castToInt());
-                                stringsToDraw.add(() -> mc.fontRendererObj.drawStringWithShadow(s, stringX, copyCurrentY - 8, fontColor.getRGB()));
+                                stringsToDraw.add(() ->
+                                {
+                                    fontRenderer.drawStringWithShadow(s, stringX, copyCurrentY - 8, fontColor.getRGB());
+//                                    drawRect(
+//                                        stringX,
+//                                        copyCurrentY - 8,
+//                                        stringX + fontRenderer.getStringWidth(s),
+//                                        copyCurrentY - 8 + fontRenderer.getHeight(),
+//                                        new Color(255, 0, 0, 100).getRGB()
+//                                    );
+                                });
 
-//                                final int min = currentY;
-//                                final int max = -8;
-//                                final int stringY = ( int ) ( min + ( max * chatline.getLocation().get()));
-//
-//                                Color fontColor = new Color(255, 255, 255, chatline.getOpacity().castToInt());
-//                                stringsToDraw.add(() -> mc.fontRendererObj.drawStringWithShadow(s, 0, stringY, fontColor.getRGB()));
-
-                                currentY -= ( int ) ( 9 * chatline.getLocation().get() );
-                                currentHeight += 9;
+                                currentY -= ( int ) ( fontRenderer.getHeight() * chatline.getLocation().get() );
+                                currentHeight += fontRenderer.getHeight();
                             }
                         }
                     }
@@ -149,9 +193,14 @@ public class GuiNewChat extends Gui implements Tickable
 
                     Color rectColor = new Color(0, 0, 0, 80);
                     drawRect(-2, ( int ) -height - border, l + 4, border, rectColor.getRGB());
+                }
+
+                /* Open-Chat Title */
+                {
+                    int border = ( int ) Math.min(getBorderAmount(), ( height / 10 ) * getBorderAmount());
 
                     Color lineColor = new Color(0, 0, 0, 200);
-                    drawRect(-2, ( int ) ( ( -height - border ) - ( chatOpening.get() * 15 ) ), l + 4, ( int ) ( -height - border ), lineColor.getRGB());
+                    drawRect(-2, ( int ) ( ( -height - border ) - ( titleBackground.get() * 15 ) ), l + 4, ( int ) ( -height - border ), lineColor.getRGB());
 
                     GlStateManager.enableBlend();
                     GlStateManager.enableAlpha();
@@ -160,43 +209,45 @@ public class GuiNewChat extends Gui implements Tickable
                     String s2 = InceptionCloudVersion.TITLE_2 + " §f" + InceptionCloudVersion.VERSION;
                     String s3 = InceptionCloudVersion.IDENTIFIER;
                     String whole = s1 + s2 + " " + s3;
+                    String date = "§7" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
 
-                    Color color1 = new Color(235, 59, 90, 10 + ( int ) ( titleTransition.get() * 245));
-                    Color color2 = new Color(165, 94, 234, 10 + ( int ) ( titleTransition.get() * 245));
-                    Color color3 = new Color(69, 170, 242, 10 + ( int ) ( titleTransition.get() * 245));
-                    Color alpha = new Color(255, 255, 255, 10 + ( int ) ( titleTransition.get() * 245));
+                    Color color1 = new Color(235, 59, 90, 10 + ( int ) ( titleText.get() * 245 ));
+                    Color color2 = new Color(165, 94, 234, 10 + ( int ) ( titleText.get() * 245 ));
+                    Color color3 = new Color(69, 170, 242, 10 + ( int ) ( titleText.get() * 245 ));
+                    Color alpha = new Color(255, 255, 255, 10 + ( int ) ( titleText.get() * 245 ));
 
-                    int base = -mc.fontRendererObj.getStringWidth(whole);
-                    int addition = mc.fontRendererObj.getStringWidth(whole) + getBorderAmount() - 2;
-                    int textX = base + (int) (addition * titleTransition.get());
+                    int base = -fontRenderer.getStringWidth(whole);
+                    int addition = fontRenderer.getStringWidth(whole) + getBorderAmount() - 2;
+                    int textX = base + ( int ) ( addition * titleText.get() );
 
-                    mc.fontRendererObj.drawStringWithShadow(s1, textX, ( int ) ( -height - border - 11), color1.getRGB());
-                    mc.fontRendererObj.drawStringWithShadow(s2, textX + mc.fontRendererObj.getStringWidth(s1), ( int ) ( -height - border - 11), color2.getRGB());
-                    mc.fontRendererObj.drawStringWithShadow(s3, textX + mc.fontRendererObj.getStringWidth(s1 + s2 + " "), ( int ) ( -height - border - 11), color3.getRGB());
+                    // If the title box is wide enough to display the cloud name
+                    if (l + 2 >= fontRenderer.getStringWidth(s1 + s2 + " " + s3)) {
+                        fontRenderer.drawString(s1, textX, ( int ) ( -height - border - 10 ), color1.getRGB(), true);
+                        fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), ( int ) ( -height - border - 10 ), color2.getRGB(), true);
+                        fontRenderer.drawString(s3, textX + fontRenderer.getStringWidth(s1 + s2 + " "), ( int ) ( -height - border - 10 ), color3.getRGB(), true);
+                    }
 
-                    String string = "§7" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
-                    base = -mc.fontRendererObj.getStringWidth(string);
-                    addition = l + 4 - getBorderAmount() + 2;
-                    textX = base + (int) (addition * titleTransition.get());
-                    mc.fontRendererObj.drawStringWithShadow(string, textX, ( int ) ( -height - border - 11), alpha.getRGB());
+                    // If the title box is wide enough to display the time
+                    if (l + 2 >= fontRenderer.getStringWidth(s1 + s2 + " " + s3 + "     " + date)) {
+                        base = -fontRenderer.getStringWidth(date);
+                        addition = l + 4 - getBorderAmount();
+                        textX = base + ( int ) ( addition * titleText.get() );
+                        fontRenderer.drawString(date, textX, ( int ) ( -height - border - 10 ), alpha.getRGB(), true);
+                    }
                 }
 
                 /* Draw the messages over the background */
                 {
-                    GlStateManager.enableBlend();
-                    GlStateManager.enableAlpha();
+                    GlStateManager.color(1F, 1F, 1F, 1F);
                     stringsToDraw.forEach(Runnable::run);
                 }
 
-                GlStateManager.disableAlpha();
-                GlStateManager.disableBlend();
-
                 if (chatOpen) {
-                    int fontHeight = this.mc.fontRendererObj.FONT_HEIGHT;
+                    int fontHeight = fontRenderer.getHeight();
                     GlStateManager.translate(-3.0F, 0.0F, 0.0F);
                     int totalHeight = amountOfSeperateLines * fontHeight + amountOfSeperateLines;
                     int visibleHeight = visibleChatLines * fontHeight + visibleChatLines;
-                    int yPosition = ( int ) ( this.scrollPos * visibleHeight / amountOfSeperateLines * 0.9);
+                    int yPosition = ( int ) ( this.scrollPos * visibleHeight / amountOfSeperateLines * 0.9 );
                     int scrollBarHeight = visibleHeight * visibleHeight / totalHeight;
 
                     if (totalHeight != visibleHeight) {
@@ -238,14 +289,14 @@ public class GuiNewChat extends Gui implements Tickable
         logger.info("[CHAT] " + component.getUnformattedText());
     }
 
-    private void setChatLine (IChatComponent component, int id, int updateCounter, boolean p_146237_4_)
+    private void setChatLine (IChatComponent component, int id, int updateCounter, boolean displayOnly)
     {
         if (id != 0) {
             this.deleteChatLine(id);
         }
 
         int i = MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale());
-        List<IChatComponent> list = GuiUtilRenderComponents.func_178908_a(component, i, this.mc.fontRendererObj, false, false);
+        List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, MinecraftMod.getInstance().getFontRendererMaster().getCurrent(), false, false);
         boolean chatOpen = this.getChatOpen();
 
         for (IChatComponent ichatcomponent : list) {
@@ -261,7 +312,7 @@ public class GuiNewChat extends Gui implements Tickable
             this.seperateChatLines.remove(this.seperateChatLines.size() - 1);
         }
 
-        if (!p_146237_4_) {
+        if (!displayOnly) {
             this.chatMessages.add(0, new ChatLine(updateCounter, component, id));
 
             while (this.chatMessages.size() > 100) {
@@ -326,24 +377,22 @@ public class GuiNewChat extends Gui implements Tickable
     /**
      * Gets the chat component under the mouse
      */
-    public IChatComponent getChatComponent (int p_146236_1_, int p_146236_2_)
+    public IChatComponent getChatComponent (int p1, int p2)
     {
-        if (!this.getChatOpen()) {
-            return null;
-        } else {
+        if (this.getChatOpen()) {
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaleFactor();
             float f = this.getChatScale();
-            int j = p_146236_1_ / i - 3;
-            int k = p_146236_2_ / i - 27;
+            int j = p1 / i - 3;
+            int k = p2 / i - 27;
             j = MathHelper.floor_float(( float ) j / f);
             k = MathHelper.floor_float(( float ) k / f);
 
             if (j >= 0 && k >= 0) {
                 int l = Math.min(this.getLineCount(), this.seperateChatLines.size());
 
-                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < this.mc.fontRendererObj.FONT_HEIGHT * l + l) {
-                    int i1 = k / this.mc.fontRendererObj.FONT_HEIGHT + this.scrollPos;
+                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < MinecraftMod.getInstance().getFontRendererMaster().getCurrent().getHeight() * l + l) {
+                    int i1 = k / MinecraftMod.getInstance().getFontRendererMaster().getCurrent().getHeight() + this.scrollPos;
 
                     if (i1 >= 0 && i1 < this.seperateChatLines.size()) {
                         ChatLine chatline = this.seperateChatLines.get(i1);
@@ -351,7 +400,7 @@ public class GuiNewChat extends Gui implements Tickable
 
                         for (IChatComponent ichatcomponent : chatline.getChatComponent()) {
                             if (ichatcomponent instanceof ChatComponentText) {
-                                j1 += this.mc.fontRendererObj.getStringWidth(GuiUtilRenderComponents.func_178909_a(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
+                                j1 += MinecraftMod.getInstance().getFontRendererMaster().getCurrent().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
 
                                 if (j1 > j) {
                                     return ichatcomponent;
@@ -359,23 +408,19 @@ public class GuiNewChat extends Gui implements Tickable
                             }
                         }
                     }
-
-                    return null;
-                } else {
-                    return null;
                 }
-            } else {
-                return null;
             }
         }
+
+        return null;
     }
 
     /**
      * Returns true if the chat GUI is open
      */
-    public boolean getChatOpen ()
+    public static boolean getChatOpen ()
     {
-        return this.mc.currentScreen instanceof GuiChat;
+        return Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen instanceof GuiChat;
     }
 
     /**

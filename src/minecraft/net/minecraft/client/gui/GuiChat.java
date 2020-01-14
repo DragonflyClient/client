@@ -5,6 +5,10 @@ import com.google.common.collect.Lists;
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
+
+import net.inceptioncloud.minecraftmod.MinecraftMod;
+import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -32,6 +36,8 @@ public class GuiChat extends GuiScreen
     private int autocompleteIndex;
     private List<String> foundPlayerNames = Lists.newArrayList();
 
+    public static DoubleTransition transition = DoubleTransition.builder().start(0).end(22).amountOfSteps(20).reachStart(() -> Minecraft.getMinecraft().displayGuiScreen(null)).build();
+
     /** Chat entry field */
     protected GuiTextField inputField;
 
@@ -56,13 +62,36 @@ public class GuiChat extends GuiScreen
     public void initGui()
     {
         Keyboard.enableRepeatEvents(true);
+
+        transition.setForward();
         this.sentHistoryCursor = this.mc.ingameGUI.getChatGUI().getSentMessages().size();
-        this.inputField = new GuiTextField(0, this.fontRendererObj, 4, this.height - 12, this.width - 4, 12);
+
+        this.inputField = new GuiTextField(0, MinecraftMod.getInstance().getFontRendererMaster().getCurrent(), 5, this.height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth), 12);
         this.inputField.setMaxStringLength(100);
         this.inputField.setEnableBackgroundDrawing(false);
         this.inputField.setFocused(true);
         this.inputField.setText(this.defaultInputFieldText);
         this.inputField.setCanLoseFocus(false);
+    }
+
+    /**
+     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
+     */
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    {
+        drawRect(0, this.height - transition.castToInt(), 6 + GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth), this.height, new Color(20, 20, 20, 100).getRGB());
+
+        if (transition.isAtEnd())
+            this.inputField.drawTextBox();
+
+        IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
+
+        if (ichatcomponent != null && ichatcomponent.getChatStyle().getChatHoverEvent() != null)
+        {
+            this.handleComponentHover(ichatcomponent, mouseX, mouseY);
+        }
+
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     /**
@@ -101,7 +130,7 @@ public class GuiChat extends GuiScreen
 
         if (keyCode == 1)
         {
-            this.mc.displayGuiScreen(null);
+            this.transition.setBackward();
         }
         else if (keyCode != 28 && keyCode != 156)
         {
@@ -135,7 +164,7 @@ public class GuiChat extends GuiScreen
                 this.sendChatMessage(s);
             }
 
-            this.mc.displayGuiScreen(null);
+            this.transition.setBackward();
         }
     }
 
@@ -206,7 +235,7 @@ public class GuiChat extends GuiScreen
     {
         if (this.playerNamesFound)
         {
-            this.inputField.deleteFromCursor(this.inputField.func_146197_a(-1, this.inputField.getCursorPosition(), false) - this.inputField.getCursorPosition());
+            this.inputField.deleteFromCursor(this.inputField.getNthWordFromPosWS(-1, this.inputField.getCursorPosition(), false) - this.inputField.getCursorPosition());
 
             if (this.autocompleteIndex >= this.foundPlayerNames.size())
             {
@@ -215,7 +244,7 @@ public class GuiChat extends GuiScreen
         }
         else
         {
-            int i = this.inputField.func_146197_a(-1, this.inputField.getCursorPosition(), false);
+            int i = this.inputField.getNthWordFromPosWS(-1, this.inputField.getCursorPosition(), false);
             this.foundPlayerNames.clear();
             this.autocompleteIndex = 0;
             String s = this.inputField.getText().substring(i).toLowerCase();
@@ -297,23 +326,6 @@ public class GuiChat extends GuiScreen
         }
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
-        drawRect(2, this.height - 14, this.width - 2, this.height - 2, new Color(20, 20, 20, 100).getRGB());
-        this.inputField.drawTextBox();
-        IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-
-        if (ichatcomponent != null && ichatcomponent.getChatStyle().getChatHoverEvent() != null)
-        {
-            this.handleComponentHover(ichatcomponent, mouseX, mouseY);
-        }
-
-        super.drawScreen(mouseX, mouseY, partialTicks);
-    }
-
     public void onAutocompleteResponse(String[] input)
     {
         if (this.waitingOnAutocomplete)
@@ -329,12 +341,12 @@ public class GuiChat extends GuiScreen
                 }
             }
 
-            String s1 = this.inputField.getText().substring(this.inputField.func_146197_a(-1, this.inputField.getCursorPosition(), false));
+            String s1 = this.inputField.getText().substring(this.inputField.getNthWordFromPosWS(-1, this.inputField.getCursorPosition(), false));
             String s2 = StringUtils.getCommonPrefix(input);
 
             if (s2.length() > 0 && !s1.equalsIgnoreCase(s2))
             {
-                this.inputField.deleteFromCursor(this.inputField.func_146197_a(-1, this.inputField.getCursorPosition(), false) - this.inputField.getCursorPosition());
+                this.inputField.deleteFromCursor(this.inputField.getNthWordFromPosWS(-1, this.inputField.getCursorPosition(), false) - this.inputField.getCursorPosition());
                 this.inputField.writeText(s2);
             }
             else if (this.foundPlayerNames.size() > 0)
@@ -351,5 +363,12 @@ public class GuiChat extends GuiScreen
     public boolean doesGuiPauseGame()
     {
         return false;
+    }
+
+    public static int getDirection ()
+    {
+//        GuiScreen gui = Minecraft.getMinecraft().currentScreen;
+//        return gui instanceof GuiChat ? ( ( GuiChat ) gui ).transition.getDirection() : 0;
+        return transition.getDirection();
     }
 }
