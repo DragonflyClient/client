@@ -160,6 +160,7 @@ public class MinecraftMod
      */
     public void handleTransition (Transition transition)
     {
+        LogManager.getLogger().info("Mod is now handling Transition " + transition.getClass().getSimpleName());
         modTransitions.add(transition);
     }
 
@@ -170,6 +171,7 @@ public class MinecraftMod
      */
     public void handleTickable (Tickable tickable)
     {
+        LogManager.getLogger().info("Mod is now handling Tickable " + tickable.getClass().getSimpleName());
         tickables.add(tickable);
     }
 }

@@ -27,14 +27,14 @@ public class GuiNewChat extends Gui implements Tickable
     private final List<ChatLine> chatMessages = Lists.newArrayList();
     private final List<ChatLine> seperateChatLines = Lists.newArrayList();
     private int scrollPos;
-    private int targetHeight = 0;
-    private double height = 0;
+    private static int targetHeight = 0;
+    private static double height = 0;
     private boolean isScrolled;
 
     /**
      * The transition that draws the title background.
      */
-    private final DoubleTransition titleBackground = DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator(new IntSupplier()
+    private static final DoubleTransition titleBackground = DoubleTransition.builder().start(0).end(1).amountOfSteps(15).autoTransformator(new IntSupplier()
     {
         @Override
         public int getAsInt ()
@@ -55,7 +55,7 @@ public class GuiNewChat extends Gui implements Tickable
     /**
      * The transition that moves the title text.
      */
-    private final DoubleTransition titleText = DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator(() ->
+    private static final DoubleTransition titleText = DoubleTransition.builder().start(0).end(1).amountOfSteps(15).autoTransformator(() ->
     {
         if (!getChatOpen())
             return -1;
@@ -119,7 +119,7 @@ public class GuiNewChat extends Gui implements Tickable
 
             if (amountOfSeperateLines > 0) {
 
-                if (this.getChatOpen()) {
+                if (getChatOpen()) {
                     chatOpen = true;
                 }
 
@@ -222,17 +222,17 @@ public class GuiNewChat extends Gui implements Tickable
 
                     // If the title box is wide enough to display the cloud name
                     if (l + 2 >= fontRenderer.getStringWidth(s1 + s2 + " " + s3)) {
-                        fontRenderer.drawString(s1, textX, ( int ) ( -height - border - 11 ), color1.getRGB(), true);
-                        fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), ( int ) ( -height - border - 11 ), color2.getRGB(), true);
-                        fontRenderer.drawString(s3, textX + fontRenderer.getStringWidth(s1 + s2 + " "), ( int ) ( -height - border - 11 ), color3.getRGB(), true);
+                        fontRenderer.drawString(s1, textX, ( int ) ( -height - border - 10 ), color1.getRGB(), true);
+                        fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), ( int ) ( -height - border - 10 ), color2.getRGB(), true);
+                        fontRenderer.drawString(s3, textX + fontRenderer.getStringWidth(s1 + s2 + " "), ( int ) ( -height - border - 10 ), color3.getRGB(), true);
                     }
 
                     // If the title box is wide enough to display the time
                     if (l + 2 >= fontRenderer.getStringWidth(s1 + s2 + " " + s3 + "     " + date)) {
                         base = -fontRenderer.getStringWidth(date);
-                        addition = l + 4 - getBorderAmount() + 2;
+                        addition = l + 4 - getBorderAmount();
                         textX = base + ( int ) ( addition * titleText.get() );
-                        fontRenderer.drawString(date, textX, ( int ) ( -height - border - 11 ), alpha.getRGB(), true);
+                        fontRenderer.drawString(date, textX, ( int ) ( -height - border - 10 ), alpha.getRGB(), true);
                     }
                 }
 
@@ -418,9 +418,9 @@ public class GuiNewChat extends Gui implements Tickable
     /**
      * Returns true if the chat GUI is open
      */
-    public boolean getChatOpen ()
+    public static boolean getChatOpen ()
     {
-        return this.mc.currentScreen != null && this.mc.currentScreen instanceof GuiChat;
+        return Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen instanceof GuiChat;
     }
 
     /**
