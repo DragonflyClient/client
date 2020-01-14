@@ -91,7 +91,7 @@ public class MinecraftMod
                     LogManager.getLogger().error("Inception Cloud Mod Tick failed!", exception);
                 }
             }
-        }, 0, 1);
+        }, 0, 5);
     }
 
     /**

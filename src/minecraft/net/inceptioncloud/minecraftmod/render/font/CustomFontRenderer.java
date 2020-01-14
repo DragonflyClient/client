@@ -339,7 +339,7 @@ public class CustomFontRenderer implements IFontRenderer
             this.posX = x * 2.0f;
             this.posY = y * 2.0f;
             this.renderStringAtPos(text, dropShadow);
-            return ( int ) ( this.posX / 4.0f );
+            return ( int ) ( this.posX / 2.0f ); /* NOTE: This was originally 4.0F */
         }
     }
 
@@ -457,10 +457,10 @@ public class CustomFontRenderer implements IFontRenderer
             GlStateManager.disableTexture2D();
             worldrenderer1.begin(7, DefaultVertexFormats.POSITION);
             int l = this.underlineStyle ? -1 : 0;
-            worldrenderer1.pos(this.posX + ( float ) l, this.posY + ( float ) glyphPage.getMaxFontHeight() - 4.0F, 0.0D).endVertex();
+            worldrenderer1.pos(this.posX + ( float ) l, this.posY + ( float ) glyphPage.getMaxFontHeight() - 3.0F, 0.0D).endVertex();
+            worldrenderer1.pos(this.posX + f, this.posY + ( float ) glyphPage.getMaxFontHeight() - 3.0F, 0.0D).endVertex();
             worldrenderer1.pos(this.posX + f, this.posY + ( float ) glyphPage.getMaxFontHeight() - 4.0F, 0.0D).endVertex();
-            worldrenderer1.pos(this.posX + f, this.posY + ( float ) glyphPage.getMaxFontHeight() - 5.0F, 0.0D).endVertex();
-            worldrenderer1.pos(this.posX + ( float ) l, this.posY + ( float ) glyphPage.getMaxFontHeight() - 5.0F, 0.0D).endVertex();
+            worldrenderer1.pos(this.posX + ( float ) l, this.posY + ( float ) glyphPage.getMaxFontHeight() - 4.0F, 0.0D).endVertex();
             tessellator1.draw();
             GlStateManager.enableTexture2D();
         }

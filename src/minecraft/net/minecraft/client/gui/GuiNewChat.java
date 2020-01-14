@@ -5,7 +5,6 @@ import net.inceptioncloud.minecraftmod.MinecraftMod;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.render.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
-import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,6 +17,7 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.function.IntSupplier;
 
 public class GuiNewChat extends Gui implements Tickable
 {
@@ -26,12 +26,48 @@ public class GuiNewChat extends Gui implements Tickable
     private final List<String> sentMessages = Lists.newArrayList();
     private final List<ChatLine> chatMessages = Lists.newArrayList();
     private final List<ChatLine> seperateChatLines = Lists.newArrayList();
-    private final DoubleTransition chatOpening = DoubleTransition.builder().start(0).end(1).amountOfSteps(100).autoTransformator(( ForwardBackward ) this::getChatOpen).build();
-    private final DoubleTransition titleTransition = DoubleTransition.builder().start(0).end(1).amountOfSteps(100).autoTransformator(( ForwardBackward ) chatOpening::isAtEnd).build();
     private int scrollPos;
     private int targetHeight = 0;
     private double height = 0;
     private boolean isScrolled;
+
+    /**
+     * The transition that draws the title background.
+     */
+    private final DoubleTransition titleBackground = DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator(new IntSupplier()
+    {
+        @Override
+        public int getAsInt ()
+        {
+            if (!getChatOpen())
+                return -1;
+
+            if (GuiChat.getDirection() == 1 && Math.abs(targetHeight - height) < 10)
+                return 1;
+
+            if (GuiChat.getDirection() == -1 && titleText.isAtStart())
+                return -1;
+
+            return 0;
+        }
+    }).build();
+
+    /**
+     * The transition that moves the title text.
+     */
+    private final DoubleTransition titleText = DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator(() ->
+    {
+        if (!getChatOpen())
+            return -1;
+
+        if (GuiChat.getDirection() == 1 && titleBackground.isAtEnd())
+            return 1;
+
+        if (GuiChat.getDirection() == -1)
+            return -1;
+
+        return 0;
+    }).build();
 
     public GuiNewChat (Minecraft mcIn)
     {
@@ -49,11 +85,11 @@ public class GuiNewChat extends Gui implements Tickable
         return MathHelper.floor_float(chatWidthSetting * ( float ) ( i - j ) + ( float ) j);
     }
 
-    public static int calculateChatboxHeight (float p_146243_0_)
+    public static int calculateChatboxHeight (float chatHeightSetting)
     {
         int i = 180;
         int j = 20;
-        return MathHelper.floor_float(p_146243_0_ * ( float ) ( i - j ) + ( float ) j);
+        return MathHelper.floor_float(chatHeightSetting * ( float ) ( i - j ) + ( float ) j);
     }
 
     /**
@@ -63,7 +99,7 @@ public class GuiNewChat extends Gui implements Tickable
     public void modTick ()
     {
         final double difference = Math.abs(targetHeight - height);
-        final double factor = 0.02;
+        final double factor = 0.05;
 
         if (difference > factor)
             height += targetHeight > height ? difference * factor : -( difference * factor );
@@ -164,7 +200,7 @@ public class GuiNewChat extends Gui implements Tickable
                     int border = ( int ) Math.min(getBorderAmount(), ( height / 10 ) * getBorderAmount());
 
                     Color lineColor = new Color(0, 0, 0, 200);
-                    drawRect(-2, ( int ) ( ( -height - border ) - ( chatOpening.get() * 15 ) ), l + 4, ( int ) ( -height - border ), lineColor.getRGB());
+                    drawRect(-2, ( int ) ( ( -height - border ) - ( titleBackground.get() * 15 ) ), l + 4, ( int ) ( -height - border ), lineColor.getRGB());
 
                     GlStateManager.enableBlend();
                     GlStateManager.enableAlpha();
@@ -173,25 +209,31 @@ public class GuiNewChat extends Gui implements Tickable
                     String s2 = InceptionCloudVersion.TITLE_2 + " §f" + InceptionCloudVersion.VERSION;
                     String s3 = InceptionCloudVersion.IDENTIFIER;
                     String whole = s1 + s2 + " " + s3;
+                    String date = "§7" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
 
-                    Color color1 = new Color(235, 59, 90, 10 + ( int ) ( titleTransition.get() * 245 ));
-                    Color color2 = new Color(165, 94, 234, 10 + ( int ) ( titleTransition.get() * 245 ));
-                    Color color3 = new Color(69, 170, 242, 10 + ( int ) ( titleTransition.get() * 245 ));
-                    Color alpha = new Color(255, 255, 255, 10 + ( int ) ( titleTransition.get() * 245 ));
+                    Color color1 = new Color(235, 59, 90, 10 + ( int ) ( titleText.get() * 245 ));
+                    Color color2 = new Color(165, 94, 234, 10 + ( int ) ( titleText.get() * 245 ));
+                    Color color3 = new Color(69, 170, 242, 10 + ( int ) ( titleText.get() * 245 ));
+                    Color alpha = new Color(255, 255, 255, 10 + ( int ) ( titleText.get() * 245 ));
 
                     int base = -fontRenderer.getStringWidth(whole);
                     int addition = fontRenderer.getStringWidth(whole) + getBorderAmount() - 2;
-                    int textX = base + ( int ) ( addition * titleTransition.get() );
+                    int textX = base + ( int ) ( addition * titleText.get() );
 
-                    fontRenderer.drawString(s1, textX, ( int ) ( -height - border - 11 ), color1.getRGB(), true);
-                    fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), ( int ) ( -height - border - 11 ), color2.getRGB(), true);
-                    fontRenderer.drawString(s3, textX + fontRenderer.getStringWidth(s1 + s2 + " "), ( int ) ( -height - border - 11 ), color3.getRGB(), true);
+                    // If the title box is wide enough to display the cloud name
+                    if (l + 2 >= fontRenderer.getStringWidth(s1 + s2 + " " + s3)) {
+                        fontRenderer.drawString(s1, textX, ( int ) ( -height - border - 11 ), color1.getRGB(), true);
+                        fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), ( int ) ( -height - border - 11 ), color2.getRGB(), true);
+                        fontRenderer.drawString(s3, textX + fontRenderer.getStringWidth(s1 + s2 + " "), ( int ) ( -height - border - 11 ), color3.getRGB(), true);
+                    }
 
-                    String string = "§7" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
-                    base = -fontRenderer.getStringWidth(string);
-                    addition = l + 4 - getBorderAmount() + 2;
-                    textX = base + ( int ) ( addition * titleTransition.get() );
-                    fontRenderer.drawString(string, textX, ( int ) ( -height - border - 11 ), alpha.getRGB(), true);
+                    // If the title box is wide enough to display the time
+                    if (l + 2 >= fontRenderer.getStringWidth(s1 + s2 + " " + s3 + "     " + date)) {
+                        base = -fontRenderer.getStringWidth(date);
+                        addition = l + 4 - getBorderAmount() + 2;
+                        textX = base + ( int ) ( addition * titleText.get() );
+                        fontRenderer.drawString(date, textX, ( int ) ( -height - border - 11 ), alpha.getRGB(), true);
+                    }
                 }
 
                 /* Draw the messages over the background */
