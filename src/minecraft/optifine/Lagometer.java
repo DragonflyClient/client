@@ -133,7 +133,7 @@ public class Lagometer
         }
     }
 
-    public static void showLagometer(ScaledResolution p_showLagometer_0_)
+    public static void showLagometer(ScaledResolution resolution)
     {
         if (gameSettings != null)
         {
@@ -201,8 +201,8 @@ public class Lagometer
                 int i1 = (int)(100.0F + f1 * 55.0F);
                 int j1 = (int)(10.0F + f1 * 10.0F);
                 int k1 = l2 << 16 | i1 << 8 | j1;
-                int l1 = 512 / p_showLagometer_0_.getScaleFactor() + 2;
-                int i2 = mc.displayHeight / p_showLagometer_0_.getScaleFactor() - 8;
+                int l1 = 512 / resolution.getScaleFactor() + 2;
+                int i2 = mc.displayHeight / resolution.getScaleFactor() - 8;
                 GuiIngame guiingame = mc.ingameGUI;
                 GuiIngame.drawRect(l1 - 1, i2 - 1, l1 + 50, i2 + 10, -1605349296);
                 mc.fontRendererObj.drawString(" " + memMbSec + " MB/s", l1, i2, k1);

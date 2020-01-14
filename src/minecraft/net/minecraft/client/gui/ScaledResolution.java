@@ -11,15 +11,15 @@ public class ScaledResolution
     private int scaledHeight;
     private int scaleFactor;
 
-    public ScaledResolution(Minecraft p_i46445_1_)
+    public ScaledResolution(Minecraft mc)
     {
-        this.scaledWidth = p_i46445_1_.displayWidth;
-        this.scaledHeight = p_i46445_1_.displayHeight;
+        this.scaledWidth = mc.displayWidth;
+        this.scaledHeight = mc.displayHeight;
         this.scaleFactor = 1;
-        boolean flag = p_i46445_1_.isUnicode();
-        int i = p_i46445_1_.gameSettings.guiScale;
+        boolean flag = mc.isUnicode();
+        int i = mc.gameSettings.guiScale;
 
-        if (i == 0)
+        if (i == 0) // If "Auto" is selected
         {
             i = 1000;
         }
@@ -34,7 +34,12 @@ public class ScaledResolution
             --this.scaleFactor;
         }
 
-        this.scaledWidthD = (double)this.scaledWidth / (double)this.scaleFactor;
+        if (Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen.getClass().getSimpleName().equals("GuiContainerCreative")) {
+            scaleFactor = 3;
+            scaleFactor = 3;
+        }
+
+        this.scaledWidthD = (double)this.scaledWidth / (double)this.scaleFactor; // 12 / 2 = 6 | 12 / 3 = 4 | 6 * 2/3 = 4
         this.scaledHeightD = (double)this.scaledHeight / (double)this.scaleFactor;
         this.scaledWidth = MathHelper.ceiling_double_int(this.scaledWidthD);
         this.scaledHeight = MathHelper.ceiling_double_int(this.scaledHeightD);

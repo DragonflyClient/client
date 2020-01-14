@@ -35,8 +35,16 @@ public class GuiChat extends GuiScreen
     private boolean waitingOnAutocomplete;
     private int autocompleteIndex;
     private List<String> foundPlayerNames = Lists.newArrayList();
+    private static String messageToSend = null;
 
-    public static DoubleTransition transition = DoubleTransition.builder().start(0).end(22).amountOfSteps(20).reachStart(() -> Minecraft.getMinecraft().displayGuiScreen(null)).build();
+    public static DoubleTransition transition = DoubleTransition.builder().start(0).end(22).amountOfSteps(15).reachStart(() -> {
+        Minecraft.getMinecraft().displayGuiScreen(null);
+
+        if (messageToSend != null)
+            sendChatMessage(messageToSend);
+
+        messageToSend = null;
+    }).build();
 
     /** Chat entry field */
     protected GuiTextField inputField;
@@ -130,7 +138,7 @@ public class GuiChat extends GuiScreen
 
         if (keyCode == 1)
         {
-            this.transition.setBackward();
+            transition.setBackward();
         }
         else if (keyCode != 28 && keyCode != 156)
         {
@@ -161,10 +169,10 @@ public class GuiChat extends GuiScreen
 
             if (s.length() > 0)
             {
-                this.sendChatMessage(s);
+                messageToSend = s;
             }
 
-            this.transition.setBackward();
+            transition.setBackward();
         }
     }
 

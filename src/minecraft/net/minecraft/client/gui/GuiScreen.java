@@ -47,7 +47,7 @@ import tv.twitch.chat.ChatUserInfo;
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Set<String> PROTOCOLS = Sets.newHashSet(new String[] {"http", "https"});
+    private static final Set<String> PROTOCOLS = Sets.newHashSet("http", "https");
     private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
 
     /** Reference to the Minecraft object. */
@@ -467,19 +467,19 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         }
     }
 
-    public void sendChatMessage(String msg)
+    public static void sendChatMessage(String msg)
     {
-        this.sendChatMessage(msg, true);
+        sendChatMessage(msg, true);
     }
 
-    public void sendChatMessage(String msg, boolean addToChat)
+    public static void sendChatMessage(String msg, boolean addToChat)
     {
         if (addToChat)
         {
-            this.mc.ingameGUI.getChatGUI().addToSentMessages(msg);
+            Minecraft.getMinecraft().ingameGUI.getChatGUI().addToSentMessages(msg);
         }
 
-        this.mc.thePlayer.sendChatMessage(msg);
+        Minecraft.getMinecraft().thePlayer.sendChatMessage(msg);
     }
 
     /**
@@ -536,6 +536,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
      */
     public void setWorldAndResolution(Minecraft mc, int width, int height)
     {
+        LogManager.getLogger().info("Setting resolution {}, {}", width, height);
         this.mc = mc;
         this.itemRender = mc.getRenderItem();
         this.fontRendererObj = mc.fontRendererObj;

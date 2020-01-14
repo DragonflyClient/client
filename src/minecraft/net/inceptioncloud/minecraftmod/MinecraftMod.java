@@ -160,7 +160,6 @@ public class MinecraftMod
      */
     public void handleTransition (Transition transition)
     {
-        LogManager.getLogger().info("Mod is now handling Transition " + transition.getClass().getSimpleName());
         modTransitions.add(transition);
     }
 

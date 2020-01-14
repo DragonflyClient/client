@@ -46,7 +46,7 @@ public class FontRendererMaster
      */
     public IFontRenderer getCurrent ()
     {
-        return MinecraftMod.getInstance().getFontRendererMaster().retrieveOrBuild("Product Sans Medium", Font.PLAIN, 19);
+        return MinecraftMod.getInstance().getFontRendererMaster().retrieveOrBuild("Product Sans", Font.PLAIN, 19);
 //        return Minecraft.getMinecraft().fontRendererObj;
     }
 
