@@ -1,7 +1,8 @@
 package net.minecraft.client.gui.inventory;
 
 import com.google.common.collect.Sets;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;

@@ -1,5 +1,6 @@
 package net.minecraft.client.gui;
 
+import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 
@@ -59,6 +60,7 @@ public class ScaledResolution
     {
         return this.scaledWidthD;
     }
+
 
     public double getScaledHeight_double()
     {

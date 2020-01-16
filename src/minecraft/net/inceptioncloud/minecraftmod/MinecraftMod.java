@@ -7,6 +7,8 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
+import net.inceptioncloud.minecraftmod.event.ModEventBus;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.render.font.FontRendererMaster;
 import net.inceptioncloud.minecraftmod.transition.Transition;
@@ -40,6 +42,21 @@ public class MinecraftMod
     private final FontRendererMaster fontRendererMaster;
 
     /**
+     * Discord Rich Presence Manager
+     */
+    @Getter
+    private final RichPresenceManager richPresenceManager;
+
+    @Getter
+    private final ModEventBus eventBus;
+
+    /**
+     * The last amount of mod ticks per second.
+     */
+    @Getter
+    private int lastTPS = 0;
+
+    /**
      * All transitions handled by the mod.
      */
     private List<Transition> modTransitions = Lists.newArrayList();
@@ -60,22 +77,18 @@ public class MinecraftMod
     private long firstTick = 0;
 
     /**
-     * The last amount of mod ticks per second.
-     */
-    @Getter
-    private int lastTPS = 0;
-
-    /**
      * Minecraft Mod Constructor.
      * <p>
      * Called when loading the Minecraft client.
      */
     public MinecraftMod ()
     {
+        Display.setTitle(InceptionCloudVersion.FULL_VERSION + " | Minecraft Mod 1.8.8");
+
         instance = this;
         fontRendererMaster = new FontRendererMaster();
-
-        Display.setTitle(InceptionCloudVersion.FULL_VERSION + " | Minecraft Mod 1.8.8");
+        richPresenceManager = new RichPresenceManager();
+        eventBus = new ModEventBus();
 
         auth();
 

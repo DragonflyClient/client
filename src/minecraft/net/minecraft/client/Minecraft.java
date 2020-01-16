@@ -7,6 +7,7 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.inceptioncloud.minecraftmod.MinecraftMod;
+import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -112,7 +113,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private final File fileResourcepacks;
     private final PropertyMap twitchDetails;
     private final PropertyMap field_181038_N;
-    private Session session;
     private final File fileAssets;
     private final String launchedVersion;
     private final Proxy proxy;
@@ -191,6 +191,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     int fpsCounter;
     long prevFrameTime = -1L;
+    private Session session;
     private ServerData currentServerData;
     /**
      * The RenderEngine instance used by Minecraft
@@ -867,6 +868,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     public void displayGuiScreen (GuiScreen guiScreenIn)
     {
+        // EVENTBUS - Calls a GuiScreenDisplayEvent when changing the current GuiScreen. Can be cancelled to abort the change.
+        GuiScreenDisplayEvent event = new GuiScreenDisplayEvent(this.currentScreen, guiScreenIn);
+        MinecraftMod.getInstance().getEventBus().post(event);
+        if (event.isCancelled()) return;
+
         if (this.currentScreen != null) {
             this.currentScreen.onGuiClosed();
         }

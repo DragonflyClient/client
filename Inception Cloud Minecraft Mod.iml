@@ -58,5 +58,14 @@
     <orderEntry type="library" name="realms-1.7.39" level="project" />
     <orderEntry type="library" name="twitch-external-platform-4.5-natives-windows-64" level="project" />
     <orderEntry type="library" name="twitch-platform-6.5-natives-windows-64" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/discord-rpc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
