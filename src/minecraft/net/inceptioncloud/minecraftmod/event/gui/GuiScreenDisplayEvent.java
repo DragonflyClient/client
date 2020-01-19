@@ -8,7 +8,8 @@ import net.minecraft.client.gui.GuiScreen;
 /**
  * When a new {@link GuiScreen} is displayed via {@link Minecraft#displayGuiScreen(GuiScreen)}.
  */
-@Data
+@Getter
+@RequiredArgsConstructor
 public class GuiScreenDisplayEvent extends Cancellable
 {
     /**

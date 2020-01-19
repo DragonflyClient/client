@@ -7,9 +7,9 @@ import net.inceptioncloud.minecraftmod.discord.RichPresenceStatus;
  */
 public class MultiplayerRPC extends RichPresenceStatus
 {
-    public MultiplayerRPC (String server, boolean paused)
+    public MultiplayerRPC (String server, boolean paused, long joinTime)
     {
-        setStartMillis(System.currentTimeMillis());
+        setStartMillis(joinTime);
         setTitle(paused ? "Multiplayer - Paused" : "Multiplayer");
         setExtra("on " + server);
     }

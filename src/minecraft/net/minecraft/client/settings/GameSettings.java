@@ -134,7 +134,7 @@ public class GameSettings
     public int streamChatEnabled = 0;
     public int streamChatUserFilter = 0;
     public int streamMicToggleBehavior = 0;
-    public boolean field_181150_U = true;
+    public boolean useNativeTransport = true;
     public boolean field_181151_V = true;
     public KeyBinding keyBindForward = new KeyBinding("key.forward", 17, "key.categories.movement");
     public KeyBinding keyBindLeft = new KeyBinding("key.left", 30, "key.categories.movement");
@@ -1118,7 +1118,7 @@ public class GameSettings
 
                     if (astring[0].equals("useNativeTransport"))
                     {
-                        this.field_181150_U = astring[1].equals("true");
+                        this.useNativeTransport = astring[1].equals("true");
                     }
 
                     if (astring[0].equals("entityShadows"))
@@ -1264,7 +1264,7 @@ public class GameSettings
             printwriter.println("forceUnicodeFont:" + this.forceUnicodeFont);
             printwriter.println("allowBlockAlternatives:" + this.allowBlockAlternatives);
             printwriter.println("reducedDebugInfo:" + this.reducedDebugInfo);
-            printwriter.println("useNativeTransport:" + this.field_181150_U);
+            printwriter.println("useNativeTransport:" + this.useNativeTransport);
             printwriter.println("entityShadows:" + this.field_181151_V);
 
             for (KeyBinding keybinding : this.keyBindings)
@@ -1360,9 +1360,9 @@ public class GameSettings
         return this.renderDistanceChunks >= 4 ? this.clouds : 0;
     }
 
-    public boolean func_181148_f()
+    public boolean useUsingNativeTransport ()
     {
-        return this.field_181150_U;
+        return this.useNativeTransport;
     }
 
     private void setOptionFloatValueOF(GameSettings.Options p_setOptionFloatValueOF_1_, float p_setOptionFloatValueOF_2_)

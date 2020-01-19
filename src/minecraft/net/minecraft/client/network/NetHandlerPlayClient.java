@@ -552,7 +552,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
 
         entityotherplayermp.setPositionAndRotation(d0, d1, d2, f, f1);
         this.clientWorldController.addEntityToWorld(packetIn.getEntityID(), entityotherplayermp);
-        List<DataWatcher.WatchableObject> list = packetIn.func_148944_c();
+        List<DataWatcher.WatchableObject> list = packetIn.getDataManagerEntries();
 
         if (list != null)
         {

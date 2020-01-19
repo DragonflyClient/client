@@ -21,86 +21,47 @@ public class ServerData
      */
     public String serverMOTD;
 
-    /** last server ping that showed up in the server browser */
+    /**
+     * last server ping that showed up in the server browser
+     */
     public long pingToServer;
     public int version = 47;
 
-    /** Game version for this server. */
+    /**
+     * Game version for this server.
+     */
     public String gameVersion = "1.8.8";
     public boolean field_78841_f;
     public String playerList;
     private ServerData.ServerResourceMode resourceMode = ServerData.ServerResourceMode.PROMPT;
     private String serverIcon;
-    private boolean field_181042_l;
+    private boolean lan;
 
-    public ServerData(String p_i46420_1_, String p_i46420_2_, boolean p_i46420_3_)
+    public ServerData (String name, String ip, boolean lan)
     {
-        this.serverName = p_i46420_1_;
-        this.serverIP = p_i46420_2_;
-        this.field_181042_l = p_i46420_3_;
-    }
-
-    /**
-     * Returns an NBTTagCompound with the server's name, IP and maybe acceptTextures.
-     */
-    public NBTTagCompound getNBTCompound()
-    {
-        NBTTagCompound nbttagcompound = new NBTTagCompound();
-        nbttagcompound.setString("name", this.serverName);
-        nbttagcompound.setString("ip", this.serverIP);
-
-        if (this.serverIcon != null)
-        {
-            nbttagcompound.setString("icon", this.serverIcon);
-        }
-
-        if (this.resourceMode == ServerData.ServerResourceMode.ENABLED)
-        {
-            nbttagcompound.setBoolean("acceptTextures", true);
-        }
-        else if (this.resourceMode == ServerData.ServerResourceMode.DISABLED)
-        {
-            nbttagcompound.setBoolean("acceptTextures", false);
-        }
-
-        return nbttagcompound;
-    }
-
-    public ServerData.ServerResourceMode getResourceMode()
-    {
-        return this.resourceMode;
-    }
-
-    public void setResourceMode(ServerData.ServerResourceMode mode)
-    {
-        this.resourceMode = mode;
+        this.serverName = name;
+        this.serverIP = ip;
+        this.lan = lan;
     }
 
     /**
      * Takes an NBTTagCompound with 'name' and 'ip' keys, returns a ServerData instance.
      */
-    public static ServerData getServerDataFromNBTCompound(NBTTagCompound nbtCompound)
+    public static ServerData getServerDataFromNBTCompound (NBTTagCompound nbtCompound)
     {
         ServerData serverdata = new ServerData(nbtCompound.getString("name"), nbtCompound.getString("ip"), false);
 
-        if (nbtCompound.hasKey("icon", 8))
-        {
+        if (nbtCompound.hasKey("icon", 8)) {
             serverdata.setBase64EncodedIconData(nbtCompound.getString("icon"));
         }
 
-        if (nbtCompound.hasKey("acceptTextures", 1))
-        {
-            if (nbtCompound.getBoolean("acceptTextures"))
-            {
+        if (nbtCompound.hasKey("acceptTextures", 1)) {
+            if (nbtCompound.getBoolean("acceptTextures")) {
                 serverdata.setResourceMode(ServerData.ServerResourceMode.ENABLED);
-            }
-            else
-            {
+            } else {
                 serverdata.setResourceMode(ServerData.ServerResourceMode.DISABLED);
             }
-        }
-        else
-        {
+        } else {
             serverdata.setResourceMode(ServerData.ServerResourceMode.PROMPT);
         }
 
@@ -108,33 +69,65 @@ public class ServerData
     }
 
     /**
+     * Returns an NBTTagCompound with the server's name, IP and maybe acceptTextures.
+     */
+    public NBTTagCompound getNBTCompound ()
+    {
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        nbttagcompound.setString("name", this.serverName);
+        nbttagcompound.setString("ip", this.serverIP);
+
+        if (this.serverIcon != null) {
+            nbttagcompound.setString("icon", this.serverIcon);
+        }
+
+        if (this.resourceMode == ServerData.ServerResourceMode.ENABLED) {
+            nbttagcompound.setBoolean("acceptTextures", true);
+        } else if (this.resourceMode == ServerData.ServerResourceMode.DISABLED) {
+            nbttagcompound.setBoolean("acceptTextures", false);
+        }
+
+        return nbttagcompound;
+    }
+
+    public ServerData.ServerResourceMode getResourceMode ()
+    {
+        return this.resourceMode;
+    }
+
+    public void setResourceMode (ServerData.ServerResourceMode mode)
+    {
+        this.resourceMode = mode;
+    }
+
+    /**
      * Returns the base-64 encoded representation of the server's icon, or null if not available
      */
-    public String getBase64EncodedIconData()
+    public String getBase64EncodedIconData ()
     {
         return this.serverIcon;
     }
 
-    public void setBase64EncodedIconData(String icon)
+    public void setBase64EncodedIconData (String icon)
     {
         this.serverIcon = icon;
     }
 
-    public boolean func_181041_d()
+    public boolean isLan ()
     {
-        return this.field_181042_l;
+        return this.lan;
     }
 
-    public void copyFrom(ServerData serverDataIn)
+    public void copyFrom (ServerData serverDataIn)
     {
         this.serverIP = serverDataIn.serverIP;
         this.serverName = serverDataIn.serverName;
         this.setResourceMode(serverDataIn.getResourceMode());
         this.serverIcon = serverDataIn.serverIcon;
-        this.field_181042_l = serverDataIn.field_181042_l;
+        this.lan = serverDataIn.lan;
     }
 
-    public static enum ServerResourceMode
+    public enum ServerResourceMode
     {
         ENABLED("enabled"),
         DISABLED("disabled"),
@@ -142,12 +135,12 @@ public class ServerData
 
         private final IChatComponent motd;
 
-        private ServerResourceMode(String p_i1053_3_)
+        ServerResourceMode (String name)
         {
-            this.motd = new ChatComponentTranslation("addServer.resourcePack." + p_i1053_3_, new Object[0]);
+            this.motd = new ChatComponentTranslation("addServer.resourcePack." + name);
         }
 
-        public IChatComponent getMotd()
+        public IChatComponent getMotd ()
         {
             return this.motd;
         }

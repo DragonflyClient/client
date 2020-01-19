@@ -6,8 +6,9 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import net.inceptioncloud.minecraftmod.MinecraftMod;
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
+import net.inceptioncloud.minecraftmod.event.play.IntegratedServerStartingEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -480,7 +481,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.mcResourceManager.registerReloadListener(this.mcSoundHandler);
         this.mcMusicTicker = new MusicTicker(this);
         this.fontRendererObj = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii.png"), this.renderEngine, false);
-        MinecraftMod.getInstance().initializeGraphics();
+        InceptionMod.getInstance().initializeGraphics();
 
         if (this.gameSettings.language != null) {
             this.fontRendererObj.setUnicodeFlag(this.isUnicode());
@@ -586,7 +587,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private void createDisplay () throws LWJGLException
     {
         Display.setResizable(true);
-        new MinecraftMod();
+        new InceptionMod();
 
         try {
             Display.create(( new PixelFormat() ).withDepthBits(24));
@@ -868,19 +869,19 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     public void displayGuiScreen (GuiScreen guiScreenIn)
     {
-        // EVENTBUS - Calls a GuiScreenDisplayEvent when changing the current GuiScreen. Can be cancelled to abort the change.
-        GuiScreenDisplayEvent event = new GuiScreenDisplayEvent(this.currentScreen, guiScreenIn);
-        MinecraftMod.getInstance().getEventBus().post(event);
-        if (event.isCancelled()) return;
-
-        if (this.currentScreen != null) {
-            this.currentScreen.onGuiClosed();
-        }
-
         if (guiScreenIn == null && this.theWorld == null) {
             guiScreenIn = new GuiMainMenu();
         } else if (guiScreenIn == null && this.thePlayer.getHealth() <= 0.0F) {
             guiScreenIn = new GuiGameOver();
+        }
+
+        // EVENTBUS - Calls the GuiScreenDisplayEvent when changing the current GuiScreen. Can be cancelled to abort the change.
+        GuiScreenDisplayEvent event = new GuiScreenDisplayEvent(this.currentScreen, guiScreenIn);
+        InceptionMod.getInstance().getEventBus().post(event);
+        if (event.isCancelled()) return;
+
+        if (this.currentScreen != null) {
+            this.currentScreen.onGuiClosed();
         }
 
         if (guiScreenIn instanceof GuiMainMenu) {
@@ -1913,8 +1914,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     /**
      * Arguments: World foldername,  World ingame name, WorldSettings
      */
-    public void launchIntegratedServer (String folderName, String worldName, WorldSettings worldSettingsIn)
+    public void launchIntegratedServer (final String folderName, final String worldName, WorldSettings worldSettingsIn)
     {
+        // EVENTBUS - Calls the IntegratedServerStartingEvent event when an integrated server is being launched
+        IntegratedServerStartingEvent launchEvent = new IntegratedServerStartingEvent(worldName, folderName, worldSettingsIn);
+        InceptionMod.getInstance().getEventBus().post(launchEvent);
+        if (launchEvent.isCancelled()) return;
+
         this.loadWorld(null);
         System.gc();
         ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
@@ -1954,7 +1960,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             try {
                 Thread.sleep(200L);
-            } catch (InterruptedException var9) {
+            } catch (InterruptedException ignored) {
             }
         }
 
@@ -2363,7 +2369,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     private String func_181538_aA ()
     {
-        return this.theIntegratedServer != null ? ( this.theIntegratedServer.getPublic() ? "hosting_lan" : "singleplayer" ) : ( this.currentServerData != null ? ( this.currentServerData.func_181041_d() ? "playing_lan" : "multiplayer" ) : "out_of_game" );
+        return this.theIntegratedServer != null ? ( this.theIntegratedServer.getPublic() ? "hosting_lan" : "singleplayer" ) : ( this.currentServerData != null ? ( this.currentServerData.isLan() ? "playing_lan" : "multiplayer" ) : "out_of_game" );
     }
 
     public void addServerTypeToSnooper (PlayerUsageSnooper playerSnooper)

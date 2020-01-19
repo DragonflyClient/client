@@ -1,8 +1,10 @@
 package net.inceptioncloud.minecraftmod.discord;
 
+import lombok.Getter;
 import net.arikia.dev.drpc.*;
-import net.inceptioncloud.minecraftmod.MinecraftMod;
-import net.inceptioncloud.minecraftmod.discord.custom.LoadingModRPC;
+import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.discord.custom.MenuRPC;
+import net.inceptioncloud.minecraftmod.discord.subscriber.RichPresenceSubscriber;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -13,14 +15,23 @@ public class RichPresenceManager
     /**
      * Whether the Rich Presence Channel is open.
      */
+    @Getter
     private boolean open = true;
 
     /**
-     * Initialized when loading the {@link MinecraftMod}.
+     * The current rich presence status.
+     */
+    @Getter
+    private RichPresenceStatus status;
+
+    /**
+     * Initialized when loading the {@link InceptionMod}.
      */
     public RichPresenceManager ()
     {
         LogManager.getLogger().info("Enabling Discord Rich Presence...");
+
+        InceptionMod.getInstance().getEventBus().register(new RichPresenceSubscriber());
 
         DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> LogManager.getLogger().info("Discord Rich Presence is ready!")).build();
         DiscordRPC.discordInitialize("667006162910052352", handlers, true);
@@ -32,7 +43,18 @@ public class RichPresenceManager
                 DiscordRPC.discordRunCallbacks();
         }, "Discord RPC Callback").start();
 
-        update(new LoadingModRPC().buildRichPresence());
+        update(new MenuRPC());
+    }
+
+    /**
+     * Update the Discord Rich Presence with a {@link RichPresenceStatus}.
+     *
+     * @param status The status
+     */
+    public void update (RichPresenceStatus status)
+    {
+        this.status = status;
+        update(status.buildRichPresence());
     }
 
     /**

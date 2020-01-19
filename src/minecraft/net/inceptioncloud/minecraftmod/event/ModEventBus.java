@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.event;
 
 import com.google.common.eventbus.*;
-import net.inceptioncloud.minecraftmod.subscriber.TestSubscriber;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * A custom {@link EventBus} for the InceptionCloud Mod Events.
@@ -14,8 +14,6 @@ public class ModEventBus extends EventBus
     public ModEventBus ()
     {
         super(new ModSubscriberExceptionHandler());
-
-        register(new TestSubscriber());
     }
 
     /**
@@ -25,10 +23,24 @@ public class ModEventBus extends EventBus
      *
      * @param object object whose subscriber methods should be registered.
      */
-    @Override
     public void register (final Object object)
     {
         super.register(object);
+
+        LogManager.getLogger().info("Registered Event Subscriber {}", object.getClass().getSimpleName());
+    }
+
+    /**
+     * Registers all subscriber methods on {@code object} to receive events.
+     * Subscriber methods are selected and classified using this EventBus's
+     * SubscriberFindingStrategy; the default strategy is the AnnotatedSubscriberFinder.
+     *
+     * @param object object whose subscriber methods should be registered.
+     */
+    public ModEventBus registerAnd (final Object object)
+    {
+        this.register(object);
+        return this;
     }
 
     /**

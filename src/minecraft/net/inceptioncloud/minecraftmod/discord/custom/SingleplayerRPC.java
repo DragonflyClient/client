@@ -7,9 +7,9 @@ import net.inceptioncloud.minecraftmod.discord.RichPresenceStatus;
  */
 public class SingleplayerRPC extends RichPresenceStatus
 {
-    public SingleplayerRPC (String world, boolean paused)
+    public SingleplayerRPC (String world, boolean paused, long joinTime)
     {
-        setStartMillis(System.currentTimeMillis());
+        setStartMillis(joinTime);
         setTitle(paused ? "Singleplayer - Paused" : "Singleplayer");
         setExtra("in " + world);
     }

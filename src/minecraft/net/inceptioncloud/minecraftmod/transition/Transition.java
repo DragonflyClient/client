@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.transition;
 
 import lombok.Getter;
-import net.inceptioncloud.minecraftmod.MinecraftMod;
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.transition.color.TransitionTypeColor;
 import net.inceptioncloud.minecraftmod.transition.number.TransitionTypeNumber;
 import net.inceptioncloud.minecraftmod.transition.string.TransitionTypeString;
@@ -51,7 +51,7 @@ public abstract class Transition
         this.reachStart = reachStart;
         this.autoTransformator = autoTransformator;
 
-        MinecraftMod.getInstance().handleTransition(this);
+        InceptionMod.getInstance().handleTransition(this);
     }
 
     /**

@@ -11,6 +11,7 @@ import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
 import net.inceptioncloud.minecraftmod.event.ModEventBus;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.render.font.FontRendererMaster;
+import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.Minecraft;
@@ -27,28 +28,25 @@ import java.util.List;
 /**
  * The main class of the Inception Cloud Minecraft Mod.
  */
-public class MinecraftMod
+public class InceptionMod
 {
     /**
      * The Minecraft Mod instance.
      */
     @Getter
-    private static MinecraftMod instance;
+    private static InceptionMod instance;
 
-    /**
-     * The Font Renderer Mapper.
-     */
     @Getter
     private final FontRendererMaster fontRendererMaster;
 
-    /**
-     * Discord Rich Presence Manager
-     */
     @Getter
     private final RichPresenceManager richPresenceManager;
 
     @Getter
     private final ModEventBus eventBus;
+
+    @Getter
+    private final GameStateManager gameStateManager;
 
     /**
      * The last amount of mod ticks per second.
@@ -81,14 +79,15 @@ public class MinecraftMod
      * <p>
      * Called when loading the Minecraft client.
      */
-    public MinecraftMod ()
+    public InceptionMod ()
     {
         Display.setTitle(InceptionCloudVersion.FULL_VERSION + " | Minecraft Mod 1.8.8");
 
         instance = this;
+        eventBus = new ModEventBus();
         fontRendererMaster = new FontRendererMaster();
         richPresenceManager = new RichPresenceManager();
-        eventBus = new ModEventBus();
+        gameStateManager = new GameStateManager();
 
         auth();
 

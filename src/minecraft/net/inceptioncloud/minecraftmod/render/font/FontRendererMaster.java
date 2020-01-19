@@ -2,8 +2,7 @@ package net.inceptioncloud.minecraftmod.render.font;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import net.inceptioncloud.minecraftmod.MinecraftMod;
-import net.minecraft.client.Minecraft;
+import net.inceptioncloud.minecraftmod.InceptionMod;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ public class FontRendererMaster
      */
     public IFontRenderer getCurrent ()
     {
-        return MinecraftMod.getInstance().getFontRendererMaster().retrieveOrBuild("Product Sans", Font.PLAIN, 19);
+        return InceptionMod.getInstance().getFontRendererMaster().retrieveOrBuild("Product Sans", Font.PLAIN, 19);
 //        return Minecraft.getMinecraft().fontRendererObj;
     }
 
