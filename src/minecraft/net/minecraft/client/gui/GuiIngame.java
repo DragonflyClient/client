@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
+
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -105,6 +107,7 @@ public class GuiIngame extends Gui
         this.streamIndicator = new GuiStreamIndicator(mcIn);
         this.overlayPlayerList = new GuiPlayerTabOverlay(mcIn, this);
         this.func_175177_a();
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     public void func_175177_a()

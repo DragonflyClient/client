@@ -1,9 +1,9 @@
-package net.inceptioncloud.minecraftmod.render.font;
+package net.inceptioncloud.minecraftmod.design.font;
 
 import net.minecraft.client.gui.FontRenderer;
 
 /**
- * The parent interface of the Minecraft {@link FontRenderer} and the InceptionCloud {@link CustomFontRenderer}.
+ * The parent interface of the Minecraft {@link FontRenderer} and the InceptionCloud {@link GlyphFontRenderer}.
  */
 public interface IFontRenderer
 {
@@ -53,11 +53,6 @@ public interface IFontRenderer
     int getCharWidth (char c);
 
     /**
-     * @return The default character height
-     */
-    int getHeight ();
-
-    /**
      * The exact with of the specific char in the current font.
      *
      * @param c The character
@@ -65,6 +60,11 @@ public interface IFontRenderer
      * @return The width in pixels
      */
     float getCharWidthFloat (char c);
+
+    /**
+     * @return The default character height
+     */
+    int getHeight ();
 
     /**
      * Trims the given string to be equal or less wide than the given width.
@@ -79,11 +79,28 @@ public interface IFontRenderer
     /**
      * Trims the given string to be equal or less wide than the given width.
      *
-     * @param text  The text
-     * @param width The target with
+     * @param text    The text
+     * @param width   The target with
      * @param reverse Whether to reverse the string
      *
      * @return The trimmed string
      */
     String trimStringToWidth (String text, int width, boolean reverse);
+
+    /**
+     * The default implementation for drawing a string centered on the screen.
+     *
+     * @param text   The string to be drawn
+     * @param x      The x location of the center
+     * @param y      The y location
+     * @param color  The color in which the text is drawn
+     * @param shadow Whether to draw a shadow or not
+     *
+     * @return The end x-value
+     */
+    default int drawCenteredString (String text, int x, int y, int color, boolean shadow)
+    {
+        int absoluteX = x - ( getStringWidth(text) / 2 );
+        return drawString(text, absoluteX, y, color, shadow);
+    }
 }

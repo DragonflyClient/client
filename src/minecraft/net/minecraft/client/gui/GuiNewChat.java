@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import com.google.common.collect.Lists;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
-import net.inceptioncloud.minecraftmod.render.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.Minecraft;
@@ -115,7 +115,7 @@ public class GuiNewChat extends Gui implements Tickable
             int visibleChatLines = 0;
             int amountOfSeperateLines = this.seperateChatLines.size();
             float f = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
-            final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontRendererMaster().getCurrent();
+            final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getCurrent();
 
             if (amountOfSeperateLines > 0) {
 
@@ -296,7 +296,7 @@ public class GuiNewChat extends Gui implements Tickable
         }
 
         int i = MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale());
-        List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, InceptionMod.getInstance().getFontRendererMaster().getCurrent(), false, false);
+        List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, InceptionMod.getInstance().getFontDesign().getCurrent(), false, false);
         boolean chatOpen = this.getChatOpen();
 
         for (IChatComponent ichatcomponent : list) {
@@ -391,8 +391,8 @@ public class GuiNewChat extends Gui implements Tickable
             if (j >= 0 && k >= 0) {
                 int l = Math.min(this.getLineCount(), this.seperateChatLines.size());
 
-                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < InceptionMod.getInstance().getFontRendererMaster().getCurrent().getHeight() * l + l) {
-                    int i1 = k / InceptionMod.getInstance().getFontRendererMaster().getCurrent().getHeight() + this.scrollPos;
+                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < InceptionMod.getInstance().getFontDesign().getCurrent().getHeight() * l + l) {
+                    int i1 = k / InceptionMod.getInstance().getFontDesign().getCurrent().getHeight() + this.scrollPos;
 
                     if (i1 >= 0 && i1 < this.seperateChatLines.size()) {
                         ChatLine chatline = this.seperateChatLines.get(i1);
@@ -400,7 +400,7 @@ public class GuiNewChat extends Gui implements Tickable
 
                         for (IChatComponent ichatcomponent : chatline.getChatComponent()) {
                             if (ichatcomponent instanceof ChatComponentText) {
-                                j1 += InceptionMod.getInstance().getFontRendererMaster().getCurrent().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
+                                j1 += InceptionMod.getInstance().getFontDesign().getCurrent().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
 
                                 if (j1 > j) {
                                     return ichatcomponent;

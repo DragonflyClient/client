@@ -7,10 +7,11 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.inceptioncloud.minecraftmod.design.font.FontManager;
+import net.inceptioncloud.minecraftmod.design.splash.ModSplashScreen;
 import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
 import net.inceptioncloud.minecraftmod.event.ModEventBus;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
-import net.inceptioncloud.minecraftmod.render.font.FontRendererMaster;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
@@ -37,7 +38,7 @@ public class InceptionMod
     private static InceptionMod instance;
 
     @Getter
-    private final FontRendererMaster fontRendererMaster;
+    private final GameStateManager gameStateManager;
 
     @Getter
     private final RichPresenceManager richPresenceManager;
@@ -46,7 +47,10 @@ public class InceptionMod
     private final ModEventBus eventBus;
 
     @Getter
-    private final GameStateManager gameStateManager;
+    private final FontManager fontDesign;
+
+    @Getter
+    private final ModSplashScreen splashScreen;
 
     /**
      * The last amount of mod ticks per second.
@@ -85,7 +89,8 @@ public class InceptionMod
 
         instance = this;
         eventBus = new ModEventBus();
-        fontRendererMaster = new FontRendererMaster();
+        fontDesign = new FontManager();
+        splashScreen = new ModSplashScreen();
         richPresenceManager = new RichPresenceManager();
         gameStateManager = new GameStateManager();
 

@@ -1,5 +1,6 @@
 package net.minecraft.client;
 
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -35,6 +36,7 @@ public class LoadingScreenRenderer implements IProgressUpdate
         this.scaledResolution = new ScaledResolution(mcIn);
         this.framebuffer = new Framebuffer(mcIn.displayWidth, mcIn.displayHeight, false);
         this.framebuffer.setFramebufferFilter(9728);
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     /**

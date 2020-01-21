@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import com.google.common.collect.Lists;
 import java.util.List;
 
-import net.inceptioncloud.minecraftmod.render.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;

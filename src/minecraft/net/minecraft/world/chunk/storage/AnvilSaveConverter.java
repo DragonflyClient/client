@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.client.AnvilConverterException;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,6 +34,7 @@ public class AnvilSaveConverter extends SaveFormatOld
     public AnvilSaveConverter(File p_i2144_1_)
     {
         super(p_i2144_1_);
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     /**

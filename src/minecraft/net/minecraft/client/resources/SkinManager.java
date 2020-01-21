@@ -16,6 +16,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IImageBuffer;
 import net.minecraft.client.renderer.ImageBufferDownload;
@@ -44,6 +46,7 @@ public class SkinManager
                 return Minecraft.getMinecraft().getSessionService().getTextures(p_load_1_, false);
             }
         });
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     /**

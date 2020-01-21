@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
+
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
@@ -54,6 +56,7 @@ public class SoundHandler implements IResourceManagerReloadListener, ITickable
     {
         this.mcResourceManager = manager;
         this.sndManager = new SoundManager(this, gameSettingsIn);
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     public void onResourceManagerReload(IResourceManager resourceManager)

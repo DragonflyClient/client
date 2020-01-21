@@ -1,6 +1,8 @@
 package net.minecraft.client.audio;
 
 import java.util.Random;
+
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.MathHelper;
@@ -16,6 +18,7 @@ public class MusicTicker implements ITickable
     public MusicTicker(Minecraft mcIn)
     {
         this.mc = mcIn;
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     /**

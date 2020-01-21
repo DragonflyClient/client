@@ -74,7 +74,7 @@ public class GuiChat extends GuiScreen
         transition.setForward();
         this.sentHistoryCursor = this.mc.ingameGUI.getChatGUI().getSentMessages().size();
 
-        this.inputField = new GuiTextField(0, InceptionMod.getInstance().getFontRendererMaster().getCurrent(), 5, this.height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth), 12);
+        this.inputField = new GuiTextField(0, InceptionMod.getInstance().getFontDesign().getCurrent(), 5, this.height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth), 12);
         this.inputField.setMaxStringLength(100);
         this.inputField.setEnableBackgroundDrawing(false);
         this.inputField.setFocused(true);

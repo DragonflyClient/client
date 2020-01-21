@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer;
 
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -34,6 +35,7 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener
     {
         this.blockModelShapes = blockModelShapesIn;
         this.gameSettings = gameSettingsIn;
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     public BlockModelShapes getBlockModelShapes()

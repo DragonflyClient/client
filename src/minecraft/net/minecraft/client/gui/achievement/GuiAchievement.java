@@ -1,5 +1,6 @@
 package net.minecraft.client.gui.achievement;
 
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -27,6 +28,7 @@ public class GuiAchievement extends Gui
     {
         this.mc = mc;
         this.renderItem = mc.getRenderItem();
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     public void displayAchievement(Achievement ach)

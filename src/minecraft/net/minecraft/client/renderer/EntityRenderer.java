@@ -2,6 +2,7 @@ package net.minecraft.client.renderer;
 
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -223,6 +224,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 this.rainYCoords[i << 5 | j] = f / f2;
             }
         }
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     public boolean isShaderActive ()

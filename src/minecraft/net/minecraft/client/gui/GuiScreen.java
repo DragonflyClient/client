@@ -67,7 +67,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     protected List<GuiLabel> labelList = Lists.newArrayList();
     public boolean allowUserInput;
 
-    /** The FontRenderer used by GuiScreen */
+    /** The FontManager used by GuiScreen */
     protected FontRenderer fontRendererObj;
 
     /** The button that was just pressed. */
@@ -760,8 +760,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     /**
      * Called when the GUI is resized in order to update the world and the resolution
      */
-    public void onResize(Minecraft mcIn, int p_175273_2_, int p_175273_3_)
+    public void onResize(Minecraft mcIn, int width, int height)
     {
-        this.setWorldAndResolution(mcIn, p_175273_2_, p_175273_3_);
+        this.setWorldAndResolution(mcIn, width, height);
     }
 }

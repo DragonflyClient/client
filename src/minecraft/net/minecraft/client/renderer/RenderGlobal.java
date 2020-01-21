@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockEnderChest;
@@ -249,6 +251,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         this.generateStars();
         this.generateSky();
         this.generateSky2();
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     public void onResourceManagerReload(IResourceManager resourceManager)

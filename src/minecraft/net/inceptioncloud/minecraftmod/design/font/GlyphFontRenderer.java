@@ -1,5 +1,6 @@
-package net.inceptioncloud.minecraftmod.render.font;
+package net.inceptioncloud.minecraftmod.design.font;
 
+import net.inceptioncloud.minecraftmod.design.font.util.GlyphPage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
@@ -20,7 +21,7 @@ import static org.lwjgl.opengl.GL11.*;
  * It can be used as an {@link IFontRenderer} to dynamically switch between the Minecraft default
  * and this one.
  */
-public class CustomFontRenderer implements IFontRenderer
+public class GlyphFontRenderer implements IFontRenderer
 {
     /**
      * Contains all already loaded fonts.
@@ -95,7 +96,7 @@ public class CustomFontRenderer implements IFontRenderer
     /**
      * Default Constructor
      */
-    public CustomFontRenderer (GlyphPage regularGlyphPage, GlyphPage boldGlyphPage, GlyphPage italicGlyphPage, GlyphPage boldItalicGlyphPage)
+    public GlyphFontRenderer (GlyphPage regularGlyphPage, GlyphPage boldGlyphPage, GlyphPage italicGlyphPage, GlyphPage boldItalicGlyphPage)
     {
         this.regularGlyphPage = regularGlyphPage;
         this.boldGlyphPage = boldGlyphPage;
@@ -126,7 +127,7 @@ public class CustomFontRenderer implements IFontRenderer
     /**
      * Convenient Builder
      */
-    public static CustomFontRenderer create (String fontName, int size, boolean bold, boolean italic, boolean boldItalic)
+    public static GlyphFontRenderer create (String fontName, int size, boolean bold, boolean italic, boolean boldItalic)
     {
         LogManager.getLogger().info("Building GlyphPageFontRenderer for Font {} with size {} and style {{},{},{}}", fontName, size, bold, italic, boldItalic);
 
@@ -184,7 +185,7 @@ public class CustomFontRenderer implements IFontRenderer
             boldItalicPage.setupTexture();
         }
 
-        return new CustomFontRenderer(regularPage, boldPage, italicPage, boldItalicPage);
+        return new GlyphFontRenderer(regularPage, boldPage, italicPage, boldItalicPage);
     }
 
     /**

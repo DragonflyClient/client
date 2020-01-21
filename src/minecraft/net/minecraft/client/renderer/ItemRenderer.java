@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer;
 
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -58,6 +59,7 @@ public class ItemRenderer
         this.mc = mcIn;
         this.renderManager = mcIn.getRenderManager();
         this.itemRenderer = mcIn.getRenderItem();
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     public void renderItem(EntityLivingBase entityIn, ItemStack heldStack, ItemCameraTransforms.TransformType transform)

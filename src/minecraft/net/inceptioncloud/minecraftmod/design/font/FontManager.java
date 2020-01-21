@@ -1,8 +1,7 @@
-package net.inceptioncloud.minecraftmod.render.font;
+package net.inceptioncloud.minecraftmod.design.font;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import net.inceptioncloud.minecraftmod.InceptionMod;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -11,12 +10,12 @@ import java.util.Map;
 /**
  * This class is used to build new Font Renderers or use the already created ones.
  */
-public class FontRendererMaster
+public class FontManager
 {
     /**
      * Cache with all previously built Font Renderers.
      */
-    private Map<FontRendererInfo, CustomFontRenderer> cache = new HashMap<>();
+    private Map<FontRendererInfo, GlyphFontRenderer> cache = new HashMap<>();
 
     /**
      * Build a new Custom Font Renderer or use an already created one.
@@ -34,7 +33,7 @@ public class FontRendererMaster
         if (cache.containsKey(info))
             return cache.get(info);
 
-        final CustomFontRenderer fontRenderer = CustomFontRenderer.create(info.name, info.size, info.type == Font.BOLD, info.type == Font.ITALIC, false);
+        final GlyphFontRenderer fontRenderer = GlyphFontRenderer.create(info.name, info.size, info.type == Font.BOLD, info.type == Font.ITALIC, false);
         cache.put(info, fontRenderer);
 
         return fontRenderer;
@@ -45,7 +44,7 @@ public class FontRendererMaster
      */
     public IFontRenderer getCurrent ()
     {
-        return InceptionMod.getInstance().getFontRendererMaster().retrieveOrBuild("Product Sans", Font.PLAIN, 19);
+        return retrieveOrBuild("Product Sans", Font.PLAIN, 19);
 //        return Minecraft.getMinecraft().fontRendererObj;
     }
 

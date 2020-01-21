@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.render.font;
+package net.inceptioncloud.minecraftmod.design.font.util;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;

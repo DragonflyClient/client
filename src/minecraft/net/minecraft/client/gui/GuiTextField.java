@@ -1,6 +1,6 @@
 package net.minecraft.client.gui;
 
-import net.inceptioncloud.minecraftmod.render.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ChatAllowedCharacters;

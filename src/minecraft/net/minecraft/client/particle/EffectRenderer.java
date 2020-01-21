@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Callable;
+
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -62,6 +64,7 @@ public class EffectRenderer
         }
 
         this.registerVanillaParticles();
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     private void registerVanillaParticles()

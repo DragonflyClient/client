@@ -1,7 +1,8 @@
 package net.minecraft.client.gui;
 
 import com.ibm.icu.text.*;
-import net.inceptioncloud.minecraftmod.render.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -147,6 +148,7 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
         }
 
         this.readGlyphSizes();
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     /**

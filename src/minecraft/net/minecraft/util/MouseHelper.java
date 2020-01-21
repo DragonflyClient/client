@@ -1,5 +1,6 @@
 package net.minecraft.util;
 
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
@@ -10,6 +11,11 @@ public class MouseHelper
 
     /** Mouse delta Y this frame */
     public int deltaY;
+
+    public MouseHelper ()
+    {
+        InceptionMod.getInstance().getSplashScreen().update();
+    }
 
     /**
      * Grabs the mouse cursor it doesn't move and isn't seen.

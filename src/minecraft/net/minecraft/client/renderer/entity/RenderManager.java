@@ -3,6 +3,8 @@ package net.minecraft.client.renderer.entity;
 import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.Map;
+
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
@@ -214,6 +216,7 @@ public class RenderManager
         {
             Reflector.call(Reflector.RenderingRegistry_loadEntityRenderers, new Object[] {this.entityRenderMap});
         }
+        InceptionMod.getInstance().getSplashScreen().update();
     }
 
     public void setRenderPosition(double renderPosXIn, double renderPosYIn, double renderPosZIn)
