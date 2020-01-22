@@ -1810,13 +1810,10 @@ public class Config
 
                 try
                 {
-                    inputstream = getDefaultResourcePack().getInputStreamAssets(new ResourceLocation("icons/icon_16x16.png"));
-                    inputstream1 = getDefaultResourcePack().getInputStreamAssets(new ResourceLocation("icons/icon_32x32.png"));
+                    inputstream = new FileInputStream(new File("inceptioncloud/icon_16x.png"));
+                    inputstream1 = new FileInputStream(new File("inceptioncloud/icon_32x.png"));
 
-                    if (inputstream != null && inputstream1 != null)
-                    {
-                        Display.setIcon(new ByteBuffer[] {readIconImage(inputstream), readIconImage(inputstream1)});
-                    }
+                    Display.setIcon(new ByteBuffer[] {readIconImage(inputstream), readIconImage(inputstream1)});
                 }
                 catch (IOException ioexception)
                 {

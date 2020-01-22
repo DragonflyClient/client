@@ -636,12 +636,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             InputStream inputstream1 = null;
 
             try {
-                inputstream = this.mcDefaultResourcePack.getInputStreamAssets(new ResourceLocation("icons/icon_16x16.png"));
-                inputstream1 = this.mcDefaultResourcePack.getInputStreamAssets(new ResourceLocation("icons/icon_32x32.png"));
+                inputstream = new FileInputStream(new File("inceptioncloud/icon_16x.png"));
+                inputstream1 = new FileInputStream(new File("inceptioncloud/icon_32x.png"));
 
-                if (inputstream != null && inputstream1 != null) {
-                    Display.setIcon(new ByteBuffer[] { this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1) });
-                }
+                Display.setIcon(new ByteBuffer[] { this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1) });
             } catch (IOException ioexception) {
                 logger.error("Couldn't set icon", ioexception);
             } finally {
@@ -670,7 +668,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 while (Minecraft.this.running) {
                     try {
                         Thread.sleep(2147483647L);
-                    } catch (InterruptedException var2) {
+                    } catch (InterruptedException ignored) {
                     }
                 }
             }

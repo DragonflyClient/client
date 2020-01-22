@@ -46,6 +46,13 @@ public class ResourceLocation
         return astring;
     }
 
+    public ResourceLocation outputDetails ()
+    {
+        System.out.println("getResourcePath() = " + getResourcePath());
+        System.out.println("getResourceDomain() = " + getResourceDomain());
+        return this;
+    }
+
     public String getResourcePath()
     {
         return this.resourcePath;
