@@ -3,6 +3,8 @@ package net.minecraft.client.renderer;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -515,6 +517,8 @@ public class EntityRenderer implements IResourceManagerReloadListener
         }
     }
 
+    private DoubleTransition zoomModifier = DoubleTransition.builder().start(1.0).end(3.5).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> Config.zoomMode).build();
+
     /**
      * Changes the field of view of the player depending on if they are underwater or not
      */
@@ -538,25 +542,20 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
             if (this.mc.currentScreen == null) {
                 GameSettings gamesettings = this.mc.gameSettings;
-                flag = GameSettings.isKeyDown(this.mc.gameSettings.ofKeyBindZoom);
+                flag = GameSettings.isKeyDown(gamesettings.ofKeyBindZoom);
             }
 
             if (flag) {
-                if (!Config.zoomMode) {
+                if (!Config.zoomMode)
                     Config.zoomMode = true;
-                    this.mc.gameSettings.smoothCamera = true;
-                }
-
-                if (Config.zoomMode) {
-                    f /= 4.0F;
-                }
             } else if (Config.zoomMode) {
                 Config.zoomMode = false;
-                this.mc.gameSettings.smoothCamera = false;
                 this.mouseFilterXAxis = new MouseFilter();
                 this.mouseFilterYAxis = new MouseFilter();
                 this.mc.renderGlobal.displayListEntitiesDirty = true;
             }
+
+            f /= zoomModifier.get();
 
             if (entity instanceof EntityLivingBase && ( ( EntityLivingBase ) entity ).getHealth() <= 0.0F) {
                 float f1 = ( float ) ( ( EntityLivingBase ) entity ).deathTime + partialTicks;

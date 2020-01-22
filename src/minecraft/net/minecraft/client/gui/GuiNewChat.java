@@ -229,7 +229,7 @@ public class GuiNewChat extends Gui implements Tickable
 
                     // If the title box is wide enough to display the time
                     if (l + 2 >= fontRenderer.getStringWidth(s1 + s2 + " " + s3 + "     " + date)) {
-                        base = -fontRenderer.getStringWidth(date);
+                        base = -fontRenderer.getStringWidth("00:00:00");
                         addition = l + 4 - getBorderAmount();
                         textX = base + ( int ) ( addition * titleText.get() );
                         fontRenderer.drawString(date, textX, ( int ) ( -height - border - 10 ), alpha.getRGB(), true);

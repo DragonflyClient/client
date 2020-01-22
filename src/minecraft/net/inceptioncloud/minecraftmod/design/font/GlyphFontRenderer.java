@@ -1,8 +1,10 @@
 package net.inceptioncloud.minecraftmod.design.font;
 
 import net.inceptioncloud.minecraftmod.design.font.util.GlyphPage;
+import net.inceptioncloud.minecraftmod.utils.TimeUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.apache.logging.log4j.LogManager;
@@ -510,21 +512,19 @@ public class GlyphFontRenderer implements IFontRenderer
     public String trimStringToWidth (String text, int maxWidth, boolean reverse)
     {
         StringBuilder stringbuilder = new StringBuilder();
+        // TODO [21.01.2020]: Fix this
 
-        boolean on = false;
+        boolean colorCodeActivated = false;
 
-        int j = reverse ? text.length() - 1 : 0;
-        int k = reverse ? -1 : 1;
-        int width = 0;
+        int startIndex = reverse ? text.length() - 1 : 0;
+        int step = reverse ? -1 : 1;
 
-        GlyphPage currentPage;
-
-        for (int i = j ; i >= 0 && i < text.length() && i < maxWidth ; i += k) {
+        for (int i = startIndex ; i >= 0 && i < text.length() ; i += step) {
             char character = text.charAt(i);
 
             if (character == '§')
-                on = true;
-            else if (on && character >= '0' && character <= 'r') {
+                colorCodeActivated = true;
+            else if (colorCodeActivated && character >= '0' && character <= 'r') {
                 int colorIndex = "0123456789abcdefklmnor".indexOf(character);
                 if (colorIndex < 16) {
                     boldStyle = false;
@@ -538,24 +538,19 @@ public class GlyphFontRenderer implements IFontRenderer
                     italicStyle = false;
                 }
                 i++;
-                on = false;
-            } else {
-                if (on) i--;
-
+                colorCodeActivated = false;
+            } else if (colorCodeActivated) {
+                i--;
                 character = text.charAt(i);
-                currentPage = getCurrentGlyphPage();
-                width += ( currentPage.getWidth(character) - 8 ) / 1;
             }
 
-            if (i > width) {
+            if (text.length() > i + 1 && getStringWidth(text.substring(0, i + 1)) >= maxWidth)
                 break;
-            }
 
-            if (reverse) {
+            if (reverse)
                 stringbuilder.insert(0, character);
-            } else {
+            else
                 stringbuilder.append(character);
-            }
         }
 
         return stringbuilder.toString();

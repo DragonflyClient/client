@@ -739,16 +739,16 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
      * Trims a string to a specified width, and will reverse it if par3 is set.
      */
     @Override
-    public String trimStringToWidth (String text, int width, boolean reverse)
+    public String trimStringToWidth (String text, int maxWidth, boolean reverse)
     {
         StringBuilder stringbuilder = new StringBuilder();
-        float f = 0.0F;
+        float currentWidth = 0.0F;
         int i = reverse ? text.length() - 1 : 0;
         int j = reverse ? -1 : 1;
         boolean flag = false;
         boolean flag1 = false;
 
-        for (int k = i ; k >= 0 && k < text.length() && f < ( float ) width ; k += j) {
+        for (int k = i ; k >= 0 && k < text.length() && currentWidth < ( float ) maxWidth ; k += j) {
             char c0 = text.charAt(k);
             float f1 = this.getCharWidthFloat(c0);
 
@@ -765,14 +765,14 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
             } else if (f1 < 0.0F) {
                 flag = true;
             } else {
-                f += f1;
+                currentWidth += f1;
 
                 if (flag1) {
-                    ++f;
+                    ++currentWidth;
                 }
             }
 
-            if (f > ( float ) width) {
+            if (currentWidth > ( float ) maxWidth) {
                 break;
             }
 

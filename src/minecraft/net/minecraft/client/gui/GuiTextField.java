@@ -1,11 +1,14 @@
 package net.minecraft.client.gui;
 
+import lombok.Getter;
+import net.inceptioncloud.minecraftmod.design.font.GlyphFontRenderer;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
 
+import java.awt.*;
 import java.util.function.Predicate;
 
 public class GuiTextField extends Gui
@@ -16,9 +19,9 @@ public class GuiTextField extends Gui
      * The width of this text field.
      */
     private final int width;
-    private final int height;
-    public int xPosition;
-    public int yPosition;
+    @Getter private final int height;
+    @Getter public int xPosition;
+    @Getter public int yPosition;
     /**
      * Has the current text being edited on the textbox.
      */
