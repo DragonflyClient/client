@@ -7,6 +7,7 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.event.client.*;
 import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.minecraftmod.event.play.IntegratedServerStartingEvent;
 import net.minecraft.block.Block;
@@ -106,7 +107,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     private static int debugFPS;
     public final File mcDataDir;
-    public final FrameTimer field_181542_y = new FrameTimer();
+    public final FrameTimer frameTimer = new FrameTimer();
     /**
      * The profiler instance
      */
@@ -205,7 +206,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      * Instance of CrashReport.
      */
     private CrashReport crashReporter;
-    private boolean field_181541_X = false;
+    private boolean connectedToRealms = false;
     private Timer timer = new Timer(20.0F);
     /**
      * Instance of PlayerUsageSnooper.
@@ -458,10 +459,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.displayHeight = this.gameSettings.overrideHeight;
         }
 
-        logger.info("LWJGL Version: " + Sys.getVersion());
+        InceptionMod.create();
+
+        // EVENTBUS - Post the ClientStartupEvent when the Minecraft Client starts
+        ClientStartupEvent clientStartupEvent = new ClientStartupEvent();
+        InceptionMod.getInstance().getEventBus().post(clientStartupEvent);
+
         this.setWindowIcon();
         this.setInitialDisplayMode();
         this.createDisplay();
+
+        logger.info("LWJGL Version: " + Sys.getVersion());
         OpenGlHelper.initializeTextures();
         this.framebufferMc = new Framebuffer(this.displayWidth, this.displayHeight, true);
         this.framebufferMc.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
@@ -491,9 +499,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.fontRendererObj.setBidiFlag(this.mcLanguageManager.isCurrentLanguageBidirectional());
         }
 
-        // ICMM - Graphics Initialization
-        InceptionMod.getInstance().initializeGraphics();
-        InceptionMod.getInstance().getSplashScreen().update();
+        // EVENTBUS - Post the GraphicsInitializedEvent here as the Sound and Graphics Library can be used now
+        GraphicsInitializedEvent graphicsInitializedEvent = new GraphicsInitializedEvent();
+        InceptionMod.getInstance().getEventBus().post(graphicsInitializedEvent);
 
         this.standardGalacticFontRenderer = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii_sga.png"), this.renderEngine, false);
         this.mcResourceManager.registerReloadListener(this.fontRendererObj);
@@ -595,7 +603,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private void createDisplay () throws LWJGLException
     {
         Display.setResizable(true);
-        new InceptionMod();
 
         try {
             Display.create(( new PixelFormat() ).withDepthBits(24));
@@ -636,8 +643,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             InputStream inputstream1 = null;
 
             try {
-                inputstream = new FileInputStream(new File("inceptioncloud/icon_16x.png"));
-                inputstream1 = new FileInputStream(new File("inceptioncloud/icon_32x.png"));
+                inputstream = new FileInputStream(new File("inceptioncloud/img/icon_16x.png"));
+                inputstream1 = new FileInputStream(new File("inceptioncloud/img/icon_32x.png"));
 
                 Display.setIcon(new ByteBuffer[] { this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1) });
             } catch (IOException ioexception) {
@@ -934,13 +941,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     public void shutdownMinecraftApplet ()
     {
+        // EVENTBUS - ClientShutdownEvent when the game is being closed
+        ClientShutdownEvent event = new ClientShutdownEvent();
+        InceptionMod.getInstance().getEventBus().post(event);
+
         try {
             this.stream.shutdownStream();
             logger.info("Stopping!");
 
             try {
                 this.loadWorld(null);
-            } catch (Throwable var5) {
+            } catch (Throwable ignored) {
             }
 
             this.mcSoundHandler.unloadSounds();
@@ -1053,7 +1064,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         ++this.fpsCounter;
         this.isGamePaused = this.isSingleplayer() && this.currentScreen != null && this.currentScreen.doesGuiPauseGame() && !this.theIntegratedServer.getPublic();
         long k = System.nanoTime();
-        this.field_181542_y.func_181747_a(k - this.field_181543_z);
+        this.frameTimer.func_181747_a(k - this.field_181543_z);
         this.field_181543_z = k;
 
         while (getSystemTime() >= this.debugUpdateTime + 1000L) {
@@ -1507,7 +1518,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
     }
 
-    public MusicTicker func_181535_r ()
+    public MusicTicker getMusicTicker ()
     {
         return this.mcMusicTicker;
     }
@@ -2223,7 +2234,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             NBTTagCompound nbttagcompound3 = new NBTTagCompound();
             nbttagcompound3.setTag("SkullOwner", nbttagcompound2);
             itemstack.setTagCompound(nbttagcompound3);
-            return itemstack;
         } else {
             itemstack.setTagInfo("BlockEntityTag", nbttagcompound);
             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
@@ -2231,8 +2241,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             nbttaglist.appendTag(new NBTTagString("(+NBT)"));
             nbttagcompound1.setTag("Lore", nbttaglist);
             itemstack.setTagInfo("display", nbttagcompound1);
-            return itemstack;
         }
+
+        return itemstack;
     }
 
     /**
@@ -2358,7 +2369,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         playerSnooper.addClientStat("display_frequency", Display.getDisplayMode().getFrequency());
         playerSnooper.addClientStat("display_type", this.fullscreen ? "fullscreen" : "windowed");
         playerSnooper.addClientStat("run_time", ( MinecraftServer.getCurrentTimeMillis() - playerSnooper.getMinecraftStartTimeMillis() ) / 60L * 1000L);
-        playerSnooper.addClientStat("current_action", this.func_181538_aA());
+        playerSnooper.addClientStat("current_action", this.getCurrentAction());
         String s = ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN ? "little" : "big";
         playerSnooper.addClientStat("endianness", s);
         playerSnooper.addClientStat("resource_packs", this.mcResourcePackRepository.getRepositoryEntries().size());
@@ -2373,7 +2384,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
     }
 
-    private String func_181538_aA ()
+    private String getCurrentAction ()
     {
         return this.theIntegratedServer != null ? ( this.theIntegratedServer.getPublic() ? "hosting_lan" : "singleplayer" ) : ( this.currentServerData != null ? ( this.currentServerData.isLan() ? "playing_lan" : "multiplayer" ) : "out_of_game" );
     }
@@ -2564,7 +2575,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         return this.twitchDetails;
     }
 
-    public PropertyMap func_181037_M ()
+    public PropertyMap getProfileProperties ()
     {
         if (this.field_181038_N.isEmpty()) {
             GameProfile gameprofile = this.getSessionService().fillProfileProperties(this.session.getProfile(), false);
@@ -2756,18 +2767,18 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         return this.itemRenderer;
     }
 
-    public FrameTimer func_181539_aj ()
+    public FrameTimer getFrameTimer ()
     {
-        return this.field_181542_y;
+        return this.frameTimer;
     }
 
-    public boolean func_181540_al ()
+    public boolean isConnectedToRealms ()
     {
-        return this.field_181541_X;
+        return this.connectedToRealms;
     }
 
-    public void func_181537_a (boolean p_181537_1_)
+    public void setConnectedToRealms (boolean connectedToRealms)
     {
-        this.field_181541_X = p_181537_1_;
+        this.connectedToRealms = connectedToRealms;
     }
 }

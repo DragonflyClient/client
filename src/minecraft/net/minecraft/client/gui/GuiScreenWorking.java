@@ -56,7 +56,7 @@ public class GuiScreenWorking extends GuiScreen implements IProgressUpdate
     {
         if (this.doneWorking)
         {
-            if (!this.mc.func_181540_al())
+            if (!this.mc.isConnectedToRealms())
             {
                 this.mc.displayGuiScreen((GuiScreen)null);
             }

@@ -127,7 +127,7 @@ public class SkinManager
                 if (map.isEmpty() && profile.getId().equals(Minecraft.getMinecraft().getSession().getProfile().getId()))
                 {
                     profile.getProperties().clear();
-                    profile.getProperties().putAll(Minecraft.getMinecraft().func_181037_M());
+                    profile.getProperties().putAll(Minecraft.getMinecraft().getProfileProperties());
                     map.putAll(SkinManager.this.sessionService.getTextures(profile, false));
                 }
 

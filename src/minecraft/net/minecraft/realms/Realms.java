@@ -89,7 +89,7 @@ public class Realms
 
     public static void setConnectedToRealms(boolean p_setConnectedToRealms_0_)
     {
-        Minecraft.getMinecraft().func_181537_a(p_setConnectedToRealms_0_);
+        Minecraft.getMinecraft().setConnectedToRealms(p_setConnectedToRealms_0_);
     }
 
     public static ListenableFuture<Object> downloadResourcePack(String p_downloadResourcePack_0_, String p_downloadResourcePack_1_)

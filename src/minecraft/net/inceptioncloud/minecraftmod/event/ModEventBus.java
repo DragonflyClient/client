@@ -1,6 +1,8 @@
 package net.inceptioncloud.minecraftmod.event;
 
 import com.google.common.eventbus.*;
+import net.inceptioncloud.minecraftmod.design.DesignSubscribers;
+import net.inceptioncloud.minecraftmod.subscriber.DefaultSubscribers;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -14,6 +16,9 @@ public class ModEventBus extends EventBus
     public ModEventBus ()
     {
         super(new ModSubscriberExceptionHandler());
+
+        DefaultSubscribers.register(this);
+        DesignSubscribers.register(this);
     }
 
     /**

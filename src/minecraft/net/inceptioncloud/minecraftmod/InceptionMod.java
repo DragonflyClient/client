@@ -1,30 +1,21 @@
 package net.inceptioncloud.minecraftmod;
 
 import com.google.common.collect.Lists;
-import com.mojang.authlib.Agent;
-import com.mojang.authlib.exceptions.AuthenticationException;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import net.inceptioncloud.minecraftmod.design.font.FontManager;
 import net.inceptioncloud.minecraftmod.design.splash.ModSplashScreen;
 import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
 import net.inceptioncloud.minecraftmod.event.ModEventBus;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
+import net.inceptioncloud.minecraftmod.options.OptionKey;
+import net.inceptioncloud.minecraftmod.options.Options;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.Session;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.Display;
 
-import java.io.File;
-import java.io.FileReader;
-import java.net.Proxy;
 import java.util.*;
-import java.util.List;
 
 /**
  * The main class of the Inception Cloud Minecraft Mod.
@@ -52,11 +43,8 @@ public class InceptionMod
     @Getter
     private final ModSplashScreen splashScreen;
 
-    /**
-     * The last amount of mod ticks per second.
-     */
     @Getter
-    private int lastTPS = 0;
+    private final Options options;
 
     /**
      * All transitions handled by the mod.
@@ -67,6 +55,12 @@ public class InceptionMod
      * All classes that implement the tickable interface.
      */
     private List<Tickable> tickables = Lists.newArrayList();
+
+    /**
+     * The last amount of mod ticks per second.
+     */
+    @Getter
+    private int lastTPS = 0;
 
     /**
      * The amount of ticks that have been executed in the current second.
@@ -89,12 +83,11 @@ public class InceptionMod
 
         instance = this;
         eventBus = new ModEventBus();
+        options = new Options();
         fontDesign = new FontManager();
         splashScreen = new ModSplashScreen();
         richPresenceManager = new RichPresenceManager();
         gameStateManager = new GameStateManager();
-
-        auth();
 
         new Timer().scheduleAtFixedRate(new TimerTask()
         {
@@ -109,6 +102,17 @@ public class InceptionMod
                 }
             }
         }, 0, 5);
+    }
+
+    /**
+     * Creates the {@link InceptionMod} instance.
+     */
+    public static void create ()
+    {
+        if (instance != null)
+            throw new UnsupportedOperationException("The Mod has already been created!");
+
+        new InceptionMod();
     }
 
     /**
@@ -133,40 +137,6 @@ public class InceptionMod
             lastTPS = ticks;
             firstTick = 0;
             ticks = 0;
-        }
-    }
-
-    /**
-     * Called when the Minecraft client's graphics are initialized.
-     */
-    public void initializeGraphics ()
-    {
-    }
-
-    /**
-     * Authenticate with the InceptionCloud Minecraft account.
-     */
-    @SneakyThrows
-    private void auth ()
-    {
-        final File credentials = new File("authetication.txt");
-        final Scanner scanner = new Scanner(new FileReader(credentials));
-
-        final String email = scanner.nextLine();
-        final String password = scanner.nextLine();
-
-        final YggdrasilUserAuthentication auth = ( YggdrasilUserAuthentication ) new YggdrasilAuthenticationService(Proxy.NO_PROXY, "").createUserAuthentication(Agent.MINECRAFT);
-
-        auth.setUsername(email);
-        auth.setPassword(password);
-
-        try {
-            auth.logIn();
-
-            Minecraft.getMinecraft().setSession(new Session(auth.getSelectedProfile().getName(), auth.getSelectedProfile().getId().toString(), auth.getAuthenticatedToken(), "mojang"));
-            LogManager.getLogger().error("Logged in with account " + Minecraft.getMinecraft().getSession().getUsername());
-        } catch (AuthenticationException exception) {
-            LogManager.getLogger().error("Invalid credentials in authentication file!");
         }
     }
 

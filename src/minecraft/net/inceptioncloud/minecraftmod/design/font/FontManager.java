@@ -42,7 +42,7 @@ public class FontManager
     /**
      * The current font renderer that can be the Minecraft default or the InceptionCloud custom.
      */
-    public IFontRenderer getCurrent ()
+    public IFontRenderer getRenderer ()
     {
         return retrieveOrBuild("Product Sans", Font.PLAIN, 19);
 //        return Minecraft.getMinecraft().fontRendererObj;

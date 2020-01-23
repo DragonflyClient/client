@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.state;
 
 import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.event.structure.GameStateUpdateEvent;
+import net.inceptioncloud.minecraftmod.event.client.GameStateUpdateEvent;
 import net.inceptioncloud.minecraftmod.state.menu.subscriber.MenuSubscriber;
 import net.inceptioncloud.minecraftmod.state.play.subscriber.MultiplayerSubscriber;
 import net.inceptioncloud.minecraftmod.state.play.subscriber.SingleplayerSubscriber;

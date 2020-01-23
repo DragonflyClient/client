@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.event.structure;
+package net.inceptioncloud.minecraftmod.event.client;
 
 import lombok.*;
 import net.inceptioncloud.minecraftmod.state.GameState;

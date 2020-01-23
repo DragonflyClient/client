@@ -68,7 +68,7 @@ public class ModSplashScreen
             return;
 
         final StackTraceElement element = RuntimeUtils.getStackTrace(ModSplashScreen.class);
-        this.percentage = Math.min(1.0D, this.percentage + (1.0D / 21));
+        this.percentage = Math.min(1.0D, this.percentage + (1.0D / 20));
         this.action = element == null ? "..." : element.getClassName() + " - " + element.getMethodName();
 
         performRender(Minecraft.getMinecraft().getTextureManager());

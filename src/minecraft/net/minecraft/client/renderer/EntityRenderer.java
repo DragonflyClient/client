@@ -3,6 +3,8 @@ package net.minecraft.client.renderer;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.event.control.ZoomEvent;
+import net.inceptioncloud.minecraftmod.options.sets.IngameOptions;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.minecraft.block.Block;
@@ -52,7 +54,6 @@ import org.lwjgl.util.glu.Project;
 import shadersmod.client.Shaders;
 import shadersmod.client.ShadersRender;
 
-import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
@@ -104,8 +105,8 @@ public class EntityRenderer implements IResourceManagerReloadListener
      * Pointed entity
      */
     private Entity pointedEntity;
-    private MouseFilter mouseFilterXAxis = new MouseFilter();
-    private MouseFilter mouseFilterYAxis = new MouseFilter();
+    public MouseFilter mouseFilterXAxis = new MouseFilter();
+    public MouseFilter mouseFilterYAxis = new MouseFilter();
     private float thirdPersonDistance = 4.0F;
     /**
      * Third person distance temp
@@ -517,8 +518,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
         }
     }
 
-    private DoubleTransition zoomModifier = DoubleTransition.builder().start(1.0).end(3.5).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> Config.zoomMode).build();
-
     /**
      * Changes the field of view of the player depending on if they are underwater or not
      */
@@ -528,47 +527,33 @@ public class EntityRenderer implements IResourceManagerReloadListener
             return 90.0F;
         } else {
             Entity entity = this.mc.getRenderViewEntity();
-            float f = 70.0F;
+            float fov = 70.0F;
 
             if (p_78481_2_) {
-                f = this.mc.gameSettings.fovSetting;
+                fov = this.mc.gameSettings.fovSetting;
 
                 if (Config.isDynamicFov()) {
-                    f *= this.fovModifierHandPrev + ( this.fovModifierHand - this.fovModifierHandPrev ) * partialTicks;
+                    fov *= this.fovModifierHandPrev + ( this.fovModifierHand - this.fovModifierHandPrev ) * partialTicks;
                 }
             }
 
-            boolean flag = false;
-
-            if (this.mc.currentScreen == null) {
-                GameSettings gamesettings = this.mc.gameSettings;
-                flag = GameSettings.isKeyDown(gamesettings.ofKeyBindZoom);
-            }
-
-            if (flag) {
-                if (!Config.zoomMode)
-                    Config.zoomMode = true;
-            } else if (Config.zoomMode) {
-                Config.zoomMode = false;
-                this.mouseFilterXAxis = new MouseFilter();
-                this.mouseFilterYAxis = new MouseFilter();
-                this.mc.renderGlobal.displayListEntitiesDirty = true;
-            }
-
-            f /= zoomModifier.get();
+            // EVENTBUS - Calls the ZoomEvent to make the client able to modify the FOV when zooming
+            ZoomEvent zoomEvent = new ZoomEvent(fov);
+            InceptionMod.getInstance().getEventBus().post(zoomEvent);
+            fov = zoomEvent.getFieldOfView();
 
             if (entity instanceof EntityLivingBase && ( ( EntityLivingBase ) entity ).getHealth() <= 0.0F) {
                 float f1 = ( float ) ( ( EntityLivingBase ) entity ).deathTime + partialTicks;
-                f /= ( 1.0F - 500.0F / ( f1 + 500.0F ) ) * 2.0F + 1.0F;
+                fov /= ( 1.0F - 500.0F / ( f1 + 500.0F ) ) * 2.0F + 1.0F;
             }
 
             Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(this.mc.theWorld, entity, partialTicks);
 
             if (block.getMaterial() == Material.water) {
-                f = f * 60.0F / 70.0F;
+                fov = fov * 60.0F / 70.0F;
             }
 
-            return f;
+            return fov;
         }
     }
 
