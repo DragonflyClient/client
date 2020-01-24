@@ -3,8 +3,6 @@ package net.minecraft.client.gui;
 import com.google.common.collect.Lists;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
-import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
-import net.inceptioncloud.minecraftmod.transition.supplier.AlwaysForward;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -481,7 +479,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         this.drawCenteredString(this.fontRendererObj, this.splashText, 0, -8, -256);
         GlStateManager.popMatrix();
 
-        IFontRenderer iFontRenderer = InceptionMod.getInstance().getFontDesign().getRenderer();
+        IFontRenderer iFontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
         String clientVersion = InceptionCloudVersion.FULL_VERSION + " ▏ Minecraft Mod 1.8.8";
         String copyright = "Copyright Mojang AB. Do not distribute!";
 

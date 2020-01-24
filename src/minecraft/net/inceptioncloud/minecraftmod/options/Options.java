@@ -41,12 +41,12 @@ public class Options
     {
         try {
 
-            System.out.println("Loading Settings...");
+            LogManager.getLogger().info("Loading Settings...");
 
             if (!OPTIONS_FILE.exists()) jsonObject = new JSONObject();
             else jsonObject = ( JSONObject ) new JSONParser().parse(new FileReader(OPTIONS_FILE));
 
-            System.out.println(jsonObject);
+            LogManager.getLogger().info(jsonObject);
 
         } catch (IOException | ParseException e) {
             e.printStackTrace();

@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -198,6 +199,12 @@ public abstract class GuiContainer extends GuiScreen
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
         RenderHelper.enableStandardItemLighting();
+    }
+
+    @Override
+    public void setWorldAndResolution (Minecraft mc, int width, int height)
+    {
+        super.setWorldAndResolution(mc, width, height);
     }
 
     /**
@@ -670,7 +677,10 @@ public abstract class GuiContainer extends GuiScreen
         int j = this.guiTop;
         pointX = pointX - i;
         pointY = pointY - j;
-        return pointX >= left - 1 && pointX < left + right + 1 && pointY >= top - 1 && pointY < top + bottom + 1;
+
+        final boolean b = pointX >= left - 1 && pointX < left + right + 1 && pointY >= top - 1 && pointY < top + bottom + 1;
+
+        return b;
     }
 
     /**

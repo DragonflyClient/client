@@ -40,12 +40,19 @@ public class FontManager
     }
 
     /**
-     * The current font renderer that can be the Minecraft default or the InceptionCloud custom.
+     * A custom Font Renderer with the "Product Sans" font and a size of 19.
      */
-    public IFontRenderer getRenderer ()
+    public IFontRenderer getRegular ()
     {
         return retrieveOrBuild("Product Sans", Font.PLAIN, 19);
-//        return Minecraft.getMinecraft().fontRendererObj;
+    }
+
+    /**
+     * TA custom Font Renderer with the "Product Sans Medium" font and a size of 19.
+     */
+    public IFontRenderer getMedium ()
+    {
+        return retrieveOrBuild("Product Sans Medium", Font.PLAIN, 19);
     }
 
     /**

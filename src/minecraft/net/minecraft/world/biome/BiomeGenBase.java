@@ -329,7 +329,7 @@ public abstract class BiomeGenBase
     {
         p_76731_1_ = p_76731_1_ / 3.0F;
         p_76731_1_ = MathHelper.clamp_float(p_76731_1_, -1.0F, 1.0F);
-        return MathHelper.func_181758_c(0.62222224F - p_76731_1_ * 0.05F, 0.5F + p_76731_1_ * 0.1F, 1.0F);
+        return MathHelper.hsvToRTB(0.62222224F - p_76731_1_ * 0.05F, 0.5F + p_76731_1_ * 0.1F, 1.0F);
     }
 
     public List<BiomeGenBase.SpawnListEntry> getSpawnableList(EnumCreatureType creatureType)

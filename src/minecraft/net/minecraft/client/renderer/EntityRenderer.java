@@ -14,6 +14,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.culling.ClippingHelperImpl;
@@ -1124,8 +1125,15 @@ public class EntityRenderer implements IResourceManagerReloadListener
             final ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int scaledWidth = scaledresolution.getScaledWidth();
             int scaledHeight = scaledresolution.getScaledHeight();
+
+//            if (mc.currentScreen instanceof GuiContainer) {
+//                scaledWidth *= 2 / 3D;
+//                scaledHeight *= 2 / 3D;
+//            }
+
             final int scaledMouseX = Mouse.getX() * scaledWidth / this.mc.displayWidth;
             final int scaledMouseY = scaledHeight - Mouse.getY() * scaledHeight / this.mc.displayHeight - 1;
+
             int l1 = this.mc.gameSettings.limitFramerate;
 
             if (this.mc.theWorld != null) {
@@ -1888,10 +1896,13 @@ public class EntityRenderer implements IResourceManagerReloadListener
     public void setupOverlayRendering ()
     {
         ScaledResolution scaledresolution = new ScaledResolution(this.mc);
+        double scaledWidth = scaledresolution.getScaledWidth_double();
+        double scaledHeight = scaledresolution.getScaledHeight_double();
+
         GlStateManager.clear(256);
         GlStateManager.matrixMode(5889);
         GlStateManager.loadIdentity();
-        GlStateManager.ortho(0.0D, scaledresolution.getScaledWidth_double(), scaledresolution.getScaledHeight_double(), 0.0D, 1000.0D, 3000.0D);
+        GlStateManager.ortho(0.0D, scaledWidth, scaledHeight, 0.0D, 1000.0D, 3000.0D);
         GlStateManager.matrixMode(5888);
         GlStateManager.loadIdentity();
         GlStateManager.translate(0.0F, 0.0F, -2000.0F);

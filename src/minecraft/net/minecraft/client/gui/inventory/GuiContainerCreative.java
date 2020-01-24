@@ -2,8 +2,7 @@ package net.minecraft.client.gui.inventory;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.renderer.*;
@@ -515,12 +514,6 @@ public class GuiContainerCreative extends InventoryEffectRenderer
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableLighting();
-    }
-
-    @Override
-    public void setWorldAndResolution (final Minecraft mc, int width, int height)
-    {
-        super.setWorldAndResolution(mc, width, height);
     }
 
     protected void renderToolTip (ItemStack stack, int x, int y)

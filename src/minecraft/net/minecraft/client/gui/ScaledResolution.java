@@ -1,6 +1,6 @@
 package net.minecraft.client.gui;
 
-import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.inceptioncloud.minecraftmod.utils.RuntimeUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 
@@ -12,7 +12,7 @@ public class ScaledResolution
     private int scaledHeight;
     private int scaleFactor;
 
-    public ScaledResolution(Minecraft mc)
+    public ScaledResolution (Minecraft mc)
     {
         this.scaledWidth = mc.displayWidth;
         this.scaledHeight = mc.displayHeight;
@@ -25,49 +25,49 @@ public class ScaledResolution
             i = 1000;
         }
 
-        while (this.scaleFactor < i && this.scaledWidth / (this.scaleFactor + 1) >= 320 && this.scaledHeight / (this.scaleFactor + 1) >= 240)
-        {
+//        if (Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen.getClass().getName().startsWith("net.minecraft.client.gui.inventory")) {
+//            StackTraceElement stackTraceElement = RuntimeUtils.getStackTrace(ScaledResolution.class);
+//
+//            if (!( stackTraceElement != null && stackTraceElement.getClassName().contains("GuiIngame") ))
+//                i = 3;
+//        }
+
+        while (this.scaleFactor < i && this.scaledWidth / ( this.scaleFactor + 1 ) >= 320 && this.scaledHeight / ( this.scaleFactor + 1 ) >= 240) {
             ++this.scaleFactor;
         }
 
-        if (flag && this.scaleFactor % 2 != 0 && this.scaleFactor != 1)
-        {
+        if (flag && this.scaleFactor % 2 != 0 && this.scaleFactor != 1) {
             --this.scaleFactor;
         }
 
-        if (Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen.getClass().getSimpleName().equals("GuiContainerCreative")) {
-            scaleFactor = 3;
-            scaleFactor = 3;
-        }
-
-        this.scaledWidthD = (double)this.scaledWidth / (double)this.scaleFactor; // 12 / 2 = 6 | 12 / 3 = 4 | 6 * 2/3 = 4
-        this.scaledHeightD = (double)this.scaledHeight / (double)this.scaleFactor;
+        this.scaledWidthD = ( double ) this.scaledWidth / ( double ) this.scaleFactor; // 12 / 2 = 6 | 12 / 3 = 4 | 6 * 2/3 = 4
+        this.scaledHeightD = ( double ) this.scaledHeight / ( double ) this.scaleFactor;
         this.scaledWidth = MathHelper.ceiling_double_int(this.scaledWidthD);
         this.scaledHeight = MathHelper.ceiling_double_int(this.scaledHeightD);
     }
 
-    public int getScaledWidth()
+    public int getScaledWidth ()
     {
         return this.scaledWidth;
     }
 
-    public int getScaledHeight()
+    public int getScaledHeight ()
     {
         return this.scaledHeight;
     }
 
-    public double getScaledWidth_double()
+    public double getScaledWidth_double ()
     {
         return this.scaledWidthD;
     }
 
 
-    public double getScaledHeight_double()
+    public double getScaledHeight_double ()
     {
         return this.scaledHeightD;
     }
 
-    public int getScaleFactor()
+    public int getScaleFactor ()
     {
         return this.scaleFactor;
     }

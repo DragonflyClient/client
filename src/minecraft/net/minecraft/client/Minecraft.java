@@ -17,6 +17,7 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.achievement.GuiAchievement;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.gui.stream.GuiStreamUnavailable;
 import net.minecraft.client.main.GameConfiguration;
@@ -907,10 +908,15 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         if (guiScreenIn != null) {
             this.setIngameNotInFocus();
             ScaledResolution scaledresolution = new ScaledResolution(this);
-            int i = scaledresolution.getScaledWidth();
-            int j = scaledresolution.getScaledHeight();
+            int scaledWidth = scaledresolution.getScaledWidth();
+            int scaledHeight = scaledresolution.getScaledHeight();
 
-            guiScreenIn.setWorldAndResolution(this, i, j);
+//            if (guiScreenIn instanceof GuiContainer) {
+//                scaledWidth *= 2 / 3D;
+//                scaledHeight *= 2 / 3D;
+//            }
+
+            guiScreenIn.setWorldAndResolution(this, scaledWidth, scaledHeight);
             this.skipRenderWorld = false;
         } else {
             this.mcSoundHandler.resumeSounds();
