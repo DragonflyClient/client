@@ -10,6 +10,7 @@ import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.event.client.*;
 import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.minecraftmod.event.play.IntegratedServerStartingEvent;
+import net.inceptioncloud.minecraftmod.utils.TimeUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -17,7 +18,6 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.achievement.GuiAchievement;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.gui.stream.GuiStreamUnavailable;
 import net.minecraft.client.main.GameConfiguration;
@@ -208,7 +208,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     private CrashReport crashReporter;
     private boolean connectedToRealms = false;
-    private Timer timer = new Timer(20.0F);
+    public Timer timer = new Timer(20.0F);
     /**
      * Instance of PlayerUsageSnooper.
      */
@@ -414,7 +414,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 while (this.running) {
                     if (!this.hasCrashed || this.crashReporter == null) {
                         try {
+
                             this.runGameLoop();
+
                         } catch (OutOfMemoryError var10) {
                             this.freeMemory();
                             this.displayGuiScreen(new GuiMemoryErrorScreen());
@@ -1127,7 +1129,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public int getLimitFramerate ()
     {
-        return this.theWorld == null && this.currentScreen != null ? 30 : this.gameSettings.limitFramerate;
+        // ICMM - Outgame GUI Framerate Limit (original 30)
+        return this.theWorld == null && this.currentScreen != null ? 144 : this.gameSettings.limitFramerate;
     }
 
     public boolean isFramerateLimitBelowMax ()

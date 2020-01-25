@@ -10,7 +10,7 @@ import java.awt.*;
 public class CloudColor
 {
     /**
-     * A mix between red and pink-
+     * A mix between red and pink.
      */
     public static final Color FUSION = new Color(0xEB3B5A);
 
@@ -22,5 +22,5 @@ public class CloudColor
     /**
      * A light blue variation.
      */
-    public static final Color ROYAL = new Color(0x3498DB);
+    public static final Color ROYAL = new Color(0x3867d6);
 }
