@@ -27,13 +27,13 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
     private boolean deletingServer;
     private boolean addingServer;
     private boolean editingServer;
-    private boolean directConnect;
+    public boolean directConnect;
 
     /**
      * The text to be displayed when the player's cursor hovers over a server listing.
      */
     private String hoveringText;
-    private ServerData selectedServer;
+    public ServerData selectedServer;
     private LanServerDetector.LanServerList lanServerList;
     private LanServerDetector.ThreadLanServerFind lanServerDetector;
     private boolean initialized;
@@ -165,7 +165,7 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
             else if (button.id == 4)
             {
                 this.directConnect = true;
-                this.mc.displayGuiScreen(new GuiScreenServerList(this, this.selectedServer = new ServerData(I18n.format("selectServer.defaultName", new Object[0]), "", false)));
+                this.mc.displayGuiScreen(new GuiDirectConnect(this, this.selectedServer = new ServerData(I18n.format("selectServer.defaultName"), "", false)));
             }
             else if (button.id == 3)
             {

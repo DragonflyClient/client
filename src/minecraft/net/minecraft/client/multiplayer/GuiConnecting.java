@@ -38,10 +38,10 @@ public class GuiConnecting extends GuiScreen
         this.connect(serveraddress.getIP(), serveraddress.getPort());
     }
 
-    public GuiConnecting (GuiScreen p_i1182_1_, Minecraft mcIn, String hostName, int port)
+    public GuiConnecting (GuiScreen previousScreen, Minecraft mcIn, String hostName, int port)
     {
         this.mc = mcIn;
-        this.previousGuiScreen = p_i1182_1_;
+        this.previousGuiScreen = previousScreen;
         mcIn.loadWorld(null);
         this.connect(hostName, port);
     }

@@ -4,6 +4,15 @@ import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.*;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.gui.components.CleanGuiButton;
+import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.QuickAction;
+import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.multiplayer.DirectConnectAction;
+import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.multiplayer.LastServerAction;
+import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.options.ModOptionsAction;
+import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.options.ResourcePackAction;
+import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.quit.ReloadAction;
+import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.quit.RestartAction;
+import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.singleplayer.CreateMapAction;
+import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.singleplayer.LastMapAction;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
@@ -22,24 +31,42 @@ import org.lwjgl.opengl.GLContext;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 {
     public static final String informationText = "Please click " + EnumChatFormatting.UNDERLINE + "here" + EnumChatFormatting.RESET + " for more information.";
+
+    /**
+     * Provides all available quick actions.
+     */
+    public static final List<QuickAction> AVAILABLE_ACTIONS = Arrays.asList(
+        new LastMapAction(), new CreateMapAction(),
+        new LastServerAction(), new DirectConnectAction(),
+        new ResourcePackAction(), new ModOptionsAction(),
+        new ReloadAction(), new RestartAction()
+    );
+
     private static final Logger logger = LogManager.getLogger();
+
     /**
      * The Object object utilized as a thread lock when performing non thread-safe operations
      */
     private final Object threadLock = new Object();
     private int mouseY = 0;
+
     /**
      * OpenGL graphics card warning.
      */
     private String openGLWarning1;
+
     /**
      * OpenGL graphics card warning.
      */
     private String openGLWarning2;
+
     /**
      * Link to the Mojang Support about minimum requirements
      */
@@ -56,6 +83,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     private int BUTTON_HEIGHT;
     private int BUTTON_SPACE;
     private int BUTTON_Y;
+    private int QUICK_ACTION_LEFT;
+    private int QUICK_ACTION_RIGHT;
 
     /**
      * The ID of the button which is selected in order to draw it's sub-modules.
@@ -64,9 +93,15 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
     /**
      * The time when the GUI was first drawn.
+     *
      * @see #addButtons() Which Button IDs are used
      */
     private long drawTime = -1;
+
+    /**
+     * The transitions that are responsible for the different Quick Action Buttons.
+     */
+    private Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
 
     /**
      * The transition that lets the navigation bar rise when it's hovered.
@@ -78,6 +113,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      */
     private DoubleTransition fadeInTransition = DoubleTransition.builder().start(1).end(0).amountOfSteps(500).autoTransformator(( ForwardNothing ) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000).build();
 
+    /**
+     * Default Constructor
+     */
     public GuiMainMenu ()
     {
         this.openGLWarning2 = informationText;
@@ -106,30 +144,44 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         if (this.drawTime == -1) this.drawTime = System.currentTimeMillis();
         this.mouseY = mouseY;
         this.drawGradientBackground();
+        final IFontRenderer finalFontRenderer = updateSize();
 
-        IFontRenderer fontRenderer = updateSize();
-
-        final IFontRenderer finalFontRenderer = fontRenderer;
         this.buttonList.stream()
+            .filter(guiButton -> guiButton.id < 10)
             .filter(CleanGuiButton.class::isInstance)
             .map(CleanGuiButton.class::cast)
             .forEach(cleanGuiButton ->
             {
+                cleanGuiButton.setHighlighted(!riseTransition.isAtStart() && selectedButton == cleanGuiButton.id);
                 cleanGuiButton.setFontRenderer(finalFontRenderer);
                 cleanGuiButton.setyPosition(BUTTON_Y);
+
+                if (cleanGuiButton.isMouseOver())
+                    selectedButton = cleanGuiButton.id;
             });
 
-        // ICMM - Logo Drawing
+        this.buttonList.stream()
+            .filter(guiButton -> guiButton.id >= 10)
+            .filter(CleanGuiButton.class::isInstance)
+            .map(CleanGuiButton.class::cast)
+            .forEach(cleanGuiButton ->
+            {
+                double percent = quickActionTransitions.get(cleanGuiButton.id).get();
+                cleanGuiButton.setyPosition(( int ) ( height - BUTTON_HEIGHT * 1.7 * percent));
+                cleanGuiButton.setFontRenderer(finalFontRenderer);
+            });
+
+        // ICMM - Logo
         int imageSize = Math.min(height / 3, 300);
         RenderUtils.drawImage(new ResourceLocation("inceptioncloud/sqr_outline.png"), width / 2 - imageSize / 2 + 1, height / 8 + 1, imageSize, imageSize, 0, 0, 0, 0.4F);
         RenderUtils.drawImage(new ResourceLocation("inceptioncloud/sqr_outline.png"), width / 2 - imageSize / 2, height / 8, imageSize, imageSize);
 
-        // ICMM - Title Drawing
+        // ICMM - Title
         double percent = imageSize / 280D;
-        fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans Medium", Font.PLAIN, ( int ) ( 25 + ( percent * 60 ) ));
+        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans Medium", Font.PLAIN, ( int ) ( 25 + ( percent * 60 ) ));
         fontRenderer.drawCenteredString(InceptionCloudVersion.FULL_VERSION, width / 2, height / 8 + imageSize + 10, 0xFFFFFF, true);
 
-        // ICMM - Subtitle Drawing
+        // ICMM - Subtitle
         int previousHeight = fontRenderer.getHeight();
         percent = imageSize / 280D;
         fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans", Font.PLAIN, ( int ) ( 15 + ( percent * 40 ) ));
@@ -138,8 +190,12 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         // ICMM - Bottom Bar
         drawRect(0, height - getNavbarHeight(), width, height, new Color(0, 0, 0, 100).getRGB());
 
+        // Buttons
         super.drawScreen(mouseX, mouseY, partialTicks);
 
+        this.buttonList.remove(this.buttonList.stream().filter(guiButton -> guiButton.id == 5).findFirst().orElse(null));
+
+        // ICMM - Fade-In Overlay
         Gui.drawRect(0, 0, width, height, ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(( float ) fadeInTransition.get()).toRGB());
     }
 
@@ -151,10 +207,14 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         double percent = Math.min(height / 540D, 1.0D);
         final int BUTTON_FONT_SIZE = ( int ) ( 18 + ( percent * 15 ) );
         IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans", Font.PLAIN, BUTTON_FONT_SIZE);
+
         BUTTON_WIDTH = ( int ) ( 80 + ( percent * 30 ) );
         BUTTON_HEIGHT = fontRenderer.getHeight();
         BUTTON_SPACE = 10;
         BUTTON_Y = height - getNavbarHeight() + ( BUTTON_HEIGHT / 2 );
+
+        QUICK_ACTION_LEFT = ( int ) ( this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2 + 10);
+        QUICK_ACTION_RIGHT = ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH * 2 - 10);
 
         return fontRenderer;
     }
@@ -168,12 +228,35 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      * <code>2</code> Options<br/>
      * <code>3</code> Quit Game
      */
-    private void addButtons ()
+    public void addButtons ()
     {
         this.buttonList.add(new CleanGuiButton(0, ( int ) ( this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2 ), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.singleplayer")));
         this.buttonList.add(new CleanGuiButton(1, this.width / 2 - BUTTON_SPACE / 2 - BUTTON_WIDTH, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.multiplayer")));
         this.buttonList.add(new CleanGuiButton(2, this.width / 2 + BUTTON_SPACE / 2, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.options")));
         this.buttonList.add(new CleanGuiButton(3, ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH ), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.quit")));
+
+        IFontRenderer fontRenderer = updateSize();
+        boolean left = true;
+
+        for (QuickAction quickAction : AVAILABLE_ACTIONS) {
+            final int stringWidth = fontRenderer.getStringWidth(quickAction.getDisplay());
+            final int xPosition = left ? QUICK_ACTION_LEFT + 50 : QUICK_ACTION_RIGHT - stringWidth - 50;
+            final int buttonId = quickAction.getOwnButtonId();
+
+            this.buttonList.add(new CleanGuiButton(buttonId, xPosition, height, stringWidth, 20, quickAction.getDisplay()).setOpacity(0.5F));
+            this.quickActionTransitions.put(buttonId, DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> riseTransition.isAtEnd() && isQuickActionSelected(buttonId)).build());
+
+            left = !left;
+        }
+    }
+
+    /**
+     * Checks whether the Quick Action represented by the Button is currently selected.
+     */
+    private boolean isQuickActionSelected (int quickActionButtonId)
+    {
+        final List<QuickAction> actions = AVAILABLE_ACTIONS.stream().filter(action -> action.getHeadButtonId() == selectedButton).collect(Collectors.toList());
+        return quickActionButtonId == actions.get(0).getOwnButtonId() || quickActionButtonId == actions.get(1).getOwnButtonId();
     }
 
     /**
@@ -269,6 +352,17 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
                 break;
 
         }
+
+        if (button.id >= 10)
+            getActionByButtonId(button.id).getHandleClick().run();
+    }
+
+    /**
+     * Tries to find the quick action that belongs to the given button id.
+     */
+    private QuickAction getActionByButtonId (int buttonId)
+    {
+        return AVAILABLE_ACTIONS.stream().filter(quickAction -> quickAction.getOwnButtonId() == buttonId).findFirst().orElse(null);
     }
 
     public void confirmClicked (boolean result, int id)

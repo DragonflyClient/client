@@ -1,6 +1,9 @@
 package net.inceptioncloud.minecraftmod.gui.components;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.design.color.ColorTransformator;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
@@ -19,6 +22,22 @@ public class CleanGuiButton extends GuiButton
      * The font renderer with which the button text is drawn.
      */
     private IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans Medium", Font.PLAIN, 22);
+
+    /**
+     * The transition that animates the underline.
+     */
+    private DoubleTransition underline = DoubleTransition.builder().start(0).end(1).autoTransformator(( ForwardBackward ) this::isHighlighted).amountOfSteps(40).build();
+
+    /**
+     * Whether the clean button is highlighted by an underline.
+     */
+    @Getter @Setter
+    private boolean highlighted = false;
+
+    /**
+     * The opacity of the text.
+     */
+    private float opacity = 1.0F;
 
     /**
      * Super-Constructor
@@ -48,12 +67,22 @@ public class CleanGuiButton extends GuiButton
             this.mouseDragged(mc, mouseX, mouseY);
 
             final int i = Math.max(2, ( this.height - fontRenderer.getHeight() ) / 2);
-            fontRenderer.drawCenteredString(this.displayString, this.xPosition + this.width / 2, this.yPosition + i, 0xFFFFFF, true);
+            fontRenderer.drawCenteredString(this.displayString, this.xPosition + this.width / 2, this.yPosition + i, ColorTransformator.of(0xFFFFFF).transformAlpha(opacity).toRGB(), true);
+
+            int centerX = xPosition + (width / 2);
+            int underlineWidth = ( int ) ( ( fontRenderer.getStringWidth(this.displayString) / 2) * underline.get());
+            drawHorizontalLine(centerX - underlineWidth, centerX + underlineWidth, yPosition + fontRenderer.getHeight(), new Color(255, 255, 255, 255).getRGB());
         }
     }
 
     public void setFontRenderer (final IFontRenderer fontRenderer)
     {
         this.fontRenderer = fontRenderer;
+    }
+
+    public CleanGuiButton setOpacity (final float opacity)
+    {
+        this.opacity = opacity;
+        return this;
     }
 }

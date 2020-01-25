@@ -7,4 +7,5 @@ import net.inceptioncloud.minecraftmod.options.OptionKey;
  */
 public class StorageOptions
 {
+    public static final OptionKey<String> LAST_SERVER = OptionKey.<String>newInstance().key("lastServer").defaultValue(( String ) null).validator(str -> true).build();
 }

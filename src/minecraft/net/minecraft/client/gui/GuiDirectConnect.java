@@ -5,13 +5,13 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 
-public class GuiScreenServerList extends GuiScreen
+public class GuiDirectConnect extends GuiScreen
 {
     private final GuiScreen previousScreen;
     private final ServerData serverData;
     private GuiTextField textField;
 
-    public GuiScreenServerList(GuiScreen previousScreen, ServerData serverData)
+    public GuiDirectConnect (GuiScreen previousScreen, ServerData serverData)
     {
         this.previousScreen = previousScreen;
         this.serverData = serverData;
@@ -102,8 +102,8 @@ public class GuiScreenServerList extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRendererObj, I18n.format("selectServer.direct"), this.width / 2, 20, 16777215);
-        this.drawString(this.fontRendererObj, I18n.format("addServer.enterIp"), this.width / 2 - 100, 100, 10526880);
+        drawCenteredString(this.fontRendererObj, I18n.format("selectServer.direct"), this.width / 2, 20, 16777215);
+        drawString(this.fontRendererObj, I18n.format("addServer.enterIp"), this.width / 2 - 100, 100, 10526880);
         this.textField.drawTextBox();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

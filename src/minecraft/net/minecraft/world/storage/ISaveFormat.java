@@ -54,5 +54,5 @@ public interface ISaveFormat
     /**
      * Return whether the given world can be loaded.
      */
-    boolean canLoadWorld(String p_90033_1_);
+    boolean canLoadWorld(String folderName);
 }

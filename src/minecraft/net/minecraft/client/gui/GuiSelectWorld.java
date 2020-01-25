@@ -22,9 +22,9 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
     private final DateFormat field_146633_h = new SimpleDateFormat();
     protected GuiScreen parentScreen;
     protected String field_146628_f = "Select world";
-    private boolean field_146634_i;
+    private boolean joiningWorld;
     private int field_146640_r;
-    private java.util.List<SaveFormatComparator> field_146639_s;
+    private java.util.List<SaveFormatComparator> worldList;
     private GuiSelectWorld.List field_146638_t;
     private String field_146637_u;
     private String field_146636_v;
@@ -88,22 +88,22 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
     private void func_146627_h () throws AnvilConverterException
     {
         ISaveFormat isaveformat = this.mc.getSaveLoader();
-        this.field_146639_s = isaveformat.getSaveList();
-        Collections.sort(this.field_146639_s);
+        this.worldList = isaveformat.getSaveList();
+        Collections.sort(this.worldList);
         this.field_146640_r = -1;
     }
 
-    protected String func_146621_a (int p_146621_1_)
+    protected String getFolderNameForWorldIndex (int index)
     {
-        return this.field_146639_s.get(p_146621_1_).getFileName();
+        return this.worldList.get(index).getFileName();
     }
 
-    protected String func_146614_d (int p_146614_1_)
+    protected String getWorldNameForWorldIndex (int index)
     {
-        String s = this.field_146639_s.get(p_146614_1_).getDisplayName();
+        String s = this.worldList.get(index).getDisplayName();
 
         if (StringUtils.isEmpty(s)) {
-            s = I18n.format("selectWorld.world") + " " + ( p_146614_1_ + 1 );
+            s = I18n.format("selectWorld.world") + " " + ( index + 1 );
         }
 
         return s;
@@ -130,7 +130,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
     {
         if (button.enabled) {
             if (button.id == 2) {
-                String s = this.func_146614_d(this.field_146640_r);
+                String s = this.getWorldNameForWorldIndex(this.field_146640_r);
 
                 if (s != null) {
                     this.field_146643_x = true;
@@ -142,12 +142,12 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
             } else if (button.id == 3) {
                 this.mc.displayGuiScreen(new GuiCreateWorld(this));
             } else if (button.id == 6) {
-                this.mc.displayGuiScreen(new GuiRenameWorld(this, this.func_146621_a(this.field_146640_r)));
+                this.mc.displayGuiScreen(new GuiRenameWorld(this, this.getFolderNameForWorldIndex(this.field_146640_r)));
             } else if (button.id == 0) {
                 this.mc.displayGuiScreen(this.parentScreen);
             } else if (button.id == 7) {
                 GuiCreateWorld guicreateworld = new GuiCreateWorld(this);
-                ISaveHandler isavehandler = this.mc.getSaveLoader().getSaveLoader(this.func_146621_a(this.field_146640_r), false);
+                ISaveHandler isavehandler = this.mc.getSaveLoader().getSaveLoader(this.getFolderNameForWorldIndex(this.field_146640_r), false);
                 WorldInfo worldinfo = isavehandler.loadWorldInfo();
                 isavehandler.flush();
                 guicreateworld.func_146318_a(worldinfo);
@@ -158,26 +158,26 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
         }
     }
 
-    public void joinSelectedWorld (int integer)
+    public void joinSelectedWorld (int index)
     {
         this.mc.displayGuiScreen(null);
 
-        if (!this.field_146634_i) {
-            this.field_146634_i = true;
-            String s = this.func_146621_a(integer);
+        if (!this.joiningWorld) {
+            this.joiningWorld = true;
+            String folderName = this.getFolderNameForWorldIndex(index);
 
-            if (s == null) {
-                s = "World" + integer;
+            if (folderName == null) {
+                folderName = "World" + index;
             }
 
-            String s1 = this.func_146614_d(integer);
+            String worldName = this.getWorldNameForWorldIndex(index);
 
-            if (s1 == null) {
-                s1 = "World" + integer;
+            if (worldName == null) {
+                worldName = "World" + index;
             }
 
-            if (this.mc.getSaveLoader().canLoadWorld(s)) {
-                this.mc.launchIntegratedServer(s, s1, null);
+            if (this.mc.getSaveLoader().canLoadWorld(folderName)) {
+                this.mc.launchIntegratedServer(folderName, worldName, null);
             }
         }
     }
@@ -190,7 +190,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
             if (result) {
                 ISaveFormat isaveformat = this.mc.getSaveLoader();
                 isaveformat.flushCache();
-                isaveformat.deleteWorldDirectory(this.func_146621_a(id));
+                isaveformat.deleteWorldDirectory(this.getFolderNameForWorldIndex(id));
 
                 try {
                     this.func_146627_h();
@@ -209,7 +209,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
     public void drawScreen (int mouseX, int mouseY, float partialTicks)
     {
         this.field_146638_t.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, this.field_146628_f, this.width / 2, 20, 16777215);
+        drawCenteredString(this.fontRendererObj, this.field_146628_f, this.width / 2, 20, 16777215);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -222,7 +222,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
 
         protected int getSize ()
         {
-            return GuiSelectWorld.this.field_146639_s.size();
+            return GuiSelectWorld.this.worldList.size();
         }
 
         protected void elementClicked (int slotIndex, boolean isDoubleClick, int mouseX, int mouseY)
@@ -246,7 +246,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
 
         protected int getContentHeight ()
         {
-            return GuiSelectWorld.this.field_146639_s.size() * 36;
+            return GuiSelectWorld.this.worldList.size() * 36;
         }
 
         protected void drawBackground ()
@@ -256,7 +256,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
 
         protected void drawSlot (int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn)
         {
-            SaveFormatComparator saveformatcomparator = GuiSelectWorld.this.field_146639_s.get(entryID);
+            SaveFormatComparator saveformatcomparator = GuiSelectWorld.this.worldList.get(entryID);
             String s = saveformatcomparator.getDisplayName();
 
             if (StringUtils.isEmpty(s)) {
