@@ -12,6 +12,8 @@ public class DefaultSubscribers
      */
     public static void register (ModEventBus modEventBus)
     {
-        modEventBus.register(new AuthenticationSubscriber());
+        modEventBus
+            .registerAnd(new AuthenticationSubscriber())
+            .register(new LastServerSaveSubscriber());
     }
 }

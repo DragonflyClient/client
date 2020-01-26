@@ -42,7 +42,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     /**
      * Provides all available quick actions.
      */
-    public static final List<QuickAction> AVAILABLE_ACTIONS = Arrays.asList(
+    public final List<QuickAction> AVAILABLE_ACTIONS = Arrays.asList(
         new LastMapAction(), new CreateMapAction(),
         new LastServerAction(), new DirectConnectAction(),
         new ResourcePackAction(), new ModOptionsAction(),
@@ -96,7 +96,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      *
      * @see #addButtons() Which Button IDs are used
      */
-    private long drawTime = -1;
+    private static long drawTime = -1;
 
     /**
      * The transitions that are responsible for the different Quick Action Buttons.
@@ -111,7 +111,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     /**
      * Provides the value for the fading in of the main menu after the splash screen.
      */
-    private DoubleTransition fadeInTransition = DoubleTransition.builder().start(1).end(0).amountOfSteps(500).autoTransformator(( ForwardNothing ) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000).build();
+    private static DoubleTransition fadeInTransition = DoubleTransition.builder().start(1).end(0).amountOfSteps(500).autoTransformator(( ForwardNothing ) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000).build();
 
     /**
      * Default Constructor

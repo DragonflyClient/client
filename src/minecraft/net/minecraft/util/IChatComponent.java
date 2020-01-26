@@ -32,8 +32,7 @@ public interface IChatComponent extends Iterable<IChatComponent>
     IChatComponent appendSibling(IChatComponent component);
 
     /**
-     * Gets the text of this component, without any special formatting codes added, for chat.  TODO: why is this two
-     * different methods?
+     * Gets the text of this component, without any special formatting codes added, for chat.
      */
     String getUnformattedTextForChat();
 
