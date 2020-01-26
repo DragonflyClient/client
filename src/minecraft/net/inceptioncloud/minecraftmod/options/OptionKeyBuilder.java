@@ -8,9 +8,11 @@ public final class OptionKeyBuilder<T>
     private String key;
     private Predicate<T> validator = obj -> true;
     private Supplier<T> defaultValue = () -> null;
+    private Class<T> typeClass;
 
-    OptionKeyBuilder ()
+    OptionKeyBuilder (Class<T> typeClass)
     {
+        this.typeClass = typeClass;
     }
 
     public OptionKeyBuilder<T> key (String key)
@@ -39,6 +41,6 @@ public final class OptionKeyBuilder<T>
 
     public OptionKey<T> build ()
     {
-        return new OptionKey<>(key, validator, defaultValue);
+        return new OptionKey<>(typeClass, key, validator, defaultValue);
     }
 }

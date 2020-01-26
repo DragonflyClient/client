@@ -1,18 +1,20 @@
 package net.inceptioncloud.minecraftmod.options;
 
+import com.google.common.reflect.TypeParameter;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.event.play.ServerConnectingEvent;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class manages the reading and writing of the options to the specific file.
  */
-@SuppressWarnings ( "unchecked" )
 public class Options
 {
     /**
@@ -21,9 +23,19 @@ public class Options
     public static final File OPTIONS_FILE = new File("inceptioncloud/options.json");
 
     /**
+     * Contains all available type converters.
+     */
+    private static final Map<Class<?>, TypeConverter<?>> typeConverters = new HashMap<>();
+
+    /**
      * The last read content (via {@link #contentUpdate()}) in JSON-Format.
      */
-    private JSONObject jsonObject;
+    private JsonObject jsonObject;
+
+    /**
+     * The Gson instance that allows the (de-)serialization of objects.
+     */
+    private Gson gson;
 
     /**
      * Initial Constructor that updates the content when called.
@@ -31,6 +43,7 @@ public class Options
     public Options ()
     {
         InceptionMod.getInstance().getEventBus().register(new OptionSaveSubscriber());
+        gson = new GsonBuilder().setPrettyPrinting().create();
         contentUpdate();
     }
 
@@ -43,12 +56,12 @@ public class Options
 
             LogManager.getLogger().info("Loading Settings...");
 
-            if (!OPTIONS_FILE.exists()) jsonObject = new JSONObject();
-            else jsonObject = ( JSONObject ) new JSONParser().parse(new FileReader(OPTIONS_FILE));
+            if (!OPTIONS_FILE.exists()) jsonObject = new JsonObject();
+            else jsonObject = new JsonParser().parse(new FileReader(OPTIONS_FILE)).getAsJsonObject();
 
             LogManager.getLogger().info(jsonObject);
 
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -63,9 +76,9 @@ public class Options
             if (!OPTIONS_FILE.exists() && !OPTIONS_FILE.createNewFile())
                 throw new IOException("Unable to create options.json file!");
 
-            FileWriter file = new FileWriter(OPTIONS_FILE);
-            file.write(jsonObject.toJSONString());
-            file.flush();
+            FileWriter fw = new FileWriter(OPTIONS_FILE);
+            fw.write(jsonObject.toString());
+            fw.flush();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,21 +99,17 @@ public class Options
     {
         Validate.notNull(optionKey, "The key for the options value cannot be null!");
 
-        Object object = jsonObject.get(optionKey.getKey());
-        T value;
+        if (jsonObject.has(optionKey.getKey())) {
 
-        try {
-            value = ( T ) object;
+            JsonElement jsonElement = jsonObject.get(optionKey.getKey());
+            T value = gson.fromJson(jsonElement, optionKey.getTypeClass());
 
-            if (value != null && optionKey.getValidator().test(value))
+            if (optionKey.getValidator().test(value))
                 return value;
-        } catch (ClassCastException ignored) {
         }
 
-        value = optionKey.getDefaultValue().get();
-        jsonObject.put(optionKey.getKey(), value);
-        LogManager.getLogger().warn("---> The default value for {} has been restored: {}", optionKey.getKey(), value);
-
+        T value = optionKey.getDefaultValue().get();
+        setValue(optionKey, value);
         return value;
     }
 
@@ -120,7 +129,15 @@ public class Options
             return false;
         }
 
-        jsonObject.put(optionKey.getKey(), value);
+        jsonObject.add(optionKey.getKey(), gson.toJsonTree(value));
         return true;
+    }
+
+    /**
+     * Gson-Getter
+     */
+    public Gson getGson ()
+    {
+        return this.gson;
     }
 }

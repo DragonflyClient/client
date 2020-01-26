@@ -8,34 +8,34 @@ public class ServerData
 {
     public String serverName;
     public String serverIP;
+    public boolean lan;
 
     /**
      * the string indicating number of players on and capacity of the server that is shown on the server browser (i.e.
      * "5/20" meaning 5 slots used out of 20 slots total)
      */
-    public String populationInfo;
+    public transient String populationInfo;
 
     /**
      * (better variable name would be 'hostname') server name as displayed in the server browser's second line (grey
      * text)
      */
-    public String serverMOTD;
+    public transient String serverMOTD;
 
     /**
      * last server ping that showed up in the server browser
      */
-    public long pingToServer;
-    public int version = 47;
+    public transient long pingToServer;
+    public transient int version = 47;
 
     /**
      * Game version for this server.
      */
-    public String gameVersion = "1.8.8";
-    public boolean field_78841_f;
-    public String playerList;
-    private ServerData.ServerResourceMode resourceMode = ServerData.ServerResourceMode.PROMPT;
-    private String serverIcon;
-    private boolean lan;
+    public transient String gameVersion = "1.8.8";
+    public transient boolean field_78841_f;
+    public transient String playerList;
+    private transient ServerData.ServerResourceMode resourceMode = ServerData.ServerResourceMode.PROMPT;
+    private transient String serverIcon;
 
     public ServerData (String name, String ip, boolean lan)
     {

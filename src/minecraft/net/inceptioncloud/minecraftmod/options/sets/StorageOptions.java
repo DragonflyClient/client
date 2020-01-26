@@ -8,5 +8,5 @@ import net.minecraft.client.multiplayer.ServerData;
  */
 public class StorageOptions
 {
-    public static final OptionKey<ServerData> LAST_SERVER = OptionKey.<ServerData>newInstance().key("lastServer").defaultValue(( ServerData ) null).validator(str -> true).build();
+    public static final OptionKey<ServerData> LAST_SERVER = OptionKey.newInstance(ServerData.class).key("lastServer").defaultValue(( ServerData ) null).validator(str -> true).build();
 }

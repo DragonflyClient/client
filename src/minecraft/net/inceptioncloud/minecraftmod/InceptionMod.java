@@ -6,6 +6,7 @@ import net.inceptioncloud.minecraftmod.design.font.FontManager;
 import net.inceptioncloud.minecraftmod.design.splash.ModSplashScreen;
 import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
 import net.inceptioncloud.minecraftmod.event.ModEventBus;
+import net.inceptioncloud.minecraftmod.event.play.ServerConnectingEvent;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.options.OptionKey;
 import net.inceptioncloud.minecraftmod.options.Options;
@@ -16,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.Display;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * The main class of the Inception Cloud Minecraft Mod.
