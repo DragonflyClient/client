@@ -77,7 +77,7 @@ public class Options
                 throw new IOException("Unable to create options.json file!");
 
             FileWriter fw = new FileWriter(OPTIONS_FILE);
-            fw.write(jsonObject.toString());
+            fw.write(gson.toJson(jsonObject));
             fw.flush();
 
         } catch (IOException e) {

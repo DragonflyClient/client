@@ -13,6 +13,7 @@ import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.quit.Rel
 import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.quit.RestartAction;
 import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.singleplayer.CreateMapAction;
 import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.singleplayer.LastMapAction;
+import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
@@ -35,7 +36,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
+public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
 {
     public static final String informationText = "Please click " + EnumChatFormatting.UNDERLINE + "here" + EnumChatFormatting.RESET + " for more information.";
 
@@ -99,6 +100,11 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     private static long drawTime = -1;
 
     /**
+     * The amount of ticks when the cursor hovered the navigation bar.
+     */
+    private static long cursorHoverTime = 0;
+
+    /**
      * The transitions that are responsible for the different Quick Action Buttons.
      */
     private Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
@@ -106,7 +112,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     /**
      * The transition that lets the navigation bar rise when it's hovered.
      */
-    private DoubleTransition riseTransition = DoubleTransition.builder().start(1).end(2).amountOfSteps(30).autoTransformator(( ForwardBackward ) () -> mouseY >= height - getNavbarHeight() && mouseY <= height).build();
+    private DoubleTransition riseTransition = DoubleTransition.builder().start(1).end(2).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> cursorHoverTime >= 100).build();
 
     /**
      * Provides the value for the fading in of the main menu after the splash screen.
@@ -118,6 +124,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      */
     public GuiMainMenu ()
     {
+        InceptionMod.getInstance().handleTickable(this);
+
         this.openGLWarning2 = informationText;
         this.openGLWarning1 = "";
 
@@ -141,7 +149,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      */
     public void drawScreen (int mouseX, int mouseY, float partialTicks)
     {
-        if (this.drawTime == -1) this.drawTime = System.currentTimeMillis();
+        if (drawTime == -1) drawTime = System.currentTimeMillis();
         this.mouseY = mouseY;
         this.drawGradientBackground();
         final IFontRenderer finalFontRenderer = updateSize();
@@ -217,6 +225,18 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         QUICK_ACTION_RIGHT = ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH * 2 - 10);
 
         return fontRenderer;
+    }
+
+    /**
+     * Handle the mod tick.
+     */
+    @Override
+    public void modTick ()
+    {
+        if (mouseY >= height - getNavbarHeight() && mouseY <= height)
+            cursorHoverTime++;
+        else
+            cursorHoverTime = 0;
     }
 
     /**
