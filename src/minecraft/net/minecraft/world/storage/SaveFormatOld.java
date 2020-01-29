@@ -266,9 +266,9 @@ public class SaveFormatOld implements ISaveFormat
     /**
      * Return whether the given world can be loaded.
      */
-    public boolean canLoadWorld(String p_90033_1_)
+    public boolean canLoadWorld(String folderName)
     {
-        File file1 = new File(this.savesDirectory, p_90033_1_);
+        File file1 = new File(this.savesDirectory, folderName);
         return file1.isDirectory();
     }
 }

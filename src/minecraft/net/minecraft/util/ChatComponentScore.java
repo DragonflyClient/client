@@ -38,7 +38,7 @@ public class ChatComponentScore extends ChatComponentStyle
     }
 
     /**
-     * Gets the text of this component, without any special formatting codes added, for chat.  TODO: why is this two
+     * Gets the text of this component, without any special formatting codes added, for chat.
      * different methods?
      */
     public String getUnformattedTextForChat()
@@ -53,7 +53,7 @@ public class ChatComponentScore extends ChatComponentStyle
             if (scoreboard.entityHasObjective(this.name, scoreobjective))
             {
                 Score score = scoreboard.getValueFromObjective(this.name, scoreobjective);
-                this.setValue(String.format("%d", new Object[] {Integer.valueOf(score.getScorePoints())}));
+                this.setValue(String.format("%d", score.getScorePoints()));
             }
             else
             {

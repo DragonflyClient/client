@@ -61,9 +61,9 @@ public class SaveFormatComparator implements Comparable<SaveFormatComparator>
         return this.lastTimePlayed;
     }
 
-    public int compareTo(SaveFormatComparator p_compareTo_1_)
+    public int compareTo(SaveFormatComparator other)
     {
-        return this.lastTimePlayed < p_compareTo_1_.lastTimePlayed ? 1 : (this.lastTimePlayed > p_compareTo_1_.lastTimePlayed ? -1 : this.fileName.compareTo(p_compareTo_1_.fileName));
+        return this.lastTimePlayed < other.lastTimePlayed ? 1 : (this.lastTimePlayed > other.lastTimePlayed ? -1 : this.fileName.compareTo(other.fileName));
     }
 
     /**

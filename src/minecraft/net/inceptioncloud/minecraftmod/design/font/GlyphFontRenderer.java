@@ -512,7 +512,6 @@ public class GlyphFontRenderer implements IFontRenderer
     public String trimStringToWidth (String text, int maxWidth, boolean reverse)
     {
         StringBuilder stringbuilder = new StringBuilder();
-        // TODO [21.01.2020]: Fix this
 
         boolean colorCodeActivated = false;
 

@@ -56,7 +56,7 @@ public class ModSplashScreen
     /**
      * Whether the splash screen is active due to the loading of the client.
      */
-    @Setter
+    @Setter @Getter
     private boolean active = true;
 
     /**

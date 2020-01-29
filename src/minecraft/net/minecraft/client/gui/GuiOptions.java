@@ -18,18 +18,22 @@ import net.minecraft.world.EnumDifficulty;
 public class GuiOptions extends GuiScreen implements GuiYesNoCallback
 {
     private static final GameSettings.Options[] field_146440_f = new GameSettings.Options[] {GameSettings.Options.FOV};
-    private final GuiScreen field_146441_g;
+    private final GuiScreen parentScreen;
 
     /** Reference to the GameSettings object. */
-    private final GameSettings game_settings_1;
+    private final GameSettings gameSettings;
     private GuiButton field_175357_i;
     private GuiLockIconButton field_175356_r;
     protected String field_146442_a = "Options";
 
-    public GuiOptions(GuiScreen p_i1046_1_, GameSettings p_i1046_2_)
+    public GuiOptions(GuiScreen parentScreen, GameSettings gameSettings)
     {
-        this.field_146441_g = p_i1046_1_;
-        this.game_settings_1 = p_i1046_2_;
+        this.parentScreen = parentScreen;
+        this.gameSettings = gameSettings;
+
+        // TODO [24.01.2020]: Add Language Button to Options
+        // this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, j + 72 + 12));
+        // -> this.mc.displayGuiScreen(new GuiLanguage(this, this.mc.gameSettings, this.mc.getLanguageManager()));
     }
 
     /**
@@ -39,7 +43,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
     public void initGui()
     {
         int i = 0;
-        this.field_146442_a = I18n.format("options.title", new Object[0]);
+        this.field_146442_a = I18n.format("options.title");
 
         for (GameSettings.Options gamesettings$options : field_146440_f)
         {
@@ -49,7 +53,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
             }
             else
             {
-                GuiOptionButton guioptionbutton = new GuiOptionButton(gamesettings$options.returnEnumOrdinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 - 12 + 24 * (i >> 1), gamesettings$options, this.game_settings_1.getKeyBinding(gamesettings$options));
+                GuiOptionButton guioptionbutton = new GuiOptionButton(gamesettings$options.returnEnumOrdinal(), this.width / 2 - 155 + i % 2 * 160, this.height / 6 - 12 + 24 * (i >> 1), gamesettings$options, this.gameSettings.getKeyBinding(gamesettings$options));
                 this.buttonList.add(guioptionbutton);
             }
 
@@ -133,8 +137,8 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
             if (button.id < 100 && button instanceof GuiOptionButton)
             {
                 GameSettings.Options gamesettings$options = ((GuiOptionButton)button).returnEnumOptions();
-                this.game_settings_1.setOptionValue(gamesettings$options, 1);
-                button.displayString = this.game_settings_1.getKeyBinding(GameSettings.Options.getEnumOptions(button.id));
+                this.gameSettings.setOptionValue(gamesettings$options, 1);
+                button.displayString = this.gameSettings.getKeyBinding(GameSettings.Options.getEnumOptions(button.id));
             }
 
             if (button.id == 108)
@@ -162,37 +166,37 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
             if (button.id == 101)
             {
                 this.mc.gameSettings.saveOptions();
-                this.mc.displayGuiScreen(new GuiVideoSettings(this, this.game_settings_1));
+                this.mc.displayGuiScreen(new GuiVideoSettings(this, this.gameSettings));
             }
 
             if (button.id == 100)
             {
                 this.mc.gameSettings.saveOptions();
-                this.mc.displayGuiScreen(new GuiControls(this, this.game_settings_1));
+                this.mc.displayGuiScreen(new GuiControls(this, this.gameSettings));
             }
 
             if (button.id == 102)
             {
                 this.mc.gameSettings.saveOptions();
-                this.mc.displayGuiScreen(new GuiLanguage(this, this.game_settings_1, this.mc.getLanguageManager()));
+                this.mc.displayGuiScreen(new GuiLanguage(this, this.gameSettings, this.mc.getLanguageManager()));
             }
 
             if (button.id == 103)
             {
                 this.mc.gameSettings.saveOptions();
-                this.mc.displayGuiScreen(new ScreenChatOptions(this, this.game_settings_1));
+                this.mc.displayGuiScreen(new ScreenChatOptions(this, this.gameSettings));
             }
 
             if (button.id == 104)
             {
                 this.mc.gameSettings.saveOptions();
-                this.mc.displayGuiScreen(new GuiSnooper(this, this.game_settings_1));
+                this.mc.displayGuiScreen(new GuiSnooper(this, this.gameSettings));
             }
 
             if (button.id == 200)
             {
                 this.mc.gameSettings.saveOptions();
-                this.mc.displayGuiScreen(this.field_146441_g);
+                this.mc.displayGuiScreen(this.parentScreen);
             }
 
             if (button.id == 105)
@@ -204,7 +208,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
             if (button.id == 106)
             {
                 this.mc.gameSettings.saveOptions();
-                this.mc.displayGuiScreen(new GuiScreenOptionsSounds(this, this.game_settings_1));
+                this.mc.displayGuiScreen(new GuiScreenOptionsSounds(this, this.gameSettings));
             }
 
             if (button.id == 107)
@@ -214,7 +218,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
 
                 if (istream.func_152936_l() && istream.func_152928_D())
                 {
-                    this.mc.displayGuiScreen(new GuiStreamOptions(this, this.game_settings_1));
+                    this.mc.displayGuiScreen(new GuiStreamOptions(this, this.gameSettings));
                 }
                 else
                 {

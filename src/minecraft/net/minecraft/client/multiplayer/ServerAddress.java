@@ -27,26 +27,26 @@ public class ServerAddress
         return this.serverPort;
     }
 
-    public static ServerAddress func_78860_a(String p_78860_0_)
+    public static ServerAddress retrieveServerAddress (String serverIP)
     {
-        if (p_78860_0_ == null)
+        if (serverIP == null)
         {
             return null;
         }
         else
         {
-            String[] astring = p_78860_0_.split(":");
+            String[] astring = serverIP.split(":");
 
-            if (p_78860_0_.startsWith("["))
+            if (serverIP.startsWith("["))
             {
-                int i = p_78860_0_.indexOf("]");
+                int i = serverIP.indexOf("]");
 
                 if (i > 0)
                 {
-                    String s = p_78860_0_.substring(1, i);
-                    String s1 = p_78860_0_.substring(i + 1).trim();
+                    String s = serverIP.substring(1, i);
+                    String s1 = serverIP.substring(i + 1).trim();
 
-                    if (s1.startsWith(":") && s1.length() > 0)
+                    if (s1.startsWith(":"))
                     {
                         s1 = s1.substring(1);
                         astring = new String[] {s, s1};
@@ -60,7 +60,7 @@ public class ServerAddress
 
             if (astring.length > 2)
             {
-                astring = new String[] {p_78860_0_};
+                astring = new String[] {serverIP};
             }
 
             String s2 = astring[0];

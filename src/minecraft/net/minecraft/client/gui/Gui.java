@@ -23,7 +23,7 @@ public class Gui
             endX = i;
         }
 
-        drawRect(startX, y, endX + 1, y + 1, color);
+        drawRect(startX, y, endX, y + 1, color);
     }
 
     /**
@@ -148,7 +148,7 @@ public class Gui
      * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
      * topColor, bottomColor
      */
-    protected void drawGradientRect (int left, int top, int right, int bottom, int startColor, int endColor)
+    public void drawGradientRect (int left, int top, int right, int bottom, int startColor, int endColor)
     {
         float f = ( float ) ( startColor >> 24 & 255 ) / 255.0F;
         float f1 = ( float ) ( startColor >> 16 & 255 ) / 255.0F;
@@ -180,7 +180,7 @@ public class Gui
     /**
      * Renders the specified text to the screen, center-aligned. Args : renderer, string, x, y, color
      */
-    public void drawCenteredString (FontRenderer fontRendererIn, String text, int x, int y, int color)
+    public static void drawCenteredString (FontRenderer fontRendererIn, String text, int x, int y, int color)
     {
         fontRendererIn.drawStringWithShadow(text, ( float ) ( x - fontRendererIn.getStringWidth(text) / 2 ), ( float ) y, color);
     }
@@ -188,7 +188,7 @@ public class Gui
     /**
      * Renders the specified text to the screen. Args : renderer, string, x, y, color
      */
-    public void drawString (FontRenderer fontRendererIn, String text, int x, int y, int color)
+    public static void drawString (FontRenderer fontRendererIn, String text, int x, int y, int color)
     {
         fontRendererIn.drawStringWithShadow(text, ( float ) x, ( float ) y, color);
     }

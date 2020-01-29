@@ -14,6 +14,11 @@ import java.util.function.Supplier;
 public class OptionKey<T>
 {
     /**
+     * The class of the value's type.
+     */
+    private final Class<T> typeClass;
+
+    /**
      * The key that is set for the option in the file.
      */
     private final String key;
@@ -34,8 +39,9 @@ public class OptionKey<T>
      * @param validator Validates whether the current value is acceptable
      * @param defaultValue Supplies the default value
      */
-    public OptionKey (final String key, final Predicate<T> validator, final Supplier<T> defaultValue)
+    public OptionKey (final Class<T> typeClass, final String key, final Predicate<T> validator, final Supplier<T> defaultValue)
     {
+        this.typeClass = typeClass;
         this.key = key;
         this.validator = validator;
         this.defaultValue = defaultValue;
@@ -60,8 +66,8 @@ public class OptionKey<T>
     /**
      * Returns a new {@link OptionKeyBuilder} to build a new instance of the {@link OptionKey} class.
      */
-    public static <T> OptionKeyBuilder<T> newInstance ()
+    public static <T> OptionKeyBuilder<T> newInstance (Class<T> typeClass)
     {
-        return new OptionKeyBuilder<>();
+        return new OptionKeyBuilder<>(typeClass);
     }
 }

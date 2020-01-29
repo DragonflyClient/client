@@ -7,7 +7,6 @@ import net.inceptioncloud.minecraftmod.design.splash.ModSplashScreen;
 import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
 import net.inceptioncloud.minecraftmod.event.ModEventBus;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
-import net.inceptioncloud.minecraftmod.options.OptionKey;
 import net.inceptioncloud.minecraftmod.options.Options;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
@@ -16,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.Display;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * The main class of the Inception Cloud Minecraft Mod.
@@ -57,6 +58,16 @@ public class InceptionMod
     private List<Tickable> tickables = Lists.newArrayList();
 
     /**
+     * If a tickable has an associated class, it is stored in here so it can be replaced.
+     */
+    private Map<Class<?>, Tickable> associatedTickables = new HashMap<>();
+
+    /**
+     * The {@link Timer} that performs the mod ticks.
+     */
+    private Timer tickTimer;
+
+    /**
      * The last amount of mod ticks per second.
      */
     @Getter
@@ -89,7 +100,8 @@ public class InceptionMod
         richPresenceManager = new RichPresenceManager();
         gameStateManager = new GameStateManager();
 
-        new Timer().scheduleAtFixedRate(new TimerTask()
+        tickTimer = new Timer();
+        tickTimer.scheduleAtFixedRate(new TimerTask()
         {
             @Override
             public void run ()
@@ -110,9 +122,18 @@ public class InceptionMod
     public static void create ()
     {
         if (instance != null)
-            throw new UnsupportedOperationException("The Mod has already been created!");
+            instance.shutdownInstance();
 
         new InceptionMod();
+    }
+
+    /**
+     * Used to shut down the current InceptionCloud Minecraft Mod Instance.
+     */
+    public void shutdownInstance ()
+    {
+        LogManager.getLogger().info("Shutting down InceptionCloud Minecraft Mod Instance...");
+        tickTimer.cancel();
     }
 
     /**
@@ -153,11 +174,31 @@ public class InceptionMod
     /**
      * Add a tickable interface to handle.
      *
-     * @param tickable The implementing class
+     * @param tickable        The implementing class
+     * @param associatedClass The class that this tickable is connected with if it should be replaced
+     */
+    public void handleTickable (Tickable tickable, Class<?> associatedClass)
+    {
+        if (associatedClass != null && associatedTickables.containsKey(associatedClass)) {
+            Tickable previous = associatedTickables.get(associatedClass);
+            tickables.remove(previous);
+            LogManager.getLogger().info("Replaced previous Tickable " + previous.getClass().getSimpleName());
+        }
+
+        LogManager.getLogger().info("Mod is now handling Tickable " + tickable.getClass().getSimpleName());
+        tickables.add(tickable);
+
+        if (associatedClass != null)
+            associatedTickables.put(associatedClass, tickable);
+    }
+
+    /**
+     * Convenient Method
+     *
+     * @see #handleTickable(Tickable, Class) Original Method
      */
     public void handleTickable (Tickable tickable)
     {
-        LogManager.getLogger().info("Mod is now handling Tickable " + tickable.getClass().getSimpleName());
-        tickables.add(tickable);
+        this.handleTickable(tickable, null);
     }
 }

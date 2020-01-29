@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.*;
 import java.net.Proxy.Type;
 import java.util.List;
@@ -56,7 +58,8 @@ public class Main
         if (s != null) {
             try {
                 proxy = new Proxy(Type.SOCKS, new InetSocketAddress(s, optionset.valueOf(specProxyPort)));
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         }
 
         final String s1 = optionset.valueOf(specProxyUser);
@@ -98,7 +101,7 @@ public class Main
             }
         });
         Thread.currentThread().setName("Client thread");
-        ( new Minecraft(gameconfiguration) ).run();
+        new Minecraft(gameconfiguration).run();
     }
 
     private static boolean isNullOrEmpty (String str)

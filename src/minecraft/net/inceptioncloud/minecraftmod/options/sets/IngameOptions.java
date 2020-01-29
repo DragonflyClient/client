@@ -7,5 +7,5 @@ import net.inceptioncloud.minecraftmod.options.OptionKey;
  */
 public class IngameOptions
 {
-    public static final OptionKey<Boolean> ENABLE_ZOOM_ANIMATION = OptionKey.<Boolean>newInstance().key("enableZoomAnimation").defaultValue(Boolean.TRUE).validator(val -> true).build();
+    public static final OptionKey<Boolean> ENABLE_ZOOM_ANIMATION = OptionKey.newInstance(Boolean.class).key("enableZoomAnimation").defaultValue(Boolean.TRUE).validator(val -> true).build();
 }
