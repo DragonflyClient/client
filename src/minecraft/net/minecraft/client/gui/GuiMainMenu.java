@@ -4,15 +4,15 @@ import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.*;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.gui.components.CleanGuiButton;
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.QuickAction;
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.multiplayer.DirectConnectAction;
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.multiplayer.LastServerAction;
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.options.ModOptionsAction;
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.options.ResourcePackAction;
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.quit.ReloadAction;
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.quit.RestartAction;
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.singleplayer.CreateMapAction;
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.singleplayer.LastMapAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.QuickAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.multiplayer.DirectConnectAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.multiplayer.LastServerAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.options.ModOptionsAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.options.ResourcePackAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.quit.ReloadAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.quit.RestartAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.singleplayer.CreateMapAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.singleplayer.LastMapAction;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
@@ -124,7 +124,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
      */
     public GuiMainMenu ()
     {
-        InceptionMod.getInstance().handleTickable(this);
+        InceptionMod.getInstance().handleTickable(this, GuiMainMenu.class);
 
         this.openGLWarning2 = informationText;
         this.openGLWarning1 = "";

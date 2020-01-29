@@ -1698,26 +1698,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                             this.ingameGUI.getChatGUI().clearChatMessages();
                         }
 
-                        if (k == 31 && Keyboard.isKeyDown(61)) {
-                            this.refreshResources();
-                        }
-
-                        if (k == 17 && Keyboard.isKeyDown(61)) {
-                        }
-
-                        if (k == 18 && Keyboard.isKeyDown(61)) {
-                        }
-
-                        if (k == 47 && Keyboard.isKeyDown(61)) {
-                        }
-
-                        if (k == 38 && Keyboard.isKeyDown(61)) {
-                        }
-
-                        if (k == 22 && Keyboard.isKeyDown(61)) {
-                        }
-
-                        if (k == 20 && Keyboard.isKeyDown(61)) {
+                        if ((k == 31 || k == 20) && Keyboard.isKeyDown(61)) {
                             this.refreshResources();
                         }
 

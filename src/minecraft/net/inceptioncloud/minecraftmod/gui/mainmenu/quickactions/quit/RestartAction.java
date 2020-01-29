@@ -1,8 +1,7 @@
-package net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.quit;
+package net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.quit;
 
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.QuickAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.QuickAction;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.main.Main;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;

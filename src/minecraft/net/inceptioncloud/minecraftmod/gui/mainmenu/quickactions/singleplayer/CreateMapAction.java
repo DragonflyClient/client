@@ -1,6 +1,6 @@
-package net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.singleplayer;
+package net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.singleplayer;
 
-import net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions.QuickAction;
+import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.QuickAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiCreateWorld;
 

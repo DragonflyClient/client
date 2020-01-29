@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.gui.custom.mainmenu.quickactions;
+package net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions;
 
 import lombok.Getter;
 import net.minecraft.client.gui.GuiMainMenu;
