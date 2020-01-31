@@ -6,7 +6,6 @@ import java.io.*;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -133,7 +132,7 @@ public abstract class GuiContainer extends GuiScreen
                 int j1 = slot.xDisplayPosition;
                 int k1 = slot.yDisplayPosition;
                 GlStateManager.colorMask(true, true, true, false);
-                this.drawGradientRect(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
+                this.drawGradientVertical(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
                 GlStateManager.colorMask(true, true, true, true);
                 GlStateManager.enableLighting();
                 GlStateManager.enableDepth();

@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.gui.components;
+package net.inceptioncloud.minecraftmod.ui.components;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ import java.awt.*;
 /**
  * A {@link GuiButton} with custom font and transparent background!
  */
-public class CleanGuiButton extends GuiButton
+public class TransparentButton extends GuiButton
 {
     /**
      * The font renderer with which the button text is drawn.
@@ -42,7 +42,7 @@ public class CleanGuiButton extends GuiButton
     /**
      * Super-Constructor
      */
-    public CleanGuiButton (final int buttonId, final int x, final int y, final String buttonText)
+    public TransparentButton (final int buttonId, final int x, final int y, final String buttonText)
     {
         this(buttonId, x, y, 200, 20, buttonText);
     }
@@ -50,7 +50,7 @@ public class CleanGuiButton extends GuiButton
     /**
      * Super-Constructor
      */
-    public CleanGuiButton (final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText)
+    public TransparentButton (final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText)
     {
         super(buttonId, x, y, widthIn, heightIn, buttonText);
     }
@@ -80,7 +80,7 @@ public class CleanGuiButton extends GuiButton
         this.fontRenderer = fontRenderer;
     }
 
-    public CleanGuiButton setOpacity (final float opacity)
+    public TransparentButton setOpacity (final float opacity)
     {
         this.opacity = opacity;
         return this;

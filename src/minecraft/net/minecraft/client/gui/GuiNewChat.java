@@ -379,7 +379,7 @@ public class GuiNewChat extends Gui implements Tickable
      */
     public IChatComponent getChatComponent (int p1, int p2)
     {
-        if (this.getChatOpen()) {
+        if (getChatOpen()) {
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaleFactor();
             float f = this.getChatScale();

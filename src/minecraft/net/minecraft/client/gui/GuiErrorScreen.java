@@ -29,7 +29,7 @@ public class GuiErrorScreen extends GuiScreen
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        this.drawGradientRect(0, 0, this.width, this.height, -12574688, -11530224);
+        this.drawGradientVertical(0, 0, this.width, this.height, -12574688, -11530224);
         drawCenteredString(this.fontRendererObj, this.line_1, this.width / 2, 90, 16777215);
         drawCenteredString(this.fontRendererObj, this.line_2, this.width / 2, 110, 16777215);
         super.drawScreen(mouseX, mouseY, partialTicks);

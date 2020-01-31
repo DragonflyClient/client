@@ -117,4 +117,12 @@ public class ColorTransformator
     {
         return color.getRGB();
     }
+
+    /**
+     * @return The AWT color.
+     */
+    public Color toColor ()
+    {
+        return color;
+    }
 }

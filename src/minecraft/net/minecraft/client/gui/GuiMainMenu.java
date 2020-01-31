@@ -3,16 +3,16 @@ package net.minecraft.client.gui;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.*;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
-import net.inceptioncloud.minecraftmod.gui.components.CleanGuiButton;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.QuickAction;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.multiplayer.DirectConnectAction;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.multiplayer.LastServerAction;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.options.ModOptionsAction;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.options.ResourcePackAction;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.quit.ReloadAction;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.quit.RestartAction;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.singleplayer.CreateMapAction;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.singleplayer.LastMapAction;
+import net.inceptioncloud.minecraftmod.ui.components.TransparentButton;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.QuickAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.multiplayer.DirectConnectAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.multiplayer.LastServerAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.options.ModOptionsAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.options.ResourcePackAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.quit.ReloadAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.quit.RestartAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.singleplayer.CreateMapAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.singleplayer.LastMapAction;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
@@ -156,8 +156,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
 
         this.buttonList.stream()
             .filter(guiButton -> guiButton.id < 10)
-            .filter(CleanGuiButton.class::isInstance)
-            .map(CleanGuiButton.class::cast)
+            .filter(TransparentButton.class::isInstance)
+            .map(TransparentButton.class::cast)
             .forEach(cleanGuiButton ->
             {
                 cleanGuiButton.setHighlighted(!riseTransition.isAtStart() && selectedButton == cleanGuiButton.id);
@@ -170,8 +170,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
 
         this.buttonList.stream()
             .filter(guiButton -> guiButton.id >= 10)
-            .filter(CleanGuiButton.class::isInstance)
-            .map(CleanGuiButton.class::cast)
+            .filter(TransparentButton.class::isInstance)
+            .map(TransparentButton.class::cast)
             .forEach(cleanGuiButton ->
             {
                 double percent = quickActionTransitions.get(cleanGuiButton.id).get();
@@ -200,7 +200,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
 
         // Buttons
         super.drawScreen(mouseX, mouseY, partialTicks);
-
         this.buttonList.remove(this.buttonList.stream().filter(guiButton -> guiButton.id == 5).findFirst().orElse(null));
 
         // ICMM - Fade-In Overlay
@@ -250,10 +249,10 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
      */
     public void addButtons ()
     {
-        this.buttonList.add(new CleanGuiButton(0, ( int ) ( this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2 ), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.singleplayer")));
-        this.buttonList.add(new CleanGuiButton(1, this.width / 2 - BUTTON_SPACE / 2 - BUTTON_WIDTH, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.multiplayer")));
-        this.buttonList.add(new CleanGuiButton(2, this.width / 2 + BUTTON_SPACE / 2, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.options")));
-        this.buttonList.add(new CleanGuiButton(3, ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH ), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.quit")));
+        this.buttonList.add(new TransparentButton(0, ( int ) ( this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2 ), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.singleplayer")));
+        this.buttonList.add(new TransparentButton(1, this.width / 2 - BUTTON_SPACE / 2 - BUTTON_WIDTH, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.multiplayer")));
+        this.buttonList.add(new TransparentButton(2, this.width / 2 + BUTTON_SPACE / 2, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.options")));
+        this.buttonList.add(new TransparentButton(3, ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH ), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.quit")));
 
         IFontRenderer fontRenderer = updateSize();
         boolean left = true;
@@ -263,7 +262,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
             final int xPosition = left ? QUICK_ACTION_LEFT + 50 : QUICK_ACTION_RIGHT - stringWidth - 50;
             final int buttonId = quickAction.getOwnButtonId();
 
-            this.buttonList.add(new CleanGuiButton(buttonId, xPosition, height, stringWidth, 20, quickAction.getDisplay()).setOpacity(0.5F));
+            this.buttonList.add(new TransparentButton(buttonId, xPosition, height, stringWidth, 20, quickAction.getDisplay()).setOpacity(0.5F));
             this.quickActionTransitions.put(buttonId, DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> riseTransition.isAtEnd() && isQuickActionSelected(buttonId)).build());
 
             left = !left;
@@ -317,35 +316,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
     {
         int startColor = CloudColor.FUSION.getRGB();
         int endColor = CloudColor.ROYAL.getRGB();
-        float start_a = ( float ) ( startColor >> 24 & 255 ) / 255.0F;
-        float start_r = ( float ) ( startColor >> 16 & 255 ) / 255.0F;
-        float start_g = ( float ) ( startColor >> 8 & 255 ) / 255.0F;
-        float start_b = ( float ) ( startColor & 255 ) / 255.0F;
-        float end_a = ( float ) ( endColor >> 24 & 255 ) / 255.0F;
-        float end_r = ( float ) ( endColor >> 16 & 255 ) / 255.0F;
-        float end_g = ( float ) ( endColor >> 8 & 255 ) / 255.0F;
-        float end_b = ( float ) ( endColor & 255 ) / 255.0F;
-        float avg_a = ( start_a + end_a ) / 2F;
-        float avg_r = ( start_r + end_r ) / 2F;
-        float avg_g = ( start_g + end_g ) / 2F;
-        float avg_b = ( start_b + end_b ) / 2F;
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.shadeModel(7425);
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        worldrenderer.pos(width, 0, this.zLevel).color(avg_r, avg_g, avg_b, avg_a).endVertex();
-        worldrenderer.pos(0, 0, this.zLevel).color(start_r, start_g, start_b, start_a).endVertex();
-        worldrenderer.pos(0, height, this.zLevel).color(avg_r, avg_g, avg_b, avg_a).endVertex();
-        worldrenderer.pos(width, height, this.zLevel).color(end_r, end_g, end_b, end_a).endVertex();
-        tessellator.draw();
-        GlStateManager.shadeModel(7424);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
+        drawGradientLeftCornerRightBottom(0, 0, width, height, startColor, endColor);
     }
 
     /**

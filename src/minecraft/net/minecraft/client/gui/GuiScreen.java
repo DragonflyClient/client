@@ -4,7 +4,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.awt.Toolkit;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -225,17 +224,17 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             this.zLevel = 300.0F;
             this.itemRender.zLevel = 300.0F;
             int l = -267386864;
-            this.drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
-            this.drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
-            this.drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
-            this.drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
-            this.drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
+            this.drawGradientVertical(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
+            this.drawGradientVertical(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
+            this.drawGradientVertical(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
+            this.drawGradientVertical(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
+            this.drawGradientVertical(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
             int i1 = 1347420415;
             int j1 = (i1 & 16711422) >> 1 | i1 & -16777216;
-            this.drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
-            this.drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
-            this.drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
-            this.drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
+            this.drawGradientVertical(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
+            this.drawGradientVertical(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
+            this.drawGradientVertical(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
+            this.drawGradientVertical(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
 
             for (int k1 = 0; k1 < textLines.size(); ++k1)
             {
@@ -649,7 +648,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     {
         if (this.mc.theWorld != null)
         {
-            this.drawGradientRect(0, 0, this.width, this.height, -1072689136, -804253680);
+            this.drawGradientVertical(0, 0, this.width, this.height, -1072689136, -804253680);
         }
         else
         {

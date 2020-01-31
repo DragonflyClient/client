@@ -9,15 +9,15 @@ import net.minecraft.world.WorldSettings;
 
 public class GuiShareToLan extends GuiScreen
 {
-    private final GuiScreen field_146598_a;
+    private final GuiScreen parent;
     private GuiButton field_146596_f;
     private GuiButton field_146597_g;
     private String field_146599_h = "survival";
     private boolean field_146600_i;
 
-    public GuiShareToLan(GuiScreen p_i1055_1_)
+    public GuiShareToLan(GuiScreen parent)
     {
-        this.field_146598_a = p_i1055_1_;
+        this.parent = parent;
     }
 
     /**
@@ -56,7 +56,7 @@ public class GuiShareToLan extends GuiScreen
     {
         if (button.id == 102)
         {
-            this.mc.displayGuiScreen(this.field_146598_a);
+            this.mc.displayGuiScreen(this.parent);
         }
         else if (button.id == 104)
         {

@@ -1,5 +1,6 @@
 package net.minecraft.client.gui;
 
+import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -78,10 +79,80 @@ public class Gui
     }
 
     /**
+     * Draws a solid color rectangle with the specified coordinates and color (ARGB format). Args: x1, y1, x2, y2, color
+     */
+    public static void drawRectD (double left, double top, double right, double bottom, int color)
+    {
+        if (left < right) {
+            double i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom) {
+            double j = top;
+            top = bottom;
+            bottom = j;
+        }
+
+        float f3 = ( float ) ( color >> 24 & 255 ) / 255.0F;
+        float f = ( float ) ( color >> 16 & 255 ) / 255.0F;
+        float f1 = ( float ) ( color >> 8 & 255 ) / 255.0F;
+        float f2 = ( float ) ( color & 255 ) / 255.0F;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.color(f, f1, f2, f3);
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION);
+        worldrenderer.pos(left, bottom, 0.0D).endVertex();
+        worldrenderer.pos(right, bottom, 0.0D).endVertex();
+        worldrenderer.pos(right, top, 0.0D).endVertex();
+        worldrenderer.pos(left, top, 0.0D).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
+    /**
      * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
      * topColor, bottomColor
      */
     public static void drawGradientHorizontal (int left, int top, int right, int bottom, int startColor, int endColor)
+    {
+        float start_a = ( float ) ( startColor >> 24 & 255 ) / 255.0F;
+        float start_r = ( float ) ( startColor >> 16 & 255 ) / 255.0F;
+        float start_g = ( float ) ( startColor >> 8 & 255 ) / 255.0F;
+        float start_b = ( float ) ( startColor & 255 ) / 255.0F;
+        float end_a = ( float ) ( endColor >> 24 & 255 ) / 255.0F;
+        float end_r = ( float ) ( endColor >> 16 & 255 ) / 255.0F;
+        float end_g = ( float ) ( endColor >> 8 & 255 ) / 255.0F;
+        float end_b = ( float ) ( endColor & 255 ) / 255.0F;
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.shadeModel(7425);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        worldrenderer.pos(left, top, 0).color(start_r, start_g, start_b, start_a).endVertex();
+        worldrenderer.pos(left, bottom, 0).color(start_r, start_g, start_b, start_a).endVertex();
+        worldrenderer.pos(right, bottom, 0).color(end_r, end_g, end_b, end_a).endVertex();
+        worldrenderer.pos(right, top, 0).color(end_r, end_g, end_b, end_a).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+    }
+
+    /**
+     * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
+     * topColor, bottomColor
+     */
+    public static void drawGradientHorizontalD (double left, double top, double right, double bottom, int startColor, int endColor)
     {
         float start_a = ( float ) ( startColor >> 24 & 255 ) / 255.0F;
         float start_r = ( float ) ( startColor >> 16 & 255 ) / 255.0F;
@@ -148,7 +219,7 @@ public class Gui
      * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
      * topColor, bottomColor
      */
-    public void drawGradientRect (int left, int top, int right, int bottom, int startColor, int endColor)
+    public void drawGradientVertical (int left, int top, int right, int bottom, int startColor, int endColor)
     {
         float f = ( float ) ( startColor >> 24 & 255 ) / 255.0F;
         float f1 = ( float ) ( startColor >> 16 & 255 ) / 255.0F;
@@ -178,9 +249,45 @@ public class Gui
     }
 
     /**
+     * Draws a gradient from the left top corner to the right bottom corner.
+     */
+    public void drawGradientLeftCornerRightBottom (int left, int top, int right, int bottom, int startColor, int endColor)
+    {
+        float start_a = ( float ) ( startColor >> 24 & 255 ) / 255.0F;
+        float start_r = ( float ) ( startColor >> 16 & 255 ) / 255.0F;
+        float start_g = ( float ) ( startColor >> 8 & 255 ) / 255.0F;
+        float start_b = ( float ) ( startColor & 255 ) / 255.0F;
+        float end_a = ( float ) ( endColor >> 24 & 255 ) / 255.0F;
+        float end_r = ( float ) ( endColor >> 16 & 255 ) / 255.0F;
+        float end_g = ( float ) ( endColor >> 8 & 255 ) / 255.0F;
+        float end_b = ( float ) ( endColor & 255 ) / 255.0F;
+        float avg_a = ( start_a + end_a ) / 2F;
+        float avg_r = ( start_r + end_r ) / 2F;
+        float avg_g = ( start_g + end_g ) / 2F;
+        float avg_b = ( start_b + end_b ) / 2F;
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.shadeModel(7425);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        worldrenderer.pos(right, top, this.zLevel).color(avg_r, avg_g, avg_b, avg_a).endVertex();
+        worldrenderer.pos(left, top, this.zLevel).color(start_r, start_g, start_b, start_a).endVertex();
+        worldrenderer.pos(left, bottom, this.zLevel).color(avg_r, avg_g, avg_b, avg_a).endVertex();
+        worldrenderer.pos(right, bottom, this.zLevel).color(end_r, end_g, end_b, end_a).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+    }
+
+    /**
      * Renders the specified text to the screen, center-aligned. Args : renderer, string, x, y, color
      */
-    public static void drawCenteredString (FontRenderer fontRendererIn, String text, int x, int y, int color)
+    public static void drawCenteredString (IFontRenderer fontRendererIn, String text, int x, int y, int color)
     {
         fontRendererIn.drawStringWithShadow(text, ( float ) ( x - fontRendererIn.getStringWidth(text) / 2 ), ( float ) y, color);
     }
