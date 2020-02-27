@@ -132,6 +132,8 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
         }
 
         this.oldServerPinger.clearPendingNetworks();
+
+        super.onGuiClosed();
     }
 
     /**

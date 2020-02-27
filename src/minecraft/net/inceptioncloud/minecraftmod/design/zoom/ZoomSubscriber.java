@@ -38,7 +38,7 @@ public class ZoomSubscriber
             flag = GameSettings.isKeyDown(gamesettings.ofKeyBindZoom);
         }
 
-        if (IngameOptions.ENABLE_ZOOM_ANIMATION.get()) {
+        if (IngameOptions.ZOOM_ANIMATION.get()) {
 
             if (flag) {
                 if (!Config.zoomMode)

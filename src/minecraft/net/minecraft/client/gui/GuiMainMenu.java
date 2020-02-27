@@ -20,7 +20,6 @@ import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
 import net.inceptioncloud.minecraftmod.utils.RenderUtils;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
@@ -47,7 +46,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
         new LastMapAction(), new CreateMapAction(),
         new LastServerAction(), new DirectConnectAction(),
         new ResourcePackAction(), new ModOptionsAction(),
-        new ReloadAction(), new RestartAction()
+        new RestartAction(), new ReloadAction()
     );
 
     private static final Logger logger = LogManager.getLogger();
@@ -107,17 +106,17 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
     /**
      * The transitions that are responsible for the different Quick Action Buttons.
      */
-    private Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
+    private final Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
 
     /**
      * The transition that lets the navigation bar rise when it's hovered.
      */
-    private DoubleTransition riseTransition = DoubleTransition.builder().start(1).end(2).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> cursorHoverTime >= 100).build();
+    private final DoubleTransition riseTransition = DoubleTransition.builder().start(1).end(2).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> cursorHoverTime >= 100).build();
 
     /**
      * Provides the value for the fading in of the main menu after the splash screen.
      */
-    private static DoubleTransition fadeInTransition = DoubleTransition.builder().start(1).end(0).amountOfSteps(500).autoTransformator(( ForwardNothing ) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000).build();
+    private static final DoubleTransition fadeInTransition = DoubleTransition.builder().start(1).end(0).amountOfSteps(500).autoTransformator(( ForwardNothing ) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000).build();
 
     /**
      * Default Constructor
@@ -181,7 +180,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
 
         // ICMM - Logo
         int imageSize = Math.min(height / 3, 300);
-        RenderUtils.drawImage(new ResourceLocation("inceptioncloud/sqr_outline.png"), width / 2 - imageSize / 2 + 1, height / 8 + 1, imageSize, imageSize, 0, 0, 0, 0.4F);
+        RenderUtils.drawImage(new ResourceLocation("inceptioncloud/sqr_outline.png"), width / 2 - imageSize / 2 + 2, height / 8 + 2, imageSize, imageSize, 0, 0, 0, 0.4F);
         RenderUtils.drawImage(new ResourceLocation("inceptioncloud/sqr_outline.png"), width / 2 - imageSize / 2, height / 8, imageSize, imageSize);
 
         // ICMM - Title
@@ -241,7 +240,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
     /**
      * Adds Singleplayer and Multiplayer buttons on Main Menu for players who have bought the game.<br/>
      *
-     * <b>The following button ids are used:</b><br/>
+     * <b>The following button IDs are used:</b><br/>
      * <code>0</code> Singleplayer<br/>
      * <code>1</code> Multiplayer<br/>
      * <code>2</code> Options<br/>
@@ -267,6 +266,18 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
 
             left = !left;
         }
+    }
+
+    /**
+     * Called when the screen is unloaded. Used to disable keyboard repeat events
+     */
+    @Override
+    public void onGuiClosed ()
+    {
+        InceptionMod.getInstance().stopTransition(riseTransition);
+        quickActionTransitions.values().forEach(target -> InceptionMod.getInstance().stopTransition(target));
+
+        super.onGuiClosed();
     }
 
     /**
@@ -316,7 +327,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
     {
         int startColor = CloudColor.FUSION.getRGB();
         int endColor = CloudColor.ROYAL.getRGB();
-        drawGradientLeftCornerRightBottom(0, 0, width, height, startColor, endColor);
+        drawGradientLeftTopRightBottom(0, 0, width, height, startColor, endColor);
     }
 
     /**

@@ -212,14 +212,14 @@ public class GuiShaderOptions extends GuiScreenOF
      */
     public void onGuiClosed()
     {
-        super.onGuiClosed();
-
         if (this.changed)
         {
             Shaders.saveShaderPackOptions();
             this.changed = false;
             Shaders.uninit();
         }
+
+        super.onGuiClosed();
     }
 
     private void updateAllButtons()

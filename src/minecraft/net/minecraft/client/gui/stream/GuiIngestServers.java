@@ -57,6 +57,8 @@ public class GuiIngestServers extends GuiScreen
         {
             this.mc.getTwitchStream().func_152932_y().func_153039_l();
         }
+
+        super.onGuiClosed();
     }
 
     /**

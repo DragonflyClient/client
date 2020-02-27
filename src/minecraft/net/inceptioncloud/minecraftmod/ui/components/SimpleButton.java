@@ -6,9 +6,12 @@ import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.*;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition;
+import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
+import net.inceptioncloud.minecraftmod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
 
@@ -18,21 +21,20 @@ import java.awt.*;
 public class SimpleButton extends GuiButton
 {
     /**
-     * The transition for the left color of the gradient.
+     * Transition manages the Hover Effect
      */
-    private ColorTransition transitionColorLeft = ColorTransition.builder().start(GreyToneColor.DARK_GREY).end(CloudColor.FUSION).amountOfSteps(50).autoTransformator(( ForwardBackward ) () -> hovered).build();
+    protected DoubleTransition hoverTransition = DoubleTransition.builder().start(0.0).end(1.0).amountOfSteps(width / 4).autoTransformator(( ForwardBackward ) () -> hovered).build();
 
     /**
-     * The transition for the right color of the gradient.
+     * Transition changes the color when hovering.
      */
-    private ColorTransition transitionColorRight = ColorTransition.builder().start(GreyToneColor.DARK_GREY).end(CloudColor.ROYAL).amountOfSteps(50).autoTransformator(( ForwardBackward ) () -> hovered).build();
+    protected ColorTransition colorTransition = ColorTransition.builder().start(CloudColor.FUSION).end(CloudColor.ROYAL).amountOfSteps(width / 2).autoTransformator(( ForwardBackward ) () -> hovered).build();
 
     /**
      * The opacity of the button.
      */
-    @Getter
-    @Setter
-    private float opacity = 1.0F;
+    @Setter @Getter
+    protected float opacity = 1.0F;
 
     /**
      * Inherit Constructor
@@ -63,20 +65,31 @@ public class SimpleButton extends GuiButton
         if (this.visible) {
             IFontRenderer fontrenderer = InceptionMod.getInstance().getFontDesign().getRegular();
             final double border = 0.5;
-            final double left = this.xPosition;
-            final double top = this.yPosition;
-            final double right = this.xPosition + this.width;
-            final double bottom = this.yPosition + this.height;
-            final int colorLeft = ColorTransformator.of(transitionColorLeft.get()).transformAlpha(opacity).toRGB();
-            final int colorRight = ColorTransformator.of(transitionColorRight.get()).transformAlpha(opacity).toRGB();
+            final double left = this.xPosition + border;
+            final double top = this.yPosition + border;
+            final double right = this.xPosition + this.width - border;
+            final double bottom = this.yPosition + this.height - border;
+            final Color color = ColorTransformator.of(colorTransition.get()).transformAlpha(opacity).toColor();
 
             this.hovered = mouseX >= left && mouseY >= top && mouseX < right && mouseY < bottom;
             this.mouseDragged(mc, mouseX, mouseY);
 
-            drawRectD(left, top, right, bottom, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).transformAlpha(opacity).toRGB());
-            drawGradientHorizontalD(left + border, top + border, right - border, bottom - border, colorLeft, colorRight);
+            drawRectD(left - border, top - border, right + border, bottom + border, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).transformAlpha(opacity).toRGB());
+            drawRectD(left, top, right, bottom, ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(opacity).toRGB());
+
+            drawRectD(left, top, left + 4 + (hoverTransition.get() * (right - left - 4)), bottom, color.getRGB());
+
             if (opacity > 0.1)
                 drawCenteredString(fontrenderer, this.displayString, (int) left + this.width / 2, (int) top + ( this.height - 8 ) / 2, new Color(1, 1, 1, opacity).getRGB());
         }
+    }
+
+    /**
+     * Destroys the Button by removing all transitions.
+     */
+    @Override
+    public void destroy ()
+    {
+        InceptionMod.getInstance().stopTransition(hoverTransition);
     }
 }

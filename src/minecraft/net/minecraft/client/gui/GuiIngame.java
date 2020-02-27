@@ -1,11 +1,12 @@
 package net.minecraft.client.gui;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.ColorTransformator;
+import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.options.sets.IngameOptions;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.minecraft.block.material.Material;
@@ -31,7 +32,9 @@ import net.minecraft.world.border.WorldBorder;
 import optifine.Config;
 import optifine.CustomColors;
 
+import java.awt.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GuiIngame extends Gui
 {
@@ -75,12 +78,12 @@ public class GuiIngame extends Gui
      * The ItemStack that is currently being highlighted
      */
     private ItemStack highlightingItemStack;
-    private int field_175195_w;
-    private String field_175201_x = "";
-    private String field_175200_y = "";
-    private int field_175199_z;
-    private int field_175192_A;
-    private int field_175193_B;
+    private int title_timer;
+    private String title_title = "";
+    private String title_subtitle = "";
+    private int title_fadeIn;
+    private int title_stay;
+    private int title_fadeOut;
     private int playerHealth = 0;
     private int lastPlayerHealth = 0;
     /**
@@ -92,7 +95,7 @@ public class GuiIngame extends Gui
      */
     private long healthUpdateCounter = 0L;
     private boolean actionBarDisplayed = false;
-    private DoubleTransition actionBar = DoubleTransition.builder().start(0.0D).end(1.0D).amountOfSteps(20).autoTransformator(new ForwardBackward()
+    private final DoubleTransition actionBar = DoubleTransition.builder().start(0.0D).end(1.0D).amountOfSteps(20).autoTransformator(new ForwardBackward()
     {
         @Override
         public boolean getAsBoolean ()
@@ -116,9 +119,9 @@ public class GuiIngame extends Gui
 
     public void func_175177_a ()
     {
-        this.field_175199_z = 10;
-        this.field_175192_A = 70;
-        this.field_175193_B = 20;
+        this.title_fadeIn = 10;
+        this.title_stay = 70;
+        this.title_fadeOut = 20;
     }
 
     public void renderGameOverlay (float partialTicks)
@@ -251,18 +254,18 @@ public class GuiIngame extends Gui
             this.mc.mcProfiler.endSection();
         }
 
-        if (this.field_175195_w > 0) {
+        if (this.title_timer > 0) {
             this.mc.mcProfiler.startSection("titleAndSubtitle");
-            float f4 = ( float ) this.field_175195_w - partialTicks;
+            float f4 = ( float ) this.title_timer - partialTicks;
             int l1 = 255;
 
-            if (this.field_175195_w > this.field_175193_B + this.field_175192_A) {
-                float f1 = ( float ) ( this.field_175199_z + this.field_175192_A + this.field_175193_B ) - f4;
-                l1 = ( int ) ( f1 * 255.0F / ( float ) this.field_175199_z );
+            if (this.title_timer > this.title_fadeOut + this.title_stay) {
+                float f1 = ( float ) ( this.title_fadeIn + this.title_stay + this.title_fadeOut ) - f4;
+                l1 = ( int ) ( f1 * 255.0F / ( float ) this.title_fadeIn );
             }
 
-            if (this.field_175195_w <= this.field_175193_B) {
-                l1 = ( int ) ( f4 * 255.0F / ( float ) this.field_175193_B );
+            if (this.title_timer <= this.title_fadeOut) {
+                l1 = ( int ) ( f4 * 255.0F / ( float ) this.title_fadeOut );
             }
 
             l1 = MathHelper.clamp_int(l1, 0, 255);
@@ -275,11 +278,11 @@ public class GuiIngame extends Gui
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(4.0F, 4.0F, 4.0F);
                 int j2 = l1 << 24 & -16777216;
-                this.getFontRenderer().drawString(this.field_175201_x, ( float ) ( -this.getFontRenderer().getStringWidth(this.field_175201_x) / 2 ), -10.0F, 16777215 | j2, true);
+                this.getFontRenderer().drawString(this.title_title, ( float ) ( -this.getFontRenderer().getStringWidth(this.title_title) / 2 ), -10.0F, 16777215 | j2, true);
                 GlStateManager.popMatrix();
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(2.0F, 2.0F, 2.0F);
-                this.getFontRenderer().drawString(this.field_175200_y, ( float ) ( -this.getFontRenderer().getStringWidth(this.field_175200_y) / 2 ), 5.0F, 16777215 | j2, true);
+                this.getFontRenderer().drawString(this.title_subtitle, ( float ) ( -this.getFontRenderer().getStringWidth(this.title_subtitle) / 2 ), 5.0F, 16777215 | j2, true);
                 GlStateManager.popMatrix();
                 GlStateManager.disableBlend();
                 GlStateManager.popMatrix();
@@ -489,72 +492,65 @@ public class GuiIngame extends Gui
         }
     }
 
-    public void renderStreamIndicator (ScaledResolution p_180478_1_)
+    public void renderStreamIndicator (ScaledResolution resolution)
     {
-        this.streamIndicator.render(p_180478_1_.getScaledWidth() - 10, 10);
+        this.streamIndicator.render(resolution.getScaledWidth() - 10, 10);
     }
 
-    private void renderScoreboard (ScoreObjective p_180475_1_, ScaledResolution p_180475_2_)
+    private void renderScoreboard (ScoreObjective objective, ScaledResolution resolution)
     {
-        Scoreboard scoreboard = p_180475_1_.getScoreboard();
-        Collection collection = scoreboard.getSortedScores(p_180475_1_);
-        ArrayList arraylist = Lists.newArrayList(Iterables.filter(collection, new Predicate()
-        {
-            private static final String __OBFID = "CL_00001958";
+        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        Scoreboard scoreboard = objective.getScoreboard();
+        Collection<Score> sortedScores = scoreboard.getSortedScores(objective);
+        ArrayList<Score> displayableScores = sortedScores.stream().filter(score -> score.getPlayerName() != null && !score.getPlayerName().startsWith("#")).collect(Collectors.toCollection(Lists::newArrayList));
+        ArrayList<Score> trimmedScores = displayableScores.size() > 15 ? Lists.newArrayList(Iterables.skip(displayableScores, sortedScores.size() - 15)) : displayableScores;
 
-            public boolean apply (Score p_apply_1_)
-            {
-                return p_apply_1_.getPlayerName() != null && !p_apply_1_.getPlayerName().startsWith("#");
-            }
+        int i = fontRenderer.getStringWidth(objective.getDisplayName());
 
-            public boolean apply (Object p_apply_1_)
-            {
-                return this.apply(( Score ) p_apply_1_);
-            }
-        }));
-        ArrayList arraylist1;
-
-        if (arraylist.size() > 15) {
-            arraylist1 = Lists.newArrayList(Iterables.skip(arraylist, collection.size() - 15));
-        } else {
-            arraylist1 = arraylist;
-        }
-
-        int i = this.getFontRenderer().getStringWidth(p_180475_1_.getDisplayName());
-
-        for (Object score : arraylist1) {
+        for (Object score : trimmedScores) {
             ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(( ( Score ) score ).getPlayerName());
             String s = ScorePlayerTeam.formatPlayerName(scoreplayerteam, ( ( Score ) score ).getPlayerName()) + ": " + EnumChatFormatting.RED + ( ( Score ) score ).getScorePoints();
-            i = Math.max(i, this.getFontRenderer().getStringWidth(s));
+            i = Math.max(i, fontRenderer.getStringWidth(s));
         }
 
-        int j1 = arraylist1.size() * this.getFontRenderer().FONT_HEIGHT;
-        int k1 = p_180475_2_.getScaledHeight() / 2 + j1 / 3;
+        int j1 = trimmedScores.size() * fontRenderer.getHeight();
+        int k1 = resolution.getScaledHeight() / 2 + j1 / 3;
         byte b0 = 3;
-        int j = p_180475_2_.getScaledWidth() - i - b0;
+        int left = resolution.getScaledWidth() - i - b0;
         int k = 0;
 
-        for (Object score1 : arraylist1) {
-            ++k;
-            ScorePlayerTeam scoreplayerteam1 = scoreboard.getPlayersTeam(( ( Score ) score1 ).getPlayerName());
-            String s1 = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, ( ( Score ) score1 ).getPlayerName());
-            String s2 = EnumChatFormatting.RED + "" + ( ( Score ) score1 ).getScorePoints();
-            int l = k1 - k * this.getFontRenderer().FONT_HEIGHT;
-            int i1 = p_180475_2_.getScaledWidth() - b0 + 2;
-            drawRect(j - 2, l, i1, l + this.getFontRenderer().FONT_HEIGHT, 1342177280);
-            this.getFontRenderer().drawString(s1, j, l, 553648127);
-            this.getFontRenderer().drawString(s2, i1 - this.getFontRenderer().getStringWidth(s2), l, 553648127);
+        final int lightColor = ColorTransformator.of(GreyToneColor.GREY).transformAlpha(0.5F).toRGB();
+        final int darkColor = ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(0.5F).toRGB();
 
-            if (k == arraylist1.size()) {
-                String s3 = p_180475_1_.getDisplayName();
-                drawRect(j - 2, l - this.getFontRenderer().FONT_HEIGHT - 1, i1, l - 1, 1610612736);
-                drawRect(j - 2, l - 1, i1, l, 1342177280);
-                this.getFontRenderer().drawString(s3, j + i / 2 - this.getFontRenderer().getStringWidth(s3) / 2, l - this.getFontRenderer().FONT_HEIGHT, 553648127);
+        for (Score score : trimmedScores) {
+            ++k;
+            ScorePlayerTeam scoreplayerteam1 = scoreboard.getPlayersTeam(score.getPlayerName());
+            String s1 = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score.getPlayerName());
+            String s2 = EnumChatFormatting.RED.toString() + score.getScorePoints();
+            int top = k1 - k * fontRenderer.getHeight();
+            int right = resolution.getScaledWidth() - b0 + 2;
+
+            if (IngameOptions.SCOREBOARD_BACKGROUND.get())
+                drawRect(left - 2, top, right + 2, top + fontRenderer.getHeight(), lightColor);
+
+            if (IngameOptions.SCOREBOARD_SCORES.get())
+                fontRenderer.drawString(s2, right - fontRenderer.getStringWidth(s2), top, 0xFFFFFF, true);
+
+            fontRenderer.drawString(s1, left, top, 0xFFFFFF, true);
+
+            if (k == trimmedScores.size() && IngameOptions.SCOREBOARD_TITLE.get()) {
+                if (IngameOptions.SCOREBOARD_BACKGROUND.get()) {
+                    drawRect(left - 2, top - fontRenderer.getHeight() - 1, right + 2, top - 1, darkColor);
+                    drawRect(left - 2, top - 1, right + 2, top, lightColor);
+                }
+
+                String s3 = objective.getDisplayName();
+                fontRenderer.drawString(s3, left + i / 2f - fontRenderer.getStringWidth(s3) / 2f, top - fontRenderer.getHeight() + 1, 0xFFFFFF, true);
             }
         }
     }
 
-    private void renderPlayerStats (ScaledResolution p_180477_1_)
+    private void renderPlayerStats (ScaledResolution resolution)
     {
         if (this.mc.getRenderViewEntity() instanceof EntityPlayer) {
             EntityPlayer entityplayer = ( EntityPlayer ) this.mc.getRenderViewEntity();
@@ -583,9 +579,9 @@ public class GuiIngame extends Gui
             int k = foodstats.getFoodLevel();
             int l = foodstats.getPrevFoodLevel();
             IAttributeInstance iattributeinstance = entityplayer.getEntityAttribute(SharedMonsterAttributes.maxHealth);
-            int i1 = p_180477_1_.getScaledWidth() / 2 - 91;
-            int j1 = p_180477_1_.getScaledWidth() / 2 + 91;
-            int k1 = p_180477_1_.getScaledHeight() - 39;
+            int i1 = resolution.getScaledWidth() / 2 - 91;
+            int j1 = resolution.getScaledWidth() / 2 + 91;
+            int k1 = resolution.getScaledHeight() - 39;
             float f = ( float ) iattributeinstance.getAttributeValue();
             float f1 = entityplayer.getAbsorptionAmount();
             int l1 = MathHelper.ceiling_float_int(( f + f1 ) / 2.0F / 10.0F);
@@ -962,12 +958,12 @@ public class GuiIngame extends Gui
             --this.recordPlayingUpFor;
         }
 
-        if (this.field_175195_w > 0) {
-            --this.field_175195_w;
+        if (this.title_timer > 0) {
+            --this.title_timer;
 
-            if (this.field_175195_w <= 0) {
-                this.field_175201_x = "";
-                this.field_175200_y = "";
+            if (this.title_timer <= 0) {
+                this.title_title = "";
+                this.title_subtitle = "";
             }
         }
 
@@ -1004,32 +1000,32 @@ public class GuiIngame extends Gui
         this.actionBarDisplayed = true;
     }
 
-    public void displayTitle (String p_175178_1_, String p_175178_2_, int p_175178_3_, int p_175178_4_, int p_175178_5_)
+    public void displayTitle (String title, String subtitle, int fadeIn, int stay, int fadeOut)
     {
-        if (p_175178_1_ == null && p_175178_2_ == null && p_175178_3_ < 0 && p_175178_4_ < 0 && p_175178_5_ < 0) {
-            this.field_175201_x = "";
-            this.field_175200_y = "";
-            this.field_175195_w = 0;
-        } else if (p_175178_1_ != null) {
-            this.field_175201_x = p_175178_1_;
-            this.field_175195_w = this.field_175199_z + this.field_175192_A + this.field_175193_B;
-        } else if (p_175178_2_ != null) {
-            this.field_175200_y = p_175178_2_;
+        if (title == null && subtitle == null && fadeIn < 0 && stay < 0 && fadeOut < 0) {
+            this.title_title = "";
+            this.title_subtitle = "";
+            this.title_timer = 0;
+        } else if (title != null) {
+            this.title_title = title;
+            this.title_timer = this.title_fadeIn + this.title_stay + this.title_fadeOut;
+        } else if (subtitle != null) {
+            this.title_subtitle = subtitle;
         } else {
-            if (p_175178_3_ >= 0) {
-                this.field_175199_z = p_175178_3_;
+            if (fadeIn >= 0) {
+                this.title_fadeIn = fadeIn;
             }
 
-            if (p_175178_4_ >= 0) {
-                this.field_175192_A = p_175178_4_;
+            if (stay >= 0) {
+                this.title_stay = stay;
             }
 
-            if (p_175178_5_ >= 0) {
-                this.field_175193_B = p_175178_5_;
+            if (fadeOut >= 0) {
+                this.title_fadeOut = fadeOut;
             }
 
-            if (this.field_175195_w > 0) {
-                this.field_175195_w = this.field_175199_z + this.field_175192_A + this.field_175193_B;
+            if (this.title_timer > 0) {
+                this.title_timer = this.title_fadeIn + this.title_stay + this.title_fadeOut;
             }
         }
     }
@@ -1052,7 +1048,7 @@ public class GuiIngame extends Gui
         return this.updateCounter;
     }
 
-    public FontRenderer getFontRenderer ()
+    public IFontRenderer getFontRenderer ()
     {
         return this.mc.fontRendererObj;
     }

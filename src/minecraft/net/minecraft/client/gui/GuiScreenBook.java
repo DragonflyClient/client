@@ -140,6 +140,8 @@ public class GuiScreenBook extends GuiScreen
     public void onGuiClosed()
     {
         Keyboard.enableRepeatEvents(false);
+
+        super.onGuiClosed();
     }
 
     private void updateButtons()

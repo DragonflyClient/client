@@ -751,6 +751,8 @@ public abstract class GuiContainer extends GuiScreen
         {
             this.inventorySlots.onContainerClosed(this.mc.thePlayer);
         }
+
+        super.onGuiClosed();
     }
 
     /**

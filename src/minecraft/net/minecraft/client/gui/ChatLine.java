@@ -1,12 +1,15 @@
 package net.minecraft.client.gui;
 
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
 import net.minecraft.util.IChatComponent;
 
 public class ChatLine
 {
-    /** GUI Update Counter value this Line was created at */
+    /**
+     * GUI Update Counter value this Line was created at
+     */
     private final int updateCounterCreated;
     private final IChatComponent lineString;
 
@@ -25,30 +28,37 @@ public class ChatLine
      */
     private final DoubleTransition opacity;
 
-    public ChatLine(int updateCounter, IChatComponent component, int lineID)
+    /**
+     * Chat Line Constructor
+     */
+    public ChatLine (int updateCounter, IChatComponent component, int lineID)
     {
         this.lineString = component;
         this.updateCounterCreated = updateCounter;
         this.chatLineID = lineID;
 
         this.location = DoubleTransition.builder().start(0.0D).end(1.0D).amountOfSteps(40).autoTransformator(( ForwardNothing ) () -> true).build();
-        this.opacity = DoubleTransition.builder().start(50).end(255).amountOfSteps(80).autoTransformator((ForwardNothing) () -> location.get() > 0.5).build();
+        this.opacity = DoubleTransition.builder().start(50).end(255).amountOfSteps(80).autoTransformator(( ForwardNothing ) () -> location.get() > 0.5).build();
     }
 
-    public IChatComponent getChatComponent()
+    /**
+     * Destroys this chat line by stopping all transitions.
+     */
+    public void destroy ()
     {
-        return this.lineString;
+        InceptionMod.getInstance().stopTransition(location);
+        InceptionMod.getInstance().stopTransition(opacity);
     }
 
     /**
      * @return How many times the gui has been updated with this line shown.
      */
-    public int getUpdatedCounter()
+    public int getUpdatedCounter ()
     {
         return this.updateCounterCreated;
     }
 
-    public int getChatLineID()
+    public int getChatLineID ()
     {
         return this.chatLineID;
     }
@@ -61,5 +71,10 @@ public class ChatLine
     public DoubleTransition getOpacity ()
     {
         return opacity;
+    }
+
+    public IChatComponent getChatComponent ()
+    {
+        return this.lineString;
     }
 }

@@ -251,7 +251,7 @@ public class Gui
     /**
      * Draws a gradient from the left top corner to the right bottom corner.
      */
-    public void drawGradientLeftCornerRightBottom (int left, int top, int right, int bottom, int startColor, int endColor)
+    public void drawGradientLeftTopRightBottom (int left, int top, int right, int bottom, int startColor, int endColor)
     {
         float start_a = ( float ) ( startColor >> 24 & 255 ) / 255.0F;
         float start_r = ( float ) ( startColor >> 16 & 255 ) / 255.0F;

@@ -429,4 +429,14 @@ public final class RenderUtils
         else
             glDisable(cap);
     }
+
+    public static void drawTriangle (final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final int color)
+    {
+        glColor(color);
+        glBegin(GL_TRIANGLES);
+        glVertex2d(x1, y1);
+        glVertex2d(x2, y2);
+        glVertex2d(x3, y3);
+        glEnd();
+    }
 }

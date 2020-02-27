@@ -2,10 +2,16 @@ package net.inceptioncloud.minecraftmod.transition;
 
 import lombok.Getter;
 import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.transition.color.TransitionTypeColor;
-import net.inceptioncloud.minecraftmod.transition.number.TransitionTypeNumber;
+import net.inceptioncloud.minecraftmod.transition.color.*;
+import net.inceptioncloud.minecraftmod.transition.number.*;
+import net.inceptioncloud.minecraftmod.transition.string.SubstringTransition;
 import net.inceptioncloud.minecraftmod.transition.string.TransitionTypeString;
+import net.inceptioncloud.minecraftmod.ui.components.SimpleButton;
+import net.inceptioncloud.minecraftmod.ui.components.TransparentButton;
+import net.inceptioncloud.minecraftmod.utils.RuntimeUtils;
+import net.minecraft.client.gui.GuiButton;
 
+import java.util.Objects;
 import java.util.function.IntSupplier;
 
 /**
@@ -34,6 +40,11 @@ public abstract class Transition
     protected final IntSupplier autoTransformator;
 
     /**
+     * The origin of the transition (the class that it was created in).
+     */
+    protected final String origin;
+
+    /**
      * The currently set direction.
      * <p>
      * 1 = forward
@@ -51,6 +62,27 @@ public abstract class Transition
         this.reachStart = reachStart;
         this.autoTransformator = autoTransformator;
 
+        String[] split = Objects.requireNonNull(RuntimeUtils.getStackTrace(Transition.class,
+            TransitionTypeNumber.class,
+            TransitionTypeColor.class,
+            TransitionTypeString.class,
+            DoubleTransition.class,
+            ColorTransition.class,
+            SubstringTransition.class,
+            FloatingDoubleTransition.class,
+            FloatingColorTransition.class,
+            OverflowDoubleTransition.class,
+            DoubleTransition.DoubleTransitionBuilder.class,
+            ColorTransition.ColorTransitionBuilder.class,
+            SubstringTransition.SubstringTransitionBuilder.class,
+            FloatingDoubleTransition.FloatingDoubleTransitionBuilder.class,
+            FloatingColorTransition.FloatingColorTransitionBuilder.class,
+            OverflowDoubleTransition.OverflowDoubleTransitionBuilder.class,
+
+            TransparentButton.class,
+            SimpleButton.class,
+            GuiButton.class)).getClassName().split("\\.");
+        origin = split[split.length - 1];
         InceptionMod.getInstance().handleTransition(this);
     }
 

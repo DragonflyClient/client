@@ -239,13 +239,13 @@ public class GuiContainerCreative extends InventoryEffectRenderer
      */
     public void onGuiClosed ()
     {
-        super.onGuiClosed();
-
         if (this.mc.thePlayer != null && this.mc.thePlayer.inventory != null) {
             this.mc.thePlayer.inventoryContainer.removeCraftingFromCrafters(this.field_147059_E);
         }
 
         Keyboard.enableRepeatEvents(false);
+
+        super.onGuiClosed();
     }
 
     /**

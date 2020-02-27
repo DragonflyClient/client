@@ -10,11 +10,13 @@ import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.options.Options;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
+import net.inceptioncloud.minecraftmod.utils.TimeUtils;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.Display;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,22 +52,22 @@ public class InceptionMod
     /**
      * All transitions handled by the mod.
      */
-    private List<Transition> modTransitions = Lists.newArrayList();
+    private final List<Transition> transitions = Lists.newArrayList();
 
     /**
      * All classes that implement the tickable interface.
      */
-    private List<Tickable> tickables = Lists.newArrayList();
+    private final List<Tickable> tickables = Lists.newArrayList();
 
     /**
      * If a tickable has an associated class, it is stored in here so it can be replaced.
      */
-    private Map<Class<?>, Tickable> associatedTickables = new HashMap<>();
+    private final Map<Class<?>, Tickable> associatedTickables = new HashMap<>();
 
     /**
      * The {@link Timer} that performs the mod ticks.
      */
-    private Timer tickTimer;
+    private final Timer tickTimer;
 
     /**
      * The last amount of mod ticks per second.
@@ -141,8 +143,16 @@ public class InceptionMod
      */
     private void tick ()
     {
-        new ArrayList<>(modTransitions).forEach(Transition::tick);
+        new ArrayList<>(transitions).forEach(Transition::tick);
         new ArrayList<>(tickables).forEach(Tickable::modTick);
+
+        /*TimeUtils.requireDelay("tick-check", 1000, () -> {
+            Map<String, List<Transition>> groupings = transitions.stream().collect(Collectors.groupingBy(Transition::getOrigin));
+            Map<String, Integer> amounts = new HashMap<>();
+
+            groupings.keySet().forEach(key -> amounts.put(key, groupings.get(key).size()));
+            System.out.println(amounts);
+        });*/
     }
 
     /**
@@ -164,11 +174,22 @@ public class InceptionMod
     /**
      * Add a client transition to handle.
      *
-     * @param transition The transition
+     * @param target The target transition
      */
-    public void handleTransition (Transition transition)
+    public void handleTransition (Transition target)
     {
-        modTransitions.add(transition);
+        transitions.add(target);
+    }
+
+    /**
+     * Removes the target transition from the handler list.
+     *
+     * @param target The target transition
+     */
+    public void stopTransition (Transition target)
+    {
+        if(!transitions.remove(target))
+            System.err.println("Could not stop transition!");
     }
 
     /**

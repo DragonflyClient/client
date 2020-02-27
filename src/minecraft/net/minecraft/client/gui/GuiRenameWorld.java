@@ -50,6 +50,8 @@ public class GuiRenameWorld extends GuiScreen
     public void onGuiClosed()
     {
         Keyboard.enableRepeatEvents(false);
+
+        super.onGuiClosed();
     }
 
     /**
