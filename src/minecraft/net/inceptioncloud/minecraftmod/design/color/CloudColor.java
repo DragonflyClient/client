@@ -17,7 +17,7 @@ public class CloudColor
     /**
      * A purple variation.
      */
-    public static final Color GLOOMY = new Color(0x8C7AE6);
+    public static final Color GLOOMY = new Color(0xa55eea);
 
     /**
      * A light blue variation.

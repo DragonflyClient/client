@@ -15,7 +15,7 @@ public class FontManager
     /**
      * Cache with all previously built Font Renderers.
      */
-    private Map<FontRendererInfo, GlyphFontRenderer> cache = new HashMap<>();
+    private final Map<FontRendererInfo, GlyphFontRenderer> cache = new HashMap<>();
 
     /**
      * Build a new Custom Font Renderer or use an already created one.

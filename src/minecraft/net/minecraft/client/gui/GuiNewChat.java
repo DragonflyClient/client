@@ -265,6 +265,9 @@ public class GuiNewChat extends Gui implements Tickable
      */
     public void clearChatMessages ()
     {
+        this.seperateChatLines.forEach(ChatLine::destroy);
+        this.chatMessages.forEach(ChatLine::destroy);
+
         this.seperateChatLines.clear();
         this.chatMessages.clear();
         this.sentMessages.clear();
@@ -316,7 +319,9 @@ public class GuiNewChat extends Gui implements Tickable
             this.chatMessages.add(0, new ChatLine(updateCounter, component, id));
 
             while (this.chatMessages.size() > 100) {
-                this.chatMessages.remove(this.chatMessages.size() - 1);
+                ChatLine target = chatMessages.get(chatMessages.size() - 1);
+                target.destroy();
+                chatMessages.remove(target);
             }
         }
     }
@@ -379,7 +384,7 @@ public class GuiNewChat extends Gui implements Tickable
      */
     public IChatComponent getChatComponent (int p1, int p2)
     {
-        if (this.getChatOpen()) {
+        if (getChatOpen()) {
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaleFactor();
             float f = this.getChatScale();
@@ -426,14 +431,15 @@ public class GuiNewChat extends Gui implements Tickable
     /**
      * finds and deletes a Chat line by ID
      */
-    public void deleteChatLine (int p_146242_1_)
+    public void deleteChatLine (int chatLineID)
     {
         Iterator<ChatLine> iterator = this.seperateChatLines.iterator();
 
         while (iterator.hasNext()) {
-            ChatLine chatline = iterator.next();
+            ChatLine target = iterator.next();
 
-            if (chatline.getChatLineID() == p_146242_1_) {
+            if (target.getChatLineID() == chatLineID) {
+                target.destroy();
                 iterator.remove();
             }
         }
@@ -441,9 +447,10 @@ public class GuiNewChat extends Gui implements Tickable
         iterator = this.chatMessages.iterator();
 
         while (iterator.hasNext()) {
-            ChatLine chatline1 = iterator.next();
+            ChatLine target = iterator.next();
 
-            if (chatline1.getChatLineID() == p_146242_1_) {
+            if (target.getChatLineID() == chatLineID) {
+                target.destroy();
                 iterator.remove();
                 break;
             }
@@ -457,7 +464,7 @@ public class GuiNewChat extends Gui implements Tickable
 
     public int getChatHeight ()
     {
-        return calculateChatboxHeight(this.getChatOpen() ? this.mc.gameSettings.chatHeightFocused : this.mc.gameSettings.chatHeightUnfocused);
+        return calculateChatboxHeight(getChatOpen() ? this.mc.gameSettings.chatHeightFocused : this.mc.gameSettings.chatHeightUnfocused);
     }
 
     /**

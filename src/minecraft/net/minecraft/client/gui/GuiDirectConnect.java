@@ -50,6 +50,8 @@ public class GuiDirectConnect extends GuiScreen
         Keyboard.enableRepeatEvents(false);
         this.mc.gameSettings.lastServer = this.textField.getText();
         this.mc.gameSettings.saveOptions();
+
+        super.onGuiClosed();
     }
 
     /**

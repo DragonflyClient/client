@@ -212,14 +212,14 @@ public class GuiShaderOptions extends GuiScreenOF
      */
     public void onGuiClosed()
     {
-        super.onGuiClosed();
-
         if (this.changed)
         {
             Shaders.saveShaderPackOptions();
             this.changed = false;
             Shaders.uninit();
         }
+
+        super.onGuiClosed();
     }
 
     private void updateAllButtons()
@@ -301,7 +301,7 @@ public class GuiShaderOptions extends GuiScreenOF
                     return;
                 }
 
-                this.drawGradientRect(j, k, l, i1, -536870912, -536870912);
+                this.drawGradientVertical(j, k, l, i1, -536870912, -536870912);
 
                 for (int j1 = 0; j1 < astring.length; ++j1)
                 {

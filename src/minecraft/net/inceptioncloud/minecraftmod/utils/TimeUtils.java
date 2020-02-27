@@ -12,7 +12,7 @@ public class TimeUtils
     /**
      * When the task with the specific identifier was executed the last time.
      */
-    private static Map<String, Long> LAST_EXECUTIONS = Maps.newHashMap();
+    private static final Map<String, Long> LAST_EXECUTIONS = Maps.newHashMap();
 
     /**
      * Run the task if the last execution of the identifier is long enough in the past.

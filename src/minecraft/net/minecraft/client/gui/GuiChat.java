@@ -7,8 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.util.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -18,7 +16,6 @@ import java.util.List;
 
 public class GuiChat extends GuiScreen
 {
-    private static final Logger logger = LogManager.getLogger();
     private static String messageToSend = null;
     public static DoubleTransition transition = DoubleTransition.builder().start(0).end(22).amountOfSteps(15).reachStart(() ->
     {
@@ -29,6 +26,7 @@ public class GuiChat extends GuiScreen
 
         messageToSend = null;
     }).build();
+    private final List<String> foundPlayerNames = Lists.newArrayList();
     /**
      * Chat entry field
      */
@@ -42,7 +40,6 @@ public class GuiChat extends GuiScreen
     private boolean playerNamesFound;
     private boolean waitingOnAutocomplete;
     private int autocompleteIndex;
-    private List<String> foundPlayerNames = Lists.newArrayList();
     /**
      * is the text that appears when you press the chat key and the input box appears pre-filled
      */
@@ -109,6 +106,8 @@ public class GuiChat extends GuiScreen
     {
         Keyboard.enableRepeatEvents(false);
         this.mc.ingameGUI.getChatGUI().resetScroll();
+
+        super.onGuiClosed();
     }
 
     /**
@@ -226,7 +225,7 @@ public class GuiChat extends GuiScreen
             this.autocompleteIndex = 0;
             String s = this.inputField.getText().substring(i).toLowerCase();
             String s1 = this.inputField.getText().substring(0, this.inputField.getCursorPosition());
-            this.sendAutocompleteRequest(s1, s);
+            this.sendAutocompleteRequest(s1);
 
             if (this.foundPlayerNames.isEmpty()) {
                 return;
@@ -253,7 +252,7 @@ public class GuiChat extends GuiScreen
         this.inputField.writeText(this.foundPlayerNames.get(this.autocompleteIndex++));
     }
 
-    private void sendAutocompleteRequest (String p_146405_1_, String p_146405_2_)
+    private void sendAutocompleteRequest (String p_146405_1_)
     {
         if (p_146405_1_.length() >= 1) {
             BlockPos blockpos = null;

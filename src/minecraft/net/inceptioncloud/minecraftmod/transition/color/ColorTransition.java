@@ -9,7 +9,7 @@ import java.util.function.IntSupplier;
 
 /**
  * <h2>Color Transition</h2>
- *
+ * <p>
  * Supplies a color value that transforms from the start value to the end value on only that direction.
  */
 public class ColorTransition extends TransitionTypeColor
@@ -42,6 +42,11 @@ public class ColorTransition extends TransitionTypeColor
     protected DoubleTransition blueBase;
 
     /**
+     * Constructor-Variable Field
+     */
+    protected int amountOfSteps;
+
+    /**
      * Create a new color transition instance.
      *
      * @param start         {@link #start}
@@ -50,7 +55,7 @@ public class ColorTransition extends TransitionTypeColor
      * @param reachEnd      {@link #reachEnd}
      * @param reachStart    {@link #reachStart}
      */
-    @Builder
+    @Builder ( toBuilder = true )
     private ColorTransition (final Color start, final Color end, final int amountOfSteps,
                              final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
     {
@@ -60,6 +65,7 @@ public class ColorTransition extends TransitionTypeColor
 
         this.start = start;
         this.end = end;
+        this.amountOfSteps = amountOfSteps;
 
         this.redBase = DoubleTransition.builder().start(start.getRed()).end(end.getRed()).amountOfSteps(amountOfSteps).build();
         this.greenBase = DoubleTransition.builder().start(start.getGreen()).end(end.getGreen()).amountOfSteps(amountOfSteps).build();

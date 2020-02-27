@@ -58,9 +58,10 @@ public class GuiRepair extends GuiContainer implements ICrafting
      */
     public void onGuiClosed()
     {
-        super.onGuiClosed();
         Keyboard.enableRepeatEvents(false);
         this.inventorySlots.removeCraftingFromCrafters(this);
+
+        super.onGuiClosed();
     }
 
     /**

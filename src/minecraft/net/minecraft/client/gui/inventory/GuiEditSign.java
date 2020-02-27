@@ -60,6 +60,8 @@ public class GuiEditSign extends GuiScreen
         }
 
         this.tileSign.setEditable(true);
+
+        super.onGuiClosed();
     }
 
     /**

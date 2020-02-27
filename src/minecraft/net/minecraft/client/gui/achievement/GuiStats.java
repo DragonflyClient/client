@@ -42,10 +42,10 @@ public class GuiStats extends GuiScreen implements IProgressMeter
     /** When true, the game will be paused when the gui is shown */
     private boolean doesGuiPauseGame = true;
 
-    public GuiStats(GuiScreen p_i1071_1_, StatFileWriter p_i1071_2_)
+    public GuiStats(GuiScreen parent, StatFileWriter statFileWriter)
     {
-        this.parentScreen = p_i1071_1_;
-        this.field_146546_t = p_i1071_2_;
+        this.parentScreen = parent;
+        this.field_146546_t = statFileWriter;
     }
 
     /**
@@ -404,7 +404,7 @@ public class GuiStats extends GuiScreen implements IProgressMeter
                         int k = p_148142_1_ + 12;
                         int l = p_148142_2_ - 12;
                         int i1 = GuiStats.this.fontRendererObj.getStringWidth(s);
-                        GuiStats.this.drawGradientRect(k - 3, l - 3, k + i1 + 3, l + 8 + 3, -1073741824, -1073741824);
+                        GuiStats.this.drawGradientVertical(k - 3, l - 3, k + i1 + 3, l + 8 + 3, -1073741824, -1073741824);
                         GuiStats.this.fontRendererObj.drawStringWithShadow(s, (float)k, (float)l, -1);
                     }
                 }
@@ -425,7 +425,7 @@ public class GuiStats extends GuiScreen implements IProgressMeter
                     int i = p_148213_2_ + 12;
                     int j = p_148213_3_ - 12;
                     int k = GuiStats.this.fontRendererObj.getStringWidth(s1);
-                    GuiStats.this.drawGradientRect(i - 3, j - 3, i + k + 3, j + 8 + 3, -1073741824, -1073741824);
+                    GuiStats.this.drawGradientVertical(i - 3, j - 3, i + k + 3, j + 8 + 3, -1073741824, -1073741824);
                     GuiStats.this.fontRendererObj.drawStringWithShadow(s1, (float)i, (float)j, -1);
                 }
             }

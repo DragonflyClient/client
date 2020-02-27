@@ -82,6 +82,7 @@ public class GuiStreamUnavailable extends GuiScreen
      */
     public void onGuiClosed()
     {
+        super.onGuiClosed();
     }
 
     /**

@@ -10,17 +10,17 @@ import net.minecraft.realms.RealmsScreen;
 
 public class GuiScreenRealmsProxy extends GuiScreen
 {
-    private RealmsScreen field_154330_a;
+    private final RealmsScreen realmsScreen;
 
-    public GuiScreenRealmsProxy(RealmsScreen p_i1087_1_)
+    public GuiScreenRealmsProxy(RealmsScreen realmsScreen)
     {
-        this.field_154330_a = p_i1087_1_;
+        this.realmsScreen = realmsScreen;
         super.buttonList = Collections.<GuiButton>synchronizedList(Lists.<GuiButton>newArrayList());
     }
 
     public RealmsScreen func_154321_a()
     {
-        return this.field_154330_a;
+        return this.realmsScreen;
     }
 
     /**
@@ -29,18 +29,18 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void initGui()
     {
-        this.field_154330_a.init();
+        this.realmsScreen.init();
         super.initGui();
     }
 
     public void func_154325_a(String p_154325_1_, int p_154325_2_, int p_154325_3_, int p_154325_4_)
     {
-        super.drawCenteredString(this.fontRendererObj, p_154325_1_, p_154325_2_, p_154325_3_, p_154325_4_);
+        drawCenteredString(this.fontRendererObj, p_154325_1_, p_154325_2_, p_154325_3_, p_154325_4_);
     }
 
     public void func_154322_b(String p_154322_1_, int p_154322_2_, int p_154322_3_, int p_154322_4_)
     {
-        super.drawString(this.fontRendererObj, p_154322_1_, p_154322_2_, p_154322_3_, p_154322_4_);
+        drawString(this.fontRendererObj, p_154322_1_, p_154322_2_, p_154322_3_, p_154322_4_);
     }
 
     /**
@@ -48,7 +48,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void drawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height)
     {
-        this.field_154330_a.blit(x, y, textureX, textureY, width, height);
+        this.realmsScreen.blit(x, y, textureX, textureY, width, height);
         super.drawTexturedModalRect(x, y, textureX, textureY, width, height);
     }
 
@@ -56,9 +56,9 @@ public class GuiScreenRealmsProxy extends GuiScreen
      * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
      * topColor, bottomColor
      */
-    public void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor)
+    public void drawGradientVertical (int left, int top, int right, int bottom, int startColor, int endColor)
     {
-        super.drawGradientRect(left, top, right, bottom, startColor, endColor);
+        super.drawGradientVertical(left, top, right, bottom, startColor, endColor);
     }
 
     /**
@@ -87,7 +87,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        this.field_154330_a.render(mouseX, mouseY, partialTicks);
+        this.realmsScreen.render(mouseX, mouseY, partialTicks);
     }
 
     public void renderToolTip(ItemStack stack, int x, int y)
@@ -117,7 +117,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void updateScreen()
     {
-        this.field_154330_a.tick();
+        this.realmsScreen.tick();
         super.updateScreen();
     }
 
@@ -146,7 +146,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public final void actionPerformed(GuiButton button) throws IOException
     {
-        this.field_154330_a.buttonClicked(((GuiButtonRealmsProxy)button).getRealmsButton());
+        this.realmsScreen.buttonClicked(((GuiButtonRealmsProxy)button).getRealmsButton());
     }
 
     public void func_154324_i()
@@ -181,7 +181,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
     {
-        this.field_154330_a.mouseClicked(mouseX, mouseY, mouseButton);
+        this.realmsScreen.mouseClicked(mouseX, mouseY, mouseButton);
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
@@ -190,7 +190,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void handleMouseInput() throws IOException
     {
-        this.field_154330_a.mouseEvent();
+        this.realmsScreen.mouseEvent();
         super.handleMouseInput();
     }
 
@@ -199,7 +199,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void handleKeyboardInput() throws IOException
     {
-        this.field_154330_a.keyboardEvent();
+        this.realmsScreen.keyboardEvent();
         super.handleKeyboardInput();
     }
 
@@ -208,7 +208,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void mouseReleased(int mouseX, int mouseY, int state)
     {
-        this.field_154330_a.mouseReleased(mouseX, mouseY, state);
+        this.realmsScreen.mouseReleased(mouseX, mouseY, state);
     }
 
     /**
@@ -217,7 +217,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick)
     {
-        this.field_154330_a.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        this.realmsScreen.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
     }
 
     /**
@@ -226,12 +226,12 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        this.field_154330_a.keyPressed(typedChar, keyCode);
+        this.realmsScreen.keyPressed(typedChar, keyCode);
     }
 
     public void confirmClicked(boolean result, int id)
     {
-        this.field_154330_a.confirmResult(result, id);
+        this.realmsScreen.confirmResult(result, id);
     }
 
     /**
@@ -239,7 +239,8 @@ public class GuiScreenRealmsProxy extends GuiScreen
      */
     public void onGuiClosed()
     {
-        this.field_154330_a.removed();
+        this.realmsScreen.removed();
+
         super.onGuiClosed();
     }
 }

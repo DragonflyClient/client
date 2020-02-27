@@ -76,7 +76,7 @@ public class GuiScreenAddServer extends GuiScreen
         this.serverIPField.setMaxStringLength(128);
         this.serverIPField.setText(this.serverData.serverIP);
         this.serverIPField.setValidator(s -> field_181032_r.apply(s));
-        ((GuiButton)this.buttonList.get(0)).enabled = this.serverIPField.getText().length() > 0 && this.serverIPField.getText().split(":").length > 0 && this.serverNameField.getText().length() > 0;
+        this.buttonList.get(0).enabled = this.serverIPField.getText().length() > 0 && this.serverIPField.getText().split(":").length > 0 && this.serverNameField.getText().length() > 0;
     }
 
     /**
@@ -85,6 +85,8 @@ public class GuiScreenAddServer extends GuiScreen
     public void onGuiClosed()
     {
         Keyboard.enableRepeatEvents(false);
+
+        super.onGuiClosed();
     }
 
     /**

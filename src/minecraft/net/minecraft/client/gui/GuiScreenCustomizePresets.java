@@ -63,6 +63,8 @@ public class GuiScreenCustomizePresets extends GuiScreen
     public void onGuiClosed()
     {
         Keyboard.enableRepeatEvents(false);
+
+        super.onGuiClosed();
     }
 
     /**

@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.gui.components;
+package net.inceptioncloud.minecraftmod.ui.components;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ import java.awt.*;
 /**
  * A {@link GuiButton} with custom font and transparent background!
  */
-public class CleanGuiButton extends GuiButton
+public class TransparentButton extends GuiButton
 {
     /**
      * The font renderer with which the button text is drawn.
@@ -24,15 +24,15 @@ public class CleanGuiButton extends GuiButton
     private IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans Medium", Font.PLAIN, 22);
 
     /**
-     * The transition that animates the underline.
-     */
-    private DoubleTransition underline = DoubleTransition.builder().start(0).end(1).autoTransformator(( ForwardBackward ) this::isHighlighted).amountOfSteps(40).build();
-
-    /**
      * Whether the clean button is highlighted by an underline.
      */
     @Getter @Setter
     private boolean highlighted = false;
+
+    /**
+     * The transition that animates the underline.
+     */
+    private final DoubleTransition underline = DoubleTransition.builder().start(0).end(1).autoTransformator(( ForwardBackward ) this::isHighlighted).amountOfSteps(40).build();
 
     /**
      * The opacity of the text.
@@ -42,7 +42,7 @@ public class CleanGuiButton extends GuiButton
     /**
      * Super-Constructor
      */
-    public CleanGuiButton (final int buttonId, final int x, final int y, final String buttonText)
+    public TransparentButton (final int buttonId, final int x, final int y, final String buttonText)
     {
         this(buttonId, x, y, 200, 20, buttonText);
     }
@@ -50,7 +50,7 @@ public class CleanGuiButton extends GuiButton
     /**
      * Super-Constructor
      */
-    public CleanGuiButton (final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText)
+    public TransparentButton (final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText)
     {
         super(buttonId, x, y, widthIn, heightIn, buttonText);
     }
@@ -69,18 +69,35 @@ public class CleanGuiButton extends GuiButton
             final int i = Math.max(2, ( this.height - fontRenderer.getHeight() ) / 2);
             fontRenderer.drawCenteredString(this.displayString, this.xPosition + this.width / 2, this.yPosition + i, ColorTransformator.of(0xFFFFFF).transformAlpha(opacity).toRGB(), true);
 
-            int centerX = xPosition + (width / 2);
-            int underlineWidth = ( int ) ( ( fontRenderer.getStringWidth(this.displayString) / 2) * underline.get());
+            int centerX = xPosition + ( width / 2 );
+            int underlineWidth = ( int ) ( ( fontRenderer.getStringWidth(this.displayString) / 2 ) * underline.get() );
             drawHorizontalLine(centerX - underlineWidth, centerX + underlineWidth, yPosition + fontRenderer.getHeight(), new Color(255, 255, 255, 255).getRGB());
         }
     }
 
+    /**
+     * Destroys the Button by removing all transitions.
+     */
+    @Override
+    public void destroy ()
+    {
+        InceptionMod.getInstance().stopTransition(underline);
+    }
+
+    /**
+     * Changes the font renderer of the button.
+     */
     public void setFontRenderer (final IFontRenderer fontRenderer)
     {
         this.fontRenderer = fontRenderer;
     }
 
-    public CleanGuiButton setOpacity (final float opacity)
+    /**
+     * Changes the opacity of the button.
+     *
+     * @return The button instance
+     */
+    public TransparentButton setOpacity (final float opacity)
     {
         this.opacity = opacity;
         return this;

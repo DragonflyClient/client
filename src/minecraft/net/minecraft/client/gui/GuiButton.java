@@ -57,7 +57,6 @@ public class GuiButton extends Gui
         this.width = widthIn;
         this.height = heightIn;
         this.displayString = buttonText;
-
     }
 
     public void setxPosition (final int xPosition)
@@ -165,4 +164,9 @@ public class GuiButton extends Gui
     {
         this.width = width;
     }
+
+    /**
+     * Can be implemented in buttons that use animations in order to destroy them when the GUI is closed.
+     */
+    public void destroy() {}
 }

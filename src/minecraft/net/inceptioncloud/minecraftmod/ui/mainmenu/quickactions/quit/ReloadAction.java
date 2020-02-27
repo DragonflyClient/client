@@ -1,7 +1,7 @@
-package net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.quit;
+package net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.quit;
 
 import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.gui.mainmenu.quickactions.QuickAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.QuickAction;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -17,7 +17,7 @@ public class ReloadAction extends QuickAction
         super(3, 17, "Reload", () ->
         {
             Minecraft.getMinecraft().loadingScreen.displayLoadingString("Reloading Mod...");
-            InceptionMod.create();
+            InceptionMod.getInstance().getOptions().contentUpdate();
             Minecraft.getMinecraft().refreshResources();
         });
     }

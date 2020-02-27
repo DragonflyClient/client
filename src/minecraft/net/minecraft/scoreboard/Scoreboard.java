@@ -123,11 +123,11 @@ public class Scoreboard
 
     public Collection<Score> getSortedScores(ScoreObjective objective)
     {
-        List<Score> list = Lists.<Score>newArrayList();
+        List<Score> list = Lists.newArrayList();
 
         for (Map<ScoreObjective, Score> map : this.entitiesScoreObjectives.values())
         {
-            Score score = (Score)map.get(objective);
+            Score score = map.get(objective);
 
             if (score != null)
             {
@@ -135,7 +135,7 @@ public class Scoreboard
             }
         }
 
-        Collections.sort(list, Score.scoreComparator);
+        list.sort(Score.scoreComparator);
         return list;
     }
 
