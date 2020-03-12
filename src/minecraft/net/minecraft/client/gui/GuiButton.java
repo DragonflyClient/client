@@ -9,31 +9,38 @@ import net.minecraft.util.ResourceLocation;
 public class GuiButton extends Gui
 {
     protected static final ResourceLocation buttonTextures = new ResourceLocation("textures/gui/widgets.png");
+
     /**
      * The x position of this control.
      */
     public int xPosition;
+
     /**
      * The y position of this control.
      */
     public int yPosition;
+
     /**
      * The string displayed on this control.
      */
     public String displayString;
     public int id;
+
     /**
      * True if this control is enabled, false to disable.
      */
     public boolean enabled;
+
     /**
      * Hides the button completely if false.
      */
     public boolean visible;
+
     /**
      * Button width in pixels
      */
     protected int width;
+
     /**
      * Button height in pixels
      */
@@ -59,12 +66,12 @@ public class GuiButton extends Gui
         this.displayString = buttonText;
     }
 
-    public void setxPosition (final int xPosition)
+    public void setPositionX (final int xPosition)
     {
         this.xPosition = xPosition;
     }
 
-    public void setyPosition (final int yPosition)
+    public void setPositionY (final int yPosition)
     {
         this.yPosition = yPosition;
     }
@@ -103,15 +110,12 @@ public class GuiButton extends Gui
             this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + i * 20, this.width / 2, this.height);
             this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
             this.mouseDragged(mc, mouseX, mouseY);
-            int j = 14737632;
+            int color = 14737632;
 
-            if (!this.enabled) {
-                j = 10526880;
-            } else if (this.hovered) {
-                j = 16777120;
-            }
+            if (!this.enabled) color = 10526880;
+            else if (this.hovered) color = 16777120;
 
-            drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + ( this.height - 8 ) / 2, j);
+            drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + ( this.height - 8 ) / 2, color);
         }
     }
 
@@ -130,8 +134,7 @@ public class GuiButton extends Gui
     }
 
     /**
-     * Returns true if the mouse has been pressed on this control. Equivalent of MouseListener.mousePressed(MouseEvent
-     * e).
+     * Returns true if the mouse has been pressed on this control. Equivalent of MouseListener.mousePressed(MouseEvent e).
      */
     public boolean mousePressed (Minecraft mc, int mouseX, int mouseY)
     {
@@ -168,5 +171,7 @@ public class GuiButton extends Gui
     /**
      * Can be implemented in buttons that use animations in order to destroy them when the GUI is closed.
      */
-    public void destroy() {}
+    public void destroy ()
+    {
+    }
 }

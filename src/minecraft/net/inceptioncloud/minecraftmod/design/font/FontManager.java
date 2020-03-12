@@ -2,6 +2,7 @@ package net.inceptioncloud.minecraftmod.design.font;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import net.inceptioncloud.minecraftmod.InceptionMod;
 
 import java.awt.*;
 import java.util.HashMap;

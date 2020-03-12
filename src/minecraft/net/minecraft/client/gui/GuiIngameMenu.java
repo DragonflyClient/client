@@ -57,7 +57,9 @@ public class GuiIngameMenu extends GuiScreen
         /* Options */
         this.buttonList.add(new SimpleButton(0, this.width / 2 - 100, this.height / 4 + 84, "Options"));
         /* Open to LAN / Lobby */
-        this.buttonList.add(new ConfirmationButton(this, 7, this.width / 2 - 100, this.height / 4 + 108, this.mc.isSingleplayer() && !this.mc.getIntegratedServer().getPublic() ? "Open to LAN" : "Back to Hub"));
+        this.buttonList.add(this.mc.isSingleplayer() && !this.mc.getIntegratedServer().getPublic()
+            ? new SimpleButton(7, this.width / 2 - 100, this.height / 4 + 108, "Open to LAN")
+            : new ConfirmationButton(this, 7, this.width / 2 - 100, this.height / 4 + 108, "Back to Hub"));
         /* Quit World */
         this.buttonList.add(new ConfirmationButton(this, 1, this.width / 2 - 100, this.height / 4 + 132, this.mc.isIntegratedServerRunning() ? "Save and Quit to Title" : "Disconnect"));
     }
@@ -152,7 +154,7 @@ public class GuiIngameMenu extends GuiScreen
         int headerWidth = ( int ) ( transitionHeader.get() * width );
         int headerCenter = left + ( width / 2 );
         int headerLeft = headerCenter - ( headerWidth / 2 );
-        drawGradientHorizontal(headerLeft, top - 1, headerLeft + headerWidth, top, CloudColor.FUSION.getRGB(), CloudColor.ROYAL.getRGB());
+        drawGradientHorizontal(headerLeft, top - 1, headerLeft + headerWidth, top, CloudColor.DESIRE.getRGB(), CloudColor.ROYAL.getRGB());
 
         /* Game Menu Box */
         drawRect(left, top, right, bottom, GreyToneColor.DARK_GREY.getRGB());

@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.design.font;
 
+import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.font.util.GlyphPage;
 import net.inceptioncloud.minecraftmod.utils.TimeUtils;
 import net.minecraft.client.Minecraft;
@@ -44,12 +45,13 @@ public class GlyphFontRenderer implements IFontRenderer
      * Array of RGB triplets defining the 16 standard chat colors followed by 16 darker version of the same colors for
      * drop shadows.
      */
-    private int[] colorCode = new int[32];
+    private final int[] colorCode = new int[32];
 
     /**
      * Used to specify new red value for the current color.
      */
     private float red;
+
     /**
      * Used to specify new blue value for the current color.
      */
@@ -93,7 +95,7 @@ public class GlyphFontRenderer implements IFontRenderer
     /**
      * The different Glyph Pages
      */
-    private GlyphPage regularGlyphPage, boldGlyphPage, italicGlyphPage, boldItalicGlyphPage;
+    private final GlyphPage regularGlyphPage, boldGlyphPage, italicGlyphPage, boldItalicGlyphPage;
 
     /**
      * Default Constructor
@@ -131,7 +133,7 @@ public class GlyphFontRenderer implements IFontRenderer
      */
     public static GlyphFontRenderer create (String fontName, int size, boolean bold, boolean italic, boolean boldItalic)
     {
-        LogManager.getLogger().info("Building GlyphPageFontRenderer for Font {} with size {} and style {{},{},{}}", fontName, size, bold, italic, boldItalic);
+        InceptionMod.getLogger().info("Building GlyphPageFontRenderer for Font " + fontName + " with size " + size + "..");
 
         // If the font isn't already loaded, import it from a .ttf file
         if (!LOADED_FONTS.contains(fontName)) {
@@ -251,15 +253,15 @@ public class GlyphFontRenderer implements IFontRenderer
         int width = 0;
         int size = text.length();
 
-        boolean on = false;
+        boolean flag = false;
 
-        for (int i = 0 ; i < size ; i++) {
-            char character = text.charAt(i);
+        for (int index = 0 ; index < size ; index++) {
+            char charAt = text.charAt(index);
 
-            if (character == '§')
-                on = true;
-            else if (on && character >= '0' && character <= 'r') {
-                int colorIndex = "0123456789abcdefklmnor".indexOf(character);
+            if (charAt == '§') {
+                flag = true;
+            } else if (flag && charAt >= '0' && charAt <= 'r') {
+                int colorIndex = "0123456789abcdefklmnor".indexOf(charAt);
                 if (colorIndex < 16) {
                     boldStyle = false;
                     italicStyle = false;
@@ -271,13 +273,12 @@ public class GlyphFontRenderer implements IFontRenderer
                     boldStyle = false;
                     italicStyle = false;
                 }
-//                i++;
-                on = false;
+//                index++;
+                flag = false;
             } else {
-                if (on) i--;
-
-                character = text.charAt(i);
-                width += getCharWidthFloat(character);
+//                if (flag) index--;
+                charAt = text.charAt(index);
+                width += getCharWidthFloat(charAt);
             }
         }
 
@@ -471,7 +472,6 @@ public class GlyphFontRenderer implements IFontRenderer
         this.posX += f;
     }
 
-
     private GlyphPage getCurrentGlyphPage ()
     {
         if (boldStyle && italicStyle)
@@ -554,4 +554,109 @@ public class GlyphFontRenderer implements IFontRenderer
 
         return stringbuilder.toString();
     }
+
+    /**
+     * Breaks a string into a list of pieces that will fit a specified width.
+     *
+     * @param text  The text
+     * @param width The target width
+     *
+     * @return The list of broken strings
+     */
+    @Override
+    public List<String> listFormattedStringToWidth (final String text, final int width)
+    {
+        return Arrays.asList(this.wrapFormattedStringToWidth(text, width).split("\n"));
+    }
+
+    /**
+     * Inserts newline and formatting into a string to wrap it within the specified width.
+     *
+     * @param text  The text
+     * @param width The target width
+     *
+     * @return The string with new lines determined via \n
+     */
+    @Override
+    public String wrapFormattedStringToWidth (final String text, final int width)
+    {
+        int i = this.sizeStringToWidth(text, width);
+
+        if (text.length() <= i) {
+            return text;
+        } else {
+            String s = text.substring(0, i);
+            char c0 = text.charAt(i);
+            boolean flag = c0 == 32 || c0 == 10;
+            String s1 = FontRenderer.getFormatFromString(s) + text.substring(i + ( flag ? 1 : 0 ));
+            return s + "\n" + this.wrapFormattedStringToWidth(s1, width);
+        }
+    }
+
+    /**
+     * Determines how many characters from the string will fit into the specified width.
+     *
+     * @param text  The text
+     * @param width The target width
+     *
+     * @return The amount of characters
+     */
+    @Override
+    public int sizeStringToWidth (final String text, final int width)
+    {
+        int i = text.length();
+        float f = 0.0F;
+        int j = 0;
+        int k = -1;
+
+        for (boolean flag = false ; j < i ; ++j) {
+            char c0 = text.charAt(j);
+
+            switch (c0) {
+                case '\n':
+                    --j;
+                    break;
+
+                case ' ':
+                    k = j;
+
+                default:
+                    f += this.getCharWidthFloat(c0);
+
+                    if (flag) {
+                        ++f;
+                    }
+
+                    break;
+
+                case '\u00a7':
+                    if (j < i - 1) {
+                        ++j;
+                        char c1 = text.charAt(j);
+
+                        if (c1 != 108 && c1 != 76) {
+                            if (c1 == 114 || c1 == 82 || FontRenderer.isFormatColor(c1)) {
+                                flag = false;
+                            }
+                        } else {
+                            flag = true;
+                        }
+                    }
+            }
+
+            if (c0 == 10) {
+                ++j;
+                k = j;
+                break;
+            }
+
+            if (f > ( float ) width) {
+                break;
+            }
+        }
+
+        return j != i && k != -1 && k < j ? k : j;
+    }
+
+
 }

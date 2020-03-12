@@ -147,7 +147,7 @@ public class ModSplashScreen
 
         Gui.drawRect(rectLeft, 180, rectRight, 180 + rectHeight, new Color(255, 255, 255, 200).getRGB());
         Gui.drawRect(rectLeft + 1, 180 + 1, rectRight - 1, 180 + rectHeight - 1, GreyToneColor.DARK_GREY.getRGB());
-        Gui.drawGradientHorizontal(rectLeft + 2, 180 + 2, rectLeft + loadingWidth - 2, 180 + rectHeight - 2, CloudColor.FUSION.getRGB(), CloudColor.ROYAL.getRGB());
+        Gui.drawGradientHorizontal(rectLeft + 2, 180 + 2, rectLeft + loadingWidth - 2, 180 + rectHeight - 2, CloudColor.DESIRE.getRGB(), CloudColor.ROYAL.getRGB());
     }
 
     /**

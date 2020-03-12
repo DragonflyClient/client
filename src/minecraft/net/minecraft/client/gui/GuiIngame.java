@@ -499,21 +499,22 @@ public class GuiIngame extends Gui
 
     private void renderScoreboard (ScoreObjective objective, ScaledResolution resolution)
     {
-        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        IFontRenderer fontRegular = InceptionMod.getInstance().getFontDesign().getRegular();
+        IFontRenderer fontMedium = InceptionMod.getInstance().getFontDesign().getMedium();
         Scoreboard scoreboard = objective.getScoreboard();
         Collection<Score> sortedScores = scoreboard.getSortedScores(objective);
         ArrayList<Score> displayableScores = sortedScores.stream().filter(score -> score.getPlayerName() != null && !score.getPlayerName().startsWith("#")).collect(Collectors.toCollection(Lists::newArrayList));
         ArrayList<Score> trimmedScores = displayableScores.size() > 15 ? Lists.newArrayList(Iterables.skip(displayableScores, sortedScores.size() - 15)) : displayableScores;
 
-        int i = fontRenderer.getStringWidth(objective.getDisplayName());
+        int i = fontRegular.getStringWidth(objective.getDisplayName());
 
         for (Object score : trimmedScores) {
             ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(( ( Score ) score ).getPlayerName());
             String s = ScorePlayerTeam.formatPlayerName(scoreplayerteam, ( ( Score ) score ).getPlayerName()) + ": " + EnumChatFormatting.RED + ( ( Score ) score ).getScorePoints();
-            i = Math.max(i, fontRenderer.getStringWidth(s));
+            i = Math.max(i, fontRegular.getStringWidth(s));
         }
 
-        int j1 = trimmedScores.size() * fontRenderer.getHeight();
+        int j1 = trimmedScores.size() * fontRegular.getHeight();
         int k1 = resolution.getScaledHeight() / 2 + j1 / 3;
         byte b0 = 3;
         int left = resolution.getScaledWidth() - i - b0;
@@ -527,25 +528,25 @@ public class GuiIngame extends Gui
             ScorePlayerTeam scoreplayerteam1 = scoreboard.getPlayersTeam(score.getPlayerName());
             String s1 = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score.getPlayerName());
             String s2 = EnumChatFormatting.RED.toString() + score.getScorePoints();
-            int top = k1 - k * fontRenderer.getHeight();
+            int top = k1 - k * fontRegular.getHeight();
             int right = resolution.getScaledWidth() - b0 + 2;
 
             if (IngameOptions.SCOREBOARD_BACKGROUND.get())
-                drawRect(left - 2, top, right + 2, top + fontRenderer.getHeight(), lightColor);
+                drawRect(left - 2, top, right + 2, top + fontRegular.getHeight(), lightColor);
 
             if (IngameOptions.SCOREBOARD_SCORES.get())
-                fontRenderer.drawString(s2, right - fontRenderer.getStringWidth(s2), top, 0xFFFFFF, true);
+                fontRegular.drawString(s2, right - fontRegular.getStringWidth(s2), top, 0xFFFFFF, true);
 
-            fontRenderer.drawString(s1, left, top, 0xFFFFFF, true);
+            fontRegular.drawString(s1, left, top, 0xFFFFFF, true);
 
             if (k == trimmedScores.size() && IngameOptions.SCOREBOARD_TITLE.get()) {
                 if (IngameOptions.SCOREBOARD_BACKGROUND.get()) {
-                    drawRect(left - 2, top - fontRenderer.getHeight() - 1, right + 2, top - 1, darkColor);
+                    drawRect(left - 2, top - fontMedium.getHeight() - 1, right + 2, top - 1, darkColor);
                     drawRect(left - 2, top - 1, right + 2, top, lightColor);
                 }
 
                 String s3 = objective.getDisplayName();
-                fontRenderer.drawString(s3, left + i / 2f - fontRenderer.getStringWidth(s3) / 2f, top - fontRenderer.getHeight() + 1, 0xFFFFFF, true);
+                fontMedium.drawString(s3, left + i / 2f - fontMedium.getStringWidth(s3) / 2f, top - fontMedium.getHeight() + 1, 0xFFFFFF, true);
             }
         }
     }

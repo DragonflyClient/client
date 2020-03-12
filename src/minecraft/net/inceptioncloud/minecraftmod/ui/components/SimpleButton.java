@@ -8,10 +8,8 @@ import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
-import net.inceptioncloud.minecraftmod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
 
@@ -28,7 +26,7 @@ public class SimpleButton extends GuiButton
     /**
      * Transition changes the color when hovering.
      */
-    protected ColorTransition colorTransition = ColorTransition.builder().start(CloudColor.FUSION).end(CloudColor.ROYAL).amountOfSteps(width / 2).autoTransformator(( ForwardBackward ) () -> hovered).build();
+    protected ColorTransition colorTransition = ColorTransition.builder().start(CloudColor.FUSION).end(CloudColor.DESIRE).amountOfSteps(width / 2).autoTransformator(( ForwardBackward ) () -> hovered).build();
 
     /**
      * The opacity of the button.
@@ -74,10 +72,10 @@ public class SimpleButton extends GuiButton
             this.hovered = mouseX >= left && mouseY >= top && mouseX < right && mouseY < bottom;
             this.mouseDragged(mc, mouseX, mouseY);
 
-            drawRectD(left - border, top - border, right + border, bottom + border, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).transformAlpha(opacity).toRGB());
-            drawRectD(left, top, right, bottom, ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(opacity).toRGB());
+            drawRect(left - border, top - border, right + border, bottom + border, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).transformAlpha(opacity).toRGB());
+            drawRect(left, top, right, bottom, ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(opacity).toRGB());
 
-            drawRectD(left, top, left + 4 + (hoverTransition.get() * (right - left - 4)), bottom, color.getRGB());
+            drawRect(left, top, left + 4 + ( hoverTransition.get() * ( right - left - 4)), bottom, color.getRGB());
 
             if (opacity > 0.1)
                 drawCenteredString(fontrenderer, this.displayString, (int) left + this.width / 2, (int) top + ( this.height - 8 ) / 2, new Color(1, 1, 1, opacity).getRGB());

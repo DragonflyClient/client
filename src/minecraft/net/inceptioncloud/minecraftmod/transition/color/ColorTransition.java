@@ -119,9 +119,11 @@ public class ColorTransition extends TransitionTypeColor
     @Override
     public void doBackward ()
     {
-        redBase.setBackward();
-        greenBase.setBackward();
-        blueBase.setBackward();
+        if (redBase != null && greenBase != null && blueBase != null) {
+            redBase.setBackward();
+            greenBase.setBackward();
+            blueBase.setBackward();
+        }
 
         if (isAtStart() && reachStart != null)
             reachStart.run();

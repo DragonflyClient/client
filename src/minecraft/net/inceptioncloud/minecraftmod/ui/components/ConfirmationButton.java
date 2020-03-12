@@ -39,11 +39,6 @@ public class ConfirmationButton extends SimpleButton
     private final GuiScreen parentScreen;
 
     /**
-     * Whether the action of the button was confirmed and executed.
-     */
-    private boolean actionConfirmed = false;
-
-    /**
      * Counts the ticks during the end-state of the {@link #holdTransition}.
      */
     private int endTicks = 0;
@@ -93,10 +88,10 @@ public class ConfirmationButton extends SimpleButton
             this.hovered = mouseX >= left && mouseY >= top && mouseX < right && mouseY < bottom;
             this.mouseDragged(mc, mouseX, mouseY);
 
-            drawRectD(left - border, top - border, right + border, bottom + border, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).transformAlpha(opacity).toRGB());
-            drawRectD(left, top, right, bottom, ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(opacity).toRGB());
+            drawRect(left - border, top - border, right + border, bottom + border, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).transformAlpha(opacity).toRGB());
+            drawRect(left, top, right, bottom, ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(opacity).toRGB());
 
-            drawRectD(left + ( holdTransition.get() * ( width - 4 ) ), top, left + 4 + ( hoverTransition.get() * ( width - 4 ) ), bottom, color.getRGB());
+            drawRect(left + ( holdTransition.get() * ( width - 4 ) ), top, left + 4 + ( hoverTransition.get() * ( width - 4 ) ), bottom, color.getRGB());
 
             if (opacity > 0.05)
                 drawCenteredString(fontrenderer, this.displayString, ( int ) left + this.width / 2, ( int ) top + ( this.height - 8 ) / 2, new Color(1, 1, 1, opacity).getRGB());
@@ -119,13 +114,12 @@ public class ConfirmationButton extends SimpleButton
     {
         holdTransition = DoubleTransition.builder()
             .start(0.0).end(1.0)
-            .amountOfSteps(( int ) ( width / 1.9))
+            .amountOfSteps(( int ) ( width / 2.8))
             .autoTransformator(( ForwardBackward ) () -> hoverTransition.isAtEnd() && Mouse.isButtonDown(0))
-            .reachStart(() -> actionConfirmed = false)
             .build();
 
         colorTransition  = ColorTransition.builder()
-            .start(CloudColor.ROYAL).end(CloudColor.GLOOMY)
+            .start(CloudColor.ROYAL.brighter()).end(CloudColor.NTSC)
             .amountOfSteps(width / 2)
             .autoTransformator(( ForwardBackward ) () -> hovered).build();
 

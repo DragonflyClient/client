@@ -10,15 +10,12 @@ import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.options.Options;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
-import net.inceptioncloud.minecraftmod.utils.TimeUtils;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.Display;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * The main class of the Inception Cloud Minecraft Mod.
@@ -30,6 +27,12 @@ public class InceptionMod
      */
     @Getter
     private static InceptionMod instance;
+
+    /**
+     * The Logger used to log InceptionMod messages.
+     */
+    @Getter
+    private static final Logger logger = LogManager.getLogger();
 
     @Getter
     private final GameStateManager gameStateManager;
@@ -112,7 +115,8 @@ public class InceptionMod
                     tick();
                     recordTick();
                 } catch (Exception exception) {
-                    LogManager.getLogger().error("Inception Cloud Mod Tick failed!", exception);
+                    LogManager.getLogger().error("Inception Cloud Mod Tick failed!");
+                    exception.printStackTrace();
                 }
             }
         }, 0, 5);

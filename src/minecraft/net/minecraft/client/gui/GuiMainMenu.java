@@ -3,23 +3,18 @@ package net.minecraft.client.gui;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.*;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
-import net.inceptioncloud.minecraftmod.ui.components.TransparentButton;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.QuickAction;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.multiplayer.DirectConnectAction;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.multiplayer.LastServerAction;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.options.ModOptionsAction;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.options.ResourcePackAction;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.quit.ReloadAction;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.quit.RestartAction;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.singleplayer.CreateMapAction;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.singleplayer.LastMapAction;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
-import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
-import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
+import net.inceptioncloud.minecraftmod.transition.supplier.*;
+import net.inceptioncloud.minecraftmod.ui.components.TransparentButton;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.multiplayer.*;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.options.*;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quit.*;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer.*;
 import net.inceptioncloud.minecraftmod.utils.RenderUtils;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
@@ -31,13 +26,36 @@ import org.lwjgl.opengl.GLContext;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
 {
     public static final String informationText = "Please click " + EnumChatFormatting.UNDERLINE + "here" + EnumChatFormatting.RESET + " for more information.";
+    private static final Logger logger = LogManager.getLogger();
+
+    /**
+     * The time when the GUI was first drawn.
+     *
+     * @see #addButtons() Which Button IDs are used
+     */
+    private static long drawTime = -1;
+
+    /**
+     * Provides the value for the fading in of the main menu after the splash screen.
+     */
+    private static final DoubleTransition fadeInTransition = DoubleTransition.builder()
+        .start(1)
+        .end(0)
+        .amountOfSteps(500)
+        .autoTransformator(( ForwardNothing ) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000)
+        .build();
+
+    /**
+     * The amount of ticks when the cursor hovered the navigation bar.
+     */
+    private static long cursorHoverTime = 0;
 
     /**
      * Provides all available quick actions.
@@ -49,12 +67,26 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
         new RestartAction(), new ReloadAction()
     );
 
-    private static final Logger logger = LogManager.getLogger();
-
     /**
      * The Object object utilized as a thread lock when performing non thread-safe operations
      */
     private final Object threadLock = new Object();
+
+    /**
+     * The transitions that are responsible for the different Quick Action Buttons.
+     */
+    private final Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
+
+    /**
+     * The transition that lets the navigation bar rise when it's hovered.
+     */
+    private final DoubleTransition riseTransition = DoubleTransition.builder()
+        .start(1)
+        .end(2)
+        .amountOfSteps(20)
+        .autoTransformator(( ForwardBackward ) () -> cursorHoverTime >= 100)
+        .build();
+
     private int mouseY = 0;
 
     /**
@@ -90,33 +122,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
      * The ID of the button which is selected in order to draw it's sub-modules.
      */
     private int selectedButton = 0;
-
-    /**
-     * The time when the GUI was first drawn.
-     *
-     * @see #addButtons() Which Button IDs are used
-     */
-    private static long drawTime = -1;
-
-    /**
-     * The amount of ticks when the cursor hovered the navigation bar.
-     */
-    private static long cursorHoverTime = 0;
-
-    /**
-     * The transitions that are responsible for the different Quick Action Buttons.
-     */
-    private final Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
-
-    /**
-     * The transition that lets the navigation bar rise when it's hovered.
-     */
-    private final DoubleTransition riseTransition = DoubleTransition.builder().start(1).end(2).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> cursorHoverTime >= 100).build();
-
-    /**
-     * Provides the value for the fading in of the main menu after the splash screen.
-     */
-    private static final DoubleTransition fadeInTransition = DoubleTransition.builder().start(1).end(0).amountOfSteps(500).autoTransformator(( ForwardNothing ) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000).build();
 
     /**
      * Default Constructor
@@ -157,25 +162,25 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
             .filter(guiButton -> guiButton.id < 10)
             .filter(TransparentButton.class::isInstance)
             .map(TransparentButton.class::cast)
-            .forEach(cleanGuiButton ->
+            .forEach(transparentButton ->
             {
-                cleanGuiButton.setHighlighted(!riseTransition.isAtStart() && selectedButton == cleanGuiButton.id);
-                cleanGuiButton.setFontRenderer(finalFontRenderer);
-                cleanGuiButton.setyPosition(BUTTON_Y);
+                transparentButton.setHighlighted(!riseTransition.isAtStart() && selectedButton == transparentButton.id);
+                transparentButton.setFontRenderer(finalFontRenderer);
+                transparentButton.setPositionY(BUTTON_Y);
 
-                if (cleanGuiButton.isMouseOver())
-                    selectedButton = cleanGuiButton.id;
+                if (transparentButton.isMouseOver())
+                    selectedButton = transparentButton.id;
             });
 
         this.buttonList.stream()
             .filter(guiButton -> guiButton.id >= 10)
             .filter(TransparentButton.class::isInstance)
             .map(TransparentButton.class::cast)
-            .forEach(cleanGuiButton ->
+            .forEach(transparentButton ->
             {
-                double percent = quickActionTransitions.get(cleanGuiButton.id).get();
-                cleanGuiButton.setyPosition(( int ) ( height - BUTTON_HEIGHT * 1.7 * percent));
-                cleanGuiButton.setFontRenderer(finalFontRenderer);
+                double percent = quickActionTransitions.get(transparentButton.id).get();
+                transparentButton.setPositionY(( int ) ( height - BUTTON_HEIGHT * 1.7 * percent ));
+                transparentButton.setFontRenderer(finalFontRenderer);
             });
 
         // ICMM - Logo
@@ -197,7 +202,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
         // ICMM - Bottom Bar
         drawRect(0, height - getNavbarHeight(), width, height, new Color(0, 0, 0, 100).getRGB());
 
-        // Buttons
+        // ICMM - Buttons
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.buttonList.remove(this.buttonList.stream().filter(guiButton -> guiButton.id == 5).findFirst().orElse(null));
 
@@ -219,8 +224,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
         BUTTON_SPACE = 10;
         BUTTON_Y = height - getNavbarHeight() + ( BUTTON_HEIGHT / 2 );
 
-        QUICK_ACTION_LEFT = ( int ) ( this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2 + 10);
-        QUICK_ACTION_RIGHT = ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH * 2 - 10);
+        QUICK_ACTION_LEFT = ( int ) ( this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2 + 10 );
+        QUICK_ACTION_RIGHT = ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH * 2 - 10 );
 
         return fontRenderer;
     }
@@ -325,7 +330,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
      */
     public void drawGradientBackground ()
     {
-        int startColor = CloudColor.FUSION.getRGB();
+        int startColor = CloudColor.DESIRE.getRGB();
         int endColor = CloudColor.ROYAL.getRGB();
         drawGradientLeftTopRightBottom(0, 0, width, height, startColor, endColor);
     }

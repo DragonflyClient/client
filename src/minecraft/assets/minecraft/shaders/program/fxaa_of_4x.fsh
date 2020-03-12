@@ -61,7 +61,6 @@ varying vec2 texCoord;
                    GREEN AS LUMA OPTION SUPPORT FUNCTION
 ============================================================================*/
 #if (FXAA_GREEN_AS_LUMA == 0)
-    // TODO Luma
     FxaaFloat FxaaLuma(FxaaFloat4 rgba) { return dot(rgba.xyz, vec3(0.299, 0.587, 0.114)); }
 #else
     FxaaFloat FxaaLuma(FxaaFloat4 rgba) { return rgba.y; }
@@ -165,7 +164,6 @@ FxaaFloat4 FxaaPixelShader(
 /*--------------------------------------------------------------------------*/
     FxaaFloat4 rgbyM = FxaaTexTop(tex, pos.xy);
     #if (FXAA_GREEN_AS_LUMA == 0)
-	    // TODO Luma
         FxaaFloat lumaM = FxaaLuma(rgbyM);
     #else
         FxaaFloat lumaM = rgbyM.y;
@@ -217,7 +215,6 @@ FxaaFloat4 FxaaPixelShader(
     FxaaFloat4 rgbyB = ((rgbyN2 + rgbyP2) * 0.25) + (rgbyA * 0.25);
 /*--------------------------------------------------------------------------*/
     #if (FXAA_GREEN_AS_LUMA == 0)
-      // TODO Luma
       float lumaB = FxaaLuma(rgbyB);
     #else
       float lumaB = rgbyB.y;

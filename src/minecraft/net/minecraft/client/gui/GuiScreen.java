@@ -101,7 +101,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             try {
                 StringSelection stringselection = new StringSelection(copyText);
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringselection, null);
-            } catch (Exception var2) {
+            } catch (Exception ignored) {
             }
         }
     }

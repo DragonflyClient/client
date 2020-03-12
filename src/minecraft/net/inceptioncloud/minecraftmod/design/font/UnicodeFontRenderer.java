@@ -1,6 +1,5 @@
 package net.inceptioncloud.minecraftmod.design.font;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -17,15 +16,14 @@ import java.util.*;
 /**
  * A custom Font Renderer based on the Unicode.
  */
-@SuppressWarnings ( "unchecked" )
 public class UnicodeFontRenderer implements IFontRenderer
 {
     public final int FONT_HEIGHT = 9;
     private final int[] colorCodes = new int[32];
     private final float kerning;
     private final Map<String, Float> cachedStringWidth = new HashMap<>();
-    private float antiAliasingFactor;
-    private UnicodeFont unicodeFont;
+    private final float antiAliasingFactor;
+    private final UnicodeFont unicodeFont;
 
     /**
      * Default Constructor
@@ -41,6 +39,7 @@ public class UnicodeFontRenderer implements IFontRenderer
         this.kerning = kerning;
 
         this.unicodeFont.addAsciiGlyphs();
+        //noinspection unchecked
         this.unicodeFont.getEffects().add(new ColorEffect(java.awt.Color.WHITE));
 
         try {
@@ -344,6 +343,51 @@ public class UnicodeFontRenderer implements IFontRenderer
     public String trimStringToWidth (final String text, final int width, final boolean reverse)
     {
         throw new UnsupportedOperationException("Not supported in the Unicode Font Renderer!");
+    }
+
+    /**
+     * Breaks a string into a list of pieces that will fit a specified width.
+     *
+     * @param text  The text
+     * @param width The target width
+     *
+     * @return The list of broken strings
+     */
+    @Override
+    public List<String> listFormattedStringToWidth (final String text, final int width)
+    {
+        throw new UnsupportedOperationException("TODO!");
+        // TODO [01.03.2020]: Support Operation!
+    }
+
+    /**
+     * Inserts newline and formatting into a string to wrap it within the specified width.
+     *
+     * @param text  The text
+     * @param width The target width
+     *
+     * @return The string with new lines determined via \n
+     */
+    @Override
+    public String wrapFormattedStringToWidth (final String text, final int width)
+    {
+        throw new UnsupportedOperationException("TODO!");
+        // TODO [01.03.2020]: Support Operation!
+    }
+
+    /**
+     * Determines how many characters from the string will fit into the specified width.
+     *
+     * @param text  The text
+     * @param width The target width
+     *
+     * @return The amount of characters
+     */
+    @Override
+    public int sizeStringToWidth (final String text, final int width)
+    {
+        throw new UnsupportedOperationException("TODO!");
+        // TODO [01.03.2020]: Support Operation!
     }
 
     //<editor-fold desc="<--- Extra Content --->">

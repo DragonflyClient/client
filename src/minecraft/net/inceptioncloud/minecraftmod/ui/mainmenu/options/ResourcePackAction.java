@@ -1,6 +1,6 @@
-package net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.options;
+package net.inceptioncloud.minecraftmod.ui.mainmenu.options;
 
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quickactions.QuickAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreenResourcePacks;
 

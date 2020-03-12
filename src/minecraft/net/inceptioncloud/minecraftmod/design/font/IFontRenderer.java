@@ -2,8 +2,10 @@ package net.inceptioncloud.minecraftmod.design.font;
 
 import net.minecraft.client.gui.FontRenderer;
 
+import java.util.List;
+
 /**
- * The parent interface of the Minecraft {@link FontRenderer} and the InceptionCloud {@link GlyphFontRenderer}.
+ * The parent interface of the Minecraft {@link FontRenderer} and the InceptionCloud {@link GlyphFontRenderer} and {@link UnicodeFontRenderer}.
  */
 public interface IFontRenderer
 {
@@ -86,6 +88,36 @@ public interface IFontRenderer
      * @return The trimmed string
      */
     String trimStringToWidth (String text, int width, boolean reverse);
+
+    /**
+     * Breaks a string into a list of pieces that will fit a specified width.
+     *
+     * @param text  The text
+     * @param width The target width
+     *
+     * @return The list of broken strings
+     */
+    List<String> listFormattedStringToWidth (String text, int width);
+
+    /**
+     * Inserts newline and formatting into a string to wrap it within the specified width.
+     *
+     * @param text  The text
+     * @param width The target width
+     *
+     * @return The string with new lines determined via \n
+     */
+    String wrapFormattedStringToWidth (String text, int width);
+
+    /**
+     * Determines how many characters from the string will fit into the specified width.
+     *
+     * @param text  The text
+     * @param width The target width
+     *
+     * @return The amount of characters
+     */
+    int sizeStringToWidth (String text, int width);
 
     /**
      * The default implementation for drawing a string centered on the screen.

@@ -81,7 +81,7 @@ public class Gui
     /**
      * Draws a solid color rectangle with the specified coordinates and color (ARGB format). Args: x1, y1, x2, y2, color
      */
-    public static void drawRectD (double left, double top, double right, double bottom, int color)
+    public static void drawRect (double left, double top, double right, double bottom, int color)
     {
         if (left < right) {
             double i = left;
@@ -152,7 +152,7 @@ public class Gui
      * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
      * topColor, bottomColor
      */
-    public static void drawGradientHorizontalD (double left, double top, double right, double bottom, int startColor, int endColor)
+    public static void drawGradientHorizontal (double left, double top, double right, double bottom, int startColor, int endColor)
     {
         float start_a = ( float ) ( startColor >> 24 & 255 ) / 255.0F;
         float start_r = ( float ) ( startColor >> 16 & 255 ) / 255.0F;
