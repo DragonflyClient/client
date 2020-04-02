@@ -149,14 +149,6 @@ public class InceptionMod
     {
         new ArrayList<>(transitions).forEach(Transition::tick);
         new ArrayList<>(tickables).forEach(Tickable::modTick);
-
-        /*TimeUtils.requireDelay("tick-check", 1000, () -> {
-            Map<String, List<Transition>> groupings = transitions.stream().collect(Collectors.groupingBy(Transition::getOrigin));
-            Map<String, Integer> amounts = new HashMap<>();
-
-            groupings.keySet().forEach(key -> amounts.put(key, groupings.get(key).size()));
-            System.out.println(amounts);
-        });*/
     }
 
     /**

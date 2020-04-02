@@ -1,10 +1,7 @@
 package net.inceptioncloud.minecraftmod.options;
 
-import com.google.common.reflect.TypeParameter;
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.event.play.ServerConnectingEvent;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 
@@ -35,7 +32,7 @@ public class Options
     /**
      * The Gson instance that allows the (de-)serialization of objects.
      */
-    private Gson gson;
+    private final Gson gson;
 
     /**
      * Initial Constructor that updates the content when called.

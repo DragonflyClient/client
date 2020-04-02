@@ -96,7 +96,9 @@ public class ColorTransition extends TransitionTypeColor
     @Override
     public boolean isAtStart ()
     {
-        return redBase.isAtStart() && greenBase.isAtStart() && blueBase.isAtStart();
+        return redBase != null && redBase.isAtStart()
+               && greenBase != null && greenBase.isAtStart()
+               && blueBase != null && blueBase.isAtStart();
     }
 
     /**

@@ -85,7 +85,7 @@ public class ColorTransformator
      *
      * @param alpha The integer alpha
      */
-    public ColorTransformator transformAlpha (int alpha)
+    public ColorTransformator changeAlpha (int alpha)
     {
         int r = color.getRed();
         int g = color.getGreen();
@@ -100,13 +100,29 @@ public class ColorTransformator
      *
      * @param alpha The float alpha
      */
-    public ColorTransformator transformAlpha (float alpha)
+    public ColorTransformator changeAlpha (float alpha)
     {
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
 
         color = new Color(r / 255F, g / 255F, b / 255F, alpha);
+        return this;
+    }
+
+    /**
+     * Transform the alpha value of the color.
+     *
+     * @param percent The percent of the alpha value
+     */
+    public ColorTransformator modifyAlphaRelative (float percent)
+    {
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        int a = color.getAlpha();
+
+        color = new Color(r / 255F, g / 255F, b / 255F, ( a / 255F ) * percent);
         return this;
     }
 

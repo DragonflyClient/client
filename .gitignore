@@ -1,9 +1,5 @@
 # Project exclude paths
 /out/
-/jars/assets/
-/jars/assets/skins/
-.idea/
-jars\
 logs\
 csv\
-Inception Cloud Minecraft Mod
+/temp/

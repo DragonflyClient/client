@@ -83,13 +83,13 @@ public class ConfirmationButton extends SimpleButton
             final double right = this.xPosition + this.width - border;
             final double bottom = this.yPosition + this.height - border;
             final double width = right - left;
-            final Color color = ColorTransformator.of(colorTransition.get()).transformAlpha(opacity).toColor();
+            final Color color = ColorTransformator.of(colorTransition.get()).changeAlpha(opacity).toColor();
 
             this.hovered = mouseX >= left && mouseY >= top && mouseX < right && mouseY < bottom;
             this.mouseDragged(mc, mouseX, mouseY);
 
-            drawRect(left - border, top - border, right + border, bottom + border, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).transformAlpha(opacity).toRGB());
-            drawRect(left, top, right, bottom, ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(opacity).toRGB());
+            drawRect(left - border, top - border, right + border, bottom + border, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).changeAlpha(opacity).toRGB());
+            drawRect(left, top, right, bottom, ColorTransformator.of(GreyToneColor.DARK_GREY).changeAlpha(opacity).toRGB());
 
             drawRect(left + ( holdTransition.get() * ( width - 4 ) ), top, left + 4 + ( hoverTransition.get() * ( width - 4 ) ), bottom, color.getRGB());
 
@@ -101,7 +101,7 @@ public class ConfirmationButton extends SimpleButton
             } else endTicks = 0;
 
             if (endTicks >= 15) {
-                endTicks = 0;
+                endTicks = -500;
                 parentScreen.buttonClick(this);
             }
         }
@@ -115,7 +115,7 @@ public class ConfirmationButton extends SimpleButton
         holdTransition = DoubleTransition.builder()
             .start(0.0).end(1.0)
             .amountOfSteps(( int ) ( width / 2.8))
-            .autoTransformator(( ForwardBackward ) () -> hoverTransition.isAtEnd() && Mouse.isButtonDown(0))
+            .autoTransformator(( ForwardBackward ) () -> hoverTransition != null && hoverTransition.isAtEnd() && Mouse.isCreated() && Mouse.isButtonDown(0))
             .build();
 
         colorTransition  = ColorTransition.builder()

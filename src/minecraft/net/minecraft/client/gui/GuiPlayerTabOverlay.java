@@ -5,20 +5,26 @@ import com.google.common.collect.Ordering;
 import com.mojang.authlib.GameProfile;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
+import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
+import net.inceptioncloud.minecraftmod.ui.playerlist.indicators.*;
+import net.inceptioncloud.minecraftmod.ui.renderer.HotkeyRendererKt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.*;
 import net.minecraft.util.*;
 import net.minecraft.world.WorldSettings;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GuiPlayerTabOverlay extends Gui
 {
@@ -34,9 +40,30 @@ public class GuiPlayerTabOverlay extends Gui
     private long lastTimeOpened;
 
     /**
-     * Weither or not the playerlist is currently being rendered
+     * Whether or not the playerlist is currently being rendered
      */
     private boolean isBeingRendered;
+
+    private final DoubleTransition hotkeyFlyIn = DoubleTransition.builder().start(-10).end(130).amountOfSteps(30).autoTransformator(new ForwardBackward()
+    {
+        @Override
+        public boolean getAsBoolean ()
+        {
+            return isBeingRendered && ( Minecraft.getSystemTime() - lastTimeOpened ) > 5000;
+        }
+    }).build();
+
+    private final SmoothDoubleTransition tablistFlyIn = SmoothDoubleTransition.builder()
+        .start(1).end(0)
+        .fadeIn(10).stay(30).fadeOut(20)
+        .autoTransformator(new ForwardBackward()
+        {
+            @Override
+            public boolean getAsBoolean ()
+            {
+                return isBeingRendered;
+            }
+        }).build();
 
     public GuiPlayerTabOverlay (Minecraft mcIn, GuiIngame guiIngameIn)
     {
@@ -45,16 +72,16 @@ public class GuiPlayerTabOverlay extends Gui
     }
 
     /**
-     * Returns the name that should be renderd for the player supplied
+     * Returns the name that should be rendered for the player supplied
      */
-    public String getPlayerName (NetworkPlayerInfo playerInfo)
+    public static String getPlayerName (NetworkPlayerInfo playerInfo)
     {
         String displayName = playerInfo.getDisplayName() != null ? playerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(playerInfo.getPlayerTeam(), playerInfo.getGameProfile().getName());
 
-        if (displayName.endsWith(" [§5Party§7]")) {
+        playerInfo.updateIndicator(ThePlayerIndicator.class);
+        if (playerInfo.updateIndicator(SamePartyIndicator.class)) {
             displayName = displayName.substring(0, displayName.length() - 12);
-            playerInfo.setSameParty(true);
-        } else playerInfo.setSameParty(false);
+        }
 
         return displayName;
     }
@@ -70,6 +97,14 @@ public class GuiPlayerTabOverlay extends Gui
         }
 
         this.isBeingRendered = willBeRendered;
+
+        // ICMM - Hotkey Display
+
+        int x = mc.displayWidth / 2 - hotkeyFlyIn.castToInt();
+        int y = mc.displayHeight / 2 - 50;
+        drawRect(x - 3, y - 3, mc.displayWidth / 2, y + 20, new Color(0, 0, 0, 50).getRGB());
+        HotkeyRendererKt.render(InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans", Font.PLAIN, 20),
+            KeyEvent.VK_P, "Open Indicator Menu", x, y);
     }
 
     /**
@@ -78,7 +113,14 @@ public class GuiPlayerTabOverlay extends Gui
     public void renderPlayerlist (int width, Scoreboard scoreboard, ScoreObjective scoreObjective)
     {
         final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
-//        final IFontRenderer fontRenderer = this.mc.fontRendererObj;
+        final double modifier = Math.max(1 - tablistFlyIn.get(), 0.1);
+        final int offset = ( int ) ( tablistFlyIn.get() * estimatePlayerListHeight(fontRenderer, width) );
+        final int backgroundColor = new Color(0, 0, 0, ( int ) ( 120 * modifier )).getRGB();
+
+        if (tablistFlyIn.isAtStart())
+            return;
+
+        GlStateManager.translate(0, -offset, 0);
 
         NetHandlerPlayClient netHandler = this.mc.thePlayer.sendQueue;
         List<NetworkPlayerInfo> list = ENTRY_ORDERING.sortedCopy(netHandler.getPlayerInfoMap());
@@ -87,7 +129,7 @@ public class GuiPlayerTabOverlay extends Gui
 
         for (NetworkPlayerInfo networkplayerinfo : list) {
 
-            final String playerName = this.getPlayerName(networkplayerinfo);
+            final String playerName = getPlayerName(networkplayerinfo);
             int k = fontRenderer.getStringWidth(playerName);
             i = Math.max(i, k);
 
@@ -108,7 +150,8 @@ public class GuiPlayerTabOverlay extends Gui
         }
 
         // ICMM - The space that is being hold left of every player list entry in order to display indicators
-        int horizontalColumnSpace = 15;
+        int indicatorAmount = IndicatorKt.calcMaxIndicatorCount(list);
+        int horizontalColumnSpace = 8 + indicatorAmount * 8;
 
         boolean singleplayer = this.mc.isIntegratedServerRunning() || this.mc.getNetHandler().getNetworkManager().getIsencrypted();
         int l = scoreObjective != null ? scoreObjective.getRenderType() == IScoreObjectiveCriteria.EnumRenderType.HEARTS ? 90 : j : 0;
@@ -136,20 +179,19 @@ public class GuiPlayerTabOverlay extends Gui
         }
 
         listWidth += horizontalColumnSpace;
-
         if (headerList != null) {
-            drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + headerList.size() * fontRenderer.getHeight(), Integer.MIN_VALUE);
+            drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + headerList.size() * fontRenderer.getHeight(), backgroundColor);
 
             for (String s3 : headerList) {
                 int i2 = fontRenderer.getStringWidth(s3);
-                fontRenderer.drawStringWithShadow(s3, ( float ) ( width / 2 - i2 / 2 ), ( float ) k1, -1);
+                fontRenderer.drawStringWithShadow(s3, ( float ) ( width / 2 - i2 / 2 ), ( float ) k1, new Color(255, 255, 255, ( int ) ( 255 * modifier )).getRGB());
                 k1 += fontRenderer.getHeight();
             }
 
             ++k1;
         }
 
-        drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + i4 * 9, Integer.MIN_VALUE);
+        drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + i4 * 9, backgroundColor);
 
         for (int k4 = 0 ; k4 < l3 ; ++k4) {
             int columnIndex = k4 / i4;
@@ -157,7 +199,7 @@ public class GuiPlayerTabOverlay extends Gui
             int x = defaultX + ( columnIndex * columnWidth ) + ( columnIndex * horizontalColumnSpace );
 
             int k2 = k1 + i5 * 9;
-            drawRect(x, k2, x + columnWidth, k2 + 8, 553648127);
+            drawRect(x, k2, x + columnWidth, k2 + 8, new Color(255, 255, 255, tablistFlyIn.isAtEnd() ? 30 : 0).getRGB());
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             GlStateManager.enableAlpha();
             GlStateManager.enableBlend();
@@ -165,7 +207,7 @@ public class GuiPlayerTabOverlay extends Gui
 
             if (k4 < list.size()) {
                 NetworkPlayerInfo playerInfo = list.get(k4);
-                String s1 = this.getPlayerName(playerInfo);
+                String s1 = getPlayerName(playerInfo);
                 GameProfile gameprofile = playerInfo.getGameProfile();
 
                 if (singleplayer) {
@@ -188,7 +230,7 @@ public class GuiPlayerTabOverlay extends Gui
                 k2 += 1;
                 if (playerInfo.getGameType() == WorldSettings.GameType.SPECTATOR) {
                     s1 = EnumChatFormatting.ITALIC + s1;
-                    fontRenderer.drawStringWithShadow(s1, ( float ) x, ( float ) k2, -1862270977);
+                    fontRenderer.drawStringWithShadow(s1, ( float ) x, ( float ) k2, new Color(0, 0, 0, 120).getRGB());
                 } else {
                     fontRenderer.drawStringWithShadow(s1, ( float ) x, ( float ) k2, -1);
                 }
@@ -204,26 +246,46 @@ public class GuiPlayerTabOverlay extends Gui
 
                 this.drawPing(columnWidth, x - ( singleplayer ? 9 : 0 ) + 1, k2 - 1, playerInfo);
 
-                if (playerInfo.isSameParty() || getPlayerName(playerInfo).contains("Inception")) {
-                    double factor = 0.6;
-                    double defactor = 1 / factor;
-                    GlStateManager.scale(factor, factor, factor);
-                    mc.getRenderItem().renderItemIntoGUI(new ItemStack(Items.fireworks), ( int ) ( ( x - 19 ) * defactor ), ( int ) ( ( k2 - 1 ) * defactor ));
-                    GlStateManager.scale(defactor, defactor, defactor);
+                int indicatorX = x - 13;
+
+                for (Indicator indicator : playerInfo.getActiveIndicators().stream()
+                    .sorted(Comparator.comparingInt(Indicator::getXIndex)).collect(Collectors.toList())) {
+
+                    indicator.draw(indicatorX - 8, k2 - 1);
+                    indicatorX -= 10;
                 }
             }
         }
 
         if (footerList != null) {
             k1 = k1 + i4 * 9 + 1;
-            drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + footerList.size() * fontRenderer.getHeight(), Integer.MIN_VALUE);
+            drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + footerList.size() * fontRenderer.getHeight(), backgroundColor);
 
             for (String s4 : footerList) {
                 int j5 = fontRenderer.getStringWidth(s4);
-                fontRenderer.drawStringWithShadow(s4, ( float ) ( width / 2 - j5 / 2 ), ( float ) k1, -1);
+                fontRenderer.drawStringWithShadow(s4, ( float ) ( width / 2 - j5 / 2 ), ( float ) k1, new Color(255, 255, 255, ( int ) ( 255 * modifier )).getRGB());
                 k1 += fontRenderer.getHeight();
             }
         }
+
+        GlStateManager.translate(0, offset, 0);
+    }
+
+    public int estimatePlayerListHeight (IFontRenderer fontRenderer, int width)
+    {
+        NetHandlerPlayClient netHandler = this.mc.thePlayer.sendQueue;
+        List<NetworkPlayerInfo> list = ENTRY_ORDERING.sortedCopy(netHandler.getPlayerInfoMap());
+
+        int players = Math.min(18, list.size());
+        int height = players * 12;
+
+        if (this.header != null)
+            height += fontRenderer.listFormattedStringToWidth(this.header.getFormattedText(), width - 50).size() * fontRenderer.getHeight();
+
+        if (this.footer != null)
+            height += fontRenderer.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50).size() * fontRenderer.getHeight();
+
+        return ( int ) ( height * 1.2 );
     }
 
     protected void drawPing (int param1, int param2, int param3, NetworkPlayerInfo networkPlayerInfoIn)
@@ -258,27 +320,27 @@ public class GuiPlayerTabOverlay extends Gui
         if (objective.getRenderType() == IScoreObjectiveCriteria.EnumRenderType.HEARTS) {
             this.mc.getTextureManager().bindTexture(icons);
 
-            if (this.lastTimeOpened == playerInfo.func_178855_p()) {
-                if (i < playerInfo.func_178835_l()) {
-                    playerInfo.func_178846_a(Minecraft.getSystemTime());
-                    playerInfo.func_178844_b(this.guiIngame.getUpdateCounter() + 20);
-                } else if (i > playerInfo.func_178835_l()) {
-                    playerInfo.func_178846_a(Minecraft.getSystemTime());
-                    playerInfo.func_178844_b(this.guiIngame.getUpdateCounter() + 10);
+            if (this.lastTimeOpened == playerInfo.getRenderVisibilityId()) {
+                if (i < playerInfo.getLastHealth()) {
+                    playerInfo.setLastHealthTime(Minecraft.getSystemTime());
+                    playerInfo.setHealthBlinkTime(this.guiIngame.getUpdateCounter() + 20);
+                } else if (i > playerInfo.getLastHealth()) {
+                    playerInfo.setLastHealthTime(Minecraft.getSystemTime());
+                    playerInfo.setHealthBlinkTime(this.guiIngame.getUpdateCounter() + 10);
                 }
             }
 
-            if (Minecraft.getSystemTime() - playerInfo.func_178847_n() > 1000L || this.lastTimeOpened != playerInfo.func_178855_p()) {
-                playerInfo.func_178836_b(i);
-                playerInfo.func_178857_c(i);
-                playerInfo.func_178846_a(Minecraft.getSystemTime());
+            if (Minecraft.getSystemTime() - playerInfo.getLastHealthTime() > 1000L || this.lastTimeOpened != playerInfo.getRenderVisibilityId()) {
+                playerInfo.setLastHealth(i);
+                playerInfo.setDisplayHealth(i);
+                playerInfo.setLastHealthTime(Minecraft.getSystemTime());
             }
 
-            playerInfo.func_178843_c(this.lastTimeOpened);
-            playerInfo.func_178836_b(i);
-            int j = MathHelper.ceiling_float_int(( float ) Math.max(i, playerInfo.func_178860_m()) / 2.0F);
-            int k = Math.max(MathHelper.ceiling_float_int(( float ) ( i / 2 )), Math.max(MathHelper.ceiling_float_int(( float ) ( playerInfo.func_178860_m() / 2 )), 10));
-            boolean flag = playerInfo.func_178858_o() > ( long ) this.guiIngame.getUpdateCounter() && ( playerInfo.func_178858_o() - ( long ) this.guiIngame.getUpdateCounter() ) / 3L % 2L == 1L;
+            playerInfo.setRenderVisibiltyId(this.lastTimeOpened);
+            playerInfo.setLastHealth(i);
+            int j = MathHelper.ceiling_float_int(( float ) Math.max(i, playerInfo.getDisplayHealth()) / 2.0F);
+            int k = Math.max(MathHelper.ceiling_float_int(( float ) ( i / 2 )), Math.max(MathHelper.ceiling_float_int(( float ) ( playerInfo.getDisplayHealth() / 2 )), 10));
+            boolean flag = playerInfo.getHealthBlinkTime() > ( long ) this.guiIngame.getUpdateCounter() && ( playerInfo.getHealthBlinkTime() - ( long ) this.guiIngame.getUpdateCounter() ) / 3L % 2L == 1L;
 
             if (j > 0) {
                 float f = Math.min(( float ) ( paramInt3 - paramInt2 - 4 ) / ( float ) k, 9.0F);
@@ -292,11 +354,11 @@ public class GuiPlayerTabOverlay extends Gui
                         this.drawTexturedModalRect(( float ) paramInt2 + ( float ) j1 * f, ( float ) paramInt1, flag ? 25 : 16, 0, 9, 9);
 
                         if (flag) {
-                            if (j1 * 2 + 1 < playerInfo.func_178860_m()) {
+                            if (j1 * 2 + 1 < playerInfo.getDisplayHealth()) {
                                 this.drawTexturedModalRect(( float ) paramInt2 + ( float ) j1 * f, ( float ) paramInt1, 70, 0, 9, 9);
                             }
 
-                            if (j1 * 2 + 1 == playerInfo.func_178860_m()) {
+                            if (j1 * 2 + 1 == playerInfo.getDisplayHealth()) {
                                 this.drawTexturedModalRect(( float ) paramInt2 + ( float ) j1 * f, ( float ) paramInt1, 79, 0, 9, 9);
                             }
                         }

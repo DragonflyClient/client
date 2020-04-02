@@ -5,6 +5,7 @@ import net.inceptioncloud.minecraftmod.design.color.*;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.*;
 import net.inceptioncloud.minecraftmod.ui.components.TransparentButton;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
@@ -207,7 +208,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
         this.buttonList.remove(this.buttonList.stream().filter(guiButton -> guiButton.id == 5).findFirst().orElse(null));
 
         // ICMM - Fade-In Overlay
-        Gui.drawRect(0, 0, width, height, ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(( float ) fadeInTransition.get()).toRGB());
+        drawRect(0, 0, width, height, ColorTransformator.of(GreyToneColor.DARK_GREY).changeAlpha(( float ) fadeInTransition.get()).toRGB());
     }
 
     /**

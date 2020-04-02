@@ -67,13 +67,13 @@ public class SimpleButton extends GuiButton
             final double top = this.yPosition + border;
             final double right = this.xPosition + this.width - border;
             final double bottom = this.yPosition + this.height - border;
-            final Color color = ColorTransformator.of(colorTransition.get()).transformAlpha(opacity).toColor();
+            final Color color = ColorTransformator.of(colorTransition.get()).changeAlpha(opacity).toColor();
 
             this.hovered = mouseX >= left && mouseY >= top && mouseX < right && mouseY < bottom;
             this.mouseDragged(mc, mouseX, mouseY);
 
-            drawRect(left - border, top - border, right + border, bottom + border, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).transformAlpha(opacity).toRGB());
-            drawRect(left, top, right, bottom, ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(opacity).toRGB());
+            drawRect(left - border, top - border, right + border, bottom + border, ColorTransformator.of(GreyToneColor.LIGHT_WHITE).changeAlpha(opacity).toRGB());
+            drawRect(left, top, right, bottom, ColorTransformator.of(GreyToneColor.DARK_GREY).changeAlpha(opacity).toRGB());
 
             drawRect(left, top, left + 4 + ( hoverTransition.get() * ( right - left - 4)), bottom, color.getRGB());
 

@@ -8,6 +8,7 @@ import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.options.sets.IngameOptions;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.border.WorldBorder;
 import optifine.Config;
 import optifine.CustomColors;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.*;
@@ -45,35 +47,50 @@ public class GuiIngame extends Gui
     private final Random rand = new Random();
     private final Minecraft mc;
     private final RenderItem itemRenderer;
+
     /**
      * ChatGUI instance that retains all previous chat data
      */
     private final GuiNewChat persistantChatGUI;
     private final GuiStreamIndicator streamIndicator;
     private final GuiOverlayDebug overlayDebug;
+
     /**
      * The spectator GUI for this in-game GUI instance
      */
     private final GuiSpectator spectatorGui;
     private final GuiPlayerTabOverlay overlayPlayerList;
+
     /**
      * Previous frame vignette brightness (slowly changes by 1% each frame)
      */
     public float prevVignetteBrightness = 1.0F;
+
+    private final SmoothDoubleTransition goodGameProcess = SmoothDoubleTransition.builder()
+        .fadeIn(0).stay(50).fadeOut(100)
+        .start(0).end(1)
+        .autoTransformator(( ForwardBackward ) () -> Keyboard.isCreated() && Keyboard.isKeyDown(Keyboard.KEY_G))
+        .reachEnd(() -> GuiChat.sendChatMessage("gg", false))
+        .build();
+
     private int updateCounter;
+
     /**
      * The string specifying which record music is playing
      */
     private String recordPlaying = "";
+
     /**
      * How many ticks the record playing message will be displayed
      */
     private int recordPlayingUpFor;
     private boolean recordAnimateColor;
+
     /**
      * Remaining ticks the item highlight should be visible
      */
     private int remainingHighlightTicks;
+
     /**
      * The ItemStack that is currently being highlighted
      */
@@ -86,10 +103,12 @@ public class GuiIngame extends Gui
     private int title_fadeOut;
     private int playerHealth = 0;
     private int lastPlayerHealth = 0;
+
     /**
      * The last recorded system time
      */
     private long lastSystemTime = 0L;
+
     /**
      * Used with updateCounter to make the heart bar flash
      */
@@ -231,24 +250,24 @@ public class GuiIngame extends Gui
             }
 
 //            if (k1 > 8) {
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(( float ) ( scaledWidth / 2 ), ( float ) ( scaledHeight - 68 ), 0.0F);
-                GlStateManager.enableBlend();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-                int i1 = 16777215;
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(( float ) ( scaledWidth / 2 ), ( float ) ( scaledHeight - 68 ), 0.0F);
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            int i1 = 16777215;
 
-                if (this.recordAnimateColor)
-                    i1 = MathHelper.hsvToRTB(f3 / 50.0F, 0.7F, 0.6F) & 16777215;
+            if (this.recordAnimateColor)
+                i1 = MathHelper.hsvToRTB(f3 / 50.0F, 0.7F, 0.6F) & 16777215;
 
-                int posY = ( int ) ( 6 - ( actionBar.get() * 14) );
-                int color = recordAnimateColor ? i1 + ( k1 << 24 & -16777216 ) : 0xFFFFFF;
-                color = ColorTransformator.of(color).transformAlpha(( int ) ( 55 + ( 200D * actionBar.get()))).toRGB();
+            int posY = ( int ) ( 6 - ( actionBar.get() * 14 ) );
+            int color = recordAnimateColor ? i1 + ( k1 << 24 & -16777216 ) : 0xFFFFFF;
+            color = ColorTransformator.of(color).changeAlpha(( int ) ( 55 + ( 200D * actionBar.get() ) )).toRGB();
 
-                IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getMedium();
-                fontRenderer.drawCenteredString(this.recordPlaying, 0, posY, color, true);
+            IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getMedium();
+            fontRenderer.drawCenteredString(this.recordPlaying, 0, posY, color, true);
 
-                GlStateManager.disableBlend();
-                GlStateManager.popMatrix();
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
 //            }
 
             this.mc.mcProfiler.endSection();
@@ -320,12 +339,12 @@ public class GuiIngame extends Gui
         GlStateManager.popMatrix();
         scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
 
-        if (!this.mc.gameSettings.keyBindPlayerList.isKeyDown() || this.mc.isIntegratedServerRunning() && this.mc.thePlayer.sendQueue.getPlayerInfoMap().size() <= 1 && scoreobjective1 == null) {
-            this.overlayPlayerList.updatePlayerList(false);
-        } else {
-            this.overlayPlayerList.updatePlayerList(true);
+        this.overlayPlayerList.updatePlayerList(this.mc.gameSettings.keyBindPlayerList.isKeyDown() && ( !this.mc.isIntegratedServerRunning() || this.mc.thePlayer.sendQueue.getPlayerInfoMap().size() > 1 || scoreobjective1 != null ));
+
+        if (!this.mc.isIntegratedServerRunning() || this.mc.thePlayer.sendQueue.getPlayerInfoMap().size() > 1 || scoreobjective1 != null)
             this.overlayPlayerList.renderPlayerlist(scaledWidth, scoreboard, scoreobjective1);
-        }
+
+        drawRect(0, scaledHeight - 1, goodGameProcess.get() * scaledWidth, scaledHeight, new Color(0x26de81).getRGB());
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableLighting();
@@ -520,8 +539,8 @@ public class GuiIngame extends Gui
         int left = resolution.getScaledWidth() - i - b0;
         int k = 0;
 
-        final int lightColor = ColorTransformator.of(GreyToneColor.GREY).transformAlpha(0.5F).toRGB();
-        final int darkColor = ColorTransformator.of(GreyToneColor.DARK_GREY).transformAlpha(0.5F).toRGB();
+        final int lightColor = ColorTransformator.of(GreyToneColor.GREY).changeAlpha(0.5F).toRGB();
+        final int darkColor = ColorTransformator.of(GreyToneColor.DARK_GREY).changeAlpha(0.5F).toRGB();
 
         for (Score score : trimmedScores) {
             ++k;

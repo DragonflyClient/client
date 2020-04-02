@@ -5,9 +5,10 @@ import net.inceptioncloud.minecraftmod.design.color.CloudColor;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
-import net.inceptioncloud.minecraftmod.ui.components.ConfirmationButton;
-import net.inceptioncloud.minecraftmod.ui.components.SimpleButton;
+import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
+import net.inceptioncloud.minecraftmod.ui.components.*;
 import net.inceptioncloud.minecraftmod.utils.RenderUtils;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
@@ -18,23 +19,46 @@ import org.lwjgl.opengl.Display;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GuiIngameMenu extends GuiScreen
 {
     /**
+     * True when the user requested to close the gui.
+     */
+    private boolean closeRequested = false;
+
+    /**
      * Manages the fade-in of the background gradient.
      */
-    private final DoubleTransition transitionBackground = DoubleTransition.builder().start(0.0F).end(0.6F).amountOfSteps(80).autoTransformator(( ForwardBackward ) () -> mc.currentScreen instanceof GuiIngameMenu).build();
+    private final SmoothDoubleTransition transitionBackground = SmoothDoubleTransition.builder().start(0.0F).end(0.7F).fadeIn(0).stay(20).fadeOut(20).autoTransformator(( ForwardBackward ) () -> mc != null && mc.currentScreen instanceof GuiIngameMenu && !closeRequested).build();
 
     /**
      * Builds the box of the Game Menu.
      */
-    private final DoubleTransition transitionBox = DoubleTransition.builder().start(0).end(1).amountOfSteps(30).autoTransformator(( ForwardBackward ) () -> mc.currentScreen instanceof GuiIngameMenu).build();
+    private final SmoothDoubleTransition transitionBox = SmoothDoubleTransition.builder().start(0).end(1).fadeIn(30).stay(20).fadeOut(0).autoTransformator(( ForwardBackward ) () -> mc != null && mc.currentScreen instanceof GuiIngameMenu).build();
 
     /**
      * Builds the header of the Game Menu.
      */
-    private final DoubleTransition transitionHeader = DoubleTransition.builder().start(0).end(1).amountOfSteps(50).autoTransformator(( ForwardBackward ) transitionBox::isAtEnd).build();
+    private final SmoothDoubleTransition transitionHeader = SmoothDoubleTransition.builder().start(0).end(1).fadeIn(0).stay(30).fadeOut(30).autoTransformator(( ForwardBackward ) transitionBox::isAtEnd).build();
+
+    /**
+     * The transition that closes the gui when the user requested.
+     */
+    private final SmoothDoubleTransition pushOffset =
+        SmoothDoubleTransition.builder()
+            .start(0).end(1)
+            .fadeIn(30).stay(30).fadeOut(0)
+            .autoTransformator(( ForwardNothing ) () -> closeRequested)
+            .reachEnd(() -> {
+                mc.displayGuiScreen(null);
+
+                if (mc.currentScreen == null) {
+                    mc.setIngameFocus();
+                }
+            })
+            .build();
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
@@ -96,8 +120,7 @@ public class GuiIngameMenu extends GuiScreen
                 break;
 
             case 4:
-                this.mc.displayGuiScreen(null);
-                this.mc.setIngameFocus();
+                requestClose();
                 break;
 
             case 5:
@@ -111,17 +134,16 @@ public class GuiIngameMenu extends GuiScreen
             case 7:
                 if (button.displayString.equals("Back to Hub")) {
                     GuiChat.sendChatMessage("/hub", false);
-                    mc.displayGuiScreen(null);
+                    requestClose();
                 } else this.mc.displayGuiScreen(new GuiShareToLan(this));
         }
     }
 
-    /**
-     * Called from the main game loop to update the screen.
-     */
-    public void updateScreen ()
+    private void requestClose ()
     {
-        super.updateScreen();
+        Mouse.setCursorPosition(0, 0);
+        Mouse.setGrabbed(true);
+        this.closeRequested = true;
     }
 
     /**
@@ -129,13 +151,15 @@ public class GuiIngameMenu extends GuiScreen
      */
     public void drawScreen (int mouseX, int mouseY, float partialTicks)
     {
+        int pushOffset = ( int ) ( this.pushOffset.get() * this.height);
+
         /* Background */
         drawRect(0, 0, this.width, this.height, new Color(0F, 0F, 0F, ( float ) transitionBackground.get()).getRGB());
 
         /* Game Menu Box Dimensions */
         int padding = 10;
-        int top = this.height / 4 + 12 - padding;
-        int bottom = this.height / 4 + 152 + padding;
+        int top = this.height / 4 + 12 - padding + pushOffset;
+        int bottom = this.height / 4 + 152 + padding + pushOffset;
         int left = this.width / 2 - 100 - padding;
         int right = this.width / 2 + 100 + padding;
         int width = right - left;
@@ -148,7 +172,7 @@ public class GuiIngameMenu extends GuiScreen
         bottom -= subHeight / 2;
         left += subWidth / 2;
         right -= subWidth / 2;
-        this.buttonList.stream().map(SimpleButton.class::cast).forEach(guiButton -> guiButton.setOpacity(( float ) transitionHeader.get()));
+        this.buttonList.stream().filter(SimpleButton.class::isInstance).map(SimpleButton.class::cast).forEach(guiButton -> guiButton.setOpacity(( float ) transitionHeader.get()));
 
         /* Header */
         int headerWidth = ( int ) ( transitionHeader.get() * width );
@@ -168,12 +192,23 @@ public class GuiIngameMenu extends GuiScreen
         GlStateManager.color(1f, 1f, 1f, color.getAlpha() / 255f);
         RenderUtils.drawLine(left + ( width / 2D ) - 12, top + 23, left + ( width / 2D ) + 12, top + 23, 1);
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        for (GuiButton guiButton : new ArrayList<>(this.buttonList)) {
+            final int realY = guiButton.yPosition;
+            guiButton.setPositionY(guiButton.yPosition + pushOffset);
+            guiButton.drawButton(this.mc, mouseX, mouseY);
+            guiButton.setPositionY(realY);
+        }
+
+        for (GuiLabel guiLabel : new ArrayList<>(this.labelList)) {
+            guiLabel.drawLabel(this.mc, mouseX, mouseY);
+        }
     }
 
     @Override
-    public void onGuiClosed ()
+    protected void keyTyped (final char typedChar, final int keyCode) throws IOException
     {
-        super.onGuiClosed();
+        if (keyCode == 1) {
+            requestClose();
+        }
     }
 }

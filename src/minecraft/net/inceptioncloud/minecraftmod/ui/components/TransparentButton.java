@@ -67,7 +67,7 @@ public class TransparentButton extends GuiButton
             this.mouseDragged(mc, mouseX, mouseY);
 
             final int i = Math.max(2, ( this.height - fontRenderer.getHeight() ) / 2);
-            fontRenderer.drawCenteredString(this.displayString, this.xPosition + this.width / 2, this.yPosition + i, ColorTransformator.of(0xFFFFFF).transformAlpha(opacity).toRGB(), true);
+            fontRenderer.drawCenteredString(this.displayString, this.xPosition + this.width / 2, this.yPosition + i, ColorTransformator.of(0xFFFFFF).changeAlpha(opacity).toRGB(), true);
 
             int centerX = xPosition + ( width / 2 );
             int underlineWidth = ( int ) ( ( fontRenderer.getStringWidth(this.displayString) / 2 ) * underline.get() );

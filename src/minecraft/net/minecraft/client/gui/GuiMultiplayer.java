@@ -2,8 +2,13 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
+
+import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
+import net.inceptioncloud.minecraftmod.transition.supplier.AlwaysForward;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;

@@ -8,7 +8,7 @@ public final class OptionKeyBuilder<T>
     private String key;
     private Predicate<T> validator = obj -> true;
     private Supplier<T> defaultValue = () -> null;
-    private Class<T> typeClass;
+    private final Class<T> typeClass;
 
     OptionKeyBuilder (Class<T> typeClass)
     {

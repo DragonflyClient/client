@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import net.inceptioncloud.minecraftmod.event.control.ZoomEvent;
 import net.inceptioncloud.minecraftmod.options.sets.IngameOptions;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -19,7 +20,7 @@ public class ZoomSubscriber
     /**
      * The transition that animates the OptiFine zoom.
      */
-    private DoubleTransition zoomFactor = DoubleTransition.builder().start(1.0).end(3.5).amountOfSteps(15).autoTransformator(( ForwardBackward ) () -> Config.zoomMode).build();
+    private final SmoothDoubleTransition zoomFactor = SmoothDoubleTransition.builder().start(1.0).end(3.5).fadeIn(20).stay(20).fadeOut(0).autoTransformator(( ForwardBackward ) () -> Config.zoomMode).build();
 
     /**
      * {@link ZoomEvent} Subscriber

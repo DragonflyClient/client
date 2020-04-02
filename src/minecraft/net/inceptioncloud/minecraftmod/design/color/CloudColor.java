@@ -44,4 +44,10 @@ public class CloudColor
      * @see <a href="https://flatuicolors.com/palette/de">Color Palette</a>
      */
     public static final Color ROYAL = new Color(0x3867d6);
+
+    /**
+     * rgb(69, 170, 242)
+     * @see <a href="https://flatuicolors.com/palette/de">Color Palette</a>
+     */
+    public static final Color HIGH_BLUE = new Color(0x45aaf2);
 }
