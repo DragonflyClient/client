@@ -138,7 +138,7 @@ public class ModSplashScreen
 
         titleFR.drawCenteredString("InceptionCloud", resolution.getScaledWidth() / 2, 100, Color.WHITE.getRGB(), false);
         defaultFR.drawCenteredString("Minecraft Mod", resolution.getScaledWidth() / 2, 126, new Color(255, 255, 255, 170).getRGB(), false);
-        actionFR.drawCenteredString(action, resolution.getScaledWidth() / 2, 210, new Color(255, 255, 255, 100).getRGB(), false);
+        actionFR.drawCenteredString(action, resolution.getScaledWidth() / 2 - 15, 210, new Color(255, 255, 255, 100).getRGB(), false);
 
         final int rectWidth = 250, rectHeight = 20;
         final int rectLeft = resolution.getScaledWidth() / 2 - rectWidth / 2;

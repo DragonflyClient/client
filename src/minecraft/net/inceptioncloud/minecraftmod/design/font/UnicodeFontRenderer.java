@@ -77,7 +77,7 @@ public class UnicodeFontRenderer implements IFontRenderer
             if (!GlyphFontRenderer.LOADED_FONTS.contains(name)) {
                 // Load the graphics environment
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/" + name + ".ttf")));
+                ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("inceptioncloud/fonts/" + name + ".ttf")));
                 LogManager.getLogger().debug("Importing font {}...", name);
                 GlyphFontRenderer.LOADED_FONTS.add(name);
             }

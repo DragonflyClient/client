@@ -8,9 +8,11 @@ import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
 import net.inceptioncloud.minecraftmod.event.ModEventBus;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.options.Options;
+import net.inceptioncloud.minecraftmod.state.GameState;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
+import net.minecraft.client.settings.GameSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.Display;
@@ -185,7 +187,7 @@ public class InceptionMod
     public void stopTransition (Transition target)
     {
         if(!transitions.remove(target))
-            System.err.println("Could not stop transition!");
+            LogManager.getLogger().error("Could not stop " + target.getClass().getSimpleName() + " from " + target.getOrigin() + "! (not running)");
     }
 
     /**

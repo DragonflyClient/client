@@ -2,10 +2,9 @@ package net.inceptioncloud.minecraftmod.design.font;
 
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.font.util.GlyphPage;
-import net.inceptioncloud.minecraftmod.utils.TimeUtils;
+import net.inceptioncloud.minecraftmod.options.sets.UIOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +31,19 @@ public class GlyphFontRenderer implements IFontRenderer
     public static final List<String> LOADED_FONTS = new ArrayList<>();
 
     /**
+     * Array of RGB triplets defining the 16 standard chat colors followed by 16 darker version of the same colors for
+     * drop shadows.
+     */
+    private final int[] colorCode = new int[32];
+
+    /**
+     * The different Glyph Pages
+     */
+    private final GlyphPage pageRegular, pageBold, pageItalic, pageBoldItalic;
+
+    private final GlyphPage realPageRegular, realPageBold, realPageItalic, realPageBoldItalic;
+
+    /**
      * Current X coordinate at which to draw the next character.
      */
     private float posX;
@@ -40,12 +52,6 @@ public class GlyphFontRenderer implements IFontRenderer
      * Current Y coordinate at which to draw the next character.
      */
     private float posY;
-
-    /**
-     * Array of RGB triplets defining the 16 standard chat colors followed by 16 darker version of the same colors for
-     * drop shadows.
-     */
-    private final int[] colorCode = new int[32];
 
     /**
      * Used to specify new red value for the current color.
@@ -93,19 +99,20 @@ public class GlyphFontRenderer implements IFontRenderer
     private boolean strikethroughStyle;
 
     /**
-     * The different Glyph Pages
-     */
-    private final GlyphPage regularGlyphPage, boldGlyphPage, italicGlyphPage, boldItalicGlyphPage;
-
-    /**
      * Default Constructor
      */
-    public GlyphFontRenderer (GlyphPage regularGlyphPage, GlyphPage boldGlyphPage, GlyphPage italicGlyphPage, GlyphPage boldItalicGlyphPage)
+    public GlyphFontRenderer (GlyphPage pageRegular, GlyphPage pageBold, GlyphPage pageItalic, GlyphPage pageBoldItalic,
+                              GlyphPage realPageRegular, GlyphPage realPageBold, GlyphPage realPageItalic, GlyphPage realPageBoldItalic)
     {
-        this.regularGlyphPage = regularGlyphPage;
-        this.boldGlyphPage = boldGlyphPage;
-        this.italicGlyphPage = italicGlyphPage;
-        this.boldItalicGlyphPage = boldItalicGlyphPage;
+        this.pageRegular = pageRegular;
+        this.pageBold = pageBold;
+        this.pageItalic = pageItalic;
+        this.pageBoldItalic = pageBoldItalic;
+
+        this.realPageRegular = realPageRegular;
+        this.realPageBold = realPageBold;
+        this.realPageItalic = realPageItalic;
+        this.realPageBoldItalic = realPageBoldItalic;
 
         for (int i = 0 ; i < 32 ; ++i) {
             int j = ( i >> 3 & 1 ) * 85;
@@ -140,7 +147,7 @@ public class GlyphFontRenderer implements IFontRenderer
             try {
                 // Load the graphics environment
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/" + fontName + ".ttf")));
+                ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("inceptioncloud/fonts/" + fontName + ".ttf")));
                 LogManager.getLogger().debug("Importing font {}...", fontName);
                 LOADED_FONTS.add(fontName);
             } catch (FontFormatException | IOException e) {
@@ -160,36 +167,61 @@ public class GlyphFontRenderer implements IFontRenderer
             chars[i] = characterList.get(i);
         }
 
-        GlyphPage regularPage = new GlyphPage(new Font(fontName, Font.PLAIN, size), true, true);
+        GlyphPage regularPage = new GlyphPage(new Font(fontName, Font.PLAIN, ( int ) ( size * getFontQualityScale() )), true, true);
         regularPage.generateGlyphPage(chars);
         regularPage.setupTexture();
+
+        GlyphPage realRegular = new GlyphPage(new Font(fontName, Font.PLAIN, size), true, true);
+        realRegular.generateGlyphPage(chars);
+        realRegular.setupTexture();
 
         GlyphPage boldPage = regularPage;
         GlyphPage italicPage = regularPage;
         GlyphPage boldItalicPage = regularPage;
 
-        if (bold) {
-            boldPage = new GlyphPage(new Font(fontName, Font.BOLD, size), true, true);
+        GlyphPage realBold = regularPage;
+        GlyphPage realItalic = regularPage;
+        GlyphPage realBoldItalic = regularPage;
 
+        if (bold) {
+            boldPage = new GlyphPage(new Font(fontName, Font.BOLD, ( int ) ( size * getFontQualityScale() )), true, true);
             boldPage.generateGlyphPage(chars);
             boldPage.setupTexture();
+
+            realBold = new GlyphPage(new Font(fontName, Font.BOLD, size), true, true);
+            realBold.generateGlyphPage(chars);
+            realBold.setupTexture();
         }
 
         if (italic) {
-            italicPage = new GlyphPage(new Font(fontName, Font.ITALIC, size), true, true);
-
+            italicPage = new GlyphPage(new Font(fontName, Font.ITALIC, ( int ) ( size * getFontQualityScale() )), true, true);
             italicPage.generateGlyphPage(chars);
             italicPage.setupTexture();
+
+            realItalic = new GlyphPage(new Font(fontName, Font.ITALIC, size), true, true);
+            realItalic.generateGlyphPage(chars);
+            realItalic.setupTexture();
         }
 
         if (boldItalic) {
-            boldItalicPage = new GlyphPage(new Font(fontName, Font.BOLD | Font.ITALIC, size), true, true);
-
+            boldItalicPage = new GlyphPage(new Font(fontName, Font.BOLD | Font.ITALIC, ( int ) ( size * getFontQualityScale() )), true, true);
             boldItalicPage.generateGlyphPage(chars);
             boldItalicPage.setupTexture();
+
+            realBoldItalic = new GlyphPage(new Font(fontName, Font.BOLD | Font.ITALIC, size), true, true);
+            realBoldItalic.generateGlyphPage(chars);
+            realBoldItalic.setupTexture();
         }
 
-        return new GlyphFontRenderer(regularPage, boldPage, italicPage, boldItalicPage);
+        return new GlyphFontRenderer(regularPage, boldPage, italicPage, boldItalicPage, realRegular, realBold, realItalic, realBoldItalic);
+    }
+
+    /**
+     * Quick Method to access {@link UIOptions#FONT_QUALITY_SCALE}
+     */
+    public static double getFontQualityScale ()
+    {
+        return UIOptions.FONT_QUALITY_SCALE.get();
     }
 
     /**
@@ -282,7 +314,7 @@ public class GlyphFontRenderer implements IFontRenderer
             }
         }
 
-        return width / 2;
+        return width / ( 2 );
     }
 
     /**
@@ -302,20 +334,26 @@ public class GlyphFontRenderer implements IFontRenderer
     @Override
     public int getHeight ()
     {
-        return ( int ) ( regularGlyphPage.getMaxFontHeight() / 2.2D );
+        return ( int ) ( realPageRegular.getMaxFontHeight() / 2.2D );
     }
 
     /**
      * The exact with of the specific char in the current font.
      *
-     * @param c The character
+     * @param ch The character
      *
      * @return The width in pixels
      */
     @Override
-    public float getCharWidthFloat (final char c)
+    public float getCharWidthFloat (final char ch)
     {
-        return getCurrentGlyphPage().getWidth(c) - 8;
+        GlyphPage.Glyph glyph = realPageRegular.glyphCharacterMap.get(ch == '▏' ? '|' : ch);
+
+        if (glyph == null) {
+            return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch) * 2;
+        }
+
+        return realPageRegular.getWidth(ch) - 8;
     }
 
     /**
@@ -326,6 +364,10 @@ public class GlyphFontRenderer implements IFontRenderer
         if (text == null) {
             return 0;
         } else {
+
+            GlStateManager.scale(1 / getFontQualityScale(), 1 / getFontQualityScale(), 1 / getFontQualityScale());
+            x *= getFontQualityScale();
+            y *= getFontQualityScale();
 
             if (( color & -67108864 ) == 0) {
                 color |= -16777216;
@@ -343,7 +385,8 @@ public class GlyphFontRenderer implements IFontRenderer
             this.posX = x * 2.0f;
             this.posY = y * 2.0f;
             this.renderStringAtPos(text, dropShadow);
-            return ( int ) ( this.posX / 2.0f ); /* NOTE: This was originally 4.0F */
+            GlStateManager.scale(getFontQualityScale(), getFontQualityScale(), getFontQualityScale());
+            return ( int ) ( this.posX / ( 2.0f * getFontQualityScale() ) ); /* NOTE: This was originally 4.0F */
         }
     }
 
@@ -423,7 +466,7 @@ public class GlyphFontRenderer implements IFontRenderer
                     finishDraw(f, glyphPage);
                 else {
                     final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-                    final float factor = 2.1F;
+                    final float factor = ( float ) ( 2F * getFontQualityScale() );
 
                     glScaled(factor, factor, factor);
 
@@ -475,13 +518,25 @@ public class GlyphFontRenderer implements IFontRenderer
     private GlyphPage getCurrentGlyphPage ()
     {
         if (boldStyle && italicStyle)
-            return boldItalicGlyphPage;
+            return pageBoldItalic;
         else if (boldStyle)
-            return boldGlyphPage;
+            return pageBold;
         else if (italicStyle)
-            return italicGlyphPage;
+            return pageItalic;
         else
-            return regularGlyphPage;
+            return pageRegular;
+    }
+
+    private GlyphPage getCurrentRealGlyphPage ()
+    {
+        if (boldStyle && italicStyle)
+            return realPageBoldItalic;
+        else if (boldStyle)
+            return realPageBold;
+        else if (italicStyle)
+            return realPageItalic;
+        else
+            return realPageRegular;
     }
 
     /**
@@ -657,6 +712,4 @@ public class GlyphFontRenderer implements IFontRenderer
 
         return j != i && k != -1 && k < j ? k : j;
     }
-
-
 }

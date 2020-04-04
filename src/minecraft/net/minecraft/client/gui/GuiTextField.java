@@ -106,12 +106,12 @@ public class GuiTextField extends Gui
             }
 
             boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
-            int k1 = j1;
+            int cursorX = j1;
 
             if (!flag) {
-                k1 = cursorPos > 0 ? l + this.width : l;
+                cursorX = cursorPos > 0 ? l + this.width : l;
             } else if (flag2) {
-                k1 = j1 - 1;
+                cursorX = j1 - 1;
                 --j1;
             }
 
@@ -121,15 +121,15 @@ public class GuiTextField extends Gui
 
             if (flag1) {
                 if (flag2) {
-                    Gui.drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + this.fontRendererInstance.getHeight(), -3092272);
+                    Gui.drawRect(cursorX, i1 - 1, cursorX + 1, i1 + 1 + this.fontRendererInstance.getHeight(), -3092272);
                 } else {
-                    this.fontRendererInstance.drawStringWithShadow("_", ( float ) k1, ( float ) i1, color);
+                    this.fontRendererInstance.drawStringWithShadow("_", ( float ) cursorX, ( float ) i1, color);
                 }
             }
 
             if (k != cursorPos) {
                 int l1 = l + this.fontRendererInstance.getStringWidth(s.substring(0, k));
-                this.drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + this.fontRendererInstance.getHeight());
+                this.drawCursorVertical(cursorX, i1 - 1, l1 - 1, i1 + 1 + this.fontRendererInstance.getHeight());
             }
         }
     }

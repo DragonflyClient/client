@@ -17,7 +17,10 @@ public class ReloadAction extends QuickAction
         super(3, 17, "Reload", () ->
         {
             Minecraft.getMinecraft().loadingScreen.displayLoadingString("Reloading Mod...");
+
             InceptionMod.getInstance().getOptions().contentUpdate();
+            InceptionMod.getInstance().getFontDesign().clearCache();
+
             Minecraft.getMinecraft().refreshResources();
         });
     }

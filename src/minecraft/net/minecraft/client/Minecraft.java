@@ -10,7 +10,6 @@ import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.event.client.*;
 import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.minecraftmod.event.play.IntegratedServerStartingEvent;
-import net.inceptioncloud.minecraftmod.utils.TimeUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -57,7 +56,8 @@ import net.minecraft.network.play.client.C16PacketClientStatus;
 import net.minecraft.profiler.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.stats.*;
+import net.minecraft.stats.AchievementList;
+import net.minecraft.stats.StatFileWriter;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Timer;
 import net.minecraft.util.Util;
@@ -179,6 +179,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     public boolean field_175614_C = false;
     public boolean field_175611_D = false;
     public boolean renderChunksMany = true;
+    public Timer timer = new Timer(20.0F);
+    public ResourceLocation mojangLogo;
     long systemTime = getSystemTime();
     long field_181543_z = System.nanoTime();
     /**
@@ -201,18 +203,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     private TextureManager renderEngine;
     private boolean fullscreen;
-    private boolean enableGLErrorChecking = true;
+    private final boolean enableGLErrorChecking = true;
     private boolean hasCrashed;
     /**
      * Instance of CrashReport.
      */
     private CrashReport crashReporter;
     private boolean connectedToRealms = false;
-    public Timer timer = new Timer(20.0F);
     /**
      * Instance of PlayerUsageSnooper.
      */
-    private PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("client", this, MinecraftServer.getCurrentTimeMillis());
+    private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("client", this, MinecraftServer.getCurrentTimeMillis());
     private RenderManager renderManager;
     private RenderItem renderItem;
     private ItemRenderer itemRenderer;
@@ -225,11 +226,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     /**
      * Display width
      */
-    private int tempDisplayWidth;
+    private final int tempDisplayWidth;
     /**
      * Display height
      */
-    private int tempDisplayHeight;
+    private final int tempDisplayHeight;
     /**
      * Instance of IntegratedServer.
      */
@@ -259,9 +260,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private TextureMap textureMapBlocks;
     private SoundHandler mcSoundHandler;
     private MusicTicker mcMusicTicker;
-    public ResourceLocation mojangLogo;
     private SkinManager skinManager;
-    private long field_175615_aJ = 0L;
+    private final long field_175615_aJ = 0L;
     private ModelManager modelManager;
     /**
      * The BlockRenderDispatcher instance that will be used based off gamesettings
@@ -767,47 +767,48 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     private void updateDisplayMode () throws LWJGLException
     {
-        Set<DisplayMode> set = Sets.newHashSet();
-        Collections.addAll(set, Display.getAvailableDisplayModes());
-        DisplayMode displaymode = Display.getDesktopDisplayMode();
+        DisplayMode desktopDisplayMode = Display.getDesktopDisplayMode();
 
-        if (!set.contains(displaymode) && Util.getOSType() == Util.EnumOS.OSX) {
-            label53:
+        if (Util.getOSType() == Util.EnumOS.OSX) {
 
-            for (DisplayMode displaymode1 : macDisplayModes) {
-                boolean flag = true;
+            Set<DisplayMode> allDisplayModes = Sets.newHashSet();
+            Collections.addAll(allDisplayModes, Display.getAvailableDisplayModes());
 
-                for (DisplayMode displaymode2 : set) {
-                    if (displaymode2.getBitsPerPixel() == 32 && displaymode2.getWidth() == displaymode1.getWidth() && displaymode2.getHeight() == displaymode1.getHeight()) {
-                        flag = false;
-                        break;
-                    }
-                }
+            if (!allDisplayModes.contains(desktopDisplayMode)) {
+                label53:
 
-                if (!flag) {
-                    Iterator<DisplayMode> iterator = set.iterator();
-                    DisplayMode displaymode3;
+                for (DisplayMode macDisplayMode : macDisplayModes) {
+                    boolean macEqualToGeneral = true;
 
-                    while (true) {
-                        if (!iterator.hasNext()) {
-                            continue label53;
-                        }
-
-                        displaymode3 = iterator.next();
-
-                        if (displaymode3.getBitsPerPixel() == 32 && displaymode3.getWidth() == displaymode1.getWidth() / 2 && displaymode3.getHeight() == displaymode1.getHeight() / 2) {
+                    for (DisplayMode generalDisplayMode : allDisplayModes) {
+                        if (generalDisplayMode.getBitsPerPixel() == 32 && generalDisplayMode.getWidth() == macDisplayMode.getWidth() && generalDisplayMode.getHeight() == macDisplayMode.getHeight()) {
+                            macEqualToGeneral = false;
                             break;
                         }
                     }
 
-                    displaymode = displaymode3;
+                    if (!macEqualToGeneral) {
+                        Iterator<DisplayMode> iterator = allDisplayModes.iterator();
+                        DisplayMode displaymode3;
+
+                        do {
+                            if (!iterator.hasNext()) {
+                                continue label53;
+                            }
+
+                            displaymode3 = iterator.next();
+
+                        } while (displaymode3.getBitsPerPixel() != 32 || displaymode3.getWidth() != macDisplayMode.getWidth() / 2 || displaymode3.getHeight() != macDisplayMode.getHeight() / 2);
+
+                        desktopDisplayMode = displaymode3;
+                    }
                 }
             }
         }
 
-        Display.setDisplayMode(displaymode);
-        this.displayWidth = displaymode.getWidth();
-        this.displayHeight = displaymode.getHeight();
+        Display.setDisplayMode(desktopDisplayMode);
+        this.displayWidth = desktopDisplayMode.getWidth();
+        this.displayHeight = desktopDisplayMode.getHeight();
     }
 
     private void drawSplashScreen (TextureManager textureManager) throws LWJGLException
@@ -1470,12 +1471,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 Display.setDisplayMode(new DisplayMode(this.tempDisplayWidth, this.tempDisplayHeight));
                 this.displayWidth = this.tempDisplayWidth;
                 this.displayHeight = this.tempDisplayHeight;
-
             }
 
             if (this.displayWidth <= 0) {
                 this.displayWidth = 1;
             }
+
             if (this.displayHeight <= 0) {
                 this.displayHeight = 1;
             }
@@ -1691,7 +1692,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                             this.ingameGUI.getChatGUI().clearChatMessages();
                         }
 
-                        if ((k == 31 || k == 20) && Keyboard.isKeyDown(61)) {
+                        if (( k == 31 || k == 20 ) && Keyboard.isKeyDown(61)) {
                             this.refreshResources();
                         }
 

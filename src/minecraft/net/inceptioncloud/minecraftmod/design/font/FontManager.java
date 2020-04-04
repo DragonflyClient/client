@@ -57,6 +57,14 @@ public class FontManager
     }
 
     /**
+     * Clears the Font Renderer cache.
+     */
+    public void clearCache ()
+    {
+        this.cache.clear();
+    }
+
+    /**
      * Contains information about the Font Renderer.
      */
     @RequiredArgsConstructor

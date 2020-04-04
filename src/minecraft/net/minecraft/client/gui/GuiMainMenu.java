@@ -76,16 +76,16 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
     /**
      * The transitions that are responsible for the different Quick Action Buttons.
      */
-    private final Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
+    private static final Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
 
     /**
      * The transition that lets the navigation bar rise when it's hovered.
      */
-    private final DoubleTransition riseTransition = DoubleTransition.builder()
+    private static final SmoothDoubleTransition riseTransition = SmoothDoubleTransition.builder()
         .start(1)
         .end(2)
-        .amountOfSteps(20)
-        .autoTransformator(( ForwardBackward ) () -> cursorHoverTime >= 100)
+        .fadeIn(0).stay(10).fadeOut(20)
+        .autoTransformator(( ForwardBackward ) () -> cursorHoverTime > 0)
         .build();
 
     private int mouseY = 0;
@@ -173,6 +173,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
                     selectedButton = transparentButton.id;
             });
 
+        // All quick-action buttons
         this.buttonList.stream()
             .filter(guiButton -> guiButton.id >= 10)
             .filter(TransparentButton.class::isInstance)
@@ -272,18 +273,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
 
             left = !left;
         }
-    }
-
-    /**
-     * Called when the screen is unloaded. Used to disable keyboard repeat events
-     */
-    @Override
-    public void onGuiClosed ()
-    {
-        InceptionMod.getInstance().stopTransition(riseTransition);
-        quickActionTransitions.values().forEach(target -> InceptionMod.getInstance().stopTransition(target));
-
-        super.onGuiClosed();
     }
 
     /**

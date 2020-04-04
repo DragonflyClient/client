@@ -19,6 +19,16 @@ import java.awt.*;
 public class TransparentButton extends GuiButton
 {
     /**
+     * Transition increases the opacity up to 1.0F when the button is hovered.
+     */
+    private final DoubleTransition hoverIncreaseOpacity = DoubleTransition.builder().start(0).end(1).autoTransformator(( ForwardBackward ) () -> hovered).amountOfSteps(20).build();
+
+    /**
+     * The transition that animates the underline.
+     */
+    private final DoubleTransition underline = DoubleTransition.builder().start(0).end(1).autoTransformator(( ForwardBackward ) this::isHighlighted).amountOfSteps(40).build();
+
+    /**
      * The font renderer with which the button text is drawn.
      */
     private IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans Medium", Font.PLAIN, 22);
@@ -28,11 +38,6 @@ public class TransparentButton extends GuiButton
      */
     @Getter @Setter
     private boolean highlighted = false;
-
-    /**
-     * The transition that animates the underline.
-     */
-    private final DoubleTransition underline = DoubleTransition.builder().start(0).end(1).autoTransformator(( ForwardBackward ) this::isHighlighted).amountOfSteps(40).build();
 
     /**
      * The opacity of the text.
@@ -66,12 +71,17 @@ public class TransparentButton extends GuiButton
             this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
             this.mouseDragged(mc, mouseX, mouseY);
 
+            final float tempOpacity = ( float ) ( this.opacity + ( 0.85F - opacity) * hoverIncreaseOpacity.get());
             final int i = Math.max(2, ( this.height - fontRenderer.getHeight() ) / 2);
-            fontRenderer.drawCenteredString(this.displayString, this.xPosition + this.width / 2, this.yPosition + i, ColorTransformator.of(0xFFFFFF).changeAlpha(opacity).toRGB(), true);
+            fontRenderer.drawCenteredString(this.displayString,
+                this.xPosition + this.width / 2,
+                this.yPosition + i,
+                ColorTransformator.of(0xFFFFFF).changeAlpha(highlighted ? opacity : tempOpacity).toRGB(),
+                true);
 
             int centerX = xPosition + ( width / 2 );
             int underlineWidth = ( int ) ( ( fontRenderer.getStringWidth(this.displayString) / 2 ) * underline.get() );
-            drawHorizontalLine(centerX - underlineWidth, centerX + underlineWidth, yPosition + fontRenderer.getHeight(), new Color(255, 255, 255, 255).getRGB());
+            drawHorizontalLine(centerX - underlineWidth, centerX + underlineWidth, yPosition + fontRenderer.getHeight() + 1, Color.WHITE.getRGB());
         }
     }
 

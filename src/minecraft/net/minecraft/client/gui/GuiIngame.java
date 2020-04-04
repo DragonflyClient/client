@@ -69,7 +69,7 @@ public class GuiIngame extends Gui
     private final SmoothDoubleTransition goodGameProcess = SmoothDoubleTransition.builder()
         .fadeIn(0).stay(50).fadeOut(100)
         .start(0).end(1)
-        .autoTransformator(( ForwardBackward ) () -> Keyboard.isCreated() && Keyboard.isKeyDown(Keyboard.KEY_G))
+        .autoTransformator(( ForwardBackward ) () -> Keyboard.isCreated() && Keyboard.isKeyDown(Keyboard.KEY_G) && !GuiNewChat.isChatOpen())
         .reachEnd(() -> GuiChat.sendChatMessage("gg", false))
         .build();
 

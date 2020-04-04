@@ -2,9 +2,10 @@ package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
 import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -22,52 +23,54 @@ import java.util.function.IntSupplier;
 public class GuiNewChat extends Gui implements Tickable
 {
     private static final Logger logger = LogManager.getLogger();
+
+    private static int targetHeight = 0;
+    private static double height = 0;
+
+    /**
+     * The transition that moves the title text.
+     */
+    private static final SmoothDoubleTransition titleText = SmoothDoubleTransition.builder().start(0).end(1).fadeIn(0).stay(15).fadeOut(15)
+        .autoTransformator(new IntSupplier()
+        {
+            @Override
+            public int getAsInt ()
+            {
+                if (!isChatOpen() || GuiChat.getDirection() == -1)
+                    return -1;
+
+                if (GuiChat.getDirection() == 1 && titleBackground.isAtEnd())
+                    return 1;
+
+                return 0;
+            }
+        }).build();
+
+    /**
+     * The transition that draws the title background.
+     */
+    private static final DoubleTransition titleBackground = DoubleTransition.builder().start(0).end(1).amountOfSteps(15)
+        .autoTransformator(new IntSupplier()
+        {
+            @Override
+            public int getAsInt ()
+            {
+                if (!isChatOpen() || ( GuiChat.getDirection() == -1 && titleText.isAtStart() ))
+                    return -1;
+
+                if (GuiChat.getDirection() == 1 && Math.abs(targetHeight - height) < 10)
+                    return 1;
+
+                return 0;
+            }
+        }).build();
+
     private final Minecraft mc;
     private final List<String> sentMessages = Lists.newArrayList();
     private final List<ChatLine> chatMessages = Lists.newArrayList();
     private final List<ChatLine> seperateChatLines = Lists.newArrayList();
     private int scrollPos;
-    private static int targetHeight = 0;
-    private static double height = 0;
     private boolean isScrolled;
-
-    /**
-     * The transition that draws the title background.
-     */
-    private static final DoubleTransition titleBackground = DoubleTransition.builder().start(0).end(1).amountOfSteps(15).autoTransformator(new IntSupplier()
-    {
-        @Override
-        public int getAsInt ()
-        {
-            if (!getChatOpen())
-                return -1;
-
-            if (GuiChat.getDirection() == 1 && Math.abs(targetHeight - height) < 10)
-                return 1;
-
-            if (GuiChat.getDirection() == -1 && titleText.isAtStart())
-                return -1;
-
-            return 0;
-        }
-    }).build();
-
-    /**
-     * The transition that moves the title text.
-     */
-    private static final DoubleTransition titleText = DoubleTransition.builder().start(0).end(1).amountOfSteps(15).autoTransformator(() ->
-    {
-        if (!getChatOpen())
-            return -1;
-
-        if (GuiChat.getDirection() == 1 && titleBackground.isAtEnd())
-            return 1;
-
-        if (GuiChat.getDirection() == -1)
-            return -1;
-
-        return 0;
-    }).build();
 
     public GuiNewChat (Minecraft mcIn)
     {
@@ -90,6 +93,14 @@ public class GuiNewChat extends Gui implements Tickable
         int i = 180;
         int j = 20;
         return MathHelper.floor_float(chatHeightSetting * ( float ) ( i - j ) + ( float ) j);
+    }
+
+    /**
+     * Returns true if the chat GUI is open
+     */
+    public static boolean isChatOpen ()
+    {
+        return Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen instanceof GuiChat;
     }
 
     /**
@@ -119,7 +130,7 @@ public class GuiNewChat extends Gui implements Tickable
 
             if (amountOfSeperateLines > 0) {
 
-                if (getChatOpen()) {
+                if (isChatOpen()) {
                     chatOpen = true;
                 }
 
@@ -300,7 +311,7 @@ public class GuiNewChat extends Gui implements Tickable
 
         int i = MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale());
         List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, InceptionMod.getInstance().getFontDesign().getRegular(), false, false);
-        boolean chatOpen = this.getChatOpen();
+        boolean chatOpen = isChatOpen();
 
         for (IChatComponent ichatcomponent : list) {
             if (chatOpen && this.scrollPos > 0) {
@@ -384,7 +395,7 @@ public class GuiNewChat extends Gui implements Tickable
      */
     public IChatComponent getChatComponent (int p1, int p2)
     {
-        if (getChatOpen()) {
+        if (isChatOpen()) {
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaleFactor();
             float f = this.getChatScale();
@@ -418,14 +429,6 @@ public class GuiNewChat extends Gui implements Tickable
         }
 
         return null;
-    }
-
-    /**
-     * Returns true if the chat GUI is open
-     */
-    public static boolean getChatOpen ()
-    {
-        return Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen instanceof GuiChat;
     }
 
     /**
@@ -464,7 +467,7 @@ public class GuiNewChat extends Gui implements Tickable
 
     public int getChatHeight ()
     {
-        return calculateChatboxHeight(getChatOpen() ? this.mc.gameSettings.chatHeightFocused : this.mc.gameSettings.chatHeightUnfocused);
+        return calculateChatboxHeight(isChatOpen() ? this.mc.gameSettings.chatHeightFocused : this.mc.gameSettings.chatHeightUnfocused);
     }
 
     /**

@@ -38,6 +38,10 @@ public class AuthenticationSubscriber
     private void authenticateWithFile ()
     {
         final File credentials = new File("authetication.txt");
+
+        if (!credentials.exists())
+            return;
+
         final Scanner scanner = new Scanner(new FileReader(credentials));
 
         final String email = scanner.nextLine();

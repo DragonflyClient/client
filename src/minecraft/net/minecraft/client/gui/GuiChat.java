@@ -26,12 +26,15 @@ public class GuiChat extends GuiScreen
 
         messageToSend = null;
     }).build();
+
     private final List<String> foundPlayerNames = Lists.newArrayList();
+
     /**
      * Chat entry field
      */
     protected GuiTextField inputField;
     private String historyBuffer = "";
+
     /**
      * keeps position of which chat message you will select when you press up, (does not increase for duplicated
      * messages sent immediately after each other)
@@ -40,6 +43,7 @@ public class GuiChat extends GuiScreen
     private boolean playerNamesFound;
     private boolean waitingOnAutocomplete;
     private int autocompleteIndex;
+
     /**
      * is the text that appears when you press the chat key and the input box appears pre-filled
      */

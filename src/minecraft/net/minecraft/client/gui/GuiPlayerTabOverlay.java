@@ -199,7 +199,7 @@ public class GuiPlayerTabOverlay extends Gui
             int x = defaultX + ( columnIndex * columnWidth ) + ( columnIndex * horizontalColumnSpace );
 
             int k2 = k1 + i5 * 9;
-            drawRect(x, k2, x + columnWidth, k2 + 8, new Color(255, 255, 255, tablistFlyIn.isAtEnd() ? 30 : 0).getRGB());
+            drawRect(x, k2, x + columnWidth, k2 + 8, new Color(255, 255, 255, 30).getRGB());
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             GlStateManager.enableAlpha();
             GlStateManager.enableBlend();
@@ -228,6 +228,7 @@ public class GuiPlayerTabOverlay extends Gui
                 }
 
                 k2 += 1;
+
                 if (playerInfo.getGameType() == WorldSettings.GameType.SPECTATOR) {
                     s1 = EnumChatFormatting.ITALIC + s1;
                     fontRenderer.drawStringWithShadow(s1, ( float ) x, ( float ) k2, new Color(0, 0, 0, 120).getRGB());

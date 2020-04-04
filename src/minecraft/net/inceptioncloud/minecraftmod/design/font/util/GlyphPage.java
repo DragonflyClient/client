@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.design.font.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
@@ -19,7 +20,7 @@ public class GlyphPage
     private Font font;
     private boolean antiAliasing;
     private boolean fractionalMetrics;
-    private HashMap<Character, Glyph> glyphCharacterMap = new HashMap<>();
+    public HashMap<Character, Glyph> glyphCharacterMap = new HashMap<>();
 
     private BufferedImage bufferedImage;
     private DynamicTexture loadedTexture;
@@ -132,8 +133,9 @@ public class GlyphPage
     {
         Glyph glyph = glyphCharacterMap.get(ch == '▏' ? '|' : ch);
 
-        if (glyph == null)
+        if (glyph == null) {
             return -1;
+        }
 
         float pageX = glyph.x / ( float ) imgSize;
         float pageY = glyph.y / ( float ) imgSize;
@@ -190,7 +192,7 @@ public class GlyphPage
         return fractionalMetrics;
     }
 
-    static class Glyph
+    public static class Glyph
     {
         private int x;
         private int y;

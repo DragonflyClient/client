@@ -20,7 +20,7 @@ public class ZoomSubscriber
     /**
      * The transition that animates the OptiFine zoom.
      */
-    private final SmoothDoubleTransition zoomFactor = SmoothDoubleTransition.builder().start(1.0).end(3.5).fadeIn(20).stay(20).fadeOut(0).autoTransformator(( ForwardBackward ) () -> Config.zoomMode).build();
+    private final SmoothDoubleTransition zoomFactor = SmoothDoubleTransition.builder().start(1.0).end(3.5).fadeIn(0).stay(20).fadeOut(15).autoTransformator(( ForwardBackward ) () -> Config.zoomMode).build();
 
     /**
      * {@link ZoomEvent} Subscriber
