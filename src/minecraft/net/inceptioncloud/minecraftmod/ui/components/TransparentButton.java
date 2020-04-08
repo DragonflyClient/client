@@ -31,7 +31,7 @@ public class TransparentButton extends GuiButton
     /**
      * The font renderer with which the button text is drawn.
      */
-    private IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans Medium", Font.PLAIN, 22);
+    private IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", 22);
 
     /**
      * Whether the clean button is highlighted by an underline.
@@ -91,7 +91,8 @@ public class TransparentButton extends GuiButton
     @Override
     public void destroy ()
     {
-        InceptionMod.getInstance().stopTransition(underline);
+        underline.destroy();
+        hoverIncreaseOpacity.destroy();
     }
 
     /**

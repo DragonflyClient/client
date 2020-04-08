@@ -6,8 +6,7 @@ import net.inceptioncloud.minecraftmod.transition.color.*;
 import net.inceptioncloud.minecraftmod.transition.number.*;
 import net.inceptioncloud.minecraftmod.transition.string.SubstringTransition;
 import net.inceptioncloud.minecraftmod.transition.string.TransitionTypeString;
-import net.inceptioncloud.minecraftmod.ui.components.SimpleButton;
-import net.inceptioncloud.minecraftmod.ui.components.TransparentButton;
+import net.inceptioncloud.minecraftmod.ui.components.*;
 import net.inceptioncloud.minecraftmod.utils.RuntimeUtils;
 import net.minecraft.client.gui.GuiButton;
 
@@ -18,7 +17,7 @@ import java.util.function.IntSupplier;
  * <h2>Transition</h2>
  * <p>
  * The transition superclass represents any transition.
- * It can be a {@link TransitionTypeNumber , a {@link TransitionTypeString } or a {@link TransitionTypeColor }.
+ * It can be a {@link TransitionTypeNumber number}-, {@link TransitionTypeString string}- or {@link TransitionTypeColor color}-transition.
  */
 @Getter
 public abstract class Transition
@@ -42,7 +41,12 @@ public abstract class Transition
     /**
      * The origin of the transition (the class that it was created in).
      */
-    protected final String origin;
+    protected final String originClass;
+
+    /**
+     * Stack Trace of the origin.
+     */
+    protected final StackTraceElement originStackTrace;
 
     /**
      * The currently set direction.
@@ -62,7 +66,7 @@ public abstract class Transition
         this.reachStart = reachStart;
         this.autoTransformator = autoTransformator;
 
-        String[] split = Objects.requireNonNull(RuntimeUtils.getStackTrace(Transition.class,
+        final StackTraceElement stackTrace = RuntimeUtils.getStackTrace(Transition.class,
             TransitionTypeNumber.class,
             TransitionTypeColor.class,
             TransitionTypeString.class,
@@ -83,8 +87,14 @@ public abstract class Transition
 
             TransparentButton.class,
             SimpleButton.class,
-            GuiButton.class)).getClassName().split("\\.");
-        origin = split[split.length - 1];
+            GuiButton.class,
+            ConfirmationButton.class
+        );
+
+        String[] split = Objects.requireNonNull(stackTrace).getClassName().split("\\.");
+        originClass = split[split.length - 1];
+        originStackTrace = stackTrace;
+
         InceptionMod.getInstance().handleTransition(this);
     }
 
@@ -134,6 +144,14 @@ public abstract class Transition
     }
 
     /**
+     * Destorys the transition.
+     */
+    public void destroy()
+    {
+        InceptionMod.getInstance().stopTransition(this);
+    }
+
+    /**
      * Does the forward transition.
      */
     protected abstract void doForward ();
@@ -152,4 +170,12 @@ public abstract class Transition
      * @return Whether the current value is at the start.
      */
     public abstract boolean isAtStart ();
+
+    @Override
+    public String toString ()
+    {
+        return "Transition{" +
+               "originStackTrace=" + originStackTrace +
+               '}';
+    }
 }

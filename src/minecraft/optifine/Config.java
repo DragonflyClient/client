@@ -53,7 +53,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.PixelFormat;
@@ -866,7 +865,7 @@ public class Config
     public static IResourcePack[] getResourcePacks()
     {
         ResourcePackRepository resourcepackrepository = minecraft.getResourcePackRepository();
-        List list = resourcepackrepository.getRepositoryEntries();
+        List list = resourcepackrepository.getSelectedPacks();
         List list1 = new ArrayList();
 
         for (Object resourcepackrepository$entry : list)

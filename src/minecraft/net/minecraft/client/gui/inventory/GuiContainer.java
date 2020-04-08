@@ -215,7 +215,7 @@ public abstract class GuiContainer extends GuiScreen
         this.zLevel = 200.0F;
         this.itemRender.zLevel = 200.0F;
         this.itemRender.renderItemAndEffectIntoGUI(stack, x, y);
-        this.itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, stack, x, y - (this.draggedStack == null ? 0 : 8), altText);
+        this.itemRender.renderItemOverlayIntoGUI(stack, x, y - ( this.draggedStack == null ? 0 : 8), altText);
         this.zLevel = 0.0F;
         this.itemRender.zLevel = 0.0F;
     }
@@ -306,7 +306,7 @@ public abstract class GuiContainer extends GuiScreen
 
             GlStateManager.enableDepth();
             this.itemRender.renderItemAndEffectIntoGUI(itemstack, i, j);
-            this.itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, itemstack, i, j, s);
+            this.itemRender.renderItemOverlayIntoGUI(itemstack, i, j, s);
         }
 
         this.itemRender.zLevel = 0.0F;

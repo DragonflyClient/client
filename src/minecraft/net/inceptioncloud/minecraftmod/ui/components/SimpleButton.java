@@ -61,7 +61,7 @@ public class SimpleButton extends GuiButton
     public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
     {
         if (this.visible) {
-            IFontRenderer fontrenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+            IFontRenderer fontrenderer = InceptionMod.getInstance().getFontDesign().getMedium();
             final double border = 0.5;
             final double left = this.xPosition + border;
             final double top = this.yPosition + border;
@@ -78,7 +78,7 @@ public class SimpleButton extends GuiButton
             drawRect(left, top, left + 4 + ( hoverTransition.get() * ( right - left - 4)), bottom, color.getRGB());
 
             if (opacity > 0.1)
-                drawCenteredString(fontrenderer, this.displayString, (int) left + this.width / 2, (int) top + ( this.height - 8 ) / 2, new Color(1, 1, 1, opacity).getRGB());
+                drawCenteredString(fontrenderer, this.displayString, (int) left + this.width / 2, (int) top + ( this.height - 6 ) / 2, new Color(1, 1, 1, opacity).getRGB());
         }
     }
 
@@ -88,6 +88,7 @@ public class SimpleButton extends GuiButton
     @Override
     public void destroy ()
     {
-        InceptionMod.getInstance().stopTransition(hoverTransition);
+        hoverTransition.destroy();
+        colorTransition.destroy();
     }
 }

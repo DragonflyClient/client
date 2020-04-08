@@ -4,6 +4,7 @@ import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.*;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
+import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.*;
@@ -25,13 +26,14 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GLContext;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
+public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 {
     public static final String informationText = "Please click " + EnumChatFormatting.UNDERLINE + "here" + EnumChatFormatting.RESET + " for more information.";
     private static final Logger logger = LogManager.getLogger();
@@ -54,14 +56,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
         .build();
 
     /**
-     * The amount of ticks when the cursor hovered the navigation bar.
-     */
-    private static long cursorHoverTime = 0;
-
-    /**
      * Provides all available quick actions.
      */
-    public final List<QuickAction> AVAILABLE_ACTIONS = Arrays.asList(
+    public static final List<QuickAction> AVAILABLE_ACTIONS = Arrays.asList(
         new LastMapAction(), new CreateMapAction(),
         new LastServerAction(), new DirectConnectAction(),
         new ResourcePackAction(), new ModOptionsAction(),
@@ -72,6 +69,11 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
      * The Object object utilized as a thread lock when performing non thread-safe operations
      */
     private final Object threadLock = new Object();
+
+    /**
+     * Whether the navbar is currently hovered.
+     */
+    private static boolean navbarHovered = false;
 
     /**
      * The transitions that are responsible for the different Quick Action Buttons.
@@ -85,14 +87,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
         .start(1)
         .end(2)
         .fadeIn(0).stay(10).fadeOut(20)
-        .autoTransformator(( ForwardBackward ) () -> cursorHoverTime > 0)
+        .autoTransformator(( ForwardBackward ) () -> navbarHovered)
         .build();
 
-    private int mouseY = 0;
-
-    /**
-     * OpenGL graphics card warning.
-     */
     private String openGLWarning1;
 
     /**
@@ -129,8 +126,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
      */
     public GuiMainMenu ()
     {
-        InceptionMod.getInstance().handleTickable(this, GuiMainMenu.class);
-
         this.openGLWarning2 = informationText;
         this.openGLWarning1 = "";
 
@@ -155,9 +150,10 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
     public void drawScreen (int mouseX, int mouseY, float partialTicks)
     {
         if (drawTime == -1) drawTime = System.currentTimeMillis();
-        this.mouseY = mouseY;
         this.drawGradientBackground();
         final IFontRenderer finalFontRenderer = updateSize();
+
+        navbarHovered = mouseY >= height - getNavbarHeight() && mouseY <= height;
 
         this.buttonList.stream()
             .filter(guiButton -> guiButton.id < 10)
@@ -192,13 +188,13 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
 
         // ICMM - Title
         double percent = imageSize / 280D;
-        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans Medium", Font.PLAIN, ( int ) ( 25 + ( percent * 60 ) ));
+        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", ( int ) ( 25 + ( percent * 60 ) ));
         fontRenderer.drawCenteredString(InceptionCloudVersion.FULL_VERSION, width / 2, height / 8 + imageSize + 10, 0xFFFFFF, true);
 
         // ICMM - Subtitle
         int previousHeight = fontRenderer.getHeight();
         percent = imageSize / 280D;
-        fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans", Font.PLAIN, ( int ) ( 15 + ( percent * 40 ) ));
+        fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("", ( int ) ( 15 + ( percent * 40 ) ));
         fontRenderer.drawCenteredString("Minecraft Mod 1.8.8", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true);
 
         // ICMM - Bottom Bar
@@ -219,7 +215,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
     {
         double percent = Math.min(height / 540D, 1.0D);
         final int BUTTON_FONT_SIZE = ( int ) ( 18 + ( percent * 15 ) );
-        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans", Font.PLAIN, BUTTON_FONT_SIZE);
+        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("", BUTTON_FONT_SIZE);
 
         BUTTON_WIDTH = ( int ) ( 80 + ( percent * 30 ) );
         BUTTON_HEIGHT = fontRenderer.getHeight();
@@ -230,18 +226,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
         QUICK_ACTION_RIGHT = ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH * 2 - 10 );
 
         return fontRenderer;
-    }
-
-    /**
-     * Handle the mod tick.
-     */
-    @Override
-    public void modTick ()
-    {
-        if (mouseY >= height - getNavbarHeight() && mouseY <= height)
-            cursorHoverTime++;
-        else
-            cursorHoverTime = 0;
     }
 
     /**
@@ -263,13 +247,15 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback, Tickable
         IFontRenderer fontRenderer = updateSize();
         boolean left = true;
 
+        quickActionTransitions.values().forEach(Transition::destroy);
+
         for (QuickAction quickAction : AVAILABLE_ACTIONS) {
             final int stringWidth = fontRenderer.getStringWidth(quickAction.getDisplay());
             final int xPosition = left ? QUICK_ACTION_LEFT + 50 : QUICK_ACTION_RIGHT - stringWidth - 50;
             final int buttonId = quickAction.getOwnButtonId();
 
             this.buttonList.add(new TransparentButton(buttonId, xPosition, height, stringWidth, 20, quickAction.getDisplay()).setOpacity(0.5F));
-            this.quickActionTransitions.put(buttonId, DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> riseTransition.isAtEnd() && isQuickActionSelected(buttonId)).build());
+            quickActionTransitions.put(buttonId, DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> riseTransition.isAtEnd() && isQuickActionSelected(buttonId)).build());
 
             left = !left;
         }

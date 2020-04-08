@@ -135,10 +135,15 @@ public class GlyphFontRenderer implements IFontRenderer
         }
     }
 
+    private static Font font (String name, int style, int size, double letterSpacing)
+    {
+        return FontManager.applyLetterSpacing(new Font(name, style, size), letterSpacing);
+    }
+
     /**
      * Convenient Builder
      */
-    public static GlyphFontRenderer create (String fontName, int size, boolean bold, boolean italic, boolean boldItalic)
+    public static GlyphFontRenderer create (String fontName, int size, double letterSpacing, boolean bold, boolean italic, boolean boldItalic)
     {
         InceptionMod.getLogger().info("Building GlyphPageFontRenderer for Font " + fontName + " with size " + size + "..");
 
@@ -167,11 +172,11 @@ public class GlyphFontRenderer implements IFontRenderer
             chars[i] = characterList.get(i);
         }
 
-        GlyphPage regularPage = new GlyphPage(new Font(fontName, Font.PLAIN, ( int ) ( size * getFontQualityScale() )), true, true);
+        GlyphPage regularPage = new GlyphPage(font(fontName, Font.PLAIN, ( int ) ( size * getFontQualityScale() ), letterSpacing), true, true);
         regularPage.generateGlyphPage(chars);
         regularPage.setupTexture();
 
-        GlyphPage realRegular = new GlyphPage(new Font(fontName, Font.PLAIN, size), true, true);
+        GlyphPage realRegular = new GlyphPage(font(fontName, Font.PLAIN, size, letterSpacing), true, true);
         realRegular.generateGlyphPage(chars);
         realRegular.setupTexture();
 
@@ -184,31 +189,31 @@ public class GlyphFontRenderer implements IFontRenderer
         GlyphPage realBoldItalic = regularPage;
 
         if (bold) {
-            boldPage = new GlyphPage(new Font(fontName, Font.BOLD, ( int ) ( size * getFontQualityScale() )), true, true);
+            boldPage = new GlyphPage(font(fontName, Font.BOLD, ( int ) ( size * getFontQualityScale() ), letterSpacing), true, true);
             boldPage.generateGlyphPage(chars);
             boldPage.setupTexture();
 
-            realBold = new GlyphPage(new Font(fontName, Font.BOLD, size), true, true);
+            realBold = new GlyphPage(font(fontName, Font.BOLD, size, letterSpacing), true, true);
             realBold.generateGlyphPage(chars);
             realBold.setupTexture();
         }
 
         if (italic) {
-            italicPage = new GlyphPage(new Font(fontName, Font.ITALIC, ( int ) ( size * getFontQualityScale() )), true, true);
+            italicPage = new GlyphPage(font(fontName, Font.ITALIC, ( int ) ( size * getFontQualityScale() ), letterSpacing), true, true);
             italicPage.generateGlyphPage(chars);
             italicPage.setupTexture();
 
-            realItalic = new GlyphPage(new Font(fontName, Font.ITALIC, size), true, true);
+            realItalic = new GlyphPage(font(fontName, Font.ITALIC, size, letterSpacing), true, true);
             realItalic.generateGlyphPage(chars);
             realItalic.setupTexture();
         }
 
         if (boldItalic) {
-            boldItalicPage = new GlyphPage(new Font(fontName, Font.BOLD | Font.ITALIC, ( int ) ( size * getFontQualityScale() )), true, true);
+            boldItalicPage = new GlyphPage(font(fontName, Font.BOLD | Font.ITALIC, ( int ) ( size * getFontQualityScale() ), letterSpacing), true, true);
             boldItalicPage.generateGlyphPage(chars);
             boldItalicPage.setupTexture();
 
-            realBoldItalic = new GlyphPage(new Font(fontName, Font.BOLD | Font.ITALIC, size), true, true);
+            realBoldItalic = new GlyphPage(font(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing), true, true);
             realBoldItalic.generateGlyphPage(chars);
             realBoldItalic.setupTexture();
         }
@@ -247,7 +252,7 @@ public class GlyphFontRenderer implements IFontRenderer
         int i;
 
         if (dropShadow) {
-            i = this.renderString(text, x + 1.0F, y + 1.0F, color, true);
+            i = this.renderString(text, x + 0.7F, y + 0.7F, color, true);
             i = Math.max(i, this.renderString(text, x, y, color, false));
         } else {
             i = this.renderString(text, x, y, color, false);

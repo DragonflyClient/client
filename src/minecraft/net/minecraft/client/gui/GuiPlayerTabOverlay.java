@@ -103,8 +103,7 @@ public class GuiPlayerTabOverlay extends Gui
         int x = mc.displayWidth / 2 - hotkeyFlyIn.castToInt();
         int y = mc.displayHeight / 2 - 50;
         drawRect(x - 3, y - 3, mc.displayWidth / 2, y + 20, new Color(0, 0, 0, 50).getRGB());
-        HotkeyRendererKt.render(InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans", Font.PLAIN, 20),
-            KeyEvent.VK_P, "Open Indicator Menu", x, y);
+        HotkeyRendererKt.render(InceptionMod.getInstance().getFontDesign().retrieveOrBuild("", 20), KeyEvent.VK_P, "Open Indicator Menu", x, y);
     }
 
     /**
@@ -180,7 +179,7 @@ public class GuiPlayerTabOverlay extends Gui
 
         listWidth += horizontalColumnSpace;
         if (headerList != null) {
-            drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + headerList.size() * fontRenderer.getHeight(), backgroundColor);
+            drawRect(width / 2 - listWidth / 2 - 1, k1 - 4, width / 2 + listWidth / 2 + 1, k1 + headerList.size() * fontRenderer.getHeight(), backgroundColor);
 
             for (String s3 : headerList) {
                 int i2 = fontRenderer.getStringWidth(s3);
@@ -260,7 +259,7 @@ public class GuiPlayerTabOverlay extends Gui
 
         if (footerList != null) {
             k1 = k1 + i4 * 9 + 1;
-            drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + footerList.size() * fontRenderer.getHeight(), backgroundColor);
+            drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + footerList.size() * fontRenderer.getHeight() + 2, backgroundColor);
 
             for (String s4 : footerList) {
                 int j5 = fontRenderer.getStringWidth(s4);

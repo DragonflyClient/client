@@ -14,18 +14,18 @@ import org.apache.logging.log4j.Logger;
 public class ResourcePackListEntryDefault extends ResourcePackListEntry
 {
     private static final Logger logger = LogManager.getLogger();
-    private final IResourcePack field_148320_d;
+    private final IResourcePack resourcePack;
     private final ResourceLocation resourcePackIcon;
 
     public ResourcePackListEntryDefault(GuiScreenResourcePacks resourcePacksGUIIn)
     {
         super(resourcePacksGUIIn);
-        this.field_148320_d = this.mc.getResourcePackRepository().rprDefaultResourcePack;
+        this.resourcePack = this.mc.getResourcePackRepository().rprDefaultResourcePack;
         DynamicTexture dynamictexture;
 
         try
         {
-            dynamictexture = new DynamicTexture(this.field_148320_d.getPackImage());
+            dynamictexture = new DynamicTexture(this.resourcePack.getPackImage());
         }
         catch (IOException var4)
         {
@@ -35,7 +35,7 @@ public class ResourcePackListEntryDefault extends ResourcePackListEntry
         this.resourcePackIcon = this.mc.getTextureManager().getDynamicTextureLocation("texturepackicon", dynamictexture);
     }
 
-    protected int func_183019_a()
+    protected int getEntryPackFormat ()
     {
         return 1;
     }
@@ -44,7 +44,7 @@ public class ResourcePackListEntryDefault extends ResourcePackListEntry
     {
         try
         {
-            PackMetadataSection packmetadatasection = (PackMetadataSection)this.field_148320_d.getPackMetadata(this.mc.getResourcePackRepository().rprMetadataSerializer, "pack");
+            PackMetadataSection packmetadatasection = (PackMetadataSection)this.resourcePack.getPackMetadata(this.mc.getResourcePackRepository().rprMetadataSerializer, "pack");
 
             if (packmetadatasection != null)
             {
@@ -88,7 +88,7 @@ public class ResourcePackListEntryDefault extends ResourcePackListEntry
         return "Default";
     }
 
-    protected void func_148313_c()
+    protected void bindEntryIcon ()
     {
         this.mc.getTextureManager().bindTexture(this.resourcePackIcon);
     }

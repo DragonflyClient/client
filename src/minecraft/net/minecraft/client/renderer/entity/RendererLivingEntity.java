@@ -585,9 +585,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                 }
             }
 
-            if (!Reflector.RenderLivingEvent_Specials_Post_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Post_Constructor, new Object[] {entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z)}))
-            {
-                ;
+            if (Reflector.RenderLivingEvent_Specials_Post_Constructor.exists()) {
+                Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Post_Constructor, entity, this, x, y, z);
             }
         }
     }
@@ -596,7 +595,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
     {
         EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
 
-        if (entity instanceof EntityPlayer && entity != entityplayersp)
+        // ICMM - Show own Name:  && entity != entityplayersp
+        if (entity instanceof EntityPlayer)
         {
             Team team = entity.getTeam();
             Team team1 = entityplayersp.getTeam();
@@ -607,9 +607,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
                 switch (RendererLivingEntity.RendererLivingEntity$1.field_178679_a[team$enumvisible.ordinal()])
                 {
-                    case 1:
-                        return true;
-
                     case 2:
                         return false;
 

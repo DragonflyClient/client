@@ -3,6 +3,8 @@ package net.minecraft.client.gui;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.ui.components.ConfirmationButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.stream.GuiTwitchUserMode;
@@ -229,54 +231,58 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             GlStateManager.disableDepth();
             int i = 0;
 
+            final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getMedium();
+
             for (String s : textLines) {
-                int j = this.fontRendererObj.getStringWidth(s);
+                int j = fontRenderer.getStringWidth(s);
 
                 if (j > i) {
                     i = j;
                 }
             }
 
-            int l1 = x + 12;
-            int i2 = y - 12;
-            int k = 8;
+            int left = x + 12;
+            int top = y - 12;
+            int height = 8;
 
             if (textLines.size() > 1) {
-                k += 2 + ( textLines.size() - 1 ) * 10;
+                height += 2 + ( textLines.size() - 1 ) * 10;
             }
 
-            if (l1 + i > this.width) {
-                l1 -= 28 + i;
+            if (left + i > this.width) {
+                left -= 28 + i;
             }
 
-            if (i2 + k + 6 > this.height) {
-                i2 = this.height - k - 6;
+            if (top + height + 6 > this.height) {
+                top = this.height - height - 6;
             }
 
             this.zLevel = 300.0F;
             this.itemRender.zLevel = 300.0F;
             int l = -267386864;
-            this.drawGradientVertical(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
-            this.drawGradientVertical(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
-            this.drawGradientVertical(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
-            this.drawGradientVertical(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
-            this.drawGradientVertical(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
+            this.drawGradientVertical(left - 3, top - 4, left + i + 3, top - 3, l, l);
+            this.drawGradientVertical(left - 3, top + height + 3, left + i + 3, top + height + 4, l, l);
+            this.drawGradientVertical(left - 3, top - 3, left + i + 3, top + height + 3, l, l);
+            this.drawGradientVertical(left - 4, top - 3, left - 3, top + height + 3, l, l);
+            this.drawGradientVertical(left + i + 3, top - 3, left + i + 4, top + height + 3, l, l);
             int i1 = 1347420415;
             int j1 = ( i1 & 16711422 ) >> 1 | i1 & -16777216;
-            this.drawGradientVertical(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
-            this.drawGradientVertical(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
-            this.drawGradientVertical(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
-            this.drawGradientVertical(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
+            this.drawGradientVertical(left - 3, top - 3 + 1, left - 3 + 1, top + height + 3 - 1, i1, j1);
+            this.drawGradientVertical(left + i + 2, top - 3 + 1, left + i + 3, top + height + 3 - 1, i1, j1);
+            this.drawGradientVertical(left - 3, top - 3, left + i + 3, top - 3 + 1, i1, i1);
+            this.drawGradientVertical(left - 3, top + height + 2, left + i + 3, top + height + 3, j1, j1);
+
+            top += 1;
 
             for (int k1 = 0 ; k1 < textLines.size() ; ++k1) {
                 String s1 = textLines.get(k1);
-                this.fontRendererObj.drawStringWithShadow(s1, ( float ) l1, ( float ) i2, -1);
+                fontRenderer.drawStringWithShadow(s1, ( float ) left, ( float ) top, -1);
 
                 if (k1 == 0) {
-                    i2 += 2;
+                    top += 1;
                 }
 
-                i2 += 10;
+                top += 10;
             }
 
             this.zLevel = 0.0F;

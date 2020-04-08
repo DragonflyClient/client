@@ -91,7 +91,7 @@ public class ColorTransformator
         int g = color.getGreen();
         int b = color.getBlue();
 
-        color = new Color(r, g, b, alpha);
+        color = new Color(r, g, b, Math.min(alpha, 255));
         return this;
     }
 
@@ -106,7 +106,7 @@ public class ColorTransformator
         int g = color.getGreen();
         int b = color.getBlue();
 
-        color = new Color(r / 255F, g / 255F, b / 255F, alpha);
+        color = new Color(r / 255F, g / 255F, b / 255F, Math.min(alpha, 1.0F));
         return this;
     }
 

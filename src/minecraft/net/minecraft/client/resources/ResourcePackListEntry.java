@@ -29,7 +29,7 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
 
     public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
     {
-        int i = this.func_183019_a();
+        int i = this.getEntryPackFormat();
 
         if (i != 1)
         {
@@ -37,9 +37,11 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
             Gui.drawRect(x - 1, y - 1, x + listWidth - 9, y + slotHeight + 1, -8978432);
         }
 
-        this.func_148313_c();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        Gui.drawModalRectWithCustomSizedTexture(x, y, 0.0F, 0.0F, 32, 32, 32.0F, 32.0F);
+        if (i != -100) {
+            this.bindEntryIcon();
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            Gui.drawModalRectWithCustomSizedTexture(x, y, 0.0F, 0.0F, 32, 32, 32.0F, 32.0F);
+        }
         String s = this.func_148312_b();
         String s1 = this.func_148311_a();
 
@@ -129,13 +131,13 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
         }
     }
 
-    protected abstract int func_183019_a();
+    protected abstract int getEntryPackFormat ();
 
     protected abstract String func_148311_a();
 
     protected abstract String func_148312_b();
 
-    protected abstract void func_148313_c();
+    protected abstract void bindEntryIcon ();
 
     protected boolean func_148310_d()
     {
@@ -176,7 +178,7 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
             if (this.func_148309_e())
             {
                 this.resourcePacksGUI.markChanged();
-                int j = this.func_183019_a();
+                int j = this.getEntryPackFormat();
 
                 if (j != 1)
                 {

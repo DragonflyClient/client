@@ -10,6 +10,7 @@ import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.event.client.*;
 import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.minecraftmod.event.play.IntegratedServerStartingEvent;
+import net.inceptioncloud.minecraftmod.tracking.transitions.TransitionTracker;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -127,6 +128,20 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private final MinecraftSessionService sessionService;
     private final Queue<FutureTask<?>> scheduledTasks = Queues.newArrayDeque();
     private final Thread mcThread = Thread.currentThread();
+    private final boolean enableGLErrorChecking = true;
+    /**
+     * Instance of PlayerUsageSnooper.
+     */
+    private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("client", this, MinecraftServer.getCurrentTimeMillis());
+    /**
+     * Display width
+     */
+    private final int tempDisplayWidth;
+    /**
+     * Display height
+     */
+    private final int tempDisplayHeight;
+    private final long field_175615_aJ = 0L;
     public PlayerControllerMP playerController;
     public int displayWidth;
     public int displayHeight;
@@ -203,17 +218,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     private TextureManager renderEngine;
     private boolean fullscreen;
-    private final boolean enableGLErrorChecking = true;
     private boolean hasCrashed;
     /**
      * Instance of CrashReport.
      */
     private CrashReport crashReporter;
     private boolean connectedToRealms = false;
-    /**
-     * Instance of PlayerUsageSnooper.
-     */
-    private final PlayerUsageSnooper usageSnooper = new PlayerUsageSnooper("client", this, MinecraftServer.getCurrentTimeMillis());
     private RenderManager renderManager;
     private RenderItem renderItem;
     private ItemRenderer itemRenderer;
@@ -223,14 +233,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      * Mouse left click counter
      */
     private int leftClickCounter;
-    /**
-     * Display width
-     */
-    private final int tempDisplayWidth;
-    /**
-     * Display height
-     */
-    private final int tempDisplayHeight;
     /**
      * Instance of IntegratedServer.
      */
@@ -261,7 +263,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private SoundHandler mcSoundHandler;
     private MusicTicker mcMusicTicker;
     private SkinManager skinManager;
-    private final long field_175615_aJ = 0L;
     private ModelManager modelManager;
     /**
      * The BlockRenderDispatcher instance that will be used based off gamesettings
@@ -580,6 +581,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
 
         this.renderGlobal.makeEntityOutlineShader();
+
+        // ICMM - Opens the Live Transition Tracking Window
+        TransitionTracker.INSTANCE.initUI();
     }
 
     private void registerMetadataSerializers ()
@@ -723,7 +727,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         List<IResourcePack> list = Lists.newArrayList(this.defaultResourcePacks);
 
-        for (ResourcePackRepository.Entry resourcepackrepository$entry : this.mcResourcePackRepository.getRepositoryEntries()) {
+        for (ResourcePackRepository.Entry resourcepackrepository$entry : this.mcResourcePackRepository.getSelectedPacks()) {
             list.add(resourcepackrepository$entry.getResourcePack());
         }
 
@@ -950,10 +954,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     public void shutdownMinecraftApplet ()
     {
-        // EVENTBUS - ClientShutdownEvent when the game is being closed
-        ClientShutdownEvent event = new ClientShutdownEvent();
-        InceptionMod.getInstance().getEventBus().post(event);
-
         try {
             this.stream.shutdownStream();
             logger.info("Stopping!");
@@ -1294,6 +1294,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     public void shutdown ()
     {
+        InceptionMod.getInstance().shutdownInstance();
         this.running = false;
     }
 
@@ -1575,13 +1576,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             } catch (Throwable throwable1) {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Updating screen events");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Affected screen");
-                crashreportcategory.addCrashSectionCallable("Screen name", new Callable<String>()
-                {
-                    public String call () throws Exception
-                    {
-                        return Minecraft.this.currentScreen.getClass().getCanonicalName();
-                    }
-                });
+                crashreportcategory.addCrashSectionCallable("Screen name", () -> Minecraft.this.currentScreen.getClass().getCanonicalName());
                 throw new ReportedException(crashreport);
             }
 
@@ -1591,13 +1586,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 } catch (Throwable throwable) {
                     CrashReport crashreport1 = CrashReport.makeCrashReport(throwable, "Ticking screen");
                     CrashReportCategory crashreportcategory1 = crashreport1.makeCategory("Affected screen");
-                    crashreportcategory1.addCrashSectionCallable("Screen name", new Callable<String>()
-                    {
-                        public String call () throws Exception
-                        {
-                            return Minecraft.this.currentScreen.getClass().getCanonicalName();
-                        }
-                    });
+                    crashreportcategory1.addCrashSectionCallable("Screen name", () -> Minecraft.this.currentScreen.getClass().getCanonicalName());
                     throw new ReportedException(crashreport1);
                 }
             }
@@ -1688,34 +1677,37 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                             this.displayInGameMenu();
                         }
 
-                        if (k == 32 && Keyboard.isKeyDown(61) && this.ingameGUI != null) {
-                            this.ingameGUI.getChatGUI().clearChatMessages();
-                        }
-
-                        if (( k == 31 || k == 20 ) && Keyboard.isKeyDown(61)) {
-                            this.refreshResources();
-                        }
-
-                        if (k == 33 && Keyboard.isKeyDown(61)) {
-                            this.gameSettings.setOptionValue(GameSettings.Options.RENDER_DISTANCE, GuiScreen.isShiftKeyDown() ? -1 : 1);
-                        }
-
-                        if (k == 30 && Keyboard.isKeyDown(61)) {
-                            this.renderGlobal.loadRenderers();
-                        }
-
-                        if (k == 35 && Keyboard.isKeyDown(61)) {
-                            this.gameSettings.advancedItemTooltips = !this.gameSettings.advancedItemTooltips;
-                            this.gameSettings.saveOptions();
-                        }
-
-                        if (k == 48 && Keyboard.isKeyDown(61)) {
-                            this.renderManager.setDebugBoundingBox(!this.renderManager.isDebugBoundingBox());
-                        }
-
-                        if (k == 25 && Keyboard.isKeyDown(61)) {
-                            this.gameSettings.pauseOnLostFocus = !this.gameSettings.pauseOnLostFocus;
-                            this.gameSettings.saveOptions();
+                        // ICMM - F3 - Combinations
+                        if (Keyboard.isKeyDown(61)) {
+                            switch (k) {
+                                case 32:
+                                    if (this.ingameGUI != null)
+                                        this.ingameGUI.getChatGUI().clearChatMessages();
+                                    break;
+                                case 31:
+                                    this.refreshResources();
+                                    break;
+                                case 33:
+                                    this.gameSettings.setOptionValue(GameSettings.Options.RENDER_DISTANCE, GuiScreen.isShiftKeyDown() ? -1 : 1);
+                                    break;
+                                case 30:
+                                    this.renderGlobal.loadRenderers();
+                                    break;
+                                case 35:
+                                    this.gameSettings.advancedItemTooltips = !this.gameSettings.advancedItemTooltips;
+                                    this.gameSettings.saveOptions();
+                                    break;
+                                case 48:
+                                    this.renderManager.setDebugBoundingBox(!this.renderManager.isDebugBoundingBox());
+                                    break;
+                                case 25:
+                                    this.gameSettings.pauseOnLostFocus = !this.gameSettings.pauseOnLostFocus;
+                                    this.gameSettings.saveOptions();
+                                    break;
+                                case Keyboard.KEY_T:
+                                    TransitionTracker.INSTANCE.toggle();
+                                    break;
+                            }
                         }
 
                         if (k == 59) {
@@ -1790,7 +1782,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 }
             }
 
-            while (this.gameSettings.keyBindChat.isPressed() && flag) {
+            while (this.gameSettings.keyBindChat.isPressed() && flag && !Keyboard.isKeyDown(Keyboard.KEY_F3)) {
                 this.displayGuiScreen(new GuiChat());
             }
 
@@ -1801,15 +1793,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             if (this.thePlayer.isUsingItem()) {
                 if (!this.gameSettings.keyBindUseItem.isKeyDown()) {
                     this.playerController.onStoppedUsingItem(this.thePlayer);
-                }
-
-                while (this.gameSettings.keyBindAttack.isPressed()) {
-                }
-
-                while (this.gameSettings.keyBindUseItem.isPressed()) {
-                }
-
-                while (this.gameSettings.keyBindPickBlock.isPressed()) {
                 }
             } else {
                 while (this.gameSettings.keyBindAttack.isPressed()) {
@@ -2235,98 +2218,38 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     public CrashReport addGraphicsAndWorldToCrashReport (CrashReport theCrash)
     {
-        theCrash.getCategory().addCrashSectionCallable("Launched Version", new Callable<String>()
+        theCrash.getCategory().addCrashSectionCallable("Launched Version", () -> Minecraft.this.launchedVersion);
+        theCrash.getCategory().addCrashSectionCallable("LWJGL", Sys::getVersion);
+        theCrash.getCategory().addCrashSectionCallable("OpenGL", () -> GL11.glGetString(GL11.GL_RENDERER) + " GL version " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR));
+        theCrash.getCategory().addCrashSectionCallable("GL Caps", OpenGlHelper::getLogText);
+        theCrash.getCategory().addCrashSectionCallable("Using VBOs", () -> Minecraft.this.gameSettings.useVbo ? "Yes" : "No");
+        theCrash.getCategory().addCrashSectionCallable("Is Modded", () ->
         {
-            public String call () throws Exception
-            {
-                return Minecraft.this.launchedVersion;
-            }
+            String s = ClientBrandRetriever.getClientModName();
+            return !s.equals("vanilla") ? "Definitely; Client brand changed to '" + s + "'" : ( Minecraft.class.getSigners() == null ? "Very likely; Jar signature invalidated" : "Probably not. Jar signature remains and client brand is untouched." );
         });
-        theCrash.getCategory().addCrashSectionCallable("LWJGL", new Callable<String>()
+        theCrash.getCategory().addCrashSectionCallable("Type", () -> "Client (map_client.txt)");
+        theCrash.getCategory().addCrashSectionCallable("Resource Packs", () ->
         {
-            public String call ()
-            {
-                return Sys.getVersion();
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("OpenGL", new Callable<String>()
-        {
-            public String call ()
-            {
-                return GL11.glGetString(GL11.GL_RENDERER) + " GL version " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR);
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("GL Caps", new Callable<String>()
-        {
-            public String call ()
-            {
-                return OpenGlHelper.getLogText();
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Using VBOs", new Callable<String>()
-        {
-            public String call ()
-            {
-                return Minecraft.this.gameSettings.useVbo ? "Yes" : "No";
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Is Modded", new Callable<String>()
-        {
-            public String call () throws Exception
-            {
-                String s = ClientBrandRetriever.getClientModName();
-                return !s.equals("vanilla") ? "Definitely; Client brand changed to '" + s + "'" : ( Minecraft.class.getSigners() == null ? "Very likely; Jar signature invalidated" : "Probably not. Jar signature remains and client brand is untouched." );
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Type", new Callable<String>()
-        {
-            public String call () throws Exception
-            {
-                return "Client (map_client.txt)";
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Resource Packs", new Callable<String>()
-        {
-            public String call () throws Exception
-            {
-                StringBuilder stringbuilder = new StringBuilder();
+            StringBuilder stringbuilder = new StringBuilder();
 
-                for (Object s : Minecraft.this.gameSettings.resourcePacks) {
-                    if (stringbuilder.length() > 0) {
-                        stringbuilder.append(", ");
-                    }
-
-                    stringbuilder.append(s);
-
-                    if (Minecraft.this.gameSettings.field_183018_l.contains(s)) {
-                        stringbuilder.append(" (incompatible)");
-                    }
+            for (Object s : Minecraft.this.gameSettings.resourcePacks) {
+                if (stringbuilder.length() > 0) {
+                    stringbuilder.append(", ");
                 }
 
-                return stringbuilder.toString();
+                stringbuilder.append(s);
+
+                if (Minecraft.this.gameSettings.field_183018_l.contains(s)) {
+                    stringbuilder.append(" (incompatible)");
+                }
             }
+
+            return stringbuilder.toString();
         });
-        theCrash.getCategory().addCrashSectionCallable("Current Language", new Callable<String>()
-        {
-            public String call () throws Exception
-            {
-                return Minecraft.this.mcLanguageManager.getCurrentLanguage().toString();
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("Profiler Position", new Callable<String>()
-        {
-            public String call () throws Exception
-            {
-                return Minecraft.this.mcProfiler.profilingEnabled ? Minecraft.this.mcProfiler.getNameOfLastSection() : "N/A (disabled)";
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("CPU", new Callable<String>()
-        {
-            public String call ()
-            {
-                return OpenGlHelper.func_183029_j();
-            }
-        });
+        theCrash.getCategory().addCrashSectionCallable("Current Language", () -> Minecraft.this.mcLanguageManager.getCurrentLanguage().toString());
+        theCrash.getCategory().addCrashSectionCallable("Profiler Position", () -> Minecraft.this.mcProfiler.profilingEnabled ? Minecraft.this.mcProfiler.getNameOfLastSection() : "N/A (disabled)");
+        theCrash.getCategory().addCrashSectionCallable("CPU", OpenGlHelper::func_183029_j);
 
         if (this.theWorld != null) {
             this.theWorld.addWorldInfoToCrashReport(theCrash);
@@ -2337,13 +2260,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public ListenableFuture<Object> scheduleResourcesRefresh ()
     {
-        return this.addScheduledTask(new Runnable()
-        {
-            public void run ()
-            {
-                Minecraft.this.refreshResources();
-            }
-        });
+        return this.addScheduledTask(Minecraft.this::refreshResources);
     }
 
     public void addServerStatsToSnooper (PlayerUsageSnooper playerSnooper)
@@ -2356,10 +2273,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         playerSnooper.addClientStat("current_action", this.getCurrentAction());
         String s = ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN ? "little" : "big";
         playerSnooper.addClientStat("endianness", s);
-        playerSnooper.addClientStat("resource_packs", this.mcResourcePackRepository.getRepositoryEntries().size());
+        playerSnooper.addClientStat("resource_packs", this.mcResourcePackRepository.getSelectedPacks().size());
         int i = 0;
 
-        for (ResourcePackRepository.Entry resourcepackrepository$entry : this.mcResourcePackRepository.getRepositoryEntries()) {
+        for (ResourcePackRepository.Entry resourcepackrepository$entry : this.mcResourcePackRepository.getSelectedPacks()) {
             playerSnooper.addClientStat("resource_pack[" + i++ + "]", resourcepackrepository$entry.getResourcePackName());
         }
 
@@ -2635,16 +2552,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                         if (this.getTwitchStream().isBroadcasting()) {
                             this.getTwitchStream().stopBroadcasting();
                         } else if (this.getTwitchStream().isReadyToBroadcast()) {
-                            this.displayGuiScreen(new GuiYesNo(new GuiYesNoCallback()
+                            this.displayGuiScreen(new GuiYesNo((result, id) ->
                             {
-                                public void confirmClicked (boolean result, int id)
-                                {
-                                    if (result) {
-                                        Minecraft.this.getTwitchStream().func_152930_t();
-                                    }
-
-                                    Minecraft.this.displayGuiScreen(null);
+                                if (result) {
+                                    Minecraft.this.getTwitchStream().func_152930_t();
                                 }
+
+                                Minecraft.this.displayGuiScreen(null);
                             }, I18n.format("stream.confirm_start"), "", 0));
                         } else if (this.getTwitchStream().func_152928_D() && this.getTwitchStream().func_152936_l()) {
                             if (this.theWorld != null) {

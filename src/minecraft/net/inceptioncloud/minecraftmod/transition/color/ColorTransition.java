@@ -130,4 +130,22 @@ public class ColorTransition extends TransitionTypeColor
         if (isAtStart() && reachStart != null)
             reachStart.run();
     }
+
+    @Override
+    public void destroy ()
+    {
+        redBase.destroy();
+        greenBase.destroy();
+        blueBase.destroy();
+
+        super.destroy();
+    }
+
+    @Override
+    public String toString ()
+    {
+        return "ColorTransition{" +
+               "originStackTrace=" + originStackTrace +
+               '}';
+    }
 }

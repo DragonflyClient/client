@@ -312,10 +312,10 @@ public class GameSettings
     /**
      * Returns whether the specified key binding is currently being pressed.
      */
-    public static boolean isKeyDown(KeyBinding p_100015_0_)
+    public static boolean isKeyDown(KeyBinding binding)
     {
-        int i = p_100015_0_.getKeyCode();
-        return ( i >= -100 && i <= 255 ) && ( p_100015_0_.getKeyCode() != 0 && ( p_100015_0_.getKeyCode() < 0 ? Mouse.isButtonDown(p_100015_0_.getKeyCode() + 100) : Keyboard.isKeyDown(p_100015_0_.getKeyCode()) ) );
+        int i = binding.getKeyCode();
+        return ( i >= -100 && i <= 255 ) && ( binding.getKeyCode() != 0 && ( binding.getKeyCode() < 0 ? Mouse.isButtonDown(binding.getKeyCode() + 100) : Keyboard.isKeyDown(binding.getKeyCode()) ) );
     }
 
     /**

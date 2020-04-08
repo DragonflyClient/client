@@ -1,1 +1,13 @@
-{"enableZoomAnimation":true}
+{
+  "lastServer": {
+    "serverName": "Gomme",
+    "serverIP": "gommehd.net",
+    "lan": false
+  },
+  "enableZoomAnimation": true,
+  "scoreboardBackground": false,
+  "scoreboardScores": 2,
+  "scoreboardTitle": true,
+  "zoomAnimation": true,
+  "fontQualityScale": 2.0
+}

@@ -38,7 +38,7 @@ public class ChatLine
         this.chatLineID = lineID;
 
         this.location = DoubleTransition.builder().start(0.0D).end(1.0D).amountOfSteps(40).autoTransformator(( ForwardNothing ) () -> true).build();
-        this.opacity = DoubleTransition.builder().start(50).end(255).amountOfSteps(80).autoTransformator(( ForwardNothing ) () -> location.get() > 0.5).build();
+        this.opacity = DoubleTransition.builder().start(50).end(255).amountOfSteps(80).autoTransformator(( ForwardNothing ) () -> location.get() > 0.5).reachEnd(this::destroy).build();
     }
 
     /**

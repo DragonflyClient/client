@@ -107,4 +107,19 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
     {
         this.next();
     }
+
+    @Override
+    public void destroy ()
+    {
+        base.destroy();
+        super.destroy();
+    }
+
+    @Override
+    public String toString ()
+    {
+        return "FloatingDoubleTransition{" +
+               "originStackTrace=" + originStackTrace +
+               '}';
+    }
 }

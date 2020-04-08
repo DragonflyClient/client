@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.state.play;
 
 import lombok.*;
-import net.inceptioncloud.minecraftmod.discord.RichPresenceStatus;
+import net.inceptioncloud.minecraftmod.discord.RichPresenceAdapter;
 import net.inceptioncloud.minecraftmod.discord.custom.SingleplayerRPC;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.integrated.IntegratedServer;
@@ -32,10 +32,10 @@ public class SingleplayerState extends PlayingState
     }
 
     /**
-     * @return The {@link RichPresenceStatus} that belongs to this Game State.
+     * @return The {@link RichPresenceAdapter} that belongs to this Game State.
      */
     @Override
-    public RichPresenceStatus getBelongingRichPresence ()
+    public RichPresenceAdapter getBelongingRichPresence ()
     {
         return new SingleplayerRPC(integratedServer.getWorldName(), isPaused(), getJoinTime());
     }

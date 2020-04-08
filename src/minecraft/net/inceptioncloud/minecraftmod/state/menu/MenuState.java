@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.state.menu;
 
 import lombok.ToString;
-import net.inceptioncloud.minecraftmod.discord.RichPresenceStatus;
+import net.inceptioncloud.minecraftmod.discord.RichPresenceAdapter;
 import net.inceptioncloud.minecraftmod.discord.custom.MenuRPC;
 import net.inceptioncloud.minecraftmod.state.GameState;
 import net.inceptioncloud.minecraftmod.state.play.PlayingState;
@@ -14,10 +14,10 @@ import net.inceptioncloud.minecraftmod.state.play.PlayingState;
 public class MenuState extends GameState
 {
     /**
-     * @return The {@link RichPresenceStatus} that belongs to this Game State.
+     * @return The {@link RichPresenceAdapter} that belongs to this Game State.
      */
     @Override
-    public RichPresenceStatus getBelongingRichPresence ()
+    public RichPresenceAdapter getBelongingRichPresence ()
     {
         return new MenuRPC();
     }

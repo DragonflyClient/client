@@ -5,6 +5,7 @@ import net.inceptioncloud.minecraftmod.options.sets.StorageOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.util.EnumChatFormatting;
 
 import java.util.Optional;
 
@@ -33,7 +34,9 @@ public class LastServerAction extends QuickAction
      */
     private static Optional<String> getIP ()
     {
-        return StorageOptions.LAST_SERVER.get() != null ? Optional.of(StorageOptions.LAST_SERVER.get().serverIP) : Optional.empty();
+        return StorageOptions.LAST_SERVER.get() != null
+            ? Optional.of(StorageOptions.LAST_SERVER.get().serverIP)
+            : Optional.empty();
     }
 
     /**
@@ -41,6 +44,8 @@ public class LastServerAction extends QuickAction
      */
     private static Optional<String> getName ()
     {
-        return StorageOptions.LAST_SERVER.get() != null ? Optional.of(StorageOptions.LAST_SERVER.get().serverName) : Optional.empty();
+        return StorageOptions.LAST_SERVER.get() != null
+            ? Optional.of(EnumChatFormatting.getTextWithoutFormattingCodes(StorageOptions.LAST_SERVER.get().serverName))
+            : Optional.empty();
     }
 }

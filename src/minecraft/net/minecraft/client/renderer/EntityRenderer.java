@@ -1193,7 +1193,8 @@ public class EntityRenderer implements IResourceManagerReloadListener
                     if (Reflector.ForgeHooksClient_drawScreen.exists()) {
                         Reflector.callVoid(Reflector.ForgeHooksClient_drawScreen, this.mc.currentScreen, scaledMouseX, scaledMouseY, partialTicks);
                     } else {
-                        this.mc.currentScreen.drawScreen(scaledMouseX, scaledMouseY, partialTicks);
+                        if (this.mc.currentScreen != null)
+                            this.mc.currentScreen.drawScreen(scaledMouseX, scaledMouseY, partialTicks);
                     }
                 } catch (Throwable throwable) {
                     CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering screen");

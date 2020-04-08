@@ -76,7 +76,7 @@ public class ConfirmationButton extends SimpleButton
     public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
     {
         if (this.visible) {
-            IFontRenderer fontrenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+            IFontRenderer fontrenderer = InceptionMod.getInstance().getFontDesign().getMedium();
             final double border = 0.5;
             final double left = this.xPosition + border;
             final double top = this.yPosition + border;
@@ -94,7 +94,7 @@ public class ConfirmationButton extends SimpleButton
             drawRect(left + ( holdTransition.get() * ( width - 4 ) ), top, left + 4 + ( hoverTransition.get() * ( width - 4 ) ), bottom, color.getRGB());
 
             if (opacity > 0.05)
-                drawCenteredString(fontrenderer, this.displayString, ( int ) left + this.width / 2, ( int ) top + ( this.height - 8 ) / 2, new Color(1, 1, 1, opacity).getRGB());
+                drawCenteredString(fontrenderer, this.displayString, ( int ) left + this.width / 2, ( int ) top + ( this.height - 6 ) / 2, new Color(1, 1, 1, opacity).getRGB());
 
             if (holdTransition.isAtEnd()) {
                 endTicks++;
@@ -127,5 +127,15 @@ public class ConfirmationButton extends SimpleButton
             .start(0.0).end(1.0)
             .amountOfSteps(width / 4)
             .autoTransformator(( ForwardBackward ) () -> hovered || !holdTransition.isAtStart()).build();
+    }
+
+    @Override
+    public void destroy ()
+    {
+        holdTransition.destroy();
+        colorTransition.destroy();
+        hoverTransition.destroy();
+
+        super.destroy();
     }
 }

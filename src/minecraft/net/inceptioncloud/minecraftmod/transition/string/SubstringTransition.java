@@ -92,4 +92,20 @@ public class SubstringTransition extends TransitionTypeString
     {
         base.setBackward();
     }
+
+    @Override
+    public void destroy ()
+    {
+        base.destroy();
+
+        super.destroy();
+    }
+
+    @Override
+    public String toString ()
+    {
+        return "SubstringTransition{" +
+               "originStackTrace=" + originStackTrace +
+               '}';
+    }
 }

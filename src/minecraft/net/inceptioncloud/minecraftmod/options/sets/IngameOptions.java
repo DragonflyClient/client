@@ -24,10 +24,10 @@ public class IngameOptions
      * <hr/>
      *
      * <b>Key: </b>scoreboardScores<br/>
-     * <b>Type: </b>Boolean<br/>
-     * <b>Default: </b><code>false</code>
+     * <b>Type: </b>Integer | 0 = off, 1 = on, 2 = auto<br/>
+     * <b>Default: </b><code>0</code>
      */
-    public static final OptionKey<Boolean> SCOREBOARD_SCORES = OptionKey.newInstance(Boolean.class).key("scoreboardScores").defaultValue(false).validator(val -> true).build();
+    public static final OptionKey<Integer> SCOREBOARD_SCORES = OptionKey.newInstance(Integer.class).key("scoreboardScores").defaultValue(0).validator(val -> val >= 0 && val <= 2).build();
 
     /**
      * <h2>Scoreboard | Background</h2>

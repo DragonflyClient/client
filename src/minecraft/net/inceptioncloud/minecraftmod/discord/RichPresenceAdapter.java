@@ -3,12 +3,13 @@ package net.inceptioncloud.minecraftmod.discord;
 import lombok.*;
 import net.arikia.dev.drpc.DiscordRichPresence;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The superclass of any game status that is displayed in the Discord Rich Presence.
  */
 @Setter
-public class RichPresenceStatus
+public class RichPresenceAdapter
 {
     /**
      * The status string that is being displayed.
@@ -33,7 +34,7 @@ public class RichPresenceStatus
     /**
      * The asset key for the big image.
      */
-    private String bigImageKey = "border-thick";
+    private String bigImageKey = "512x";
 
     /**
      * The hover text displayed when hovering the big image.
@@ -62,6 +63,8 @@ public class RichPresenceStatus
             .setEndTimestamp(endMillis)
             .setBigImage(bigImageKey, bigImageText)
             .setSmallImage(smallImageKey, smallImageText)
+            .setParty("myPartyId", 1, 6)
+            .setSecrets("secret-abababa", null)
             .build();
     }
 }

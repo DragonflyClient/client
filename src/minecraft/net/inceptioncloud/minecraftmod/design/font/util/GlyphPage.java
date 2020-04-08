@@ -1,14 +1,16 @@
 package net.inceptioncloud.minecraftmod.design.font.util;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -17,9 +19,9 @@ public class GlyphPage
 {
     private int imgSize;
     private int maxFontHeight = -1;
-    private Font font;
-    private boolean antiAliasing;
-    private boolean fractionalMetrics;
+    private final Font font;
+    private final boolean antiAliasing;
+    private final boolean fractionalMetrics;
     public HashMap<Character, Glyph> glyphCharacterMap = new HashMap<>();
 
     private BufferedImage bufferedImage;
@@ -53,8 +55,8 @@ public class GlyphPage
         maxWidth += 2;
         maxHeight += 2;
 
-        imgSize = ( int ) Math.ceil(Math.max(
-            Math.ceil(Math.sqrt(maxWidth * maxWidth * chars.length) / maxWidth),
+        imgSize = ( int ) Math.ceil(
+            Math.max(Math.ceil(Math.sqrt(maxWidth * maxWidth * chars.length) / maxWidth),
             Math.ceil(Math.sqrt(maxHeight * maxHeight * chars.length) / maxHeight))
                                     * Math.max(maxWidth, maxHeight)) + 1;
 
@@ -92,6 +94,9 @@ public class GlyphPage
                 throw new IllegalStateException("Not all characters will fit");
             }
 
+            if (ch == 'j')
+                glyph.width += 4;
+
             if (posX + glyph.width >= imgSize) {
                 posX = 0;
                 posY += currentCharHeight;
@@ -105,7 +110,7 @@ public class GlyphPage
 
             if (glyph.height > currentCharHeight) currentCharHeight = glyph.height;
 
-            g.drawString(Character.toString(ch), posX + 2, posY + fontMetrics.getAscent());
+            g.drawString(Character.toString(ch), posX + (ch == 'j' ? 5 : 2), posY + fontMetrics.getAscent());
 
             posX += glyph.width;
 

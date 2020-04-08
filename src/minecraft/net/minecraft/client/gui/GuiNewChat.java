@@ -222,10 +222,11 @@ public class GuiNewChat extends Gui implements Tickable
                     String whole = s1 + s2 + " " + s3;
                     String date = "§7" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
 
-                    Color color1 = new Color(235, 59, 90, 10 + ( int ) ( titleText.get() * 245 ));
-                    Color color2 = new Color(165, 94, 234, 10 + ( int ) ( titleText.get() * 245 ));
-                    Color color3 = new Color(69, 170, 242, 10 + ( int ) ( titleText.get() * 245 ));
-                    Color alpha = new Color(255, 255, 255, 10 + ( int ) ( titleText.get() * 245 ));
+                    final int alphaValue = Math.min(10 + ( int ) ( titleText.get() * 245 ), 255);
+                    Color color1 = new Color(235, 59, 90, alphaValue);
+                    Color color2 = new Color(165, 94, 234, alphaValue);
+                    Color color3 = new Color(69, 170, 242, alphaValue);
+                    Color alpha = new Color(255, 255, 255, alphaValue);
 
                     int base = -fontRenderer.getStringWidth(whole);
                     int addition = fontRenderer.getStringWidth(whole) + getBorderAmount() - 2;

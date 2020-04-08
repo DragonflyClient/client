@@ -68,8 +68,10 @@ public class GuiIngameMenu extends GuiScreen
     {
         /* Game Menu Box Dimensions */
         int cursorY = this.height / 4 + 25;
+        Mouse.setGrabbed(false);
         Mouse.setCursorPosition(Display.getWidth() / 2, Display.getHeight() - cursorY * 2);
 
+        this.buttonList.forEach(GuiButton::destroy);
         this.buttonList.clear();
 
         /* Back to Game */
@@ -186,7 +188,7 @@ public class GuiIngameMenu extends GuiScreen
         /* Title */
         final float opacity = ( float ) transitionHeader.get();
         final Color color = new Color(1, 1, 1, Math.max(0.05f, opacity));
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("Product Sans Medium", Font.PLAIN, 22);
+        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", 22);
 
         drawCenteredString(fontRenderer, "Ingame Menu", left + ( width / 2 ), top + 9, color.getRGB());
         GlStateManager.color(1f, 1f, 1f, color.getAlpha() / 255f);
@@ -210,5 +212,16 @@ public class GuiIngameMenu extends GuiScreen
         if (keyCode == 1) {
             requestClose();
         }
+    }
+
+    @Override
+    public void onGuiClosed ()
+    {
+        transitionBackground.destroy();
+        transitionBox.destroy();
+        transitionHeader.destroy();
+        pushOffset.destroy();
+
+        super.onGuiClosed();
     }
 }

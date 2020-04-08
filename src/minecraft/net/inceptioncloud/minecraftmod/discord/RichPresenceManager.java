@@ -2,9 +2,12 @@ package net.inceptioncloud.minecraftmod.discord;
 
 import lombok.Getter;
 import net.arikia.dev.drpc.*;
+import net.arikia.dev.drpc.callbacks.JoinRequestCallback;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.discord.custom.MenuRPC;
 import net.inceptioncloud.minecraftmod.discord.subscriber.RichPresenceSubscriber;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiIngameMenu;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -22,7 +25,7 @@ public class RichPresenceManager
      * The current rich presence status.
      */
     @Getter
-    private RichPresenceStatus status;
+    private RichPresenceAdapter status;
 
     /**
      * Initialized when loading the {@link InceptionMod}.
@@ -30,11 +33,13 @@ public class RichPresenceManager
     public RichPresenceManager ()
     {
         LogManager.getLogger().info("Enabling Discord Rich Presence...");
-
         InceptionMod.getInstance().getEventBus().register(new RichPresenceSubscriber());
 
-        DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(discordUser -> LogManager.getLogger().info("Discord Rich Presence is ready!")).build();
-        DiscordRPC.discordInitialize("667006162910052352", handlers, true);
+        DiscordEventHandlers handlers = new DiscordEventHandlers.Builder()
+            .setReadyEventHandler(discordUser -> LogManager.getLogger().info("Discord Rich Presence is ready!"))
+            .build();
+
+        DiscordRPC.discordInitialize("696368023333765120", handlers, true);
 
         // KeepAlive-Thread
         new Thread(() ->
@@ -47,11 +52,11 @@ public class RichPresenceManager
     }
 
     /**
-     * Update the Discord Rich Presence with a {@link RichPresenceStatus}.
+     * Update the Discord Rich Presence with a {@link RichPresenceAdapter}.
      *
      * @param status The status
      */
-    public void update (RichPresenceStatus status)
+    public void update (RichPresenceAdapter status)
     {
         this.status = status;
         update(status.buildRichPresence());

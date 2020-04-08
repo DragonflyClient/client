@@ -178,4 +178,12 @@ public class DoubleTransition extends TransitionTypeNumber
         this.end = end;
         this.perStep = ( Math.max(start, end) - Math.min(start, end) ) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
     }
+
+    @Override
+    public String toString ()
+    {
+        return "DoubleTransition{" +
+               "originStackTrace=" + originStackTrace +
+               '}';
+    }
 }

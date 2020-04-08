@@ -307,20 +307,11 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
         return phase == 1 ? Optional.of(fadeInTransition) : phase == 3 ? Optional.of(fadeOutTransition) : Optional.empty();
     }
 
-    /**
-     * toString() support
-     */
     @Override
     public String toString ()
     {
         return "SmoothDoubleTransition{" +
-               "start=" + start +
-               ", end=" + end +
-               ", negative=" + negative +
-               ", stay=" + stay +
-               ", fadeIn=" + fadeIn +
-               ", fadeOut=" + fadeOut +
-               ", autoTransformator=" + autoTransformator +
+               "originStackTrace=" + originStackTrace +
                '}';
     }
 
@@ -331,5 +322,14 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
     {
         NumberFormat format = new DecimalFormat("000.00");
         return "SmoothDoubleTransition -> val: " + format.format(current) + " (" + currentStep + "/" + amountOfSteps + ") during phase " + getPhase() + " with " + format.format(getPhasePerStep()) + " {fod=" + fadeOutDistance + "}";
+    }
+
+    @Override
+    public void destroy ()
+    {
+        fadeInTransition.destroy();
+        fadeOutTransition.destroy();
+
+        super.destroy();
     }
 }

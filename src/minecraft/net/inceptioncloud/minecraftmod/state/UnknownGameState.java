@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.state;
 
-import net.inceptioncloud.minecraftmod.discord.RichPresenceStatus;
+import net.inceptioncloud.minecraftmod.discord.RichPresenceAdapter;
 
 /**
  * The default loading Game State.
@@ -8,10 +8,10 @@ import net.inceptioncloud.minecraftmod.discord.RichPresenceStatus;
 public class UnknownGameState extends GameState
 {
     /**
-     * @return The {@link RichPresenceStatus} that belongs to this Game State.
+     * @return The {@link RichPresenceAdapter} that belongs to this Game State.
      */
     @Override
-    public RichPresenceStatus getBelongingRichPresence ()
+    public RichPresenceAdapter getBelongingRichPresence ()
     {
         return null;
     }

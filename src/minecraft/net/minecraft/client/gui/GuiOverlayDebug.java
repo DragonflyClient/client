@@ -70,7 +70,6 @@ public class GuiOverlayDebug extends Gui
             {
                 int j = this.fontRenderer.FONT_HEIGHT;
                 int k = this.fontRenderer.getStringWidth(s);
-                boolean flag = true;
                 int l = 2 + j * i;
                 drawRect(1, l - 1, 2 + k + 1, l + j - 1, -1873784752);
                 this.fontRenderer.drawString(s, 2, l, 14737632);
@@ -78,7 +77,7 @@ public class GuiOverlayDebug extends Gui
         }
     }
 
-    protected void renderDebugInfoRight(ScaledResolution p_175239_1_)
+    protected void renderDebugInfoRight(ScaledResolution resolution)
     {
         List<String> list = this.getDebugInfoRight();
 
@@ -90,7 +89,7 @@ public class GuiOverlayDebug extends Gui
             {
                 int j = this.fontRenderer.FONT_HEIGHT;
                 int k = this.fontRenderer.getStringWidth(s);
-                int l = p_175239_1_.getScaledWidth() - 2 - k;
+                int l = resolution.getScaledWidth() - 2 - k;
                 int i1 = 2 + j * i;
                 drawRect(l - 1, i1 - 1, l + k + 1, i1 + j - 1, -1873784752);
                 this.fontRenderer.drawString(s, l, i1, 14737632);
@@ -179,22 +178,15 @@ public class GuiOverlayDebug extends Gui
         {
             Object object = Reflector.call(Reflector.FMLCommonHandler_instance);
             arraylist.add("");
-            arraylist.addAll(( Collection<String> ) Objects.requireNonNull(Reflector.call(object, Reflector.FMLCommonHandler_getBrandings, new Object[] { Boolean.FALSE })));
+            arraylist.addAll(( Collection<String> ) Objects.requireNonNull(Reflector.call(object, Reflector.FMLCommonHandler_getBrandings, Boolean.FALSE)));
         }
 
-        if (this.isReducedDebug())
-        {
-            return arraylist;
-        }
-        else
-        {
-            if (this.mc.objectMouseOver != null && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && this.mc.objectMouseOver.getBlockPos() != null)
-            {
+        if (!this.isReducedDebug()) {
+            if (this.mc.objectMouseOver != null && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && this.mc.objectMouseOver.getBlockPos() != null) {
                 BlockPos blockpos = this.mc.objectMouseOver.getBlockPos();
                 IBlockState iblockstate = this.mc.theWorld.getBlockState(blockpos);
 
-                if (this.mc.theWorld.getWorldType() != WorldType.DEBUG_WORLD)
-                {
+                if (this.mc.theWorld.getWorldType() != WorldType.DEBUG_WORLD) {
                     iblockstate = iblockstate.getBlock().getActualState(iblockstate, this.mc.theWorld, blockpos);
                 }
 
@@ -203,24 +195,21 @@ public class GuiOverlayDebug extends Gui
                 Entry<IProperty, Comparable> entry;
                 String s;
 
-                for (Iterator<Entry<IProperty, Comparable>> iterator = iblockstate.getProperties().entrySet().iterator() ; iterator.hasNext(); arraylist.add(( entry.getKey() ).getName() + ": " + s))
-                {
+                for (Iterator<Entry<IProperty, Comparable>> iterator = iblockstate.getProperties().entrySet().iterator() ; iterator.hasNext() ; arraylist.add(( entry.getKey() ).getName() + ": " + s)) {
                     entry = iterator.next();
                     s = entry.getValue().toString();
 
-                    if (entry.getValue() == Boolean.TRUE)
-                    {
+                    if (entry.getValue() == Boolean.TRUE) {
                         s = EnumChatFormatting.GREEN + s;
-                    }
-                    else if (entry.getValue() == Boolean.FALSE)
-                    {
+                    } else if (entry.getValue() == Boolean.FALSE) {
                         s = EnumChatFormatting.RED + s;
                     }
                 }
             }
 
-            return arraylist;
         }
+
+        return arraylist;
     }
 
     private void func_181554_e()
@@ -238,33 +227,33 @@ public class GuiOverlayDebug extends Gui
         while (k != j)
         {
             int i1 = frametimer.func_181748_a(along[k], 30);
-            int j1 = this.func_181552_c(MathHelper.clamp_int(i1, 0, 60), 0, 30, 60);
-            this.drawVerticalLine(l, scaledresolution.getScaledHeight(), scaledresolution.getScaledHeight() - i1, j1);
+            int j1 = this.func_181552_c(MathHelper.clamp_int(i1, 0, 60));
+            drawVerticalLine(l, scaledresolution.getScaledHeight(), scaledresolution.getScaledHeight() - i1, j1);
             ++l;
             k = frametimer.func_181751_b(k + 1);
         }
 
         drawRect(1, scaledresolution.getScaledHeight() - 30 + 1, 14, scaledresolution.getScaledHeight() - 30 + 10, -1873784752);
         this.fontRenderer.drawString("60", 2, scaledresolution.getScaledHeight() - 30 + 2, 14737632);
-        this.drawHorizontalLine(0, 239, scaledresolution.getScaledHeight() - 30, -1);
+        drawHorizontalLine(0, 239, scaledresolution.getScaledHeight() - 30, -1);
         drawRect(1, scaledresolution.getScaledHeight() - 60 + 1, 14, scaledresolution.getScaledHeight() - 60 + 10, -1873784752);
         this.fontRenderer.drawString("30", 2, scaledresolution.getScaledHeight() - 60 + 2, 14737632);
-        this.drawHorizontalLine(0, 239, scaledresolution.getScaledHeight() - 60, -1);
-        this.drawHorizontalLine(0, 239, scaledresolution.getScaledHeight() - 1, -1);
-        this.drawVerticalLine(0, scaledresolution.getScaledHeight() - 60, scaledresolution.getScaledHeight(), -1);
-        this.drawVerticalLine(239, scaledresolution.getScaledHeight() - 60, scaledresolution.getScaledHeight(), -1);
+        drawHorizontalLine(0, 239, scaledresolution.getScaledHeight() - 60, -1);
+        drawHorizontalLine(0, 239, scaledresolution.getScaledHeight() - 1, -1);
+        drawVerticalLine(0, scaledresolution.getScaledHeight() - 60, scaledresolution.getScaledHeight(), -1);
+        drawVerticalLine(239, scaledresolution.getScaledHeight() - 60, scaledresolution.getScaledHeight(), -1);
 
         if (this.mc.gameSettings.limitFramerate <= 120)
         {
-            this.drawHorizontalLine(0, 239, scaledresolution.getScaledHeight() - 60 + this.mc.gameSettings.limitFramerate / 2, -16711681);
+            drawHorizontalLine(0, 239, scaledresolution.getScaledHeight() - 60 + this.mc.gameSettings.limitFramerate / 2, -16711681);
         }
 
         GlStateManager.enableDepth();
     }
 
-    private int func_181552_c(int p_181552_1_, int p_181552_2_, int p_181552_3_, int p_181552_4_)
+    private int func_181552_c (int param)
     {
-        return p_181552_1_ < p_181552_3_ ? this.func_181553_a(-16711936, -256, (float)p_181552_1_ / (float)p_181552_3_) : this.func_181553_a(-256, -65536, (float)(p_181552_1_ - p_181552_3_) / (float)(p_181552_4_ - p_181552_3_));
+        return param < 30 ? this.func_181553_a(-16711936, -256, (float)param / (float) 30) : this.func_181553_a(-256, -65536, (float)( param - 30 ) / (float)( 60 - 30 ));
     }
 
     private int func_181553_a(int p_181553_1_, int p_181553_2_, float p_181553_3_)
@@ -300,7 +289,7 @@ public class GuiOverlayDebug extends Gui
             {
                 field_178907_a[EnumFacing.NORTH.ordinal()] = 1;
             }
-            catch (NoSuchFieldError var4)
+            catch (NoSuchFieldError ignored)
             {
             }
 
@@ -308,7 +297,7 @@ public class GuiOverlayDebug extends Gui
             {
                 field_178907_a[EnumFacing.SOUTH.ordinal()] = 2;
             }
-            catch (NoSuchFieldError var3)
+            catch (NoSuchFieldError ignored)
             {
             }
 
@@ -316,7 +305,7 @@ public class GuiOverlayDebug extends Gui
             {
                 field_178907_a[EnumFacing.WEST.ordinal()] = 3;
             }
-            catch (NoSuchFieldError var2)
+            catch (NoSuchFieldError ignored)
             {
             }
 
@@ -324,7 +313,7 @@ public class GuiOverlayDebug extends Gui
             {
                 field_178907_a[EnumFacing.EAST.ordinal()] = 4;
             }
-            catch (NoSuchFieldError var1)
+            catch (NoSuchFieldError ignored)
             {
             }
         }

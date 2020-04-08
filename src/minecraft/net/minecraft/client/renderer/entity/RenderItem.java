@@ -1,9 +1,9 @@
 package net.minecraft.client.renderer.entity;
 
 import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.*;
@@ -57,13 +57,13 @@ public class RenderItem implements IResourceManagerReloadListener
         InceptionMod.getInstance().getSplashScreen().update();
     }
 
-    public static void forgeHooksClient_putQuadColor (WorldRenderer p_forgeHooksClient_putQuadColor_0_, BakedQuad p_forgeHooksClient_putQuadColor_1_, int p_forgeHooksClient_putQuadColor_2_)
+    public static void forgeHooksClient_putQuadColor (WorldRenderer worldRenderer, BakedQuad bakedQuad, int integer)
     {
-        float f = ( float ) ( p_forgeHooksClient_putQuadColor_2_ & 255 );
-        float f1 = ( float ) ( p_forgeHooksClient_putQuadColor_2_ >>> 8 & 255 );
-        float f2 = ( float ) ( p_forgeHooksClient_putQuadColor_2_ >>> 16 & 255 );
-        float f3 = ( float ) ( p_forgeHooksClient_putQuadColor_2_ >>> 24 & 255 );
-        int[] aint = p_forgeHooksClient_putQuadColor_1_.getVertexData();
+        float f = ( float ) ( integer & 255 );
+        float f1 = ( float ) ( integer >>> 8 & 255 );
+        float f2 = ( float ) ( integer >>> 16 & 255 );
+        float f3 = ( float ) ( integer >>> 24 & 255 );
+        int[] aint = bakedQuad.getVertexData();
         int i = aint.length / 4;
 
         for (int j = 0 ; j < 4 ; ++j) {
@@ -76,7 +76,7 @@ public class RenderItem implements IResourceManagerReloadListener
             int i1 = Math.min(255, ( int ) ( f1 * f5 / 255.0F ));
             int j1 = Math.min(255, ( int ) ( f2 * f6 / 255.0F ));
             int k1 = Math.min(255, ( int ) ( f3 * f7 / 255.0F ));
-            p_forgeHooksClient_putQuadColor_0_.putColorRGBA(p_forgeHooksClient_putQuadColor_0_.getColorIndex(4 - j), l, i1, j1, k1);
+            worldRenderer.putColorRGBA(worldRenderer.getColorIndex(4 - j), l, i1, j1, k1);
         }
     }
 
@@ -476,16 +476,17 @@ public class RenderItem implements IResourceManagerReloadListener
         }
     }
 
-    public void renderItemOverlays (FontRenderer fr, ItemStack stack, int xPosition, int yPosition)
+    public void renderItemOverlays (ItemStack stack, int xPosition, int yPosition)
     {
-        this.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, null);
+        this.renderItemOverlayIntoGUI(stack, xPosition, yPosition, null);
     }
 
     /**
      * Renders the stack size and/or damage bar for the given ItemStack.
      */
-    public void renderItemOverlayIntoGUI (FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text)
+    public void renderItemOverlayIntoGUI (ItemStack stack, int xPosition, int yPosition, String text)
     {
+        final IFontRenderer fr = InceptionMod.getInstance().getFontDesign().getMedium();
         if (stack != null) {
             if (stack.stackSize != 1 || text != null) {
                 String s = text == null ? String.valueOf(stack.stackSize) : text;
@@ -497,7 +498,7 @@ public class RenderItem implements IResourceManagerReloadListener
                 GlStateManager.disableLighting();
                 GlStateManager.disableDepth();
                 GlStateManager.disableBlend();
-                fr.drawStringWithShadow(s, ( float ) ( xPosition + 19 - 2 - fr.getStringWidth(s) ), ( float ) ( yPosition + 6 + 3 ), 16777215);
+                fr.drawStringWithShadow(s, ( float ) ( xPosition + 19 - 4 - fr.getStringWidth(s) ), ( float ) ( yPosition + 6 + 3 ), 16777215);
                 GlStateManager.enableLighting();
                 GlStateManager.enableDepth();
             }

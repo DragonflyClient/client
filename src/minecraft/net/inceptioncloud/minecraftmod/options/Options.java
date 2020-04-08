@@ -23,16 +23,14 @@ public class Options
      * Contains all available type converters.
      */
     private static final Map<Class<?>, TypeConverter<?>> typeConverters = new HashMap<>();
-
-    /**
-     * The last read content (via {@link #contentUpdate()}) in JSON-Format.
-     */
-    private JsonObject jsonObject;
-
     /**
      * The Gson instance that allows the (de-)serialization of objects.
      */
     private final Gson gson;
+    /**
+     * The last read content (via {@link #contentUpdate()}) in JSON-Format.
+     */
+    private JsonObject jsonObject;
 
     /**
      * Initial Constructor that updates the content when called.
@@ -98,11 +96,20 @@ public class Options
 
         if (jsonObject.has(optionKey.getKey())) {
 
-            JsonElement jsonElement = jsonObject.get(optionKey.getKey());
-            T value = gson.fromJson(jsonElement, optionKey.getTypeClass());
+            try {
+                JsonElement jsonElement = jsonObject.get(optionKey.getKey());
+                T value = gson.fromJson(jsonElement, optionKey.getTypeClass());
 
-            if (optionKey.getValidator().test(value))
-                return value;
+                if (optionKey.getValidator().test(value))
+                    return value;
+            } catch (JsonSyntaxException exception) {
+                if (exception.getCause().getClass().getSimpleName().equals("IllegalStateException")
+                    || exception.getCause().getClass().getSimpleName().equals("NumberFormatException")) {
+                    LogManager.getLogger().info("Noticed migrated value type for " + optionKey.getKey() + ". Default Value of " + optionKey.getDefaultValue().get() + " restored!");
+                } else {
+                    exception.printStackTrace();
+                }
+            }
         }
 
         T value = optionKey.getDefaultValue().get();

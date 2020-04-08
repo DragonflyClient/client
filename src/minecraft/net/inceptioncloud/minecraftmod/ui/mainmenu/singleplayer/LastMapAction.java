@@ -3,6 +3,7 @@ package net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
 import net.minecraft.client.AnvilConverterException;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.storage.SaveFormatComparator;
 
 /**
@@ -15,7 +16,7 @@ public class LastMapAction extends QuickAction
      */
     public LastMapAction ()
     {
-        super(0, 11, getLastWorld() != null ? getLastWorld().getDisplayName() : "-/-", () ->
+        super(0, 11, getLastWorld() != null ? EnumChatFormatting.getTextWithoutFormattingCodes(getLastWorld().getDisplayName()) : "-/-", () ->
         {
             final SaveFormatComparator world = getLastWorld();
             if (world == null || !Minecraft.getMinecraft().getSaveLoader().canLoadWorld(world.getFileName()))

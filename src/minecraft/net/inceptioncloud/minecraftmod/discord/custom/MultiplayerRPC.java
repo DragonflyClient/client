@@ -1,11 +1,11 @@
 package net.inceptioncloud.minecraftmod.discord.custom;
 
-import net.inceptioncloud.minecraftmod.discord.RichPresenceStatus;
+import net.inceptioncloud.minecraftmod.discord.RichPresenceAdapter;
 
 /**
  * Dispalyed when the user is in on a multiplayer server.
  */
-public class MultiplayerRPC extends RichPresenceStatus
+public class MultiplayerRPC extends RichPresenceAdapter
 {
     public MultiplayerRPC (String server, boolean paused, long joinTime)
     {

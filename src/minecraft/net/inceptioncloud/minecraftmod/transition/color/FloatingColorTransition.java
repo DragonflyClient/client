@@ -102,4 +102,20 @@ public class FloatingColorTransition extends TransitionTypeColor
     {
         this.next();
     }
+
+    @Override
+    public void destroy ()
+    {
+        base.destroy();
+
+        super.destroy();
+    }
+
+    @Override
+    public String toString ()
+    {
+        return "FloatingColorTransition{" +
+               "originStackTrace=" + originStackTrace +
+               '}';
+    }
 }

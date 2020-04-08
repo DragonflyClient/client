@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.state;
 
 import lombok.*;
-import net.inceptioncloud.minecraftmod.discord.RichPresenceStatus;
+import net.inceptioncloud.minecraftmod.discord.RichPresenceAdapter;
 import net.inceptioncloud.minecraftmod.state.play.*;
 
 import java.util.function.Consumer;
@@ -13,9 +13,9 @@ import java.util.function.Function;
 public abstract class GameState
 {
     /**
-     * @return The {@link RichPresenceStatus} that belongs to this Game State.
+     * @return The {@link RichPresenceAdapter} that belongs to this Game State.
      */
-    public abstract RichPresenceStatus getBelongingRichPresence ();
+    public abstract RichPresenceAdapter getBelongingRichPresence ();
 
     /**
      * If this Game State is a {@link SingleplayerState}, the consumer will be called with the casted value.

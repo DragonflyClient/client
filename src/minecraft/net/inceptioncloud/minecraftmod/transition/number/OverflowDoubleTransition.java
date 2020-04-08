@@ -113,4 +113,21 @@ public class OverflowDoubleTransition extends TransitionTypeNumber
     {
         return currentlyFirst && first.isAtStart();
     }
+
+    @Override
+    public void destroy ()
+    {
+        first.destroy();
+        second.destroy();
+
+        super.destroy();
+    }
+
+    @Override
+    public String toString ()
+    {
+        return "OverflowDoubleTransition{" +
+               "originStackTrace=" + originStackTrace +
+               '}';
+    }
 }

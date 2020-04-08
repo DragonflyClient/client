@@ -6,13 +6,12 @@ import net.inceptioncloud.minecraftmod.design.font.FontManager;
 import net.inceptioncloud.minecraftmod.design.splash.ModSplashScreen;
 import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
 import net.inceptioncloud.minecraftmod.event.ModEventBus;
+import net.inceptioncloud.minecraftmod.event.client.ClientShutdownEvent;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.options.Options;
-import net.inceptioncloud.minecraftmod.state.GameState;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
-import net.minecraft.client.settings.GameSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.Display;
@@ -25,16 +24,16 @@ import java.util.*;
 public class InceptionMod
 {
     /**
-     * The Minecraft Mod instance.
-     */
-    @Getter
-    private static InceptionMod instance;
-
-    /**
      * The Logger used to log InceptionMod messages.
      */
     @Getter
     private static final Logger logger = LogManager.getLogger();
+
+    /**
+     * The Minecraft Mod instance.
+     */
+    @Getter
+    private static InceptionMod instance;
 
     @Getter
     private final GameStateManager gameStateManager;
@@ -57,11 +56,13 @@ public class InceptionMod
     /**
      * All transitions handled by the mod.
      */
+    @Getter
     private final List<Transition> transitions = Lists.newArrayList();
 
     /**
      * All classes that implement the tickable interface.
      */
+    @Getter
     private final List<Tickable> tickables = Lists.newArrayList();
 
     /**
@@ -122,6 +123,13 @@ public class InceptionMod
                 }
             }
         }, 0, 5);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() ->
+        {
+            // EVENTBUS - ClientShutdownEvent when the game is being closed
+            ClientShutdownEvent event = new ClientShutdownEvent();
+            InceptionMod.getInstance().getEventBus().post(event);
+        }));
     }
 
     /**
@@ -186,8 +194,8 @@ public class InceptionMod
      */
     public void stopTransition (Transition target)
     {
-        if(!transitions.remove(target))
-            LogManager.getLogger().error("Could not stop " + target.getClass().getSimpleName() + " from " + target.getOrigin() + "! (not running)");
+        if (!transitions.remove(target))
+            LogManager.getLogger().error("Could not stop " + target.getClass().getSimpleName() + " from " + target.getOriginClass() + "! (not running)");
     }
 
     /**
