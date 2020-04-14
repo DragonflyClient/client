@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.options.sets;
+package net.inceptioncloud.minecraftmod.options.sections;
 
 import net.inceptioncloud.minecraftmod.options.OptionKey;
 import net.minecraft.client.multiplayer.ServerData;

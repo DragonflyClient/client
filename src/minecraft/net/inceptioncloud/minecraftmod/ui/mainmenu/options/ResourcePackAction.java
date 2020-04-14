@@ -1,7 +1,6 @@
 package net.inceptioncloud.minecraftmod.ui.mainmenu.options;
 
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreenResourcePacks;
 
 /**
@@ -14,6 +13,8 @@ public class ResourcePackAction extends QuickAction
      */
     public ResourcePackAction ()
     {
-        super(2, 15, "Resource Packs", () -> Minecraft.getMinecraft().displayGuiScreen(new GuiScreenResourcePacks(Minecraft.getMinecraft().currentScreen)));
+        super(2, 15, "Resource Packs",
+            () -> mc.displayGuiScreen(new GuiScreenResourcePacks(mc.currentScreen))
+        );
     }
 }

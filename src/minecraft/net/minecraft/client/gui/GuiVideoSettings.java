@@ -1,30 +1,22 @@
 package net.minecraft.client.gui;
 
-import java.io.IOException;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
-import optifine.Config;
-import optifine.GuiAnimationSettingsOF;
-import optifine.GuiDetailSettingsOF;
-import optifine.GuiOptionButtonOF;
-import optifine.GuiOptionSliderOF;
-import optifine.GuiOtherSettingsOF;
-import optifine.GuiPerformanceSettingsOF;
-import optifine.GuiQualitySettingsOF;
-import optifine.Lang;
-import optifine.TooltipManager;
+import optifine.*;
 import shadersmod.client.GuiShaders;
+
+import java.io.IOException;
 
 public class GuiVideoSettings extends GuiScreen
 {
-    private GuiScreen parentGuiScreen;
+    private final GuiScreen parentGuiScreen;
     protected String screenTitle = "Video Settings";
-    private GameSettings guiGameSettings;
+    private final GameSettings guiGameSettings;
 
     /** An array of all of GameSettings.Options's video options. */
-    private static GameSettings.Options[] videoOptions = new GameSettings.Options[] {GameSettings.Options.GRAPHICS, GameSettings.Options.RENDER_DISTANCE, GameSettings.Options.AMBIENT_OCCLUSION, GameSettings.Options.FRAMERATE_LIMIT, GameSettings.Options.AO_LEVEL, GameSettings.Options.VIEW_BOBBING, GameSettings.Options.GUI_SCALE, GameSettings.Options.USE_VBO, GameSettings.Options.GAMMA, GameSettings.Options.BLOCK_ALTERNATIVES, GameSettings.Options.FOG_FANCY, GameSettings.Options.FOG_START};
+    private static final GameSettings.Options[] videoOptions = new GameSettings.Options[] {GameSettings.Options.GRAPHICS, GameSettings.Options.RENDER_DISTANCE, GameSettings.Options.AMBIENT_OCCLUSION, GameSettings.Options.FRAMERATE_LIMIT, GameSettings.Options.AO_LEVEL, GameSettings.Options.VIEW_BOBBING, GameSettings.Options.GUI_SCALE, GameSettings.Options.USE_VBO, GameSettings.Options.GAMMA, GameSettings.Options.BLOCK_ALTERNATIVES, GameSettings.Options.FOG_FANCY, GameSettings.Options.FOG_START};
     private static final String __OBFID = "CL_00000718";
-    private TooltipManager tooltipManager = new TooltipManager(this);
+    private final TooltipManager tooltipManager = new TooltipManager(this);
 
     public GuiVideoSettings(GuiScreen parentScreenIn, GameSettings gameSettingsIn)
     {
@@ -38,7 +30,7 @@ public class GuiVideoSettings extends GuiScreen
      */
     public void initGui()
     {
-        this.screenTitle = I18n.format("options.videoTitle", new Object[0]);
+        this.screenTitle = I18n.format("options.videoTitle");
         this.buttonList.clear();
 
         for (int i = 0; i < videoOptions.length; ++i)
@@ -78,7 +70,7 @@ public class GuiVideoSettings extends GuiScreen
         i1 = this.width / 2 - 155 + 160;
         this.buttonList.add(new GuiOptionButton(222, i1, l, Lang.get("of.options.other")));
         l = l + 21;
-        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, I18n.format("gui.done", new Object[0])));
+        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, I18n.format("gui.done")));
     }
 
     /**
@@ -178,7 +170,7 @@ public class GuiVideoSettings extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRendererObj, this.screenTitle, this.width / 2, 15, 16777215);
+        drawCenteredString(this.fontRendererObj, this.screenTitle, this.width / 2, 15, 16777215);
         String s = Config.getVersion();
         String s1 = "HD_U";
 
@@ -197,10 +189,10 @@ public class GuiVideoSettings extends GuiScreen
             s = "OptiFine H8 Light";
         }
 
-        this.drawString(this.fontRendererObj, s, 2, this.height - 10, 8421504);
+        drawString(this.fontRendererObj, s, 2, this.height - 10, 8421504);
         String s2 = "Minecraft 1.8.8";
         int i = this.fontRendererObj.getStringWidth(s2);
-        this.drawString(this.fontRendererObj, s2, this.width - i - 2, this.height - 10, 8421504);
+        drawString(this.fontRendererObj, s2, this.width - i - 2, this.height - 10, 8421504);
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.tooltipManager.drawTooltips(mouseX, mouseY, this.buttonList);
     }

@@ -330,7 +330,7 @@ public class GuiNewChat extends Gui implements Tickable
         if (!displayOnly) {
             this.chatMessages.add(0, new ChatLine(updateCounter, component, id));
 
-            while (this.chatMessages.size() > 100) {
+            while (this.chatMessages.size() > 500) {
                 ChatLine target = chatMessages.get(chatMessages.size() - 1);
                 target.destroy();
                 chatMessages.remove(target);

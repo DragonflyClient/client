@@ -2,7 +2,6 @@ package net.inceptioncloud.minecraftmod.ui.mainmenu.quit;
 
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
-import net.minecraft.client.Minecraft;
 
 /**
  * Provides the ability to reload any client feature without restarting the client.
@@ -14,14 +13,6 @@ public class ReloadAction extends QuickAction
      */
     public ReloadAction ()
     {
-        super(3, 17, "Reload", () ->
-        {
-            Minecraft.getMinecraft().loadingScreen.displayLoadingString("Reloading Mod...");
-
-            InceptionMod.getInstance().getOptions().contentUpdate();
-            InceptionMod.getInstance().getFontDesign().clearCache();
-
-            Minecraft.getMinecraft().refreshResources();
-        });
+        super(3, 17, "Reload", () -> InceptionMod.getInstance().reload());
     }
 }

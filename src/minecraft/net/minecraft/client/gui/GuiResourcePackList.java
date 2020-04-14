@@ -1,10 +1,11 @@
 package net.minecraft.client.gui;
 
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.ResourcePackListEntry;
 import net.minecraft.util.EnumChatFormatting;
+
+import java.util.List;
 
 public abstract class GuiResourcePackList extends GuiListExtended
 {
@@ -23,10 +24,10 @@ public abstract class GuiResourcePackList extends GuiListExtended
     /**
      * Handles drawing a list's header row.
      */
-    protected void drawListHeader(int p_148129_1_, int p_148129_2_, Tessellator p_148129_3_)
+    protected void drawListHeader(int x, int y, Tessellator tessellator)
     {
         String s = EnumChatFormatting.UNDERLINE + "" + EnumChatFormatting.BOLD + this.getListHeader();
-        this.mc.fontRendererObj.drawString(s, p_148129_1_ + this.width / 2 - this.mc.fontRendererObj.getStringWidth(s) / 2, Math.min(this.top + 3, p_148129_2_), 16777215);
+        this.mc.fontRendererObj.drawString(s, x + this.width / 2 - this.mc.fontRendererObj.getStringWidth(s) / 2, Math.min(this.top + 3, y), 16777215);
     }
 
     protected abstract String getListHeader();
@@ -46,7 +47,7 @@ public abstract class GuiResourcePackList extends GuiListExtended
      */
     public ResourcePackListEntry getListEntry(int index)
     {
-        return (ResourcePackListEntry)this.getList().get(index);
+        return this.getList().get(index);
     }
 
     /**

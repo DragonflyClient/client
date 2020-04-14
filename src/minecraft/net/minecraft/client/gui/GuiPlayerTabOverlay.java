@@ -55,7 +55,7 @@ public class GuiPlayerTabOverlay extends Gui
 
     private final SmoothDoubleTransition tablistFlyIn = SmoothDoubleTransition.builder()
         .start(1).end(0)
-        .fadeIn(10).stay(30).fadeOut(20)
+        .fadeIn(5).stay(15).fadeOut(10)
         .autoTransformator(new ForwardBackward()
         {
             @Override

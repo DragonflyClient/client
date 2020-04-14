@@ -1,16 +1,15 @@
-package net.inceptioncloud.minecraftmod.ui.components;
+package net.inceptioncloud.minecraftmod.ui.components.button;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.design.color.*;
+import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
+import net.inceptioncloud.minecraftmod.design.color.RGB;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition;
+import net.inceptioncloud.minecraftmod.transition.color.ColorTransitionBuilder;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.ui.renderer.RectangleRendererKt;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 
 import java.awt.*;
@@ -28,7 +27,7 @@ public class OutlineButton extends GuiButton
     /**
      * Transition manages the Button Fill Color
      */
-    protected ColorTransition fillTransition = ColorTransition.builder().start(GreyToneColor.DARK_GREY).end(new Color(0x25ccf7)).amountOfSteps(25).autoTransformator((ForwardBackward) () -> hovered).build();
+    protected ColorTransition fillTransition = new ColorTransitionBuilder().start(GreyToneColor.DARK_GREY).end(new Color(0x25ccf7)).amountOfSteps(25).autoTransformator((ForwardBackward) () -> hovered).build();
 
     /**
      * Inherit Constructor
@@ -80,7 +79,7 @@ public class OutlineButton extends GuiButton
 
             RectangleRendererKt.drawOutline(left, top, right, bottom, GreyToneColor.DARK_WHITE);
             RectangleRendererKt.renderInline(left - offset, top - offset, right + offset, bottom + offset,
-                ColorTransformator.of(GreyToneColor.LIGHT_WHITE).changeAlpha(opacity).toColor(), 1);
+                RGB.of(GreyToneColor.LIGHT_WHITE).alpha(opacity).toColor(), 1);
         }
     }
 

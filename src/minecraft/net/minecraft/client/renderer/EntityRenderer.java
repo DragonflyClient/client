@@ -4,9 +4,6 @@ import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.event.control.ZoomEvent;
-import net.inceptioncloud.minecraftmod.options.sets.IngameOptions;
-import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
-import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -14,7 +11,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.culling.ClippingHelperImpl;
@@ -24,7 +20,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.*;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.client.shader.ShaderLinkHelper;
 import net.minecraft.crash.CrashReport;
@@ -59,7 +54,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 public class EntityRenderer implements IResourceManagerReloadListener
@@ -95,8 +89,8 @@ public class EntityRenderer implements IResourceManagerReloadListener
     /**
      * A reference to the Minecraft object.
      */
-    private Minecraft mc;
-    private Random random = new Random();
+    private final Minecraft mc;
+    private final Random random = new Random();
     private float farPlaneDistance;
     /**
      * Entity renderer update count
@@ -108,7 +102,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
     private Entity pointedEntity;
     public MouseFilter mouseFilterXAxis = new MouseFilter();
     public MouseFilter mouseFilterYAxis = new MouseFilter();
-    private float thirdPersonDistance = 4.0F;
+    private final float thirdPersonDistance = 4.0F;
     /**
      * Third person distance temp
      */
@@ -147,8 +141,8 @@ public class EntityRenderer implements IResourceManagerReloadListener
      * Cloud fog mode
      */
     private boolean cloudFog;
-    private boolean renderHand = true;
-    private boolean drawBlockOutline = true;
+    private final boolean renderHand = true;
+    private final boolean drawBlockOutline = true;
     /**
      * Previous frame time in milliseconds
      */
@@ -170,12 +164,12 @@ public class EntityRenderer implements IResourceManagerReloadListener
      * Rain sound counter
      */
     private int rainSoundCounter;
-    private float[] rainXCoords = new float[1024];
-    private float[] rainYCoords = new float[1024];
+    private final float[] rainXCoords = new float[1024];
+    private final float[] rainYCoords = new float[1024];
     /**
      * Fog color buffer
      */
-    private FloatBuffer fogColorBuffer = GLAllocation.createDirectFloatBuffer(16);
+    private final FloatBuffer fogColorBuffer = GLAllocation.createDirectFloatBuffer(16);
     /**
      * Fog color 2
      */
@@ -184,9 +178,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
      * Fog color 1
      */
     private float fogColor1;
-    private int debugViewDirection = 0;
-    private boolean debugView = false;
-    private double cameraZoom = 1.0D;
+    private final int debugViewDirection = 0;
+    private final boolean debugView = false;
+    private final double cameraZoom = 1.0D;
     private double cameraYaw;
     private double cameraPitch;
     private ShaderGroup theShaderGroup;
@@ -194,7 +188,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
     private boolean useShader;
     private boolean initialized = false;
     private World updatedWorld = null;
-    private boolean showDebugInfo = false;
+    private final boolean showDebugInfo = false;
     private float clipDistance = 128.0F;
     private long lastServerTime = 0L;
     private int lastServerTicks = 0;
@@ -203,7 +197,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
     private float avgServerTimeDiff = 0.0F;
     private float avgServerTickDiff = 0.0F;
     private long lastErrorCheckTimeMs = 0L;
-    private ShaderGroup[] fxaaShaders = new ShaderGroup[10];
+    private final ShaderGroup[] fxaaShaders = new ShaderGroup[10];
 
     public EntityRenderer (Minecraft mcIn, IResourceManager resourceManagerIn)
     {
@@ -1136,6 +1130,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
             int l1 = this.mc.gameSettings.limitFramerate;
 
+            final GuiScreen currentScreen = this.mc.currentScreen;
             if (this.mc.theWorld != null) {
                 this.mc.mcProfiler.startSection("level");
                 int i = Math.min(Minecraft.getDebugFPS(), l1);
@@ -1161,7 +1156,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 this.renderEndNanoTime = System.nanoTime();
                 this.mc.mcProfiler.endStartSection("gui");
 
-                if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null) {
+                if (!this.mc.gameSettings.hideGUI || currentScreen != null) {
                     GlStateManager.alphaFunc(516, 0.1F);
                     this.mc.ingameGUI.renderGameOverlay(partialTicks);
 
@@ -1186,15 +1181,14 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 TileEntityRendererDispatcher.instance.renderEngine = this.mc.getTextureManager();
             }
 
-            if (this.mc.currentScreen != null) {
+            if (currentScreen != null) {
                 GlStateManager.clear(256);
 
                 try {
                     if (Reflector.ForgeHooksClient_drawScreen.exists()) {
-                        Reflector.callVoid(Reflector.ForgeHooksClient_drawScreen, this.mc.currentScreen, scaledMouseX, scaledMouseY, partialTicks);
+                        Reflector.callVoid(Reflector.ForgeHooksClient_drawScreen, currentScreen, scaledMouseX, scaledMouseY, partialTicks);
                     } else {
-                        if (this.mc.currentScreen != null)
-                            this.mc.currentScreen.drawScreen(scaledMouseX, scaledMouseY, partialTicks);
+                        currentScreen.drawScreen(scaledMouseX, scaledMouseY, partialTicks);
                     }
                 } catch (Throwable throwable) {
                     CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering screen");

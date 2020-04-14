@@ -45,7 +45,7 @@ public class GuiButton extends Gui
      * Button height in pixels
      */
     protected int height;
-    protected boolean hovered;
+    public boolean hovered;
 
     public GuiButton (int buttonId, int x, int y, String buttonText)
     {

@@ -1,10 +1,12 @@
 package net.minecraft.client.gui;
 
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 
 public class Gui
 {
@@ -347,5 +349,23 @@ public class Gui
         worldrenderer.pos(xCoord + widthIn, yCoord, this.zLevel).tex(textureSprite.getMaxU(), textureSprite.getMinV()).endVertex();
         worldrenderer.pos(xCoord, yCoord, this.zLevel).tex(textureSprite.getMinU(), textureSprite.getMinV()).endVertex();
         tessellator.draw();
+    }
+
+    public static int getMouseX ()
+    {
+        if (Minecraft.getMinecraft().currentScreen == null)
+            return 0;
+
+        int scaleFactor = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        return Mouse.getX() / scaleFactor;
+    }
+
+    public static int getMouseY ()
+    {
+        if (Minecraft.getMinecraft().currentScreen == null)
+            return 0;
+
+        int scaleFactor = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        return Minecraft.getMinecraft().currentScreen.height - (Mouse.getY() / scaleFactor);
     }
 }

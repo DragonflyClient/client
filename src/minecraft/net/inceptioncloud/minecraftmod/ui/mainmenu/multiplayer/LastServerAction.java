@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.ui.mainmenu.multiplayer;
 
+import net.inceptioncloud.minecraftmod.options.sections.StorageOptions;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
-import net.inceptioncloud.minecraftmod.options.sets.StorageOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
@@ -25,7 +25,7 @@ public class LastServerAction extends QuickAction
             final int port = lastIP.contains(":") ? Integer.parseInt(lastIP.split(":")[1]) : 25565;
             final ServerData serverData = new ServerData(getName().orElse("Minecraft Server"), address + ":" + port, false);
 
-            Minecraft.getMinecraft().displayGuiScreen(new GuiConnecting(Minecraft.getMinecraft().currentScreen, Minecraft.getMinecraft(), serverData));
+            mc.displayGuiScreen(new GuiConnecting(mc.currentScreen, Minecraft.getMinecraft(), serverData));
         }));
     }
 

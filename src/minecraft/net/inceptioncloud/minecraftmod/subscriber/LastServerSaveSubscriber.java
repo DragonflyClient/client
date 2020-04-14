@@ -2,7 +2,7 @@ package net.inceptioncloud.minecraftmod.subscriber;
 
 import com.google.common.eventbus.Subscribe;
 import net.inceptioncloud.minecraftmod.event.play.ServerLoggedInEvent;
-import net.inceptioncloud.minecraftmod.options.sets.StorageOptions;
+import net.inceptioncloud.minecraftmod.options.sections.StorageOptions;
 import net.minecraft.client.multiplayer.ServerData;
 import org.apache.logging.log4j.LogManager;
 

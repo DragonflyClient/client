@@ -1,6 +1,5 @@
 package net.inceptioncloud.minecraftmod;
 
-import com.google.common.collect.Lists;
 import lombok.Getter;
 import net.inceptioncloud.minecraftmod.design.font.FontManager;
 import net.inceptioncloud.minecraftmod.design.splash.ModSplashScreen;
@@ -9,6 +8,7 @@ import net.inceptioncloud.minecraftmod.event.ModEventBus;
 import net.inceptioncloud.minecraftmod.event.client.ClientShutdownEvent;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.options.Options;
+import net.inceptioncloud.minecraftmod.options.sections.*;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
@@ -32,38 +32,29 @@ public class InceptionMod
     /**
      * The Minecraft Mod instance.
      */
-    @Getter
     private static InceptionMod instance;
 
-    @Getter
     private final GameStateManager gameStateManager;
 
-    @Getter
     private final RichPresenceManager richPresenceManager;
 
-    @Getter
     private final ModEventBus eventBus;
 
-    @Getter
     private final FontManager fontDesign;
 
-    @Getter
     private final ModSplashScreen splashScreen;
 
-    @Getter
     private final Options options;
 
     /**
      * All transitions handled by the mod.
      */
-    @Getter
-    private final List<Transition> transitions = Lists.newArrayList();
+    private final List<Transition> transitions = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * All classes that implement the tickable interface.
      */
-    @Getter
-    private final List<Tickable> tickables = Lists.newArrayList();
+    private final List<Tickable> tickables = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * If a tickable has an associated class, it is stored in here so it can be replaced.
@@ -78,7 +69,6 @@ public class InceptionMod
     /**
      * The last amount of mod ticks per second.
      */
-    @Getter
     private int lastTPS = 0;
 
     /**
@@ -108,7 +98,12 @@ public class InceptionMod
         richPresenceManager = new RichPresenceManager();
         gameStateManager = new GameStateManager();
 
-        tickTimer = new Timer();
+        OptionsSectionClient.init();
+        OptionsSectionUI.init();
+        OptionsSectionScoreboard.init();
+        OptionsSectionZoom.init();
+
+        tickTimer = new Timer("Minecraft Mod Tick Timer");
         tickTimer.scheduleAtFixedRate(new TimerTask()
         {
             @Override
@@ -157,8 +152,10 @@ public class InceptionMod
      */
     private void tick ()
     {
-        new ArrayList<>(transitions).forEach(Transition::tick);
-        new ArrayList<>(tickables).forEach(Tickable::modTick);
+        synchronized (this) {
+            new ArrayList<>(transitions).forEach(Transition::tick);
+            new ArrayList<>(tickables).forEach(Tickable::modTick);
+        }
     }
 
     /**
@@ -227,5 +224,74 @@ public class InceptionMod
     public void handleTickable (Tickable tickable)
     {
         this.handleTickable(tickable, null);
+    }
+
+    /**
+     * Reloads the Minecraft Mod.
+     */
+    public void reload ()
+    {
+        InceptionMod.getInstance().getOptions().contentSave();
+        InceptionMod.getInstance().getFontDesign().clearCache();
+    }
+
+    /**
+     * @return the current Minecraft Mod version
+     */
+    public static String getVersion ()
+    {
+        return "1.0.0.2-alpha";
+    }
+
+    /*====          Getters          ====*/
+
+    public static InceptionMod getInstance ()
+    {
+        return instance;
+    }
+
+    public GameStateManager getGameStateManager ()
+    {
+        return gameStateManager;
+    }
+
+    public RichPresenceManager getRichPresenceManager ()
+    {
+        return richPresenceManager;
+    }
+
+    public ModEventBus getEventBus ()
+    {
+        return eventBus;
+    }
+
+    public FontManager getFontDesign ()
+    {
+        return fontDesign;
+    }
+
+    public ModSplashScreen getSplashScreen ()
+    {
+        return splashScreen;
+    }
+
+    public Options getOptions ()
+    {
+        return options;
+    }
+
+    public List<Transition> getTransitions ()
+    {
+        return transitions;
+    }
+
+    public List<Tickable> getTickables ()
+    {
+        return tickables;
+    }
+
+    public int getLastTPS ()
+    {
+        return lastTPS;
     }
 }

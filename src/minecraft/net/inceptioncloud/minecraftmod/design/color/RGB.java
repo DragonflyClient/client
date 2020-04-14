@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * This utility class allows the easy transformation of color values.
  */
-public class ColorTransformator
+public class RGB
 {
     /**
      * The color that is being transformed.
@@ -17,7 +17,7 @@ public class ColorTransformator
      *
      * @param rgb The RGB integer value
      */
-    private ColorTransformator (int rgb)
+    private RGB (int rgb)
     {
         color = new Color(rgb);
     }
@@ -30,7 +30,7 @@ public class ColorTransformator
      * @param b The blue integer value
      * @param a The alpha integer value
      */
-    private ColorTransformator (int r, int g, int b, int a)
+    private RGB (int r, int g, int b, int a)
     {
         color = new Color(r, g, b, a);
     }
@@ -43,41 +43,41 @@ public class ColorTransformator
      * @param b The blue float value
      * @param a The alpha float value
      */
-    private ColorTransformator (float r, float g, float b, float a)
+    private RGB (float r, float g, float b, float a)
     {
         color = new Color(r, g, b, a);
     }
 
     /**
-     * @see ColorTransformator#ColorTransformator(int) Constructor that will be called
+     * @see RGB#RGB(int) Constructor that will be called
      */
-    public static ColorTransformator of (int rgb)
+    public static RGB of (int rgb)
     {
-        return new ColorTransformator(rgb);
+        return new RGB(rgb);
     }
 
     /**
-     * @see ColorTransformator#ColorTransformator(int, int, int, int) Constructor that will be called
+     * @see RGB#RGB(int, int, int, int) Constructor that will be called
      */
-    public static ColorTransformator of (int r, int g, int b, int a)
+    public static RGB of (int r, int g, int b, int a)
     {
-        return new ColorTransformator(r, g, b, a);
+        return new RGB(r, g, b, a);
     }
 
     /**
-     * @see ColorTransformator#ColorTransformator(float, float, float, float) Constructor that will be called
+     * @see RGB#RGB(float, float, float, float) Constructor that will be called
      */
-    public static ColorTransformator of (float r, float g, float b, float a)
+    public static RGB of (float r, float g, float b, float a)
     {
-        return new ColorTransformator(r, g, b, a);
+        return new RGB(r, g, b, a);
     }
 
     /**
-     * @see ColorTransformator#ColorTransformator(int)  Constructor that will be called
+     * @see RGB#RGB(int)  Constructor that will be called
      */
-    public static ColorTransformator of (Color color)
+    public static RGB of (Color color)
     {
-        return new ColorTransformator(color.getRGB());
+        return new RGB(color.getRGB());
     }
 
     /**
@@ -85,7 +85,7 @@ public class ColorTransformator
      *
      * @param alpha The integer alpha
      */
-    public ColorTransformator changeAlpha (int alpha)
+    public RGB alpha (int alpha)
     {
         int r = color.getRed();
         int g = color.getGreen();
@@ -100,7 +100,7 @@ public class ColorTransformator
      *
      * @param alpha The float alpha
      */
-    public ColorTransformator changeAlpha (float alpha)
+    public RGB alpha (float alpha)
     {
         int r = color.getRed();
         int g = color.getGreen();
@@ -115,7 +115,7 @@ public class ColorTransformator
      *
      * @param percent The percent of the alpha value
      */
-    public ColorTransformator modifyAlphaRelative (float percent)
+    public RGB modifyAlphaRelative (float percent)
     {
         int r = color.getRed();
         int g = color.getGreen();
@@ -129,7 +129,7 @@ public class ColorTransformator
     /**
      * @return The RGB value of the color
      */
-    public int toRGB ()
+    public int rgb ()
     {
         return color.getRGB();
     }

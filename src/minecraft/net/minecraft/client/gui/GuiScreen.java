@@ -4,8 +4,9 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.design.color.CloudColor;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
-import net.inceptioncloud.minecraftmod.ui.components.ConfirmationButton;
+import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.stream.GuiTwitchUserMode;
 import net.minecraft.client.renderer.*;
@@ -56,7 +57,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
      * Holds a instance of RenderItem, used to draw the achievement icons on screen (is based on ItemStack)
      */
     protected RenderItem itemRender;
-    protected List<GuiButton> buttonList = Lists.newArrayList();
+    public List<GuiButton> buttonList = Lists.newArrayList();
     protected List<GuiLabel> labelList = Lists.newArrayList();
     /**
      * The FontManager used by GuiScreen
@@ -77,9 +78,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     private int touchValue;
     private URI clickedLinkURI;
 
-    /**
-     * Returns a string stored in the system clipboard.
-     */
     public static String getClipboardString ()
     {
         try {
@@ -164,6 +162,24 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     public static boolean isKeyComboCtrlA (int p_175278_0_)
     {
         return p_175278_0_ == 30 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+    }
+
+    /**
+     * Draws a gradient background with the default colors.
+     */
+    public void drawGradientBackground ()
+    {
+        int startColor = CloudColor.DESIRE.getRGB();
+        int endColor = CloudColor.ROYAL.getRGB();
+        drawGradientBackground(startColor, endColor);
+    }
+
+    /**
+     * Draws a gradient from the left top to the right bottom corner with specific colors.
+     */
+    public void drawGradientBackground (int leftTop, int rightBottom)
+    {
+        drawGradientLeftTopRightBottom(0, 0, width, height, leftTop, rightBottom);
     }
 
     /**
@@ -381,9 +397,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
      */
     protected boolean handleComponentClick (IChatComponent p_175276_1_)
     {
-        if (p_175276_1_ == null) {
-            return false;
-        } else {
+        if (p_175276_1_ != null) {
             ClickEvent clickevent = p_175276_1_.getChatStyle().getChatClickEvent();
 
             if (isShiftKeyDown()) {
@@ -439,8 +453,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                 return true;
             }
 
-            return false;
         }
+        return false;
     }
 
     /**

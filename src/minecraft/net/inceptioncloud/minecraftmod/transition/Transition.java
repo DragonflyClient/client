@@ -6,7 +6,7 @@ import net.inceptioncloud.minecraftmod.transition.color.*;
 import net.inceptioncloud.minecraftmod.transition.number.*;
 import net.inceptioncloud.minecraftmod.transition.string.SubstringTransition;
 import net.inceptioncloud.minecraftmod.transition.string.TransitionTypeString;
-import net.inceptioncloud.minecraftmod.ui.components.*;
+import net.inceptioncloud.minecraftmod.ui.components.button.*;
 import net.inceptioncloud.minecraftmod.utils.RuntimeUtils;
 import net.minecraft.client.gui.GuiButton;
 
@@ -78,12 +78,12 @@ public abstract class Transition
             OverflowDoubleTransition.class,
             SmoothDoubleTransition.class,
             DoubleTransition.DoubleTransitionBuilder.class,
-            ColorTransition.ColorTransitionBuilder.class,
+            ColorTransitionBuilder.class,
             SubstringTransition.SubstringTransitionBuilder.class,
             FloatingDoubleTransition.FloatingDoubleTransitionBuilder.class,
             FloatingColorTransition.FloatingColorTransitionBuilder.class,
             OverflowDoubleTransition.OverflowDoubleTransitionBuilder.class,
-            SmoothDoubleTransition.SmoothDoubleTransitionBuilder.class,
+            SmoothDoubleTransitionBuilder.class,
 
             TransparentButton.class,
             SimpleButton.class,

@@ -1,6 +1,7 @@
 package net.inceptioncloud.minecraftmod.ui.mainmenu;
 
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 
 /**
@@ -11,6 +12,11 @@ import net.minecraft.client.gui.GuiMainMenu;
 @Getter
 public class QuickAction
 {
+    /**
+     * Simple reference to the Minecraft instance.
+     */
+    protected static final Minecraft mc = Minecraft.getMinecraft();
+
     /**
      * The ID of the button (or category) to which this quick action belongs to.
      */

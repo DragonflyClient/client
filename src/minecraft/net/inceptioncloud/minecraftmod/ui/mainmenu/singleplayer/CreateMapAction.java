@@ -1,7 +1,6 @@
 package net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer;
 
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiCreateWorld;
 
 /**
@@ -14,6 +13,8 @@ public class CreateMapAction extends QuickAction
      */
     public CreateMapAction ()
     {
-        super(0, 12, "Create Map", () -> Minecraft.getMinecraft().displayGuiScreen(new GuiCreateWorld(Minecraft.getMinecraft().currentScreen)));
+        super(0, 12, "Create Map",
+            () -> mc.displayGuiScreen(new GuiCreateWorld(mc.currentScreen))
+        );
     }
 }

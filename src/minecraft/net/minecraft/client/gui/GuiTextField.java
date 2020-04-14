@@ -1,14 +1,12 @@
 package net.minecraft.client.gui;
 
 import lombok.Getter;
-import net.inceptioncloud.minecraftmod.design.font.GlyphFontRenderer;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
 
-import java.awt.*;
 import java.util.function.Predicate;
 
 public class GuiTextField extends Gui
@@ -219,7 +217,7 @@ public class GuiTextField extends Gui
             this.moveCursorBy(i - this.selectionEnd + l);
 
             if (this.guiResponder != null) {
-                this.guiResponder.func_175319_a(this.id, this.text);
+                this.guiResponder.setEntryValue(this.id, this.text);
             }
         }
     }
@@ -269,7 +267,7 @@ public class GuiTextField extends Gui
                     }
 
                     if (this.guiResponder != null) {
-                        this.guiResponder.func_175319_a(this.id, this.text);
+                        this.guiResponder.setEntryValue(this.id, this.text);
                     }
                 }
             }

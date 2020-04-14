@@ -6,13 +6,13 @@ import net.minecraft.client.resources.I18n;
 
 public class GuiSlider extends GuiButton
 {
-    private float sliderPosition = 1.0F;
+    private float sliderPosition;
     public boolean isMouseDown;
-    private String name;
+    private final String name;
     private final float min;
     private final float max;
     private final GuiPageButtonList.GuiResponder responder;
-    private GuiSlider.FormatHelper formatHelper;
+    private final GuiSlider.FormatHelper formatHelper;
 
     public GuiSlider(GuiPageButtonList.GuiResponder guiResponder, int idIn, int x, int y, String name, float min, float max, float defaultValue, GuiSlider.FormatHelper formatter)
     {
@@ -26,30 +26,30 @@ public class GuiSlider extends GuiButton
         this.displayString = this.getDisplayString();
     }
 
-    public float func_175220_c()
+    public float getSliderValue ()
     {
         return this.min + (this.max - this.min) * this.sliderPosition;
     }
 
-    public void func_175218_a(float p_175218_1_, boolean p_175218_2_)
+    public void setSliderValue (float value, boolean notifyResponder)
     {
-        this.sliderPosition = (p_175218_1_ - this.min) / (this.max - this.min);
+        this.sliderPosition = (value - this.min) / (this.max - this.min);
         this.displayString = this.getDisplayString();
 
-        if (p_175218_2_)
+        if (notifyResponder)
         {
-            this.responder.onTick(this.id, this.func_175220_c());
+            this.responder.onTick(this.id, this.getSliderValue());
         }
     }
 
-    public float func_175217_d()
+    public float getSliderPosition ()
     {
         return this.sliderPosition;
     }
 
     private String getDisplayString()
     {
-        return this.formatHelper == null ? I18n.format(this.name, new Object[0]) + ": " + this.func_175220_c() : this.formatHelper.getText(this.id, I18n.format(this.name, new Object[0]), this.func_175220_c());
+        return this.formatHelper == null ? I18n.format(this.name) + ": " + this.getSliderValue() : this.formatHelper.getText(this.id, I18n.format(this.name), this.getSliderValue());
     }
 
     /**
@@ -83,7 +83,7 @@ public class GuiSlider extends GuiButton
                 }
 
                 this.displayString = this.getDisplayString();
-                this.responder.onTick(this.id, this.func_175220_c());
+                this.responder.onTick(this.id, this.getSliderValue());
             }
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -92,11 +92,11 @@ public class GuiSlider extends GuiButton
         }
     }
 
-    public void func_175219_a(float p_175219_1_)
+    public void setSliderPosition (float sliderPosition)
     {
-        this.sliderPosition = p_175219_1_;
+        this.sliderPosition = sliderPosition;
         this.displayString = this.getDisplayString();
-        this.responder.onTick(this.id, this.func_175220_c());
+        this.responder.onTick(this.id, this.getSliderValue());
     }
 
     /**
@@ -120,7 +120,7 @@ public class GuiSlider extends GuiButton
             }
 
             this.displayString = this.getDisplayString();
-            this.responder.onTick(this.id, this.func_175220_c());
+            this.responder.onTick(this.id, this.getSliderValue());
             this.isMouseDown = true;
             return true;
         }

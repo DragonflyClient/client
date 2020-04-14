@@ -3,10 +3,10 @@ package net.minecraft.client.gui;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.design.color.ColorTransformator;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
+import net.inceptioncloud.minecraftmod.design.color.RGB;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
-import net.inceptioncloud.minecraftmod.options.sets.IngameOptions;
+import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionScoreboard;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
@@ -258,7 +258,7 @@ public class GuiIngame extends Gui
 
             int posY = ( int ) ( 6 - ( actionBar.get() * 14 ) );
             int color = recordAnimateColor ? i1 + ( k1 << 24 & -16777216 ) : 0xFFFFFF;
-            color = ColorTransformator.of(color).changeAlpha(( int ) ( 55 + ( 200D * actionBar.get() ) )).toRGB();
+            color = RGB.of(color).alpha(( int ) (55 + (200D * actionBar.get() ) )).rgb();
 
             IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getMedium();
             fontRenderer.drawCenteredString(this.recordPlaying, 0, posY, color, true);
@@ -542,8 +542,8 @@ public class GuiIngame extends Gui
         int left = resolution.getScaledWidth() - i - 3;
         int k = 0;
 
-        final int lightColor = ColorTransformator.of(GreyToneColor.GREY).changeAlpha(0.5F).toRGB();
-        final int darkColor = ColorTransformator.of(GreyToneColor.DARK_GREY).changeAlpha(0.5F).toRGB();
+        final int lightColor = RGB.of(GreyToneColor.GREY).alpha(0.5F).rgb();
+        final int darkColor = RGB.of(GreyToneColor.DARK_GREY).alpha(0.5F).rgb();
 
         boolean shouldRenderScores = shouldRenderScores(trimmedScores);
 
@@ -555,18 +555,20 @@ public class GuiIngame extends Gui
             int top = k1 - k * fontRegular.getHeight();
             int right = resolution.getScaledWidth() - b0 + 2;
 
-            if (IngameOptions.SCOREBOARD_BACKGROUND.get())
-                drawRect(left - 2, top, right + 2, top + fontRegular.getHeight(), lightColor);
+            final boolean background = OptionsSectionScoreboard.getScoreboardBackground().getKey().get();
+            final boolean title = OptionsSectionScoreboard.getScoreboardTitle().getKey().get();
+
+            if (background)
+                drawRect(left - 2, top - 1, right + 2, top + fontRegular.getHeight() - 1, lightColor);
 
             if (shouldRenderScores)
                 fontRegular.drawString(s2, right - fontRegular.getStringWidth(s2), top, 0xFFFFFF, true);
 
             fontRegular.drawString(s1, left, top, 0xFFFFFF, true);
 
-            if (k == trimmedScores.size() && IngameOptions.SCOREBOARD_TITLE.get()) {
-                if (IngameOptions.SCOREBOARD_BACKGROUND.get()) {
+            if (k == trimmedScores.size() && title) {
+                if (background) {
                     drawRect(left - 2, top - fontMedium.getHeight() - 1, right + 2, top - 1, darkColor);
-                    drawRect(left - 2, top - 1, right + 2, top, lightColor);
                 }
 
                 String s3 = objective.getDisplayName();
@@ -578,9 +580,11 @@ public class GuiIngame extends Gui
 
     private boolean shouldRenderScores (final ArrayList<Score> scores)
     {
-        if (IngameOptions.SCOREBOARD_SCORES.get() == 0 || scores.size() <= 1)
+        final int mode = OptionsSectionScoreboard.getScoreboardScores().getKey().get();
+
+        if (mode == 0 || scores.size() <= 1)
             return false;
-        else if (IngameOptions.SCOREBOARD_SCORES.get() == 1)
+        else if (mode == 1)
             return true;
         else {
             int last = scores.get(0).getScorePoints();

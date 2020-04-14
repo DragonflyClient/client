@@ -1,9 +1,9 @@
-package net.inceptioncloud.minecraftmod.ui.components;
+package net.inceptioncloud.minecraftmod.ui.components.button;
 
 import lombok.Getter;
 import lombok.Setter;
 import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.design.color.ColorTransformator;
+import net.inceptioncloud.minecraftmod.design.color.RGB;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
@@ -76,7 +76,7 @@ public class TransparentButton extends GuiButton
             fontRenderer.drawCenteredString(this.displayString,
                 this.xPosition + this.width / 2,
                 this.yPosition + i,
-                ColorTransformator.of(0xFFFFFF).changeAlpha(highlighted ? opacity : tempOpacity).toRGB(),
+                RGB.of(0xFFFFFF).alpha(highlighted ? opacity : tempOpacity).rgb(),
                 true);
 
             int centerX = xPosition + ( width / 2 );

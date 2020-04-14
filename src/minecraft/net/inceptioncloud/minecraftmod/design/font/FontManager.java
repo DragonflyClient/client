@@ -1,6 +1,7 @@
 package net.inceptioncloud.minecraftmod.design.font;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
 import java.awt.*;
 import java.awt.font.TextAttribute;
@@ -45,7 +46,7 @@ public class FontManager
      */
     public IFontRenderer retrieveOrBuild (String name, int type, int size)
     {
-        return retrieveOrBuild(name, type, size, -0.025);
+        return retrieveOrBuild(name, type, size, -0.035);
     }
 
     /**

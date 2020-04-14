@@ -1,19 +1,24 @@
 package net.minecraft.client.gui;
 
 import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.design.color.*;
+import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
+import net.inceptioncloud.minecraftmod.design.color.RGB;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
-import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
-import net.inceptioncloud.minecraftmod.transition.supplier.*;
-import net.inceptioncloud.minecraftmod.ui.components.TransparentButton;
+import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
+import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
+import net.inceptioncloud.minecraftmod.ui.components.button.TransparentButton;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.multiplayer.*;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.options.*;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.quit.*;
-import net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer.*;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.multiplayer.DirectConnectAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.multiplayer.LastServerAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.options.ModOptionsAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.options.ResourcePackAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quit.ReloadAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.quit.RestartAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer.CreateMapAction;
+import net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer.LastMapAction;
 import net.inceptioncloud.minecraftmod.utils.RenderUtils;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -26,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GLContext;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -48,22 +52,21 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     /**
      * Provides the value for the fading in of the main menu after the splash screen.
      */
-    private static final DoubleTransition fadeInTransition = DoubleTransition.builder()
-        .start(1)
-        .end(0)
-        .amountOfSteps(500)
-        .autoTransformator(( ForwardNothing ) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000)
+    private static final SmoothDoubleTransition fadeInTransition = SmoothDoubleTransition.builder()
+        .start(1).end(0)
+        .fadeIn(75).stay(75).fadeOut(0)
+        .autoTransformator((ForwardNothing) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000)
         .build();
 
     /**
      * Provides all available quick actions.
      */
-    public static final List<QuickAction> AVAILABLE_ACTIONS = Arrays.asList(
+    private final List<QuickAction> AVAILABLE_ACTIONS = new ArrayList<>(Arrays.asList(
         new LastMapAction(), new CreateMapAction(),
         new LastServerAction(), new DirectConnectAction(),
         new ResourcePackAction(), new ModOptionsAction(),
         new RestartAction(), new ReloadAction()
-    );
+    ));
 
     /**
      * The Object object utilized as a thread lock when performing non thread-safe operations
@@ -71,24 +74,19 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     private final Object threadLock = new Object();
 
     /**
-     * Whether the navbar is currently hovered.
-     */
-    private static boolean navbarHovered = false;
-
-    /**
      * The transitions that are responsible for the different Quick Action Buttons.
      */
-    private static final Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
+    private final Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
 
     /**
      * The transition that lets the navigation bar rise when it's hovered.
      */
-    private static final SmoothDoubleTransition riseTransition = SmoothDoubleTransition.builder()
-        .start(1)
-        .end(2)
-        .fadeIn(0).stay(10).fadeOut(20)
-        .autoTransformator(( ForwardBackward ) () -> navbarHovered)
-        .build();
+    private SmoothDoubleTransition riseTransition;
+
+    /**
+     * Whether the navbar is currently hovered.
+     */
+    private boolean navbarHovered = false;
 
     private String openGLWarning1;
 
@@ -136,12 +134,34 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         }
     }
 
+
     /**
-     * @return The height of the navigation bar.
+     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
+     * window resizes, the buttonList is cleared beforehand.
      */
-    public int getNavbarHeight ()
+    public void initGui ()
     {
-        return ( int ) ( BUTTON_HEIGHT * 2 * riseTransition.get() );
+        riseTransition = SmoothDoubleTransition.builder()
+            .start(1)
+            .end(2)
+            .fadeIn(0).stay(10).fadeOut(20)
+            .autoTransformator((ForwardBackward) () -> navbarHovered)
+            .build();
+
+        this.updateSize();
+        this.addButtons();
+
+        synchronized (this.threadLock) {
+            final int field_92023_s = this.fontRendererObj.getStringWidth(this.openGLWarning1);
+            final int field_92024_r = this.fontRendererObj.getStringWidth(this.openGLWarning2);
+            int k = Math.max(field_92023_s, field_92024_r);
+            this.field_92022_t = (this.width - k) / 2;
+            this.field_92021_u = this.buttonList.get(0).yPosition - 24;
+            this.field_92020_v = this.field_92022_t + k;
+            this.field_92019_w = this.field_92021_u + 24;
+        }
+
+        this.mc.setConnectedToRealms(false);
     }
 
     /**
@@ -150,7 +170,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     public void drawScreen (int mouseX, int mouseY, float partialTicks)
     {
         if (drawTime == -1) drawTime = System.currentTimeMillis();
+
         this.drawGradientBackground();
+
         final IFontRenderer finalFontRenderer = updateSize();
 
         navbarHovered = mouseY >= height - getNavbarHeight() && mouseY <= height;
@@ -177,35 +199,36 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
             .forEach(transparentButton ->
             {
                 double percent = quickActionTransitions.get(transparentButton.id).get();
-                transparentButton.setPositionY(( int ) ( height - BUTTON_HEIGHT * 1.7 * percent ));
+                transparentButton.setPositionY((int) (height - BUTTON_HEIGHT * 1.7 * percent));
                 transparentButton.setFontRenderer(finalFontRenderer);
             });
 
-        // ICMM - Logo
+        // Logo
         int imageSize = Math.min(height / 3, 300);
-        RenderUtils.drawImage(new ResourceLocation("inceptioncloud/sqr_outline.png"), width / 2 - imageSize / 2 + 2, height / 8 + 2, imageSize, imageSize, 0, 0, 0, 0.4F);
-        RenderUtils.drawImage(new ResourceLocation("inceptioncloud/sqr_outline.png"), width / 2 - imageSize / 2, height / 8, imageSize, imageSize);
+        final ResourceLocation image = new ResourceLocation("inceptioncloud/sqr_outline.png");
+        RenderUtils.drawImage(image, width / 2 - imageSize / 2 + 2, height / 8 + 2, imageSize, imageSize, 0, 0, 0, 0.4F);
+        RenderUtils.drawImage(image, width / 2 - imageSize / 2, height / 8, imageSize, imageSize);
 
-        // ICMM - Title
+        // Title
         double percent = imageSize / 280D;
-        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", ( int ) ( 25 + ( percent * 60 ) ));
+        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", (int) (25 + (percent * 60)));
         fontRenderer.drawCenteredString(InceptionCloudVersion.FULL_VERSION, width / 2, height / 8 + imageSize + 10, 0xFFFFFF, true);
 
-        // ICMM - Subtitle
+        // Subtitle
         int previousHeight = fontRenderer.getHeight();
         percent = imageSize / 280D;
-        fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("", ( int ) ( 15 + ( percent * 40 ) ));
+        fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("", (int) (15 + (percent * 40)));
         fontRenderer.drawCenteredString("Minecraft Mod 1.8.8", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true);
 
-        // ICMM - Bottom Bar
+        // Bottom Bar
         drawRect(0, height - getNavbarHeight(), width, height, new Color(0, 0, 0, 100).getRGB());
 
-        // ICMM - Buttons
+        // Buttons
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.buttonList.remove(this.buttonList.stream().filter(guiButton -> guiButton.id == 5).findFirst().orElse(null));
 
-        // ICMM - Fade-In Overlay
-        drawRect(0, 0, width, height, ColorTransformator.of(GreyToneColor.DARK_GREY).changeAlpha(( float ) fadeInTransition.get()).toRGB());
+        // Fade-In Overlay
+        drawRect(0, 0, width, height, RGB.of(GreyToneColor.DARK_GREY).alpha((float) fadeInTransition.get()).rgb());
     }
 
     /**
@@ -214,16 +237,16 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     private IFontRenderer updateSize ()
     {
         double percent = Math.min(height / 540D, 1.0D);
-        final int BUTTON_FONT_SIZE = ( int ) ( 18 + ( percent * 15 ) );
+        final int BUTTON_FONT_SIZE = (int) (18 + (percent * 15));
         IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("", BUTTON_FONT_SIZE);
 
-        BUTTON_WIDTH = ( int ) ( 80 + ( percent * 30 ) );
+        BUTTON_WIDTH = (int) (80 + (percent * 30));
         BUTTON_HEIGHT = fontRenderer.getHeight();
         BUTTON_SPACE = 10;
-        BUTTON_Y = height - getNavbarHeight() + ( BUTTON_HEIGHT / 2 );
+        BUTTON_Y = height - getNavbarHeight() + (BUTTON_HEIGHT / 2);
 
-        QUICK_ACTION_LEFT = ( int ) ( this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2 + 10 );
-        QUICK_ACTION_RIGHT = ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH * 2 - 10 );
+        QUICK_ACTION_LEFT = (int) (this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2 + 10);
+        QUICK_ACTION_RIGHT = (int) (this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH * 2 - 10);
 
         return fontRenderer;
     }
@@ -239,15 +262,13 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      */
     public void addButtons ()
     {
-        this.buttonList.add(new TransparentButton(0, ( int ) ( this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2 ), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.singleplayer")));
+        this.buttonList.add(new TransparentButton(0, (int) (this.width / 2 - BUTTON_SPACE * 1.5 - BUTTON_WIDTH * 2), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.singleplayer")));
         this.buttonList.add(new TransparentButton(1, this.width / 2 - BUTTON_SPACE / 2 - BUTTON_WIDTH, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.multiplayer")));
         this.buttonList.add(new TransparentButton(2, this.width / 2 + BUTTON_SPACE / 2, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.options")));
-        this.buttonList.add(new TransparentButton(3, ( int ) ( this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH ), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.quit")));
+        this.buttonList.add(new TransparentButton(3, (int) (this.width / 2 + BUTTON_SPACE * 1.5 + BUTTON_WIDTH), BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("menu.quit")));
 
         IFontRenderer fontRenderer = updateSize();
         boolean left = true;
-
-        quickActionTransitions.values().forEach(Transition::destroy);
 
         for (QuickAction quickAction : AVAILABLE_ACTIONS) {
             final int stringWidth = fontRenderer.getStringWidth(quickAction.getDisplay());
@@ -255,7 +276,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
             final int buttonId = quickAction.getOwnButtonId();
 
             this.buttonList.add(new TransparentButton(buttonId, xPosition, height, stringWidth, 20, quickAction.getDisplay()).setOpacity(0.5F));
-            quickActionTransitions.put(buttonId, DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator(( ForwardBackward ) () -> riseTransition.isAtEnd() && isQuickActionSelected(buttonId)).build());
+            quickActionTransitions.put(buttonId, DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator((ForwardBackward) () -> riseTransition.isAtEnd() && isQuickActionSelected(buttonId)).build());
 
             left = !left;
         }
@@ -279,45 +300,11 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     }
 
     /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
-    public void initGui ()
-    {
-        this.updateSize();
-        this.addButtons();
-
-        synchronized (this.threadLock) {
-            final int field_92023_s = this.fontRendererObj.getStringWidth(this.openGLWarning1);
-            final int field_92024_r = this.fontRendererObj.getStringWidth(this.openGLWarning2);
-            int k = Math.max(field_92023_s, field_92024_r);
-            this.field_92022_t = ( this.width - k ) / 2;
-            this.field_92021_u = this.buttonList.get(0).yPosition - 24;
-            this.field_92020_v = this.field_92022_t + k;
-            this.field_92019_w = this.field_92021_u + 24;
-        }
-
-        this.mc.setConnectedToRealms(false);
-    }
-
-    /**
-     * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
-     * topColor, bottomColor
-     */
-    public void drawGradientBackground ()
-    {
-        int startColor = CloudColor.DESIRE.getRGB();
-        int endColor = CloudColor.ROYAL.getRGB();
-        drawGradientLeftTopRightBottom(0, 0, width, height, startColor, endColor);
-    }
-
-    /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
     protected void actionPerformed (GuiButton button) throws IOException
     {
         switch (button.id) {
-
             case 0:
                 this.mc.displayGuiScreen(new GuiSelectWorld(this));
                 break;
@@ -333,7 +320,6 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
             case 3:
                 this.mc.shutdown();
                 break;
-
         }
 
         if (button.id >= 10)
@@ -384,5 +370,22 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
                 this.mc.displayGuiScreen(guiconfirmopenlink);
             }
         }
+    }
+
+    @Override
+    public void onGuiClosed ()
+    {
+        quickActionTransitions.values().forEach(Transition::destroy);
+        riseTransition.destroy();
+
+        super.onGuiClosed();
+    }
+
+    /**
+     * @return The height of the navigation bar.
+     */
+    public int getNavbarHeight ()
+    {
+        return (int) (BUTTON_HEIGHT * 2 * riseTransition.get());
     }
 }

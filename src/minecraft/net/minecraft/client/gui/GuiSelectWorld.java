@@ -25,10 +25,10 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
     private boolean joiningWorld;
     private int field_146640_r;
     private java.util.List<SaveFormatComparator> worldList;
-    private GuiSelectWorld.List field_146638_t;
+    private GuiSelectWorld.List selectWorldList;
     private String field_146637_u;
     private String field_146636_v;
-    private String[] field_146635_w = new String[4];
+    private final String[] field_146635_w = new String[4];
     private boolean field_146643_x;
     private GuiButton deleteButton;
     private GuiButton selectButton;
@@ -71,8 +71,8 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
         this.field_146635_w[WorldSettings.GameType.CREATIVE.getID()] = I18n.format("gameMode.creative");
         this.field_146635_w[WorldSettings.GameType.ADVENTURE.getID()] = I18n.format("gameMode.adventure");
         this.field_146635_w[WorldSettings.GameType.SPECTATOR.getID()] = I18n.format("gameMode.spectator");
-        this.field_146638_t = new GuiSelectWorld.List(this.mc);
-        this.field_146638_t.registerScrollButtons(4, 5);
+        this.selectWorldList = new GuiSelectWorld.List(this.mc);
+        this.selectWorldList.registerScrollButtons(4, 5);
         this.addButtons();
     }
 
@@ -82,7 +82,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
     public void handleMouseInput () throws IOException
     {
         super.handleMouseInput();
-        this.field_146638_t.handleMouseInput();
+        this.selectWorldList.handleMouseInput();
     }
 
     private void func_146627_h () throws AnvilConverterException
@@ -153,7 +153,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
                 guicreateworld.func_146318_a(worldinfo);
                 this.mc.displayGuiScreen(guicreateworld);
             } else {
-                this.field_146638_t.actionPerformed(button);
+                this.selectWorldList.actionPerformed(button);
             }
         }
     }
@@ -208,7 +208,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
      */
     public void drawScreen (int mouseX, int mouseY, float partialTicks)
     {
-        this.field_146638_t.drawScreen(mouseX, mouseY, partialTicks);
+        this.selectWorldList.drawScreen(mouseX, mouseY, partialTicks);
         drawCenteredString(this.fontRendererObj, this.field_146628_f, this.width / 2, 20, 16777215);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
@@ -254,7 +254,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
             GuiSelectWorld.this.drawDefaultBackground();
         }
 
-        protected void drawSlot (int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn)
+        protected void drawSlot (int entryID, int x, int y, int height, int mouseXIn, int mouseYIn)
         {
             SaveFormatComparator saveformatcomparator = GuiSelectWorld.this.worldList.get(entryID);
             String s = saveformatcomparator.getDisplayName();
@@ -282,9 +282,9 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback
                 }
             }
 
-            GuiSelectWorld.this.drawString(GuiSelectWorld.this.fontRendererObj, s, p_180791_2_ + 2, p_180791_3_ + 1, 16777215);
-            GuiSelectWorld.this.drawString(GuiSelectWorld.this.fontRendererObj, s1, p_180791_2_ + 2, p_180791_3_ + 12, 8421504);
-            GuiSelectWorld.this.drawString(GuiSelectWorld.this.fontRendererObj, s2, p_180791_2_ + 2, p_180791_3_ + 12 + 10, 8421504);
+            drawString(GuiSelectWorld.this.fontRendererObj, s, x + 2, y + 1, 16777215);
+            drawString(GuiSelectWorld.this.fontRendererObj, s1, x + 2, y + 12, 8421504);
+            drawString(GuiSelectWorld.this.fontRendererObj, s2, x + 2, y + 12 + 10, 8421504);
         }
     }
 }

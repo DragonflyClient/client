@@ -230,21 +230,21 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
     /**
      * Returns true if the mouse has been pressed on this control.
      */
-    public boolean mousePressed (int slotIndex, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
+    public boolean mousePressed (int slotIndex, int mouseX, int mouseY, int mouseEvent, int relativeX, int relativeY)
     {
-        if (p_148278_5_ <= 32) {
-            if (p_148278_5_ < 32 && p_148278_5_ > 16 && this.func_178013_b()) {
+        if (relativeX <= 32) {
+            if (relativeX < 32 && relativeX > 16 && this.func_178013_b()) {
                 this.multiplayerGui.selectServer(slotIndex);
                 this.multiplayerGui.connectToSelected();
                 return true;
             }
 
-            if (p_148278_5_ < 16 && p_148278_6_ < 16 && this.multiplayerGui.func_175392_a(this, slotIndex)) {
+            if (relativeX < 16 && relativeY < 16 && this.multiplayerGui.func_175392_a(this, slotIndex)) {
                 this.multiplayerGui.func_175391_a(this, slotIndex, GuiScreen.isShiftKeyDown());
                 return true;
             }
 
-            if (p_148278_5_ < 16 && p_148278_6_ > 16 && this.multiplayerGui.func_175394_b(this, slotIndex)) {
+            if (relativeX < 16 && relativeY > 16 && this.multiplayerGui.func_175394_b(this, slotIndex)) {
                 this.multiplayerGui.func_175393_b(this, slotIndex, GuiScreen.isShiftKeyDown());
                 return true;
             }
@@ -260,7 +260,7 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry
         return false;
     }
 
-    public void setSelected (int p_178011_1_, int p_178011_2_, int p_178011_3_)
+    public void setSelected (int entryID, int insideLeft, int yPos)
     {
     }
 

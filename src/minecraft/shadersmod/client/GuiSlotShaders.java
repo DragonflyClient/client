@@ -1,8 +1,9 @@
 package shadersmod.client;
 
-import java.util.ArrayList;
 import net.minecraft.client.gui.GuiSlot;
 import optifine.Lang;
+
+import java.util.ArrayList;
 
 class GuiSlotShaders extends GuiSlot
 {
@@ -42,7 +43,7 @@ class GuiSlotShaders extends GuiSlot
 
         for (int j = this.shaderslist.size(); i < j; ++i)
         {
-            if (((String)this.shaderslist.get(i)).equals(Shaders.currentshadername))
+            if (this.shaderslist.get(i).equals(Shaders.currentshadername))
             {
                 this.selectedIndex = i;
                 break;
@@ -95,7 +96,7 @@ class GuiSlotShaders extends GuiSlot
     {
     }
 
-    protected void drawSlot(int index, int posX, int posY, int contentY, int mouseX, int mouseY)
+    protected void drawSlot(int index, int x, int y, int height, int mouseX, int mouseY)
     {
         String s = (String)this.shaderslist.get(index);
 
@@ -108,7 +109,7 @@ class GuiSlotShaders extends GuiSlot
             s = Lang.get("of.options.shaders.packDefault");
         }
 
-        this.shadersGui.drawCenteredString(s, this.width / 2, posY + 1, 16777215);
+        this.shadersGui.drawCenteredString(s, this.width / 2, y + 1, 16777215);
     }
 
     public int getSelectedIndex()

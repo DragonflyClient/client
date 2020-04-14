@@ -6,8 +6,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class manages the reading and writing of the options to the specific file.
@@ -20,13 +18,10 @@ public class Options
     public static final File OPTIONS_FILE = new File("inceptioncloud/options.json");
 
     /**
-     * Contains all available type converters.
-     */
-    private static final Map<Class<?>, TypeConverter<?>> typeConverters = new HashMap<>();
-    /**
      * The Gson instance that allows the (de-)serialization of objects.
      */
     private final Gson gson;
+
     /**
      * The last read content (via {@link #contentUpdate()}) in JSON-Format.
      */

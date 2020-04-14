@@ -1,8 +1,7 @@
 package net.inceptioncloud.minecraftmod.design.font;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.font.util.GlyphPage;
-import net.inceptioncloud.minecraftmod.options.sets.UIOptions;
+import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
@@ -145,8 +144,6 @@ public class GlyphFontRenderer implements IFontRenderer
      */
     public static GlyphFontRenderer create (String fontName, int size, double letterSpacing, boolean bold, boolean italic, boolean boldItalic)
     {
-        InceptionMod.getLogger().info("Building GlyphPageFontRenderer for Font " + fontName + " with size " + size + "..");
-
         // If the font isn't already loaded, import it from a .ttf file
         if (!LOADED_FONTS.contains(fontName)) {
             try {
@@ -222,11 +219,11 @@ public class GlyphFontRenderer implements IFontRenderer
     }
 
     /**
-     * Quick Method to access {@link UIOptions#FONT_QUALITY_SCALE}
+     * Quick Method to access {@link OptionsSectionUI#getFontQuality()}
      */
     public static double getFontQualityScale ()
     {
-        return UIOptions.FONT_QUALITY_SCALE.get();
+        return OptionsSectionUI.getFontQuality().getKey().get();
     }
 
     /**
@@ -257,6 +254,22 @@ public class GlyphFontRenderer implements IFontRenderer
         } else {
             i = this.renderString(text, x, y, color, false);
         }
+
+        return i;
+    }
+
+    /**
+     * Draws the specified string with a shadow that can have a custom color and distance.
+     */
+    public int drawStringWithCustomShadow (String text, int x, int y, int color, int shadowColor, float distance)
+    {
+        y -= 3;
+        GlStateManager.enableAlpha();
+        this.resetStyles();
+        int i;
+
+        i = this.renderString(text, x + distance, y + distance, shadowColor, true);
+        i = Math.max(i, this.renderString(text, x, y, color, false));
 
         return i;
     }

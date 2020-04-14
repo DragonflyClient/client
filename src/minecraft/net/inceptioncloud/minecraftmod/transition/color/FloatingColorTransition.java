@@ -37,7 +37,7 @@ public class FloatingColorTransition extends TransitionTypeColor
                                     final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
     {
         super(null, null, autoTransformator);
-        this.base = ColorTransition.builder().start(start).end(end).amountOfSteps(amountOfSteps).reachStart(reachStart).reachEnd(reachEnd).build();
+        this.base = new ColorTransitionBuilder().start(start).end(end).amountOfSteps(amountOfSteps).reachStart(reachStart).reachEnd(reachEnd).build();
     }
 
     /**

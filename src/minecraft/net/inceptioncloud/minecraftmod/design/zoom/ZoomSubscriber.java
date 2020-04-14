@@ -2,8 +2,7 @@ package net.inceptioncloud.minecraftmod.design.zoom;
 
 import com.google.common.eventbus.Subscribe;
 import net.inceptioncloud.minecraftmod.event.control.ZoomEvent;
-import net.inceptioncloud.minecraftmod.options.sets.IngameOptions;
-import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
+import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionZoom;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.minecraft.client.Minecraft;
@@ -20,7 +19,7 @@ public class ZoomSubscriber
     /**
      * The transition that animates the OptiFine zoom.
      */
-    private final SmoothDoubleTransition zoomFactor = SmoothDoubleTransition.builder().start(1.0).end(3.5).fadeIn(0).stay(20).fadeOut(15).autoTransformator(( ForwardBackward ) () -> Config.zoomMode).build();
+    private final SmoothDoubleTransition zoomProgress = SmoothDoubleTransition.builder().start(0.0).end(1.0).fadeIn(0).stay(20).fadeOut(15).autoTransformator((ForwardBackward) () -> Config.zoomMode).build();
 
     /**
      * {@link ZoomEvent} Subscriber
@@ -31,44 +30,41 @@ public class ZoomSubscriber
         final Minecraft mc = Minecraft.getMinecraft();
         final EntityRenderer entityRenderer = mc.entityRenderer;
 
-        boolean flag = false;
+        boolean keyDown = false;
         float fov = event.getFieldOfView();
+
+        final boolean useAnimation = OptionsSectionZoom.getAnimation().getKey().get();
+        final int fovPercent = OptionsSectionZoom.getFieldOfView().getKey().get();
+        final int mousePercent = OptionsSectionZoom.getMouseSensitivity().getKey().get();
+
+        final float fovDifferenceTotal = (float) (fov * (1 - fovPercent / 100D));
+        final float fovDifferenceAnimated = (float) (fovDifferenceTotal * zoomProgress.get());
+        final float mouseSensitivityDivisor = 100F / mousePercent;
 
         if (mc.currentScreen == null) {
             GameSettings gamesettings = mc.gameSettings;
-            flag = GameSettings.isKeyDown(gamesettings.ofKeyBindZoom);
+            keyDown = GameSettings.isKeyDown(gamesettings.ofKeyBindZoom);
         }
 
-        if (IngameOptions.ZOOM_ANIMATION.get()) {
-
-            if (flag) {
-                if (!Config.zoomMode)
-                    Config.zoomMode = true;
-            } else if (Config.zoomMode) {
-                Config.zoomMode = false;
-                entityRenderer.mouseFilterXAxis = new MouseFilter();
-                entityRenderer.mouseFilterYAxis = new MouseFilter();
-                mc.renderGlobal.displayListEntitiesDirty = true;
+        if (keyDown) {
+            if (!Config.zoomMode) {
+                Config.zoomMode = true;
+                mc.gameSettings.mouseSensitivity /= mouseSensitivityDivisor;
             }
 
-            fov /= zoomFactor.get();
-
-        } else {
-
-            if (flag) {
-                if (!Config.zoomMode) {
-                    Config.zoomMode = true;
-                    mc.gameSettings.smoothCamera = true;
-                }
-
-                fov /= 4.0F;
-            } else if (Config.zoomMode) {
-                Config.zoomMode = false;
-                mc.gameSettings.smoothCamera = false;
-                entityRenderer.mouseFilterXAxis = new MouseFilter();
-                entityRenderer.mouseFilterYAxis = new MouseFilter();
-                mc.renderGlobal.displayListEntitiesDirty = true;
+            if (!useAnimation) {
+                fov -= fovDifferenceTotal;
             }
+        } else if (Config.zoomMode) {
+            Config.zoomMode = false;
+            entityRenderer.mouseFilterXAxis = new MouseFilter();
+            entityRenderer.mouseFilterYAxis = new MouseFilter();
+            mc.renderGlobal.displayListEntitiesDirty = true;
+            mc.gameSettings.mouseSensitivity *= mouseSensitivityDivisor;
+        }
+
+        if (useAnimation) {
+            fov -= fovDifferenceAnimated;
         }
 
         event.setFieldOfView(fov);

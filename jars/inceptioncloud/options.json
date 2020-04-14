@@ -1,7 +1,7 @@
 {
   "lastServer": {
     "serverName": "Gomme",
-    "serverIP": "gommehd.net",
+    "serverIP": "gommehd.net:25565",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -9,5 +9,10 @@
   "scoreboardScores": 2,
   "scoreboardTitle": true,
   "zoomAnimation": true,
-  "fontQualityScale": 2.0
+  "fontQualityScale": 3.1,
+  "borderlessWindow": true,
+  "windowedFullscreen": true,
+  "zoomFieldOfView": 42,
+  "zoomMouseSensitivity": 100,
+  "fontQuality": 2.4918032786885247
 }

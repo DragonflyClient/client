@@ -1,6 +1,5 @@
 package net.inceptioncloud.minecraftmod.transition.color;
 
-import lombok.Builder;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import org.apache.commons.lang3.Validate;
 
@@ -17,13 +16,11 @@ public class ColorTransition extends TransitionTypeColor
     /**
      * The color with which the transition starts.
      */
-    @Builder.Default
     protected Color start = Color.WHITE;
 
     /**
      * The color with which the transition ends.
      */
-    @Builder.Default
     protected Color end = Color.BLACK;
 
     /**
@@ -55,9 +52,8 @@ public class ColorTransition extends TransitionTypeColor
      * @param reachEnd      {@link #reachEnd}
      * @param reachStart    {@link #reachStart}
      */
-    @Builder ( toBuilder = true )
-    private ColorTransition (final Color start, final Color end, final int amountOfSteps,
-                             final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
+    ColorTransition (final Color start, final Color end, final int amountOfSteps,
+                     final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
     {
         super(reachEnd, reachStart, autoTransformator);
 
@@ -107,12 +103,17 @@ public class ColorTransition extends TransitionTypeColor
     @Override
     public void doForward ()
     {
-        redBase.setForward();
-        greenBase.setForward();
-        blueBase.setForward();
+        try {
+            redBase.setForward();
+            greenBase.setForward();
+            blueBase.setForward();
 
-        if (isAtEnd() && reachEnd != null)
-            reachEnd.run();
+            if (isAtEnd() && reachEnd != null)
+                reachEnd.run();
+        } catch (NullPointerException exception) {
+            exception.printStackTrace();
+            System.out.println(getOriginClass());
+        }
     }
 
     /**
@@ -147,5 +148,10 @@ public class ColorTransition extends TransitionTypeColor
         return "ColorTransition{" +
                "originStackTrace=" + originStackTrace +
                '}';
+    }
+
+    public static ColorTransitionBuilder builder ()
+    {
+        return new ColorTransitionBuilder();
     }
 }

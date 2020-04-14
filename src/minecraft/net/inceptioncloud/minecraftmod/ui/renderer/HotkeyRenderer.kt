@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.ui.renderer
 
-import net.inceptioncloud.minecraftmod.design.color.ColorTransformator
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor
+import net.inceptioncloud.minecraftmod.design.color.RGB
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer
 import net.minecraft.client.gui.Gui
 import java.awt.event.KeyEvent
@@ -11,10 +11,10 @@ fun render(fontRenderer: IFontRenderer, keycode: Int, description: String, x: In
     val keyString = KeyEvent.getKeyText(keycode)
     val height = fontRenderer.height + 4
     val length = fontRenderer.getStringWidth(keyString).coerceAtLeast(height) + 4
-    val fontY = y + height / 4 + 2;
+    val fontY = y + height / 4 + 2
 
     val foreground = GreyToneColor.WHITE.rgb
-    val background = ColorTransformator.of(GreyToneColor.DARK_GREY).changeAlpha(0.3F).toRGB()
+    val background = RGB.of(GreyToneColor.DARK_GREY).alpha(0.3F).rgb()
 
     Gui.drawRect(x + 1, y + 1, x + length + 1, y + height + 1, background)
 

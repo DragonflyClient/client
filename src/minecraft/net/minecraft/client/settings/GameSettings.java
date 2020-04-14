@@ -1,21 +1,7 @@
 package net.minecraft.client.settings;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.gson.Gson;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiNewChat;
@@ -27,16 +13,7 @@ import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.network.play.client.C15PacketClientSettings;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumDifficulty;
-import optifine.ClearWater;
-import optifine.Config;
-import optifine.CustomColors;
-import optifine.CustomSky;
-import optifine.DynamicLights;
-import optifine.Lang;
-import optifine.NaturalTextures;
-import optifine.RandomMobs;
-import optifine.Reflector;
-
+import optifine.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +21,11 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import shadersmod.client.Shaders;
+
+import java.io.*;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class GameSettings
 {
@@ -122,7 +104,7 @@ public class GameSettings
     public float chatHeightFocused = 1.0F;
     public boolean showInventoryAchievementHint = true;
     public int mipmapLevels = 4;
-    private Map mapSoundLevels = Maps.newEnumMap(SoundCategory.class);
+    private final Map mapSoundLevels = Maps.newEnumMap(SoundCategory.class);
     public float streamBytesPerPixel = 0.5F;
     public float streamMicVolume = 1.0F;
     public float streamGameVolume = 1.0F;
@@ -450,47 +432,47 @@ public class GameSettings
     /**
      * For non-float options. Toggles the option on/off, or cycles through the list i.e. render distances.
      */
-    public void setOptionValue(GameSettings.Options p_74306_1_, int p_74306_2_)
+    public void setOptionValue(GameSettings.Options enumOption, int value)
     {
-        this.setOptionValueOF(p_74306_1_, p_74306_2_);
+        this.setOptionValueOF(enumOption, value);
 
-        if (p_74306_1_ == GameSettings.Options.INVERT_MOUSE)
+        if (enumOption == GameSettings.Options.INVERT_MOUSE)
         {
             this.invertMouse = !this.invertMouse;
         }
 
-        if (p_74306_1_ == GameSettings.Options.GUI_SCALE)
+        if (enumOption == GameSettings.Options.GUI_SCALE)
         {
-            this.guiScale = this.guiScale + p_74306_2_ & 3;
+            this.guiScale = this.guiScale + value & 3;
         }
 
-        if (p_74306_1_ == GameSettings.Options.PARTICLES)
+        if (enumOption == GameSettings.Options.PARTICLES)
         {
-            this.particleSetting = (this.particleSetting + p_74306_2_) % 3;
+            this.particleSetting = (this.particleSetting + value) % 3;
         }
 
-        if (p_74306_1_ == GameSettings.Options.VIEW_BOBBING)
+        if (enumOption == GameSettings.Options.VIEW_BOBBING)
         {
             this.viewBobbing = !this.viewBobbing;
         }
 
-        if (p_74306_1_ == GameSettings.Options.RENDER_CLOUDS)
+        if (enumOption == GameSettings.Options.RENDER_CLOUDS)
         {
-            this.clouds = (this.clouds + p_74306_2_) % 3;
+            this.clouds = (this.clouds + value) % 3;
         }
 
-        if (p_74306_1_ == GameSettings.Options.FORCE_UNICODE_FONT)
+        if (enumOption == GameSettings.Options.FORCE_UNICODE_FONT)
         {
             this.forceUnicodeFont = !this.forceUnicodeFont;
             this.mc.fontRendererObj.setUnicodeFlag(this.mc.getLanguageManager().isCurrentLocaleUnicode() || this.forceUnicodeFont);
         }
 
-        if (p_74306_1_ == GameSettings.Options.FBO_ENABLE)
+        if (enumOption == GameSettings.Options.FBO_ENABLE)
         {
             this.fboEnable = !this.fboEnable;
         }
 
-        if (p_74306_1_ == GameSettings.Options.ANAGLYPH)
+        if (enumOption == GameSettings.Options.ANAGLYPH)
         {
             if (!this.anaglyph && Config.isShaders())
             {
@@ -502,75 +484,75 @@ public class GameSettings
             this.mc.refreshResources();
         }
 
-        if (p_74306_1_ == GameSettings.Options.GRAPHICS)
+        if (enumOption == GameSettings.Options.GRAPHICS)
         {
             this.fancyGraphics = !this.fancyGraphics;
             this.updateRenderClouds();
             this.mc.renderGlobal.loadRenderers();
         }
 
-        if (p_74306_1_ == GameSettings.Options.AMBIENT_OCCLUSION)
+        if (enumOption == GameSettings.Options.AMBIENT_OCCLUSION)
         {
-            this.ambientOcclusion = (this.ambientOcclusion + p_74306_2_) % 3;
+            this.ambientOcclusion = (this.ambientOcclusion + value) % 3;
             this.mc.renderGlobal.loadRenderers();
         }
 
-        if (p_74306_1_ == GameSettings.Options.CHAT_VISIBILITY)
+        if (enumOption == GameSettings.Options.CHAT_VISIBILITY)
         {
-            this.chatVisibility = EntityPlayer.EnumChatVisibility.getEnumChatVisibility((this.chatVisibility.getChatVisibility() + p_74306_2_) % 3);
+            this.chatVisibility = EntityPlayer.EnumChatVisibility.getEnumChatVisibility((this.chatVisibility.getChatVisibility() + value) % 3);
         }
 
-        if (p_74306_1_ == GameSettings.Options.STREAM_COMPRESSION)
+        if (enumOption == GameSettings.Options.STREAM_COMPRESSION)
         {
-            this.streamCompression = (this.streamCompression + p_74306_2_) % 3;
+            this.streamCompression = (this.streamCompression + value) % 3;
         }
 
-        if (p_74306_1_ == GameSettings.Options.STREAM_SEND_METADATA)
+        if (enumOption == GameSettings.Options.STREAM_SEND_METADATA)
         {
             this.streamSendMetadata = !this.streamSendMetadata;
         }
 
-        if (p_74306_1_ == GameSettings.Options.STREAM_CHAT_ENABLED)
+        if (enumOption == GameSettings.Options.STREAM_CHAT_ENABLED)
         {
-            this.streamChatEnabled = (this.streamChatEnabled + p_74306_2_) % 3;
+            this.streamChatEnabled = (this.streamChatEnabled + value) % 3;
         }
 
-        if (p_74306_1_ == GameSettings.Options.STREAM_CHAT_USER_FILTER)
+        if (enumOption == GameSettings.Options.STREAM_CHAT_USER_FILTER)
         {
-            this.streamChatUserFilter = (this.streamChatUserFilter + p_74306_2_) % 3;
+            this.streamChatUserFilter = (this.streamChatUserFilter + value) % 3;
         }
 
-        if (p_74306_1_ == GameSettings.Options.STREAM_MIC_TOGGLE_BEHAVIOR)
+        if (enumOption == GameSettings.Options.STREAM_MIC_TOGGLE_BEHAVIOR)
         {
-            this.streamMicToggleBehavior = (this.streamMicToggleBehavior + p_74306_2_) % 2;
+            this.streamMicToggleBehavior = (this.streamMicToggleBehavior + value) % 2;
         }
 
-        if (p_74306_1_ == GameSettings.Options.CHAT_COLOR)
+        if (enumOption == GameSettings.Options.CHAT_COLOR)
         {
             this.chatColours = !this.chatColours;
         }
 
-        if (p_74306_1_ == GameSettings.Options.CHAT_LINKS)
+        if (enumOption == GameSettings.Options.CHAT_LINKS)
         {
             this.chatLinks = !this.chatLinks;
         }
 
-        if (p_74306_1_ == GameSettings.Options.CHAT_LINKS_PROMPT)
+        if (enumOption == GameSettings.Options.CHAT_LINKS_PROMPT)
         {
             this.chatLinksPrompt = !this.chatLinksPrompt;
         }
 
-        if (p_74306_1_ == GameSettings.Options.SNOOPER_ENABLED)
+        if (enumOption == GameSettings.Options.SNOOPER_ENABLED)
         {
             this.snooperEnabled = !this.snooperEnabled;
         }
 
-        if (p_74306_1_ == GameSettings.Options.TOUCHSCREEN)
+        if (enumOption == GameSettings.Options.TOUCHSCREEN)
         {
             this.touchscreen = !this.touchscreen;
         }
 
-        if (p_74306_1_ == GameSettings.Options.USE_FULLSCREEN)
+        if (enumOption == GameSettings.Options.USE_FULLSCREEN)
         {
             this.fullScreen = !this.fullScreen;
 
@@ -580,30 +562,30 @@ public class GameSettings
             }
         }
 
-        if (p_74306_1_ == GameSettings.Options.ENABLE_VSYNC)
+        if (enumOption == GameSettings.Options.ENABLE_VSYNC)
         {
             this.enableVsync = !this.enableVsync;
             Display.setVSyncEnabled(this.enableVsync);
         }
 
-        if (p_74306_1_ == GameSettings.Options.USE_VBO)
+        if (enumOption == GameSettings.Options.USE_VBO)
         {
             this.useVbo = !this.useVbo;
             this.mc.renderGlobal.loadRenderers();
         }
 
-        if (p_74306_1_ == GameSettings.Options.BLOCK_ALTERNATIVES)
+        if (enumOption == GameSettings.Options.BLOCK_ALTERNATIVES)
         {
             this.allowBlockAlternatives = !this.allowBlockAlternatives;
             this.mc.renderGlobal.loadRenderers();
         }
 
-        if (p_74306_1_ == GameSettings.Options.REDUCED_DEBUG_INFO)
+        if (enumOption == GameSettings.Options.REDUCED_DEBUG_INFO)
         {
             this.reducedDebugInfo = !this.reducedDebugInfo;
         }
 
-        if (p_74306_1_ == GameSettings.Options.ENTITY_SHADOWS)
+        if (enumOption == GameSettings.Options.ENTITY_SHADOWS)
         {
             this.field_181151_V = !this.field_181151_V;
         }
@@ -3286,7 +3268,7 @@ public class GameSettings
         private final boolean enumBoolean;
         private final String enumString;
         private final float valueStep;
-        private float valueMin;
+        private final float valueMin;
         private float valueMax;
         private static final GameSettings.Options[] $VALUES = new GameSettings.Options[]{INVERT_MOUSE, SENSITIVITY, FOV, GAMMA, SATURATION, RENDER_DISTANCE, VIEW_BOBBING, ANAGLYPH, FRAMERATE_LIMIT, FBO_ENABLE, RENDER_CLOUDS, GRAPHICS, AMBIENT_OCCLUSION, GUI_SCALE, PARTICLES, CHAT_VISIBILITY, CHAT_COLOR, CHAT_LINKS, CHAT_OPACITY, CHAT_LINKS_PROMPT, SNOOPER_ENABLED, USE_FULLSCREEN, ENABLE_VSYNC, USE_VBO, TOUCHSCREEN, CHAT_SCALE, CHAT_WIDTH, CHAT_HEIGHT_FOCUSED, CHAT_HEIGHT_UNFOCUSED, MIPMAP_LEVELS, FORCE_UNICODE_FONT, STREAM_BYTES_PER_PIXEL, STREAM_VOLUME_MIC, STREAM_VOLUME_SYSTEM, STREAM_KBPS, STREAM_FPS, STREAM_COMPRESSION, STREAM_SEND_METADATA, STREAM_CHAT_ENABLED, STREAM_CHAT_USER_FILTER, STREAM_MIC_TOGGLE_BEHAVIOR, BLOCK_ALTERNATIVES, REDUCED_DEBUG_INFO, ENTITY_SHADOWS};
         private static final String __OBFID = "CL_00000653";

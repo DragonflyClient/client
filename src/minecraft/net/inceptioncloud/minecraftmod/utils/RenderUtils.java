@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.utils;
 
+import kotlin.ranges.RangesKt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -54,9 +55,9 @@ public final class RenderUtils
         final RenderManager renderManager = mc.getRenderManager();
         final Timer timer = mc.timer;
 
-        final double x = entity.lastTickPosX + ( entity.posX - entity.lastTickPosX ) * timer.renderPartialTicks - renderManager.renderPosX;
-        final double y = entity.lastTickPosY + ( entity.posY - entity.lastTickPosY ) * timer.renderPartialTicks - renderManager.renderPosY;
-        final double z = entity.lastTickPosZ + ( entity.posZ - entity.lastTickPosZ ) * timer.renderPartialTicks - renderManager.renderPosZ;
+        final double x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * timer.renderPartialTicks - renderManager.renderPosX;
+        final double y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * timer.renderPartialTicks - renderManager.renderPosY;
+        final double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * timer.renderPartialTicks - renderManager.renderPosZ;
 
         final AxisAlignedBB axisAlignedBB = entity.getEntityBoundingBox()
             .offset(-entity.posX, -entity.posY, -entity.posZ)
@@ -184,7 +185,7 @@ public final class RenderUtils
 
     public static void drawLoadingCircle (float x, float y)
     {
-        int rot = ( int ) ( ( System.nanoTime() / 5000000 ) % 360 );
+        int rot = (int) ((System.nanoTime() / 5000000) % 360);
         drawCircle(x, y, 10, rot - 180, rot);
     }
 
@@ -197,14 +198,64 @@ public final class RenderUtils
 
         glEnable(GL_LINE_SMOOTH);
         glLineWidth(2F);
+
         glBegin(GL_LINE_STRIP);
-        for (float i = end ; i >= start ; i -= ( 360 / 90 ))
-            glVertex2f(( float ) ( x + ( cos(i * PI / 180) * ( radius * 1.001F ) ) ), ( float ) ( y + ( sin(i * PI / 180) * ( radius * 1.001F ) ) ));
+        for (float i = end ; i >= start ; i -= 4)
+            glVertex2f((float) (x + (cos(i * PI / 180) * (radius * 1.001F))), (float) (y + (sin(i * PI / 180) * (radius * 1.001F))));
+
         glEnd();
         glDisable(GL_LINE_SMOOTH);
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
+    }
+
+    public static void drawArc (float x, float y, int start, int end, int width, int height, Color color)
+    {
+        int factor = 5;
+
+        glScaled(1D/factor, 1D/factor, 1D/factor);
+        glEnable( GL_BLEND );
+        glEnable(GL_POLYGON_SMOOTH);
+
+        glColor(color);
+        glBegin(GL_POLYGON);
+        glVertex2f(x * factor, y * factor);
+
+        for (float i = end ; i >= start ; i--) {
+            glVertex2f((float) (x + (cos(i * PI / 180) * (width * 1.001F))) * factor, (float) (y + (sin(i * PI / 180) * (height * 1.001F))) * factor);
+        }
+
+        glEnd();
+        glDisable(GL_POLYGON_SMOOTH);
+        glDisable(GL_BLEND);
+
+        glColor(color);
+        glBegin(GL_POLYGON);
+        glVertex2f(x * factor, y * factor);
+
+        for (float i = end ; i >= start ; i--) {
+            glVertex2f((float) (x + (cos(i * PI / 180) * (width - (1F/factor)) * 1.001F)) * factor, (float) (y + (sin(i * PI / 180) * (height - (1F/factor)) * 1.001F)) * factor);
+        }
+
+        glEnd();
+
+        glScaled(factor, factor, factor);
+    }
+
+    public static void drawRoundRect(int x, int y, int width, int height, int arc, Color color) {
+        int smallest = RangesKt.coerceAtMost(height, width);
+        int arcSize = RangesKt.coerceAtMost(arc, smallest / 2);
+        int spaceHorizontal = width - arcSize * 2;
+        int spaceVertical = height - arcSize * 2;
+
+        drawArc((float)(x + arcSize), (float)(y + arcSize), 180, 270, arcSize, arcSize, color);
+        Gui.drawRect(x, y + arcSize, x + arcSize, y + arcSize + spaceVertical, color.getRGB());
+        drawArc((float)(x + arcSize), (float)(y + arcSize + spaceVertical), 90, 180, arcSize, arcSize, color);
+        Gui.drawRect(x + arcSize, y, x + arcSize + spaceHorizontal, y + arcSize * 2 + spaceVertical, color.getRGB());
+        drawArc((float)(x + arcSize + spaceHorizontal), (float)(y + arcSize), 270, 360, arcSize, arcSize, color);
+        Gui.drawRect(x + arcSize + spaceHorizontal, y + arcSize, x + arcSize * 2 + spaceHorizontal, y + arcSize + spaceVertical, color.getRGB());
+        drawArc((float)(x + arcSize + spaceHorizontal), (float)(y + arcSize + spaceVertical), 0, 90, arcSize, arcSize, color);
     }
 
     public static void drawFilledCircle (int xx, int yy, float radius, Color col)
@@ -221,12 +272,13 @@ public final class RenderUtils
         glBegin(GL_TRIANGLE_FAN);
 
         for (int i = 0 ; i < sections ; i++) {
-            x = ( float ) ( radius * Math.sin(( i * dAngle )) );
-            y = ( float ) ( radius * Math.cos(( i * dAngle )) );
+            x = (float) (radius * Math.sin((i * dAngle)));
+            y = (float) (radius * Math.cos((i * dAngle)));
 
             glColor4f(col.getRed() / 255f, col.getGreen() / 255f, col.getBlue() / 255f, col.getAlpha() / 255f);
             glVertex2f(xx + x, yy + y);
         }
+
         GlStateManager.color(0, 0, 0);
         glEnd();
         glEnable(GL_TEXTURE_2D);
@@ -270,19 +322,19 @@ public final class RenderUtils
 
     private static void glColor (final int hex)
     {
-        float alpha = ( hex >> 24 & 0xFF ) / 255F;
-        float red = ( hex >> 16 & 0xFF ) / 255F;
-        float green = ( hex >> 8 & 0xFF ) / 255F;
-        float blue = ( hex & 0xFF ) / 255F;
+        float alpha = (hex >> 24 & 0xFF) / 255F;
+        float red = (hex >> 16 & 0xFF) / 255F;
+        float green = (hex >> 8 & 0xFF) / 255F;
+        float blue = (hex & 0xFF) / 255F;
         GlStateManager.color(red, green, blue, alpha);
     }
 
     public static Color hexColor (final int hex)
     {
-        float alpha = ( hex >> 24 & 0xFF ) / 255F;
-        float red = ( hex >> 16 & 0xFF ) / 255F;
-        float green = ( hex >> 8 & 0xFF ) / 255F;
-        float blue = ( hex & 0xFF ) / 255F;
+        float alpha = (hex >> 24 & 0xFF) / 255F;
+        float red = (hex >> 16 & 0xFF) / 255F;
+        float green = (hex >> 8 & 0xFF) / 255F;
+        float blue = (hex & 0xFF) / 255F;
 
         return new Color(red, green, blue, alpha);
     }
@@ -309,7 +361,7 @@ public final class RenderUtils
         drawRect(-7.3F, 0.5F, -7F, 3.3F, backgroundColor);
         drawRect(7F, 0.5F, 7.3F, 3.3F, backgroundColor);
 
-        GlStateManager.translate(0, 21 + -( entity.getEntityBoundingBox().maxY - entity.getEntityBoundingBox().minY ) * 12, 0);
+        GlStateManager.translate(0, 21 + -(entity.getEntityBoundingBox().maxY - entity.getEntityBoundingBox().minY) * 12, 0);
 
         drawRect(4F, -20F, 7F, -19F, color);
         drawRect(-7F, -20F, -4F, -19F, color);
@@ -330,9 +382,9 @@ public final class RenderUtils
     {
         final RenderManager renderManager = mc.getRenderManager();
 
-        final double posX = ( blockPos.getX() + 0.5 ) - renderManager.renderPosX;
+        final double posX = (blockPos.getX() + 0.5) - renderManager.renderPosX;
         final double posY = blockPos.getY() - renderManager.renderPosY;
-        final double posZ = ( blockPos.getZ() + 0.5 ) - renderManager.renderPosZ;
+        final double posZ = (blockPos.getZ() + 0.5) - renderManager.renderPosZ;
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(posX, posY, posZ);
@@ -386,7 +438,7 @@ public final class RenderUtils
     {
         final ScaledResolution scaledResolution = new ScaledResolution(mc);
         final int factor = scaledResolution.getScaleFactor();
-        glScissor(( int ) ( x * factor ), ( int ) ( ( scaledResolution.getScaledHeight() - y2 ) * factor ), ( int ) ( ( x2 - x ) * factor ), ( int ) ( ( y2 - y ) * factor ));
+        glScissor((int) (x * factor), (int) ((scaledResolution.getScaledHeight() - y2) * factor), (int) ((x2 - x) * factor), (int) ((y2 - y) * factor));
     }
 
     public static void resetCaps ()

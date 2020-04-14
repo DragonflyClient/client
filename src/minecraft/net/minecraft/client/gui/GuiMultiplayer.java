@@ -2,16 +2,7 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.List;
-
-import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
-import net.inceptioncloud.minecraftmod.transition.supplier.AlwaysForward;
-import net.minecraft.client.multiplayer.GuiConnecting;
-import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.multiplayer.ServerList;
+import net.minecraft.client.multiplayer.*;
 import net.minecraft.client.network.LanServerDetector;
 import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.client.resources.I18n;
@@ -19,11 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
+import java.io.IOException;
+import java.util.List;
+
 public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
 {
     private static final Logger logger = LogManager.getLogger();
     private final OldServerPinger oldServerPinger = new OldServerPinger();
-    private GuiScreen parentScreen;
+    private final GuiScreen parentScreen;
     private ServerSelectionList serverListSelector;
     private ServerList savedServerList;
     private GuiButton btnEditServer;
@@ -291,21 +285,21 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
                         {
                             this.savedServerList.swapServers(i, i - 1);
                             this.selectServer(this.serverListSelector.func_148193_k() - 1);
-                            this.serverListSelector.scrollBy(-this.serverListSelector.getSlotHeight());
+                            this.serverListSelector.scrollBy(-this.serverListSelector.getEntryHeight());
                             this.serverListSelector.func_148195_a(this.savedServerList);
                         }
                     }
                     else if (i > 0)
                     {
                         this.selectServer(this.serverListSelector.func_148193_k() - 1);
-                        this.serverListSelector.scrollBy(-this.serverListSelector.getSlotHeight());
+                        this.serverListSelector.scrollBy(-this.serverListSelector.getEntryHeight());
 
                         if (this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k()) instanceof ServerListEntryLanScan)
                         {
                             if (this.serverListSelector.func_148193_k() > 0)
                             {
                                 this.selectServer(this.serverListSelector.getSize() - 1);
-                                this.serverListSelector.scrollBy(-this.serverListSelector.getSlotHeight());
+                                this.serverListSelector.scrollBy(-this.serverListSelector.getEntryHeight());
                             }
                             else
                             {
@@ -326,21 +320,21 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback
                         {
                             this.savedServerList.swapServers(i, i + 1);
                             this.selectServer(i + 1);
-                            this.serverListSelector.scrollBy(this.serverListSelector.getSlotHeight());
+                            this.serverListSelector.scrollBy(this.serverListSelector.getEntryHeight());
                             this.serverListSelector.func_148195_a(this.savedServerList);
                         }
                     }
                     else if (i < this.serverListSelector.getSize())
                     {
                         this.selectServer(this.serverListSelector.func_148193_k() + 1);
-                        this.serverListSelector.scrollBy(this.serverListSelector.getSlotHeight());
+                        this.serverListSelector.scrollBy(this.serverListSelector.getEntryHeight());
 
                         if (this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k()) instanceof ServerListEntryLanScan)
                         {
                             if (this.serverListSelector.func_148193_k() < this.serverListSelector.getSize() - 1)
                             {
                                 this.selectServer(this.serverListSelector.getSize() + 1);
-                                this.serverListSelector.scrollBy(this.serverListSelector.getSlotHeight());
+                                this.serverListSelector.scrollBy(this.serverListSelector.getEntryHeight());
                             }
                             else
                             {

@@ -1,7 +1,6 @@
 package net.inceptioncloud.minecraftmod.ui.mainmenu.multiplayer;
 
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiDirectConnect;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.multiplayer.ServerData;
@@ -17,12 +16,13 @@ public class DirectConnectAction extends QuickAction
      */
     public DirectConnectAction ()
     {
-        super(1, 14, "Direct Connect", () ->
-        {
-            GuiMultiplayer guiMultiplayer = new GuiMultiplayer(Minecraft.getMinecraft().currentScreen);
-            Minecraft.getMinecraft().displayGuiScreen(guiMultiplayer);
-            guiMultiplayer.directConnect = true;
-            Minecraft.getMinecraft().displayGuiScreen(new GuiDirectConnect(guiMultiplayer, guiMultiplayer.selectedServer = new ServerData(I18n.format("selectServer.defaultName"), "", false)));
-        });
+        super(1, 14, "Direct Connect",
+            () ->
+            {
+                GuiMultiplayer guiMultiplayer = new GuiMultiplayer(mc.currentScreen);
+                mc.displayGuiScreen(guiMultiplayer);
+                guiMultiplayer.directConnect = true;
+                mc.displayGuiScreen(new GuiDirectConnect(guiMultiplayer, guiMultiplayer.selectedServer = new ServerData(I18n.format("selectServer.defaultName"), "", false)));
+            });
     }
 }
