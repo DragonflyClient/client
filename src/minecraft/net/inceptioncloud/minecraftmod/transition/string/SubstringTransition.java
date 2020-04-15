@@ -14,6 +14,14 @@ import java.util.function.IntSupplier;
 public class SubstringTransition extends TransitionTypeString
 {
     /**
+     * A simple object that the constructor and non-thread-safe methods are synchronized on.
+     * The content of this object is never used and it is never updated or accessed.
+     *
+     * @since v1.0.1.0 ~ hotfix/transition-thread-safe
+     */
+    private final Object threadLock = new Object();
+
+    /**
      * The content of the string transition.
      */
     @Builder.Default
@@ -38,14 +46,17 @@ public class SubstringTransition extends TransitionTypeString
     {
         super(reachEnd, reachStart, autoTransformator);
 
-        Validate.notNull(content, "The content cannot be null!");
+        synchronized (threadLock) {
 
-        this.content = content;
-        this.base = DoubleTransition.builder()
-            .start(0)
-            .end(this.content.length())
-            .amountOfSteps(amountOfSteps)
-            .build();
+            Validate.notNull(content, "The content cannot be null!");
+
+            this.content = content;
+            this.base = DoubleTransition.builder()
+                .start(0)
+                .end(this.content.length())
+                .amountOfSteps(amountOfSteps)
+                .build();
+        }
     }
 
     /**
@@ -81,7 +92,9 @@ public class SubstringTransition extends TransitionTypeString
     @Override
     public void doForward ()
     {
-        base.setForward();
+        synchronized (threadLock) {
+            base.setForward();
+        }
     }
 
     /**
@@ -90,7 +103,9 @@ public class SubstringTransition extends TransitionTypeString
     @Override
     public void doBackward ()
     {
-        base.setBackward();
+        synchronized (threadLock) {
+            base.setBackward();
+        }
     }
 
     @Override

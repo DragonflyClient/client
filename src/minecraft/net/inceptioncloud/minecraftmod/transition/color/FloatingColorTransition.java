@@ -17,6 +17,14 @@ import java.util.function.IntSupplier;
 public class FloatingColorTransition extends TransitionTypeColor
 {
     /**
+     * A simple object that the constructor and non-thread-safe methods are synchronized on.
+     * The content of this object is never used and it is never updated or accessed.
+     *
+     * @since v1.0.1.0 ~ hotfix/transition-thread-safe
+     */
+    private final Object threadLock = new Object();
+
+    /**
      * The color transition base.
      */
     private final ColorTransition base;
@@ -37,7 +45,10 @@ public class FloatingColorTransition extends TransitionTypeColor
                                     final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
     {
         super(null, null, autoTransformator);
-        this.base = new ColorTransitionBuilder().start(start).end(end).amountOfSteps(amountOfSteps).reachStart(reachStart).reachEnd(reachEnd).build();
+
+        synchronized (threadLock) {
+            this.base = new ColorTransitionBuilder().start(start).end(end).amountOfSteps(amountOfSteps).reachStart(reachStart).reachEnd(reachEnd).build();
+        }
     }
 
     /**
@@ -45,16 +56,18 @@ public class FloatingColorTransition extends TransitionTypeColor
      */
     public void next ()
     {
-        if (direction == FloatingDirection.FORWARD) {
-            this.base.setForward();
+        synchronized (threadLock) {
+            if (direction == FloatingDirection.FORWARD) {
+                this.base.setForward();
 
-            if (isAtEnd())
-                direction = FloatingDirection.BACKWARD;
-        } else {
-            this.base.setBackward();
+                if (isAtEnd())
+                    direction = FloatingDirection.BACKWARD;
+            } else {
+                this.base.setBackward();
 
-            if (isAtStart())
-                direction = FloatingDirection.FORWARD;
+                if (isAtStart())
+                    direction = FloatingDirection.FORWARD;
+            }
         }
     }
 
