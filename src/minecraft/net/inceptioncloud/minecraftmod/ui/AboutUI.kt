@@ -110,7 +110,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen()
             textY += imageSize + 2
 
             drawIcon("github", wX + 20, textY, imageSize)
-            smallFont.drawString("@theincxption", wX + 22F + imageSize, textY + 3F, smallColor, false)
+            smallFont.drawString("@incxption", wX + 22F + imageSize, textY + 3F, smallColor, false)
             textY += 20
             //endregion
 
