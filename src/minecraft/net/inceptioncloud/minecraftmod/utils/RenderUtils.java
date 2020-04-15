@@ -249,13 +249,19 @@ public final class RenderUtils
         int spaceHorizontal = width - arcSize * 2;
         int spaceVertical = height - arcSize * 2;
 
-        drawArc((float)(x + arcSize), (float)(y + arcSize), 180, 270, arcSize, arcSize, color);
         Gui.drawRect(x, y + arcSize, x + arcSize, y + arcSize + spaceVertical, color.getRGB());
-        drawArc((float)(x + arcSize), (float)(y + arcSize + spaceVertical), 90, 180, arcSize, arcSize, color);
         Gui.drawRect(x + arcSize, y, x + arcSize + spaceHorizontal, y + arcSize * 2 + spaceVertical, color.getRGB());
-        drawArc((float)(x + arcSize + spaceHorizontal), (float)(y + arcSize), 270, 360, arcSize, arcSize, color);
         Gui.drawRect(x + arcSize + spaceHorizontal, y + arcSize, x + arcSize * 2 + spaceHorizontal, y + arcSize + spaceVertical, color.getRGB());
-        drawArc((float)(x + arcSize + spaceHorizontal), (float)(y + arcSize + spaceVertical), 0, 90, arcSize, arcSize, color);
+
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        drawArc((float) (x + arcSize), (float) (y + arcSize), 180, 270, arcSize, arcSize, color);
+        drawArc((float) (x + arcSize), (float) (y + arcSize + spaceVertical), 90, 180, arcSize, arcSize, color);
+        drawArc((float) (x + arcSize + spaceHorizontal), (float) (y + arcSize), 270, 360, arcSize, arcSize, color);
+        drawArc((float) (x + arcSize + spaceHorizontal), (float) (y + arcSize + spaceVertical), 0, 90, arcSize, arcSize, color);
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
     }
 
     public static void drawFilledCircle (int xx, int yy, float radius, Color col)
@@ -295,6 +301,7 @@ public final class RenderUtils
         OpenGlHelper.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
         glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(image);
+
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
         glDepthMask(true);
         glDisable(GL_BLEND);

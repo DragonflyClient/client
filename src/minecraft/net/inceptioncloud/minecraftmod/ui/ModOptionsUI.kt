@@ -45,7 +45,6 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
      */
     private lateinit var uiList: UIList
 
-
     /**
      * The location where the resource for the background image can be found.
      *
@@ -100,10 +99,8 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
 
         uiList.drawScreen(mouseX, mouseY, partialTicks)
 
-        drawGradientVertical(0, 30, width, 35,
-                Color(0, 0, 0, 80).rgb, Color(0, 0, 0, 0).rgb)
-        drawGradientVertical(0, height - 23, width, height - 18,
-                Color(0, 0, 0, 0).rgb, Color(0, 0, 0, 80).rgb)
+        drawGradientVertical(0, 30, width, 35, Color(0, 0, 0, 80).rgb, Color(0, 0, 0, 0).rgb)
+        drawGradientVertical(0, height - 23, width, height - 18, Color(0, 0, 0, 0).rgb, Color(0, 0, 0, 80).rgb)
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }

@@ -35,6 +35,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.*;
 
+import static net.inceptioncloud.minecraftmod.utils.RenderUtils.drawLine;
+
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -49,6 +51,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
      */
     public int height;
     public boolean allowUserInput;
+    public List<GuiButton> buttonList = Lists.newArrayList();
     /**
      * Reference to the Minecraft object.
      */
@@ -57,7 +60,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
      * Holds a instance of RenderItem, used to draw the achievement icons on screen (is based on ItemStack)
      */
     protected RenderItem itemRender;
-    public List<GuiButton> buttonList = Lists.newArrayList();
     protected List<GuiLabel> labelList = Lists.newArrayList();
     /**
      * The FontManager used by GuiScreen
@@ -72,8 +74,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     private long lastMouseEvent;
 
     /**
-     * Incremented when the game is in touchscreen mode and the screen is tapped, decremented if the screen isn't
-     * tapped. Does not appear to be used.
+     * Incremented when the game is in touchscreen mode and the screen is tapped, decremented if the screen isn't tapped. Does not appear to be used.
      */
     private int touchValue;
     private URI clickedLinkURI;
@@ -84,7 +85,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 
             if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                return ( String ) transferable.getTransferData(DataFlavor.stringFlavor);
+                return (String) transferable.getTransferData(DataFlavor.stringFlavor);
             }
         } catch (Exception ignored) {
         }
@@ -197,8 +198,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     /**
-     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
-     * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
+     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
     protected void keyTyped (char typedChar, int keyCode) throws IOException
     {
@@ -227,8 +227,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     /**
-     * Draws the text when mouse is over creative inventory tab. Params: current creative tab to be checked, current
-     * mouse x position, current mouse y position.
+     * Draws the text when mouse is over creative inventory tab. Params: current creative tab to be checked, current mouse x position, current mouse y position.
      */
     protected void drawCreativeTabHoveringText (String tabName, int mouseX, int mouseY)
     {
@@ -262,7 +261,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             int height = 8;
 
             if (textLines.size() > 1) {
-                height += 2 + ( textLines.size() - 1 ) * 10;
+                height += 2 + (textLines.size() - 1) * 10;
             }
 
             if (left + i > this.width) {
@@ -282,7 +281,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
             this.drawGradientVertical(left - 4, top - 3, left - 3, top + height + 3, l, l);
             this.drawGradientVertical(left + i + 3, top - 3, left + i + 4, top + height + 3, l, l);
             int i1 = 1347420415;
-            int j1 = ( i1 & 16711422 ) >> 1 | i1 & -16777216;
+            int j1 = (i1 & 16711422) >> 1 | i1 & -16777216;
             this.drawGradientVertical(left - 3, top - 3 + 1, left - 3 + 1, top + height + 3 - 1, i1, j1);
             this.drawGradientVertical(left + i + 2, top - 3 + 1, left + i + 3, top + height + 3 - 1, i1, j1);
             this.drawGradientVertical(left - 3, top - 3, left + i + 3, top - 3 + 1, i1, i1);
@@ -292,7 +291,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
             for (int k1 = 0 ; k1 < textLines.size() ; ++k1) {
                 String s1 = textLines.get(k1);
-                fontRenderer.drawStringWithShadow(s1, ( float ) left, ( float ) top, -1);
+                fontRenderer.drawStringWithShadow(s1, (float) left, (float) top, -1);
 
                 if (k1 == 0) {
                     top += 1;
@@ -325,7 +324,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                     NBTBase nbtbase = JsonToNBT.getTagFromJson(hoverevent.getValue().getUnformattedText());
 
                     if (nbtbase instanceof NBTTagCompound) {
-                        itemstack = ItemStack.loadItemStackFromNBT(( NBTTagCompound ) nbtbase);
+                        itemstack = ItemStack.loadItemStackFromNBT((NBTTagCompound) nbtbase);
                     }
                 } catch (NBTException var11) {
                 }
@@ -342,7 +341,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
                         if (nbtbase1 instanceof NBTTagCompound) {
                             List<String> list1 = Lists.newArrayList();
-                            NBTTagCompound nbttagcompound = ( NBTTagCompound ) nbtbase1;
+                            NBTTagCompound nbttagcompound = (NBTTagCompound) nbtbase1;
                             list1.add(nbttagcompound.getString("name"));
 
                             if (nbttagcompound.hasKey("type", 8)) {
@@ -366,9 +365,9 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
                 if (statbase != null) {
                     IChatComponent ichatcomponent = statbase.getStatName();
-                    IChatComponent ichatcomponent1 = new ChatComponentTranslation("stats.tooltip.type." + ( statbase.isAchievement() ? "achievement" : "statistic" ));
+                    IChatComponent ichatcomponent1 = new ChatComponentTranslation("stats.tooltip.type." + (statbase.isAchievement() ? "achievement" : "statistic"));
                     ichatcomponent1.getChatStyle().setItalic(Boolean.valueOf(true));
-                    String s1 = statbase instanceof Achievement ? ( ( Achievement ) statbase ).getDescription() : null;
+                    String s1 = statbase instanceof Achievement ? ((Achievement) statbase).getDescription() : null;
                     List<String> list = Lists.newArrayList(ichatcomponent.getFormattedText(), ichatcomponent1.getFormattedText());
 
                     if (s1 != null) {
@@ -432,7 +431,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                         LOGGER.error("Can't open url for " + clickevent, urisyntaxexception);
                     }
                 } else if (clickevent.getAction() == ClickEvent.Action.OPEN_FILE) {
-                    URI uri1 = ( new File(clickevent.getValue()) ).toURI();
+                    URI uri1 = (new File(clickevent.getValue())).toURI();
                     this.openWebLink(uri1);
                 } else if (clickevent.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
                     this.setText(clickevent.getValue(), true);
@@ -496,8 +495,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     /**
-     * Called when a mouse button is pressed and the mouse is moved around. Parameters are : mouseX, mouseY,
-     * lastButtonClicked & timeSinceMouseClick.
+     * Called when a mouse button is pressed and the mouse is moved around. Parameters are : mouseX, mouseY, lastButtonClicked & timeSinceMouseClick.
      */
     protected void mouseClickMove (int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick)
     {
@@ -511,8 +509,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     /**
-     * Causes the screen to lay out its subcomponents again. This is the equivalent of the Java call
-     * Container.validate()
+     * Causes the screen to lay out its subcomponents again. This is the equivalent of the Java call Container.validate()
      */
     public void setWorldAndResolution (Minecraft mc, int width, int height)
     {
@@ -526,8 +523,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     }
 
     /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
+     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
      */
     public void initGui ()
     {
@@ -549,6 +545,41 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                 this.handleKeyboardInput();
             }
         }
+    }
+
+    /**
+     * Draws a red background on the screen that indicates that the window must be bigger.
+     * <p>
+     * This method can be used by gui screens that need the screen to have at least a certain size.
+     * When the size isn't enough, screen mustn't render it's content but instead call this method.
+     * It doesn't use any font renderer as these can cause the game to crash when below a certain size.
+     */
+    protected void drawSizeNotSupported ()
+    {
+        drawRect(0, 0, width, height, new Color(0xeb3b5a).getRGB());
+
+        int line = (int) Math.max(5, Math.min(50, mc.displayHeight / 2.5));
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+        drawLine(15, 15, 15, line, 4);
+        drawLine(13, 15, line, 15, 4);
+        drawLine(15, 15, line, line, 6);
+
+        drawLine(width - 15, 15, width - 15, line, 4);
+        drawLine(width - line, 15, width - 13, 15, 4);
+        drawLine(width - 15, 15, width - line, line, 6);
+
+        drawLine(15, height - 15, 15, height - line, 4);
+        drawLine(13, height - 15, line, height - 15, 4);
+        drawLine(15, height - 16, line, height - line, 6);
+
+        drawLine(width - 15, height - 15, width - 15, height - line, 4);
+        drawLine(width - line, height - 15, width - 13, height - 15, 4);
+        drawLine(width - 15, height - 16, width - line, height - line, 6);
+
+        drawRect(line + 15, line + 15, width - line - 15, height - line - 15, Color.WHITE.getRGB());
+        drawRect(line + 19, line + 19, width - line - 19, height - line - 19,
+            new Color(0xeb3b5a).darker().darker().getRGB());
     }
 
     /**
@@ -639,9 +670,9 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         float f = 32.0F;
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        worldrenderer.pos(0.0D, this.height, 0.0D).tex(0.0D, ( float ) this.height / 32.0F + ( float ) tint).color(64, 64, 64, 255).endVertex();
-        worldrenderer.pos(this.width, this.height, 0.0D).tex(( float ) this.width / 32.0F, ( float ) this.height / 32.0F + ( float ) tint).color(64, 64, 64, 255).endVertex();
-        worldrenderer.pos(this.width, 0.0D, 0.0D).tex(( float ) this.width / 32.0F, tint).color(64, 64, 64, 255).endVertex();
+        worldrenderer.pos(0.0D, this.height, 0.0D).tex(0.0D, (float) this.height / 32.0F + (float) tint).color(64, 64, 64, 255).endVertex();
+        worldrenderer.pos(this.width, this.height, 0.0D).tex((float) this.width / 32.0F, (float) this.height / 32.0F + (float) tint).color(64, 64, 64, 255).endVertex();
+        worldrenderer.pos(this.width, 0.0D, 0.0D).tex((float) this.width / 32.0F, tint).color(64, 64, 64, 255).endVertex();
         worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, tint).color(64, 64, 64, 255).endVertex();
         tessellator.draw();
     }
