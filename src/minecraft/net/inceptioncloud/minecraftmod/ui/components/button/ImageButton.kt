@@ -22,6 +22,10 @@ class ImageButton(
         private val resourceLocation: ResourceLocation
 ) : GuiButton(buttonId, x, y, width, height, "")
 {
+    /**
+     * The transition that moves the image a little bit up when hovering it.
+     * This creates a smooth rise effect as the second layer with 20% opacity in black stays at the current position.
+     */
     private val transitionHover = SmoothDoubleTransition.builder()
         .start(0.0).end(1.0)
         .fadeIn(10).stay(10).fadeOut(10)
@@ -46,13 +50,13 @@ class ImageButton(
             val f = 2.0F
             GlStateManager.scale(1 / f, 1 / f, 1 / f)
             GlStateManager.enableAlpha()
+            GlStateManager.enableBlend()
             GlStateManager.color(0F, 0F, 0F, .2F)
 
             mc.textureManager.bindTexture(resourceLocation)
             Gui.drawModalRectWithCustomSizedTexture((left * f).toInt(), (top * f).toInt(), 0F, 0F,
                     (width * f).toInt(), (height * f).toInt(), width * f, height * f)
 
-            GlStateManager.disableAlpha()
             GlStateManager.color(1F, 1F, 1F, 1F)
 
             mc.textureManager.bindTexture(resourceLocation)
@@ -60,6 +64,8 @@ class ImageButton(
                     0F, 0F, (width * f).toInt(), (height * f).toInt(), width * f, height * f)
 
             GlStateManager.scale(f, f, f)
+            GlStateManager.disableBlend()
+            GlStateManager.disableAlpha()
         }
     }
 

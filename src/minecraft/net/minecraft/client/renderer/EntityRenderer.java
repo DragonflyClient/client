@@ -1120,11 +1120,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
             int scaledWidth = scaledresolution.getScaledWidth();
             int scaledHeight = scaledresolution.getScaledHeight();
 
-//            if (mc.currentScreen instanceof GuiContainer) {
-//                scaledWidth *= 2 / 3D;
-//                scaledHeight *= 2 / 3D;
-//            }
-
             final int scaledMouseX = Mouse.getX() * scaledWidth / this.mc.displayWidth;
             final int scaledMouseY = scaledHeight - Mouse.getY() * scaledHeight / this.mc.displayHeight - 1;
 
