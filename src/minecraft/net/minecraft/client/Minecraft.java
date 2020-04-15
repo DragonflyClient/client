@@ -1468,8 +1468,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             if (this.fullscreen) {
 
-                if (windowedFullscreen)
+                if (windowedFullscreen) {
                     System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+                    Display.setResizable(false);
+                }
 
                 this.updateDisplayMode();
                 this.displayWidth = Display.getDisplayMode().getWidth();
@@ -1477,6 +1479,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             } else {
                 System.setProperty("org.lwjgl.opengl.Window.undecorated", "false");
+                Display.setResizable(true);
                 Display.setDisplayMode(new DisplayMode(this.tempDisplayWidth, this.tempDisplayHeight));
 
                 this.displayWidth = this.tempDisplayWidth;
