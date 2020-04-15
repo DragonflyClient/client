@@ -14,14 +14,22 @@ import java.util.function.IntSupplier;
 public class ColorTransition extends TransitionTypeColor
 {
     /**
+     * A simple object that the constructor and non-thread-safe methods are synchronized on.
+     * The content of this object is never used and it is never updated or accessed.
+     *
+     * @since v1.0.1.0 ~ hotfix/transition-thread-safe
+     */
+    private final Object threadLock = new Object();
+
+    /**
      * The color with which the transition starts.
      */
-    protected Color start = Color.WHITE;
+    protected Color start;
 
     /**
      * The color with which the transition ends.
      */
-    protected Color end = Color.BLACK;
+    protected Color end;
 
     /**
      * The base transition for the red value.
@@ -57,15 +65,22 @@ public class ColorTransition extends TransitionTypeColor
     {
         super(reachEnd, reachStart, autoTransformator);
 
-        Validate.isTrue(!start.equals(end), "Start and end value cannot be both the same");
+        synchronized (threadLock) {
+            Validate.isTrue(!start.equals(end), "Start and end value cannot be both the same");
 
-        this.start = start;
-        this.end = end;
-        this.amountOfSteps = amountOfSteps;
+            this.start = start;
+            this.end = end;
+            this.amountOfSteps = amountOfSteps;
 
-        this.redBase = DoubleTransition.builder().start(start.getRed()).end(end.getRed()).amountOfSteps(amountOfSteps).build();
-        this.greenBase = DoubleTransition.builder().start(start.getGreen()).end(end.getGreen()).amountOfSteps(amountOfSteps).build();
-        this.blueBase = DoubleTransition.builder().start(start.getBlue()).end(end.getBlue()).amountOfSteps(amountOfSteps).build();
+            this.redBase = DoubleTransition.builder().start(start.getRed()).end(end.getRed()).amountOfSteps(amountOfSteps).build();
+            this.greenBase = DoubleTransition.builder().start(start.getGreen()).end(end.getGreen()).amountOfSteps(amountOfSteps).build();
+            this.blueBase = DoubleTransition.builder().start(start.getBlue()).end(end.getBlue()).amountOfSteps(amountOfSteps).build();
+        }
+    }
+
+    public static ColorTransitionBuilder builder ()
+    {
+        return new ColorTransitionBuilder();
     }
 
     /**
@@ -103,16 +118,17 @@ public class ColorTransition extends TransitionTypeColor
     @Override
     public void doForward ()
     {
-        try {
-            redBase.setForward();
-            greenBase.setForward();
-            blueBase.setForward();
+        synchronized (threadLock) {
+            try {
+                redBase.setForward();
+                greenBase.setForward();
+                blueBase.setForward();
 
-            if (isAtEnd() && reachEnd != null)
-                reachEnd.run();
-        } catch (NullPointerException exception) {
-            exception.printStackTrace();
-            System.out.println(getOriginClass());
+                if (isAtEnd() && reachEnd != null)
+                    reachEnd.run();
+            } catch (NullPointerException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
@@ -122,14 +138,16 @@ public class ColorTransition extends TransitionTypeColor
     @Override
     public void doBackward ()
     {
-        if (redBase != null && greenBase != null && blueBase != null) {
-            redBase.setBackward();
-            greenBase.setBackward();
-            blueBase.setBackward();
-        }
+        synchronized (threadLock) {
+            if (redBase != null && greenBase != null && blueBase != null) {
+                redBase.setBackward();
+                greenBase.setBackward();
+                blueBase.setBackward();
+            }
 
-        if (isAtStart() && reachStart != null)
-            reachStart.run();
+            if (isAtStart() && reachStart != null)
+                reachStart.run();
+        }
     }
 
     @Override
@@ -148,10 +166,5 @@ public class ColorTransition extends TransitionTypeColor
         return "ColorTransition{" +
                "originStackTrace=" + originStackTrace +
                '}';
-    }
-
-    public static ColorTransitionBuilder builder ()
-    {
-        return new ColorTransitionBuilder();
     }
 }

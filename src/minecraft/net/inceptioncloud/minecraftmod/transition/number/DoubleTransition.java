@@ -15,6 +15,14 @@ import java.util.function.IntSupplier;
 public class DoubleTransition extends TransitionTypeNumber
 {
     /**
+     * A simple object that the constructor and non-thread-safe methods are synchronized on.
+     * The content of this object is never used and it is never updated or accessed.
+     *
+     * @since v1.0.1.0 ~ hotfix/transition-thread-safe
+     */
+    private final Object threadLock = new Object();
+
+    /**
      * The start value.
      */
     @Builder.Default
@@ -71,12 +79,14 @@ public class DoubleTransition extends TransitionTypeNumber
 //        Validate.isTrue(start >= 0, "The start value has to be positive");
 //        Validate.isTrue(end >= 0, "The end value has to be positive");
 
-        this.negative = start > end; // Check whether the double transition value is getting less when processing a forward step
-        this.start = start; // Pass the start value
-        this.end = end; // Pass the end value
-        this.current = start; // Set the current value to the start value
-        this.amountOfSteps = amountOfSteps;
-        this.perStep = ( Math.max(start, end) - Math.min(start, end) ) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
+        synchronized (threadLock) {
+            this.negative = start > end; // Check whether the double transition value is getting less when processing a forward step
+            this.start = start; // Pass the start value
+            this.end = end; // Pass the end value
+            this.current = start; // Set the current value to the start value
+            this.amountOfSteps = amountOfSteps;
+            this.perStep = (Math.max(start, end) - Math.min(start, end)) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
+        }
     }
 
     /**
@@ -85,24 +95,26 @@ public class DoubleTransition extends TransitionTypeNumber
     @Override
     public void doForward ()
     {
-        // If the value is already at the end, interrupt the step
-        if (isAtEnd())
-            return;
+        synchronized (threadLock) {
+            // If the value is already at the end, interrupt the step
+            if (isAtEnd())
+                return;
 
-        // Process the step
-        if (negative)
-            current -= perStep;
-        else
-            current += perStep;
+            // Process the step
+            if (negative)
+                current -= perStep;
+            else
+                current += perStep;
 
-        lastTransform = System.currentTimeMillis();
+            lastTransform = System.currentTimeMillis();
 
-        // If the value is at the end
-        if (isAtEnd()) {
-            current = end;
+            // If the value is at the end
+            if (isAtEnd()) {
+                current = end;
 
-            // Call the runnable
-            if (reachEnd != null) reachEnd.run();
+                // Call the runnable
+                if (reachEnd != null) reachEnd.run();
+            }
         }
     }
 
@@ -112,24 +124,26 @@ public class DoubleTransition extends TransitionTypeNumber
     @Override
     public void doBackward ()
     {
-        // If the value is already at the start, interrupt the step
-        if (isAtStart())
-            return;
+        synchronized (threadLock) {
+            // If the value is already at the start, interrupt the step
+            if (isAtStart())
+                return;
 
-        // Process the step
-        if (negative)
-            current += perStep;
-        else
-            current -= perStep;
+            // Process the step
+            if (negative)
+                current += perStep;
+            else
+                current -= perStep;
 
-        lastTransform = System.currentTimeMillis();
+            lastTransform = System.currentTimeMillis();
 
-        // If the value is at the start
-        if (isAtStart()) {
-            current = start;
+            // If the value is at the start
+            if (isAtStart()) {
+                current = start;
 
-            // Call the runnable
-            if (reachStart != null) reachStart.run();
+                // Call the runnable
+                if (reachStart != null) reachStart.run();
+            }
         }
     }
 
