@@ -14,6 +14,14 @@ import net.inceptioncloud.minecraftmod.transition.FloatingDirection;
 public class FloatingDoubleTransition extends TransitionTypeNumber
 {
     /**
+     * A simple object that the constructor and non-thread-safe methods are synchronized on.
+     * The content of this object is never used and it is never updated or accessed.
+     *
+     * @since v1.0.1.0 ~ hotfix/transition-thread-safe
+     */
+    private final Object threadLock = new Object();
+
+    /**
      * The double transition base.
      */
     private final DoubleTransition base;
@@ -33,7 +41,10 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
     private FloatingDoubleTransition (final double start, final double end, final int amountOfSteps, final Runnable reachEnd, final Runnable autoTransformator)
     {
         super(null, null, null);
-        this.base = DoubleTransition.builder().start(start).end(end).amountOfSteps(amountOfSteps).reachEnd(reachEnd).reachStart(autoTransformator).build();
+
+        synchronized (threadLock) {
+            this.base = DoubleTransition.builder().start(start).end(end).amountOfSteps(amountOfSteps).reachEnd(reachEnd).reachStart(autoTransformator).build();
+        }
     }
 
     /**
@@ -41,16 +52,18 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
      */
     public void next ()
     {
-        if (direction == FloatingDirection.FORWARD) {
-            this.base.setForward();
+        synchronized (threadLock) {
+            if (direction == FloatingDirection.FORWARD) {
+                this.base.setForward();
 
-            if (isAtEnd())
-                direction = FloatingDirection.BACKWARD;
-        } else {
-            this.base.setBackward();
+                if (isAtEnd())
+                    direction = FloatingDirection.BACKWARD;
+            } else {
+                this.base.setBackward();
 
-            if (isAtStart())
-                direction = FloatingDirection.FORWARD;
+                if (isAtStart())
+                    direction = FloatingDirection.FORWARD;
+            }
         }
     }
 

@@ -14,6 +14,14 @@ import java.util.function.IntSupplier;
 public class OverflowDoubleTransition extends TransitionTypeNumber
 {
     /**
+     * A simple object that the constructor and non-thread-safe methods are synchronized on.
+     * The content of this object is never used and it is never updated or accessed.
+     *
+     * @since v1.0.1.0 ~ hotfix/transition-thread-safe
+     */
+    private final Object threadLock = new Object();
+
+    /**
      * The first transition that goes from the start value to the between value.
      */
     private final DoubleTransition first;
@@ -45,13 +53,16 @@ public class OverflowDoubleTransition extends TransitionTypeNumber
     {
         super(reachEnd, reachStart, autoTransformator);
 
-        final boolean negative = end < start;
+        synchronized (threadLock) {
 
-        Validate.isTrue(negative ? overflow < end : overflow > end, "The overflow value must be %s than the end value!", ( negative ? "less" : "greater" ));
-        Validate.isTrue(start != overflow && start != end && end != overflow, "All of the values must be different!");
+            final boolean negative = end < start;
 
-        this.first = DoubleTransition.builder().start(start).end(overflow).amountOfSteps(firstAmount).reachEnd(() -> currentlyFirst = false).reachStart(reachStart).build();
-        this.second = DoubleTransition.builder().start(overflow).end(end).amountOfSteps(secondAmount).reachStart(() -> currentlyFirst = true).reachEnd(reachEnd).build();
+            Validate.isTrue(negative ? overflow < end : overflow > end, "The overflow value must be %s than the end value!", (negative ? "less" : "greater"));
+            Validate.isTrue(start != overflow && start != end && end != overflow, "All of the values must be different!");
+
+            this.first = DoubleTransition.builder().start(start).end(overflow).amountOfSteps(firstAmount).reachEnd(() -> currentlyFirst = false).reachStart(reachStart).build();
+            this.second = DoubleTransition.builder().start(overflow).end(end).amountOfSteps(secondAmount).reachStart(() -> currentlyFirst = true).reachEnd(reachEnd).build();
+        }
     }
 
     /**
@@ -60,10 +71,12 @@ public class OverflowDoubleTransition extends TransitionTypeNumber
     @Override
     public void doForward ()
     {
-        if (currentlyFirst)
-            first.setForward();
-        else
-            second.setForward();
+        synchronized (threadLock) {
+            if (currentlyFirst)
+                first.setForward();
+            else
+                second.setForward();
+        }
     }
 
     /**
@@ -72,10 +85,12 @@ public class OverflowDoubleTransition extends TransitionTypeNumber
     @Override
     public void doBackward ()
     {
-        if (currentlyFirst)
-            first.setBackward();
-        else
-            second.setBackward();
+        synchronized (threadLock) {
+            if (currentlyFirst)
+                first.setBackward();
+            else
+                second.setBackward();
+        }
     }
 
     /**

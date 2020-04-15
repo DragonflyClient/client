@@ -18,6 +18,14 @@ import java.util.function.IntSupplier;
 public class SmoothDoubleTransition extends TransitionTypeNumber
 {
     /**
+     * A simple object that the constructor and non-thread-safe methods are synchronized on.
+     * The content of this object is never used and it is never updated or accessed.
+     *
+     * @since v1.0.1.0 ~ hotfix/transition-thread-safe
+     */
+    private final Object threadLock = new Object();
+
+    /**
      * The transition that manages the fading in process. Calculates the distance per step during the fade-in.
      */
     private final DoubleTransition fadeInTransition;
@@ -110,33 +118,36 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
     {
         super(reachEnd, reachStart, autoTransformator);
 
-        this.negative = start > end;
-        this.start = start;
-        this.end = end;
-        this.current = start;
+        synchronized (threadLock) {
 
-        this.fadeIn = fadeIn;
-        this.fadeOut = fadeOut;
-        this.stay = stay;
+            this.negative = start > end;
+            this.start = start;
+            this.end = end;
+            this.current = start;
 
-        amountOfSteps = fadeIn + stay + fadeOut;
-        perStep = (Math.max(start, end) - Math.min(start, end)) / amountOfSteps;
+            this.fadeIn = fadeIn;
+            this.fadeOut = fadeOut;
+            this.stay = stay;
 
-        fadeInTransition = DoubleTransition.builder().start(0).end(perStep).amountOfSteps(fadeIn).build();
-        fadeOutTransition = DoubleTransition.builder().start(perStep).end(0).amountOfSteps(fadeOut).build();
+            amountOfSteps = fadeIn + stay + fadeOut;
+            perStep = (Math.max(start, end) - Math.min(start, end)) / amountOfSteps;
 
-        Function<Double, Double> fadeOutFunction = x -> perStep - (x * (perStep / fadeOut));
-        Function<Double, Double> fadeInFunction = x -> perStep - (x * (perStep / fadeIn));
+            fadeInTransition = DoubleTransition.builder().start(0).end(perStep).amountOfSteps(fadeIn).build();
+            fadeOutTransition = DoubleTransition.builder().start(perStep).end(0).amountOfSteps(fadeOut).build();
 
-        for (int x = 1 ; x <= fadeOut ; x++)
-            fadeOutDistance += fadeOutFunction.apply((double) x);
+            Function<Double, Double> fadeOutFunction = x -> perStep - (x * (perStep / fadeOut));
+            Function<Double, Double> fadeInFunction = x -> perStep - (x * (perStep / fadeIn));
 
-        for (int x = 1 ; x <= fadeIn ; x++)
-            fadeInDistance += fadeInFunction.apply((double) x);
+            for (int x = 1 ; x <= fadeOut ; x++)
+                fadeOutDistance += fadeOutFunction.apply((double) x);
 
-        double stayStart = start + (negative ? -fadeInDistance : fadeInDistance);
-        double stayEnd = end - (negative ? -fadeOutDistance : fadeOutDistance);
-        perStepStay = (Math.max(stayStart, stayEnd) - Math.min(stayStart, stayEnd)) / stay;
+            for (int x = 1 ; x <= fadeIn ; x++)
+                fadeInDistance += fadeInFunction.apply((double) x);
+
+            double stayStart = start + (negative ? -fadeInDistance : fadeInDistance);
+            double stayEnd = end - (negative ? -fadeOutDistance : fadeOutDistance);
+            perStepStay = (Math.max(stayStart, stayEnd) - Math.min(stayStart, stayEnd)) / stay;
+        }
     }
 
     public static SmoothDoubleTransitionBuilder builder ()
@@ -150,29 +161,31 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
     @Override
     public void doForward ()
     {
-        // If the value is already at the end, interrupt the step
-        if (isAtEnd())
-            return;
+        synchronized (threadLock) {
+            // If the value is already at the end, interrupt the step
+            if (isAtEnd())
+                return;
 
-        // Process the step
-        if (negative)
-            current -= getPhasePerStep();
-        else
-            current += getPhasePerStep();
+            // Process the step
+            if (negative)
+                current -= getPhasePerStep();
+            else
+                current += getPhasePerStep();
 
-        lastTransform = System.currentTimeMillis();
+            lastTransform = System.currentTimeMillis();
 
-        getPhaseTransition().ifPresent(DoubleTransition::doForward);
+            getPhaseTransition().ifPresent(DoubleTransition::doForward);
 
-        // If the value is at the end
-        if (isAtEnd()) {
-            current = end;
+            // If the value is at the end
+            if (isAtEnd()) {
+                current = end;
 
-            // Call the runnable
-            if (reachEnd != null) reachEnd.run();
-        } else currentStep++;
+                // Call the runnable
+                if (reachEnd != null) reachEnd.run();
+            } else currentStep++;
 
-        keepInBounds();
+            keepInBounds();
+        }
     }
 
     /**
@@ -181,29 +194,31 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
     @Override
     public void doBackward ()
     {
-        // If the value is already at the start, interrupt the step
-        if (isAtStart())
-            return;
+        synchronized (threadLock) {
+            // If the value is already at the start, interrupt the step
+            if (isAtStart())
+                return;
 
-        // Process the step
-        if (negative)
-            current += getPhasePerStep();
-        else
-            current -= getPhasePerStep();
+            // Process the step
+            if (negative)
+                current += getPhasePerStep();
+            else
+                current -= getPhasePerStep();
 
-        lastTransform = System.currentTimeMillis();
+            lastTransform = System.currentTimeMillis();
 
-        getPhaseTransition().ifPresent(DoubleTransition::doBackward);
+            getPhaseTransition().ifPresent(DoubleTransition::doBackward);
 
-        // If the value is at the start
-        if (isAtStart()) {
-            current = start;
+            // If the value is at the start
+            if (isAtStart()) {
+                current = start;
 
-            // Call the runnable
-            if (reachStart != null) reachStart.run();
-        } else currentStep--;
+                // Call the runnable
+                if (reachStart != null) reachStart.run();
+            } else currentStep--;
 
-        keepInBounds();
+            keepInBounds();
+        }
     }
 
     /**
@@ -336,10 +351,5 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
         fadeOutTransition.destroy();
 
         super.destroy();
-    }
-
-    private void foo (Object object)
-    {
-
     }
 }
