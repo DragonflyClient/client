@@ -125,6 +125,14 @@ class OptionEntryRangeDouble(
     }
 
     /**
+     * Called by the list when a key is pressed.
+     */
+    override fun keyTyped(typedChar: Char, keyCode: Int)
+    {
+        slider.keyTyped(typedChar, keyCode)
+    }
+
+    /**
      * Function to be overridden in order to return the key.
      */
     fun getKey(): OptionKey<Double>

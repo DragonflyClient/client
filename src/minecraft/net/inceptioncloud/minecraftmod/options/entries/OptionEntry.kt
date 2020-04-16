@@ -134,27 +134,6 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
     }
 
     /**
-     * Called by the list when the mouse is pressed anywhere on the screen.
-     */
-    override fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int)
-    {
-    }
-
-    /**
-     * Called by the list when the mouse is dragged anywhere on the screen.
-     */
-    override fun mouseDragged(mouseX: Int, mouseY: Int, eventButton: Int, duration: Long)
-    {
-    }
-
-    /**
-     * Called by the list when the mouse is released anywhere on the screen.
-     */
-    override fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int)
-    {
-    }
-
-    /**
      * Removes the selection effect.
      */
     override fun drawSelectionEffect(left: Int, right: Int, topY: Int, targetHeight: Int)

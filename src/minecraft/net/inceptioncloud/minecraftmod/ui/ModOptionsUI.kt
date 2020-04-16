@@ -218,4 +218,15 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
         uiList.mouseReleased(mouseX, mouseY, state)
         super.mouseReleased(mouseX, mouseY, state)
     }
+
+    /**
+     * Fired when a key is typed (except F11 which toggles full screen).
+     * This is the equivalent of KeyListener.keyTyped(KeyEvent e).
+     * Args : character (character on the key), keyCode (lwjgl Keyboard key code)
+     */
+    override fun keyTyped(typedChar: Char, keyCode: Int)
+    {
+        uiList.keyTyped(typedChar, keyCode)
+        super.keyTyped(typedChar, keyCode)
+    }
 }

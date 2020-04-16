@@ -318,7 +318,8 @@ class UIList(
     /**
      * Notifies all entries when the mouse is released.
      *
-     * This method fires whenever the action is performed on the screen. It doesn't have to be on the list or on any entry.
+     * This method fires whenever the action is performed on the screen.
+     * It doesn't have to be on the list or on any entry.
      */
     fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int)
     {
@@ -328,7 +329,8 @@ class UIList(
     /**
      * Notifies all entries when the mouse is pressed.
      *
-     * This method fires whenever the action is performed on the screen. It doesn't have to be on the list or on any entry.
+     * This method fires whenever the action is performed on the screen.
+     * It doesn't have to be on the list or on any entry.
      */
     fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int)
     {
@@ -341,6 +343,17 @@ class UIList(
     override fun getScrollBarX(): Int
     {
         return right
+    }
+
+    /**
+     * Notifies all entries when a key is typed.
+     *
+     * This method fires whenever the action is performed on the screen.
+     * It doesn't have to be on the list or on any entry.
+     */
+    fun keyTyped(typedChar: Char, keyCode: Int)
+    {
+        entries.forEach { it.keyTyped(typedChar, keyCode) }
     }
 }
 
