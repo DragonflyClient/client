@@ -6,7 +6,9 @@ import net.inceptioncloud.minecraftmod.utils.RenderUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
+import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
+import kotlin.math.pow
 
 /**
  * A simple, modern designed slider for double ranges.
@@ -48,6 +50,17 @@ class UISlider(var x: Int, var y: Int, var width: Int,
      * releasing the mouse, it changes to `false`.
      */
     private var isMouseDown = false
+
+    /**
+     * Whether the slider is currently focused because the last mouse click was on it.
+     *
+     * If this value is true, the slider's value can be modified using the arrow keys.
+     * When clicking on the slider, the value is set to true. When clicking anywhere else on the screen
+     * (not on the slider) the value is set to false.
+     *
+     * @see mousePressed
+     */
+    private var focused = false
 
     /**
      * The string that is displayed on the left of the slider.
@@ -145,6 +158,10 @@ class UISlider(var x: Int, var y: Int, var width: Int,
 
             displayString = formatDisplayString()
             isMouseDown = true
+            focused = true
+        } else
+        {
+            focused = false
         }
     }
 
@@ -163,5 +180,102 @@ class UISlider(var x: Int, var y: Int, var width: Int,
             isMouseDown = false
             changeResponder.invoke(getSliderValue())
         }
+    }
+
+    /**
+     * Updates the value of the slider based on the step accuracy when it is focused.
+     *
+     * This method must be called from the parent object that is holding the slider.
+     * When the arrow-left or arrow-right key is pressed, the value will be updated.
+     */
+    fun keyTyped(typedChar: Char, keyCode: Int)
+    {
+        if (focused)
+        {
+            val newValue: Double = when (keyCode)
+            {
+                Keyboard.KEY_RIGHT ->
+                {
+                    getSliderValue() + getStepAccuracy()
+                }
+                Keyboard.KEY_LEFT ->
+                {
+                    getSliderValue() - getStepAccuracy()
+                }
+                else -> return
+            }.coerceAtLeast(min).coerceAtMost(max)
+
+            sliderPosition = (newValue - min) / (max - min)
+            displayString = formatDisplayString()
+            changeResponder.invoke(getSliderValue())
+        }
+    }
+
+    /**
+     * Calculates the accuracy of the slider by reading the formatted display string.
+     *
+     * According to this amount, the value that should be added/removed when using the arrow
+     * keys to control to slider is calculated.
+     */
+    private fun getStepAccuracy(): Double
+    {
+        val string = formatDisplayString()
+
+        return if (string.endsWith("%") || !string.contains("."))
+        {
+            1.0
+        } else
+        {
+            try
+            {
+                val decimalString = string.split(".")[1]
+                val decimalDigits = decimalString.length
+                1 / 10.0.pow(decimalDigits.toDouble())
+            }
+            catch (e: NumberFormatException)
+            {
+                1.0
+            }
+        }
+    }
+
+    override fun equals(other: Any?): Boolean
+    {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as UISlider
+
+        if (x != other.x) return false
+        if (y != other.y) return false
+        if (width != other.width) return false
+        if (min != other.min) return false
+        if (max != other.max) return false
+        if (default != other.default) return false
+        if (changeResponder != other.changeResponder) return false
+        if (formatter != other.formatter) return false
+        if (sliderPosition != other.sliderPosition) return false
+        if (isMouseDown != other.isMouseDown) return false
+        if (focused != other.focused) return false
+        if (displayString != other.displayString) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int
+    {
+        var result = x
+        result = 31 * result + y
+        result = 31 * result + width
+        result = 31 * result + min.hashCode()
+        result = 31 * result + max.hashCode()
+        result = 31 * result + default.hashCode()
+        result = 31 * result + changeResponder.hashCode()
+        result = 31 * result + formatter.hashCode()
+        result = 31 * result + sliderPosition.hashCode()
+        result = 31 * result + isMouseDown.hashCode()
+        result = 31 * result + focused.hashCode()
+        result = 31 * result + (displayString?.hashCode() ?: 0)
+        return result
     }
 }
