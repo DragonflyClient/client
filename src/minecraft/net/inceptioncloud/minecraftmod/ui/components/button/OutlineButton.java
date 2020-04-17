@@ -8,7 +8,7 @@ import net.inceptioncloud.minecraftmod.transition.color.ColorTransition;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransitionBuilder;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
-import net.inceptioncloud.minecraftmod.ui.renderer.RectangleRendererKt;
+import net.inceptioncloud.minecraftmod.ui.renderer.RectangleRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
@@ -72,13 +72,13 @@ public class OutlineButton extends GuiButton
 
             drawRect(left, top, right, bottom, fillTransition.get().getRGB());
 
-            final int textX = ( int ) left + this.width / 2;
-            final int textY = ( int ) top + ( this.height - 6 ) / 2;
-            fontRenderer.drawCenteredString(this.displayString, textX + 1, textY + 1, new Color(0F, 0F, 0F, ( float ) ( 0.05F + hoverTransition.get() / 2F)).getRGB(), false);
+            final int textX = (int) left + this.width / 2;
+            final int textY = (int) top + (this.height - 6) / 2;
+            fontRenderer.drawCenteredString(this.displayString, textX + 1, textY + 1, new Color(0F, 0F, 0F, (float) (0.05F + hoverTransition.get() / 2F)).getRGB(), false);
             fontRenderer.drawCenteredString(this.displayString, textX, textY, -1, false);
 
-            RectangleRendererKt.drawOutline(left, top, right, bottom, GreyToneColor.DARK_WHITE);
-            RectangleRendererKt.renderInline(left - offset, top - offset, right + offset, bottom + offset,
+            RectangleRenderer.drawOutline(left, top, right, bottom, GreyToneColor.DARK_WHITE);
+            RectangleRenderer.renderInline(left - offset, top - offset, right + offset, bottom + offset,
                 RGB.of(GreyToneColor.LIGHT_WHITE).alpha(opacity).toColor(), 1);
         }
     }

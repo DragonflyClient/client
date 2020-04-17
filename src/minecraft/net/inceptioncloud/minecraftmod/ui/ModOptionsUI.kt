@@ -159,8 +159,8 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
     private fun drawFooter()
     {
         Gui.drawRect(0, height - 18, width, height, BluePalette.FOREGROUND.rgb)
-        InceptionMod.getInstance().fontDesign.retrieveOrBuild("", 14)
-            .drawString("v${InceptionMod.getVersion()}", 5, height - 9, Color(0, 0, 0, 50).rgb)
+        InceptionMod.getInstance().fontDesign.retrieveOrBuild("", 15)
+            .drawString("v${InceptionMod.getVersion()}", 5, height - 10, Color(0, 0, 0, 50).rgb)
     }
 
     /**
