@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.CloudColor;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.internal.ShapeBuffer2D;
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.stream.GuiTwitchUserMode;
@@ -78,6 +79,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
      */
     private int touchValue;
     private URI clickedLinkURI;
+
+    public ShapeBuffer2D buffer = new ShapeBuffer2D();
 
     public static String getClipboardString ()
     {
@@ -195,6 +198,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         for (GuiLabel guiLabel : new ArrayList<>(this.labelList)) {
             guiLabel.drawLabel(this.mc, mouseX, mouseY);
         }
+
+        buffer.renderBuffer();
     }
 
     /**

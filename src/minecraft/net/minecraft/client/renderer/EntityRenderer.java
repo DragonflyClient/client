@@ -222,6 +222,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 this.rainYCoords[i << 5 | j] = f / f2;
             }
         }
+
         InceptionMod.getInstance().getSplashScreen().update();
     }
 
@@ -433,11 +434,14 @@ public class EntityRenderer implements IResourceManagerReloadListener
             this.pointedEntity = null;
             Vec3 vec33 = null;
             float f = 1.0F;
-            List list = this.mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, new EntityRenderer1(this)));
+            List list = this.mc.theWorld.getEntitiesInAABBexcluding(
+                entity, entity.getEntityBoundingBox().addCoord(
+                    vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0
+                ).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, new EntityRenderer1(this)));
             double d2 = d1;
 
-            for (int i = 0 ; i < list.size() ; ++i) {
-                Entity entity1 = ( Entity ) list.get(i);
+            for (Object o : list) {
+                Entity entity1 = (Entity) o;
                 float f1 = entity1.getCollisionBorderSize();
                 AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand(f1, f1, f1);
                 MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
@@ -516,7 +520,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
     /**
      * Changes the field of view of the player depending on if they are underwater or not
      */
-    private float getFOVModifier (float partialTicks, boolean p_78481_2_)
+    private float getFOVModifier (float partialTicks, boolean underWater)
     {
         if (this.debugView) {
             return 90.0F;
@@ -524,11 +528,11 @@ public class EntityRenderer implements IResourceManagerReloadListener
             Entity entity = this.mc.getRenderViewEntity();
             float fov = 70.0F;
 
-            if (p_78481_2_) {
+            if (underWater) {
                 fov = this.mc.gameSettings.fovSetting;
 
                 if (Config.isDynamicFov()) {
-                    fov *= this.fovModifierHandPrev + ( this.fovModifierHand - this.fovModifierHandPrev ) * partialTicks;
+                    fov *= this.fovModifierHandPrev + (this.fovModifierHand - this.fovModifierHandPrev) * partialTicks;
                 }
             }
 
@@ -814,7 +818,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
         this.renderHand(partialTicks, xOffset, true, true, false);
     }
 
-    public void renderHand (float p_renderHand_1_, int p_renderHand_2_, boolean p_renderHand_3_, boolean p_renderHand_4_, boolean p_renderHand_5_)
+    public void renderHand (float partialTicks, int xOffset, boolean p_renderHand_3_, boolean p_renderHand_4_, boolean p_renderHand_5_)
     {
         if (!this.debugView) {
             GlStateManager.matrixMode(5889);
@@ -822,41 +826,41 @@ public class EntityRenderer implements IResourceManagerReloadListener
             float f = 0.07F;
 
             if (this.mc.gameSettings.anaglyph) {
-                GlStateManager.translate(( float ) ( -( p_renderHand_2_ * 2 - 1 ) ) * f, 0.0F, 0.0F);
+                GlStateManager.translate((float) (-(xOffset * 2 - 1)) * f, 0.0F, 0.0F);
             }
 
             if (Config.isShaders()) {
                 Shaders.applyHandDepth();
             }
 
-            Project.gluPerspective(this.getFOVModifier(p_renderHand_1_, false), ( float ) this.mc.displayWidth / ( float ) this.mc.displayHeight, 0.05F, this.farPlaneDistance * 2.0F);
+            Project.gluPerspective(this.getFOVModifier(partialTicks, false), (float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F, this.farPlaneDistance * 2.0F);
             GlStateManager.matrixMode(5888);
             GlStateManager.loadIdentity();
 
             if (this.mc.gameSettings.anaglyph) {
-                GlStateManager.translate(( float ) ( p_renderHand_2_ * 2 - 1 ) * 0.1F, 0.0F, 0.0F);
+                GlStateManager.translate((float) (xOffset * 2 - 1) * 0.1F, 0.0F, 0.0F);
             }
 
             boolean flag = false;
 
             if (p_renderHand_3_) {
                 GlStateManager.pushMatrix();
-                this.hurtCameraEffect(p_renderHand_1_);
+                this.hurtCameraEffect(partialTicks);
 
                 if (this.mc.gameSettings.viewBobbing) {
-                    this.setupViewBobbing(p_renderHand_1_);
+                    this.setupViewBobbing(partialTicks);
                 }
 
                 flag = this.mc.getRenderViewEntity() instanceof EntityLivingBase && ( ( EntityLivingBase ) this.mc.getRenderViewEntity() ).isPlayerSleeping();
-                boolean flag1 = !ReflectorForge.renderFirstPersonHand(this.mc.renderGlobal, p_renderHand_1_, p_renderHand_2_);
+                boolean flag1 = !ReflectorForge.renderFirstPersonHand(this.mc.renderGlobal, partialTicks, xOffset);
 
                 if (flag1 && this.mc.gameSettings.thirdPersonView == 0 && !flag && !this.mc.gameSettings.hideGUI && !this.mc.playerController.isSpectator()) {
                     this.enableLightmap();
 
                     if (Config.isShaders()) {
-                        ShadersRender.renderItemFP(this.itemRenderer, p_renderHand_1_, p_renderHand_5_);
+                        ShadersRender.renderItemFP(this.itemRenderer, partialTicks, p_renderHand_5_);
                     } else {
-                        this.itemRenderer.renderItemInFirstPerson(p_renderHand_1_);
+                        this.itemRenderer.renderItemInFirstPerson(partialTicks);
                     }
 
                     this.disableLightmap();
@@ -872,12 +876,12 @@ public class EntityRenderer implements IResourceManagerReloadListener
             this.disableLightmap();
 
             if (this.mc.gameSettings.thirdPersonView == 0 && !flag) {
-                this.itemRenderer.renderOverlays(p_renderHand_1_);
-                this.hurtCameraEffect(p_renderHand_1_);
+                this.itemRenderer.renderOverlays(partialTicks);
+                this.hurtCameraEffect(partialTicks);
             }
 
             if (this.mc.gameSettings.viewBobbing) {
-                this.setupViewBobbing(p_renderHand_1_);
+                this.setupViewBobbing(partialTicks);
             }
         }
     }

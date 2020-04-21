@@ -1,9 +1,9 @@
 package net.inceptioncloud.minecraftmod;
 
-import lombok.Getter;
 import net.inceptioncloud.minecraftmod.design.font.FontManager;
 import net.inceptioncloud.minecraftmod.design.splash.ModSplashScreen;
 import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
+import net.inceptioncloud.minecraftmod.engine.internal.Dynamic;
 import net.inceptioncloud.minecraftmod.event.ModEventBus;
 import net.inceptioncloud.minecraftmod.event.client.ClientShutdownEvent;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
@@ -12,6 +12,7 @@ import net.inceptioncloud.minecraftmod.options.sections.*;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
+import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.Display;
@@ -26,7 +27,6 @@ public class InceptionMod
     /**
      * The Logger used to log InceptionMod messages.
      */
-    @Getter
     private static final Logger logger = LogManager.getLogger();
 
     /**
@@ -34,16 +34,22 @@ public class InceptionMod
      */
     private static InceptionMod instance;
 
+    @Dynamic
     private final GameStateManager gameStateManager;
 
+    @Dynamic
     private final RichPresenceManager richPresenceManager;
 
+    @Dynamic
     private final ModEventBus eventBus;
 
+    @Dynamic
     private final FontManager fontDesign;
 
+    @Dynamic
     private final ModSplashScreen splashScreen;
 
+    @Dynamic
     private final Options options;
 
     /**
@@ -147,15 +153,9 @@ public class InceptionMod
         tickTimer.cancel();
     }
 
-    /**
-     * Perform the mod tick.
-     */
-    private void tick ()
+    public static Logger getLogger ()
     {
-        synchronized (this) {
-            new ArrayList<>(transitions).forEach(Transition::tick);
-            new ArrayList<>(tickables).forEach(Tickable::modTick);
-        }
+        return logger;
     }
 
     /**
@@ -293,5 +293,19 @@ public class InceptionMod
     public int getLastTPS ()
     {
         return lastTPS;
+    }
+
+    /**
+     * Perform the mod tick.
+     */
+    private void tick ()
+    {
+        synchronized (this) {
+            new ArrayList<>(transitions).forEach(Transition::tick);
+            new ArrayList<>(tickables).forEach(Tickable::modTick);
+
+            if (Minecraft.getMinecraft().currentScreen != null)
+                Minecraft.getMinecraft().currentScreen.buffer.updateBuffer();
+        }
     }
 }
