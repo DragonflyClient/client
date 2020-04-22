@@ -144,6 +144,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     private final int tempDisplayHeight;
     private final long field_175615_aJ = 0L;
     public PlayerControllerMP playerController;
+
     public int displayWidth;
     public int displayHeight;
     public WorldClient theWorld;
@@ -1643,7 +1644,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                         if (!this.inGameHasFocus && Mouse.getEventButtonState()) {
                             this.setIngameFocus();
                         }
-                    } else if (this.currentScreen != null) {
+                    } else {
                         this.currentScreen.handleMouseInput();
                     }
                 }

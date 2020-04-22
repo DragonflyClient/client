@@ -1,8 +1,8 @@
 package net.inceptioncloud.minecraftmod.state;
 
-import lombok.*;
 import net.inceptioncloud.minecraftmod.discord.RichPresenceAdapter;
 import net.inceptioncloud.minecraftmod.state.play.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -22,10 +22,10 @@ public abstract class GameState
      *
      * @param consumer The consumer to handle the value
      */
-    public final void ifSingleplayer (@NonNull Consumer<SingleplayerState> consumer)
+    public final void ifSingleplayer (@NotNull Consumer<SingleplayerState> consumer)
     {
         if (this instanceof SingleplayerState)
-            consumer.accept(( SingleplayerState ) this);
+            consumer.accept((SingleplayerState) this);
     }
 
     /**
@@ -33,10 +33,10 @@ public abstract class GameState
      *
      * @param consumer The consumer to handle the value
      */
-    public final void ifMultiplayer (@NonNull Consumer<MultiplayerState> consumer)
+    public final void ifMultiplayer (@NotNull Consumer<MultiplayerState> consumer)
     {
         if (this instanceof MultiplayerState)
-            consumer.accept(( MultiplayerState ) this);
+            consumer.accept((MultiplayerState) this);
     }
 
     /**
@@ -44,10 +44,10 @@ public abstract class GameState
      *
      * @param consumer The consumer to handle the value
      */
-    public final void ifPlaying (@NonNull Consumer<PlayingState> consumer)
+    public final void ifPlaying (@NotNull Consumer<PlayingState> consumer)
     {
         if (this instanceof PlayingState)
-            consumer.accept(( PlayingState ) this);
+            consumer.accept((PlayingState) this);
     }
 
     /**

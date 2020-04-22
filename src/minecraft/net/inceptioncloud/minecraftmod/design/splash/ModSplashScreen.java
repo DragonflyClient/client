@@ -1,7 +1,5 @@
 package net.inceptioncloud.minecraftmod.design.splash;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.CloudColor;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
@@ -57,7 +55,6 @@ public class ModSplashScreen
     /**
      * Whether the splash screen is active due to the loading of the client.
      */
-    @Setter @Getter
     private boolean active = true;
 
     /**
@@ -159,5 +156,15 @@ public class ModSplashScreen
         GlStateManager.resetColor();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
+    }
+
+    public boolean isActive ()
+    {
+        return active;
+    }
+
+    public void setActive (final boolean active)
+    {
+        this.active = active;
     }
 }

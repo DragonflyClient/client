@@ -1,7 +1,5 @@
 package net.inceptioncloud.minecraftmod.ui.components.button;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.RGB;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
@@ -21,24 +19,19 @@ public class TransparentButton extends GuiButton
     /**
      * Transition increases the opacity up to 1.0F when the button is hovered.
      */
-    private final DoubleTransition hoverIncreaseOpacity = DoubleTransition.builder().start(0).end(1).autoTransformator(( ForwardBackward ) () -> hovered).amountOfSteps(20).build();
-
-    /**
-     * The transition that animates the underline.
-     */
-    private final DoubleTransition underline = DoubleTransition.builder().start(0).end(1).autoTransformator(( ForwardBackward ) this::isHighlighted).amountOfSteps(40).build();
-
+    private final DoubleTransition hoverIncreaseOpacity = DoubleTransition.builder().start(0).end(1).autoTransformator((ForwardBackward) () -> hovered).amountOfSteps(20).build();
     /**
      * The font renderer with which the button text is drawn.
      */
     private IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", 22);
-
     /**
      * Whether the clean button is highlighted by an underline.
      */
-    @Getter @Setter
     private boolean highlighted = false;
-
+    /**
+     * The transition that animates the underline.
+     */
+    private final DoubleTransition underline = DoubleTransition.builder().start(0).end(1).autoTransformator((ForwardBackward) this::isHighlighted).amountOfSteps(40).build();
     /**
      * The opacity of the text.
      */
@@ -60,6 +53,16 @@ public class TransparentButton extends GuiButton
         super(buttonId, x, y, widthIn, heightIn, buttonText);
     }
 
+    public boolean isHighlighted ()
+    {
+        return highlighted;
+    }
+
+    public void setHighlighted (final boolean highlighted)
+    {
+        this.highlighted = highlighted;
+    }
+
     /**
      * Draws this button on the screen.
      */
@@ -71,16 +74,16 @@ public class TransparentButton extends GuiButton
             this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
             this.mouseDragged(mc, mouseX, mouseY);
 
-            final float tempOpacity = ( float ) ( this.opacity + ( 0.85F - opacity) * hoverIncreaseOpacity.get());
-            final int i = Math.max(2, ( this.height - fontRenderer.getHeight() ) / 2);
+            final float tempOpacity = (float) (this.opacity + (0.85F - opacity) * hoverIncreaseOpacity.get());
+            final int i = Math.max(2, (this.height - fontRenderer.getHeight()) / 2);
             fontRenderer.drawCenteredString(this.displayString,
                 this.xPosition + this.width / 2,
                 this.yPosition + i,
                 RGB.of(0xFFFFFF).alpha(highlighted ? opacity : tempOpacity).rgb(),
                 true);
 
-            int centerX = xPosition + ( width / 2 );
-            int underlineWidth = ( int ) ( ( fontRenderer.getStringWidth(this.displayString) / 2 ) * underline.get() );
+            int centerX = xPosition + (width / 2);
+            int underlineWidth = (int) ((fontRenderer.getStringWidth(this.displayString) / 2) * underline.get());
             drawHorizontalLine(centerX - underlineWidth, centerX + underlineWidth, yPosition + fontRenderer.getHeight() + 1, Color.WHITE.getRGB());
         }
     }

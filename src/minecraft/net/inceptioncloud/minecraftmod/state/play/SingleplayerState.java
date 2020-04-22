@@ -1,17 +1,15 @@
 package net.inceptioncloud.minecraftmod.state.play;
 
-import lombok.*;
 import net.inceptioncloud.minecraftmod.discord.RichPresenceAdapter;
 import net.inceptioncloud.minecraftmod.discord.custom.SingleplayerRPC;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.integrated.IntegratedServer;
 
+import java.util.Objects;
+
 /**
  * When the player is in a singleplayer world.
  */
-@Getter
-@ToString (callSuper = true)
-@EqualsAndHashCode ( callSuper = true )
 public class SingleplayerState extends PlayingState
 {
     /**
@@ -38,5 +36,34 @@ public class SingleplayerState extends PlayingState
     public RichPresenceAdapter getBelongingRichPresence ()
     {
         return new SingleplayerRPC(integratedServer.getWorldName(), isPaused(), getJoinTime());
+    }
+
+    @Override
+    public boolean equals (final Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        final SingleplayerState that = (SingleplayerState) o;
+        return Objects.equals(integratedServer, that.integratedServer);
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        return Objects.hash(super.hashCode(), integratedServer);
+    }
+
+    public IntegratedServer getIntegratedServer ()
+    {
+        return integratedServer;
+    }
+
+    @Override
+    public String toString ()
+    {
+        return "SingleplayerState{" +
+               "integratedServer=" + integratedServer +
+               '}';
     }
 }

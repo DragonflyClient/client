@@ -1,7 +1,5 @@
 package net.inceptioncloud.minecraftmod.ui.components.button;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.BluePalette;
 import net.inceptioncloud.minecraftmod.design.font.GlyphFontRenderer;
@@ -35,7 +33,6 @@ public class BluePaletteButton extends GuiButton
     /**
      * The opacity of the button.
      */
-    @Setter @Getter
     protected float opacity = 1.0F;
 
     /**
@@ -89,6 +86,16 @@ public class BluePaletteButton extends GuiButton
                 0.6F
             );
         }
+    }
+
+    public float getOpacity ()
+    {
+        return opacity;
+    }
+
+    public void setOpacity (final float opacity)
+    {
+        this.opacity = opacity;
     }
 
     /**

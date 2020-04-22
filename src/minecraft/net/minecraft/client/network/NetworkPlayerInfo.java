@@ -2,8 +2,6 @@ package net.minecraft.client.network;
 
 import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
-import lombok.Getter;
-import lombok.Setter;
 import net.inceptioncloud.minecraftmod.ui.playerlist.indicators.Indicator;
 import net.inceptioncloud.minecraftmod.ui.playerlist.indicators.IndicatorKt;
 import net.minecraft.client.Minecraft;

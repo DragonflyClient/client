@@ -1,6 +1,5 @@
 package net.inceptioncloud.minecraftmod.event.gui;
 
-import lombok.*;
 import net.inceptioncloud.minecraftmod.event.Cancellable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -8,8 +7,6 @@ import net.minecraft.client.gui.GuiScreen;
 /**
  * When a new {@link GuiScreen} is displayed via {@link Minecraft#displayGuiScreen(GuiScreen)}.
  */
-@Getter
-@RequiredArgsConstructor
 public class GuiScreenDisplayEvent extends Cancellable
 {
     /**
@@ -22,4 +19,20 @@ public class GuiScreenDisplayEvent extends Cancellable
      * The screen that will replace the current screen if the event won't be cancelled.
      */
     private final GuiScreen newScreen;
+
+    public GuiScreenDisplayEvent (final GuiScreen previousScreen, final GuiScreen newScreen)
+    {
+        this.previousScreen = previousScreen;
+        this.newScreen = newScreen;
+    }
+
+    public GuiScreen getPreviousScreen ()
+    {
+        return previousScreen;
+    }
+
+    public GuiScreen getNewScreen ()
+    {
+        return newScreen;
+    }
 }

@@ -1,13 +1,9 @@
 package net.inceptioncloud.minecraftmod.discord;
 
-import lombok.Getter;
 import net.arikia.dev.drpc.*;
-import net.arikia.dev.drpc.callbacks.JoinRequestCallback;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.discord.custom.MenuRPC;
 import net.inceptioncloud.minecraftmod.discord.subscriber.RichPresenceSubscriber;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiIngameMenu;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -18,13 +14,11 @@ public class RichPresenceManager
     /**
      * Whether the Rich Presence Channel is open.
      */
-    @Getter
     private boolean open = true;
 
     /**
      * The current rich presence status.
      */
-    @Getter
     private RichPresenceAdapter status;
 
     /**
@@ -79,5 +73,15 @@ public class RichPresenceManager
     {
         open = false;
         DiscordRPC.discordShutdown();
+    }
+
+    public boolean isOpen ()
+    {
+        return open;
+    }
+
+    public RichPresenceAdapter getStatus ()
+    {
+        return status;
     }
 }

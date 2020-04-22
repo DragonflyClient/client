@@ -1,7 +1,5 @@
 package net.inceptioncloud.minecraftmod.ui.components.button;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.*;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
@@ -22,17 +20,15 @@ public class SimpleButton extends GuiButton
     /**
      * Transition manages the Hover Effect
      */
-    protected DoubleTransition hoverTransition = DoubleTransition.builder().start(0.0).end(1.0).amountOfSteps(width / 4).autoTransformator(( ForwardBackward ) () -> hovered).build();
+    protected DoubleTransition hoverTransition = DoubleTransition.builder().start(0.0).end(1.0).amountOfSteps(width / 4).autoTransformator((ForwardBackward) () -> hovered).build();
 
     /**
      * Transition changes the color when hovering.
      */
-    protected ColorTransition colorTransition = new ColorTransitionBuilder().start(CloudColor.FUSION).end(CloudColor.DESIRE).amountOfSteps(width / 2).autoTransformator(( ForwardBackward ) () -> hovered).build();
-
+    protected ColorTransition colorTransition = new ColorTransitionBuilder().start(CloudColor.FUSION).end(CloudColor.DESIRE).amountOfSteps(width / 2).autoTransformator((ForwardBackward) () -> hovered).build();
     /**
      * The opacity of the button.
      */
-    @Setter @Getter
     protected float opacity = 1.0F;
 
     /**
@@ -53,6 +49,16 @@ public class SimpleButton extends GuiButton
     public SimpleButton (final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText)
     {
         super(buttonId, x, y, widthIn, heightIn, buttonText);
+    }
+
+    public float getOpacity ()
+    {
+        return opacity;
+    }
+
+    public void setOpacity (final float opacity)
+    {
+        this.opacity = opacity;
     }
 
     /**
@@ -78,10 +84,10 @@ public class SimpleButton extends GuiButton
             drawRect(left - border, top - border, right + border, bottom + border, RGB.of(GreyToneColor.LIGHT_WHITE).alpha(opacity).rgb());
             drawRect(left, top, right, bottom, RGB.of(GreyToneColor.DARK_GREY).alpha(opacity).rgb());
 
-            drawRect(left, top, left + 4 + ( hoverTransition.get() * ( right - left - 4)), bottom, color.getRGB());
+            drawRect(left, top, left + 4 + (hoverTransition.get() * (right - left - 4)), bottom, color.getRGB());
 
             if (opacity > 0.1)
-                drawCenteredString(fontrenderer, this.displayString, (int) left + this.width / 2, (int) top + ( this.height - 6 ) / 2, new Color(1, 1, 1, opacity).getRGB());
+                drawCenteredString(fontrenderer, this.displayString, (int) left + this.width / 2, (int) top + (this.height - 6) / 2, new Color(1, 1, 1, opacity).getRGB());
         }
     }
 

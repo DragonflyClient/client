@@ -1,14 +1,11 @@
 package net.inceptioncloud.minecraftmod.event.client;
 
-import lombok.*;
 import net.inceptioncloud.minecraftmod.state.GameState;
 import net.inceptioncloud.minecraftmod.state.GameStateManager;
 
 /**
  * When the current Game State is changed via {@link GameStateManager#updateState(GameState)}.
  */
-@Getter
-@RequiredArgsConstructor
 public class GameStateUpdateEvent
 {
     /**
@@ -20,4 +17,20 @@ public class GameStateUpdateEvent
      * The Game State to which the current selected is being changed.
      */
     private final GameState next;
+
+    public GameStateUpdateEvent (final GameState previous, final GameState next)
+    {
+        this.previous = previous;
+        this.next = next;
+    }
+
+    public GameState getPrevious ()
+    {
+        return previous;
+    }
+
+    public GameState getNext ()
+    {
+        return next;
+    }
 }

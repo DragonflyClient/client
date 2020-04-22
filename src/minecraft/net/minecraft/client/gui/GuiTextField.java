@@ -1,6 +1,5 @@
 package net.minecraft.client.gui;
 
-import lombok.Getter;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -17,9 +16,9 @@ public class GuiTextField extends Gui
      * The width of this text field.
      */
     private final int width;
-    @Getter private final int height;
-    @Getter public int xPosition;
-    @Getter public int yPosition;
+    private final int height;
+    public int xPosition;
+    public int yPosition;
     /**
      * Has the current text being edited on the textbox.
      */
@@ -27,35 +26,29 @@ public class GuiTextField extends Gui
     private int maxStringLength = 32;
     private int cursorCounter;
     private boolean enableBackgroundDrawing = true;
-
     /**
      * if true the textbox can lose focus by clicking elsewhere on the screen
      */
     private boolean canLoseFocus = true;
-
     /**
      * If this value is true along with isEnabled, keyTyped will process the keys.
      */
     private boolean isFocused;
-
     /**
      * If this value is true along with isFocused, keyTyped will process the keys.
      */
     private boolean isEnabled = true;
-
     /**
      * The current character index that should be used as start of the rendered text.
      */
     private int lineScrollOffset;
     private int cursorPosition;
-
     /**
      * other selection position, maybe the same as the cursor
      */
     private int selectionEnd;
     private int enabledColor = 14737632;
     private int disabledColor = 7368816;
-
     /**
      * True if this textbox is visible
      */
@@ -71,6 +64,30 @@ public class GuiTextField extends Gui
         this.yPosition = y;
         this.width = width;
         this.height = height;
+    }
+
+    /**
+     * Getter Method for {@link #height}
+     */
+    public int getHeight ()
+    {
+        return height;
+    }
+
+    /**
+     * Getter Method for {@link #xPosition}
+     */
+    public int getxPosition ()
+    {
+        return xPosition;
+    }
+
+    /**
+     * Getter Method for {@link #yPosition}
+     */
+    public int getyPosition ()
+    {
+        return yPosition;
     }
 
     /**
@@ -91,7 +108,7 @@ public class GuiTextField extends Gui
             boolean flag = cursorPos >= 0 && cursorPos <= s.length();
             boolean flag1 = this.isFocused && this.cursorCounter / 6 % 2 == 0 && flag;
             int l = this.enableBackgroundDrawing ? this.xPosition + 4 : this.xPosition;
-            int i1 = this.enableBackgroundDrawing ? this.yPosition + ( this.height - 8 ) / 2 : this.yPosition;
+            int i1 = this.enableBackgroundDrawing ? this.yPosition + (this.height - 8) / 2 : this.yPosition;
             int j1 = l;
 
             if (k > s.length()) {
@@ -100,7 +117,7 @@ public class GuiTextField extends Gui
 
             if (s.length() > 0) {
                 String s1 = flag ? s.substring(0, cursorPos) : s;
-                j1 = this.fontRendererInstance.drawStringWithShadow(s1, ( float ) l, ( float ) i1, color);
+                j1 = this.fontRendererInstance.drawStringWithShadow(s1, (float) l, (float) i1, color);
             }
 
             boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
@@ -114,14 +131,14 @@ public class GuiTextField extends Gui
             }
 
             if (s.length() > 0 && flag && cursorPos < s.length()) {
-                j1 = this.fontRendererInstance.drawStringWithShadow(s.substring(cursorPos), ( float ) j1, ( float ) i1, color);
+                j1 = this.fontRendererInstance.drawStringWithShadow(s.substring(cursorPos), (float) j1, (float) i1, color);
             }
 
             if (flag1) {
                 if (flag2) {
                     Gui.drawRect(cursorX, i1 - 1, cursorX + 1, i1 + 1 + this.fontRendererInstance.getHeight(), -3092272);
                 } else {
-                    this.fontRendererInstance.drawStringWithShadow("_", ( float ) cursorX, ( float ) i1, color);
+                    this.fontRendererInstance.drawStringWithShadow("_", (float) cursorX, (float) i1, color);
                 }
             }
 
@@ -193,7 +210,7 @@ public class GuiTextField extends Gui
         String s1 = ChatAllowedCharacters.filterAllowedCharacters(text);
         int i = Math.min(this.cursorPosition, this.selectionEnd);
         int j = Math.max(this.cursorPosition, this.selectionEnd);
-        int k = this.maxStringLength - this.text.length() - ( i - j );
+        int k = this.maxStringLength - this.text.length() - (i - j);
         int l;
 
         if (this.text.length() > 0) {

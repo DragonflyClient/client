@@ -1,12 +1,8 @@
 package net.inceptioncloud.minecraftmod.design.font;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-
 import java.awt.*;
 import java.awt.font.TextAttribute;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class is used to build new Font Renderers or use the already created ones.
@@ -119,8 +115,6 @@ public class FontManager
     /**
      * Contains information about the Font Renderer.
      */
-    @RequiredArgsConstructor
-    @EqualsAndHashCode
     public static class FontRendererInfo
     {
         /**
@@ -142,5 +136,31 @@ public class FontManager
          * The spacing between the letters.
          */
         private final double letterSpacing;
+
+        public FontRendererInfo (final String name, final int type, final int size, final double letterSpacing)
+        {
+            this.name = name;
+            this.type = type;
+            this.size = size;
+            this.letterSpacing = letterSpacing;
+        }
+
+        @Override
+        public boolean equals (final Object o)
+        {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final FontRendererInfo that = (FontRendererInfo) o;
+            return type == that.type &&
+                   size == that.size &&
+                   Double.compare(that.letterSpacing, letterSpacing) == 0 &&
+                   Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode ()
+        {
+            return Objects.hash(name, type, size, letterSpacing);
+        }
     }
 }
