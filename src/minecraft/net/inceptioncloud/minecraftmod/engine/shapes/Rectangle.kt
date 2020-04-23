@@ -74,6 +74,11 @@ class Rectangle : Shape2D<Rectangle>()
         glEnd()
     }
 
+    override fun newInstance(): Rectangle
+    {
+        return Rectangle()
+    }
+
     /**
      * Clones the graphics object.
      *
@@ -81,7 +86,7 @@ class Rectangle : Shape2D<Rectangle>()
      */
     override fun clone(): Rectangle
     {
-        return Rectangle().static(x, y, width, height, color)
+        return Rectangle().static(x, y, width, height, color.clone())
     }
 
     /**
@@ -96,7 +101,7 @@ class Rectangle : Shape2D<Rectangle>()
      */
     override fun cloneWithPadding(padding: Double): Rectangle
     {
-        return Rectangle().static(x + padding, y + padding, width - padding * 2, height - padding * 2, color)
+        return Rectangle().static(x + padding, y + padding, width - padding * 2, height - padding * 2, color.clone())
     }
 
     /**
@@ -111,6 +116,6 @@ class Rectangle : Shape2D<Rectangle>()
      */
     override fun cloneWithMargin(margin: Double): Rectangle
     {
-        return Rectangle().static(x - margin, y - margin, width + margin * 2, height + margin * 2, color)
+        return Rectangle().static(x - margin, y - margin, width + margin * 2, height + margin * 2, color.clone())
     }
 }

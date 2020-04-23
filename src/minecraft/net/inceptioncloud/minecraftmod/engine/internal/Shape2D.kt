@@ -26,7 +26,7 @@ import kotlin.reflect.full.memberProperties
  * @property T the type of the implementing class
  */
 @Suppress("UNCHECKED_CAST")
-abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
+abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColorable
 {
     /**
      * Whether the shape is currently visible.
@@ -35,6 +35,18 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
      * parent [ShapeBuffer2D] that contains the shape.
      */
     var visible = true
+
+    /**
+     * The animation scratchpad of this object.
+     *
+     * Every shape object that contains animation has a scratchpad. The animations will be applied to
+     * the scratchpad, but the base shape will still be available to support relative value updates.
+     *
+     * The scratchpad is created or deleted in the [update] function depending on whether the
+     * [animationStack] is empty or not. When a scratchpad is available, the [drawShapeOrScratchpad]
+     * function will draw it instead.
+     */
+    private var scratchpad: Shape2D<*>? = null
 
     /**
      * A simple method that uses the shape as a receiver in order to allow changes to it during lifetime.
@@ -90,18 +102,43 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
      */
     open fun update()
     {
-        if (updateDynamic == null && animationStack.isNullOrEmpty())
+        if (updateDynamic == null)
             return
 
         val clone = clone()
 
         updateDynamic?.invoke(clone)
 
-        animationStack.removeAll { it.finished }
-        animationStack.forEach { it.tick() }
-        animationStack.forEach { it.applyToShape(clone as Shape2D<*>, clone as Shape2D<*>) }
+        if (!animationStack.isNullOrEmpty())
+        {
+            scratchpad = clone()
+            animationStack.removeAll { it.finished }
+            animationStack.forEach { it.tick() }
+            animationStack.forEach { it.applyToShape(scratchpad = scratchpad!!, base = clone) }
+        } else scratchpad = null
 
         mergeChangesFromClone(clone)
+    }
+
+    /**
+     * Draws the shape or the scratchpad of the object.
+     *
+     * This function is a safer way to draw shape objects as it will render the [scratchpad] if one is
+     * available. Without the scratchpad, animations wouldn't affect the behaviour of the shape at all!
+     *
+     * It suppresses deprecation-warnings at it calls the [draw] function that is deprecated for the
+     * reason mentioned above.
+     */
+    @Suppress("DEPRECATION")
+    fun drawShapeOrScratchpad()
+    {
+        if (scratchpad != null)
+        {
+            scratchpad.draw()
+        } else
+        {
+            draw()
+        }
     }
 
     /**
@@ -142,6 +179,33 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
     }
 
     /**
+     * Merges changes from the clone to the instance's values.
+     *
+     * Iterates over all member properties that are annotated with [@Dynamic][Dynamic] and compares their
+     * values to the ones in the cloned object. If they don't match, it will set the property on the current
+     * instance to the value of the cloned instance.
+     *
+     * @param clone the cloned instance from which the changes are merged
+     */
+    private fun mergeChangesFromClone(clone: T)
+    {
+        this::class.memberProperties
+            .filter { it.hasAnnotation<Dynamic>() && it is KMutableProperty<*> }
+            .forEach { property ->
+                val originalProperty = property as KMutableProperty<*>
+                val originalValue = originalProperty.getter.call(this@Shape2D)
+
+                val cloneProperty = clone::class.memberProperties.find { it.name == property.name } as KMutableProperty<*>
+                val cloneValue = cloneProperty.getter.call(clone)
+
+                if (originalValue != cloneValue)
+                {
+                    originalProperty.setter.call(this@Shape2D, cloneValue!!)
+                }
+            }
+    }
+
+    /**
      * Clones the graphics object.
      *
      * @return an identical copy of the object that the function was called on
@@ -173,29 +237,19 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
     abstract fun cloneWithMargin(margin: Double): T
 
     /**
-     * Merges changes from the clone to the instance's values.
-     *
-     * Iterates over all member properties that are annotated with [@Dynamic][Dynamic] and compares their
-     * values to the ones in the cloned object. If they don't match, it will set the property on the current
-     * instance to the value of the cloned instance.
-     *
-     * @param clone the cloned instance from which the changes are merged
+     * Used to create a new instance of the subclass as [T] is the type of the subclass.
      */
-    private fun mergeChangesFromClone(clone: T)
+    abstract fun newInstance(): T
+
+    // This function is only implemented to deprecate it in this context.
+    @Deprecated
+    (
+        "This function won't render animations!",
+        ReplaceWith("drawShapeOrScratchpad()", "net.inceptioncloud.minecraftmod.engine.internal.Shape2D"),
+        DeprecationLevel.WARNING
+    )
+    override fun draw()
     {
-        this::class.memberProperties
-            .filter { it.hasAnnotation<Dynamic>() && it is KMutableProperty<*> }
-            .forEach { property ->
-                val originalProperty = property as KMutableProperty<*>
-                val originalValue = originalProperty.getter.call(this@Shape2D)
-
-                val cloneProperty = clone::class.memberProperties.find { it.name == property.name } as KMutableProperty<*>
-                val cloneValue = cloneProperty.getter.call(clone)
-
-                if (originalValue != cloneValue)
-                {
-                    originalProperty.setter.call(this@Shape2D, cloneValue!!)
-                }
-            }
+        super.draw()
     }
 }

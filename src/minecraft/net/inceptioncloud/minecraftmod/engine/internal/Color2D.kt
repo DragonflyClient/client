@@ -118,6 +118,14 @@ class Color2D
     }
 
     /**
+     * Returns an exact copy of this color object.
+     */
+    fun clone(): Color2D
+    {
+        return Color2D(red, green, blue, alpha)
+    }
+
+    /**
      * The base color stored in a [java.awt.Color] object.
      *
      * Whenever values of the [Color2D] object are accessed, the values of the base color will be used.
