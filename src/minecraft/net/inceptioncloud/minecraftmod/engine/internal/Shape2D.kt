@@ -102,12 +102,13 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
      */
     open fun update()
     {
-        if (updateDynamic == null)
-            return
-
         val clone = clone()
 
-        updateDynamic?.invoke(clone)
+        if (updateDynamic != null)
+        {
+            updateDynamic?.invoke(clone)
+            mergeChangesFromClone(clone)
+        }
 
         if (!animationStack.isNullOrEmpty())
         {
@@ -116,8 +117,6 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
             animationStack.forEach { it.tick() }
             animationStack.forEach { it.applyToShape(scratchpad = scratchpad!!, base = clone) }
         } else scratchpad = null
-
-        mergeChangesFromClone(clone)
     }
 
     /**
@@ -134,9 +133,11 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
     {
         if (scratchpad != null)
         {
-            scratchpad.draw()
+            println("Drawing scratchpad")
+            scratchpad?.draw()
         } else
         {
+            println("Drawing base")
             draw()
         }
     }

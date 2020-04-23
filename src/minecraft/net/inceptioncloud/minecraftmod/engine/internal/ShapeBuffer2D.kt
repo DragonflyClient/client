@@ -59,7 +59,7 @@ class ShapeBuffer2D
      */
     fun renderBuffer()
     {
-        synchronized(this) { content.filter { it.visible }.forEach { it.draw() } }
+        synchronized(this) { content.filter { it.visible }.forEach { it.drawShapeOrScratchpad() } }
     }
 
     /**
