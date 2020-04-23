@@ -1,7 +1,7 @@
 {
   "lastServer": {
     "serverName": "Gomme",
-    "serverIP": "gommehd.net",
+    "serverIP": "gommehd.net:25565",
     "lan": false
   },
   "enableZoomAnimation": true,

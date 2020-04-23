@@ -124,7 +124,30 @@ public abstract class Transition
      */
     public final void tick ()
     {
-        int direction = autoTransformator != null ? autoTransformator.getAsInt() : getDirection();
+        if (autoTransformator != null) {
+            int direction = autoTransformator.getAsInt();
+
+            switch (direction) {
+                case 1:
+                    doForward();
+                    break;
+
+                case -1:
+                    doBackward();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * The default tick method.
+     */
+    public final void directedUpdate ()
+    {
+        int direction = getDirection();
 
         switch (direction) {
             case 1:
@@ -143,7 +166,7 @@ public abstract class Transition
     /**
      * Destorys the transition.
      */
-    public void destroy()
+    public void destroy ()
     {
         InceptionMod.getInstance().stopTransition(this);
     }

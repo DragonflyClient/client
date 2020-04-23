@@ -1,19 +1,20 @@
 package net.inceptioncloud.minecraftmod.engine
 
+import net.inceptioncloud.minecraftmod.engine.animation.`in`.FadeAnimationIn
+import net.inceptioncloud.minecraftmod.engine.internal.Color2D
 import net.inceptioncloud.minecraftmod.engine.shapes.Rectangle
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 
 class EngineTestUI : GuiScreen()
 {
+    private val rectangle = Rectangle().static(10.0, 10.0, 50.0, 50.0, Color2D(Color.WHITE))
+
+    private val animation = FadeAnimationIn(true)
+
     override fun initGui()
     {
-        +Rectangle().dynamic {
-            x = (System.currentTimeMillis() / 100.0) % 20
-            y = (System.currentTimeMillis() / 100.0) % 20
-            width = 50.0
-            height = 50.0
-        }
+        +rectangle.pushAnimation(animation)
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float)
@@ -21,5 +22,11 @@ class EngineTestUI : GuiScreen()
         drawRect(0, 0, width, height, Color.RED.rgb)
 
         super.drawScreen(mouseX, mouseY, partialTicks)
+    }
+
+    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int)
+    {
+        animation.start()
+        super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 }

@@ -91,21 +91,6 @@ class Rectangle : Shape2D<Rectangle>()
      * object, and the distance between the outline of the cloned object and the outline of the original
      * object is equal to the padding size.
      *
-     * The calculation works like this:
-     * ```
-     * x += padding
-     * y += padding
-     * width -= padding * 2
-     * height -= padding * 2
-     *
-     * ._______________.
-     * | .___________. |
-     * | |           | |
-     * | |  =cloned  | |  =original
-     * | |___________| |
-     * |_______________|
-     * ```
-     *
      * @see cloneWithMargin
      * @return a congruent copy of the object with the given padding to the original object
      */
@@ -120,19 +105,6 @@ class Rectangle : Shape2D<Rectangle>()
      * By adding a padding, the cloned object will get greater. It stays in the center of the original
      * object, and the distance between the outline of the original object and the outline of the cloned
      * object is equal to the padding size.
-     * ```
-     * x -= margin
-     * y -= margin
-     * width += margin * 2
-     * height += margin * 2
-     *
-     * ._______________.
-     * | .___________. |
-     * | |           | |
-     * | | =original | |  =cloned
-     * | |___________| |
-     * |_______________|
-     * ```
      *
      * @see cloneWithPadding
      * @return a congruent copy of the object with the given margin to the original object

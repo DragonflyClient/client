@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.internal
 
+import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.structure.IColorable
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IDrawable
@@ -9,7 +10,7 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
 /**
- * ## Object2D Interface
+ * ## Shape2D Class
  *
  * A two-dimensional object is a drawable shape that has a position (x and y), a size (width and height)
  * and can receive a color. This interface provides specific methods that every 2D-object has to implement
@@ -24,6 +25,7 @@ import kotlin.reflect.full.memberProperties
  *
  * @property T the type of the implementing class
  */
+@Suppress("UNCHECKED_CAST")
 abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
 {
     /**
@@ -41,12 +43,21 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
      * changes will be made. After the execution, the new object will be compared to the original one
      * and the changes will be applied to the original one.
      */
-    private var dynamicUpdate: (T.() -> Unit)? = null
+    private var updateDynamic: (T.() -> Unit)? = null
+
+    /**
+     * A stacking list with all animations that are currently being applied to the shape.
+     *
+     * The transitions are prioritized in descending order, what means the last added animation can
+     * override all animations that were applied before. To add an animation on top of the stack, use
+     * [pushAnimation]. Animations in any place of the stack can be removed by calling [popAnimation].
+     */
+    private val animationStack = mutableListOf<Animation>()
 
     /**
      * Sets the values of the shape statically without dynamic updating.
      *
-     * Note, that this doesn't remove the [dynamicUpdate] function so it doesn't prevent it.
+     * Note, that this doesn't remove the [updateDynamic] function so it doesn't prevent it.
      * It only sets the values for the moment but they can be updated by a future update.
      */
     fun static(x: Double, y: Double, width: Double, height: Double, color: Color2D): T
@@ -56,7 +67,7 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
         this.width = width
         this.height = height
         this.color = color
-        @Suppress("UNCHECKED_CAST")
+
         return this as T
     }
 
@@ -68,8 +79,7 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
      */
     fun dynamic(dynamicUpdate: T.() -> Unit): T
     {
-        this.dynamicUpdate = dynamicUpdate
-        @Suppress("UNCHECKED_CAST")
+        this.updateDynamic = dynamicUpdate
         return this as T
     }
 
@@ -80,12 +90,55 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
      */
     open fun update()
     {
-        if (dynamicUpdate != null)
-        {
-            val clone = clone()
-            dynamicUpdate?.invoke(clone)
-            mergeChangesFromClone(clone)
-        }
+        if (updateDynamic == null && animationStack.isNullOrEmpty())
+            return
+
+        val clone = clone()
+
+        updateDynamic?.invoke(clone)
+
+        animationStack.removeAll { it.finished }
+        animationStack.forEach { it.tick() }
+        animationStack.forEach { it.applyToShape(clone as Shape2D<*>, clone as Shape2D<*>) }
+
+        mergeChangesFromClone(clone)
+    }
+
+    /**
+     * Pushes an animation on top of the animations-stack.
+     *
+     * This animation can override all other animations that have been added to the stack before, but will
+     * be overwritten by following animations.
+     */
+    fun pushAnimation(animation: Animation): T
+    {
+        animationStack.add(animation)
+        update()
+
+        return this as T
+    }
+
+    /**
+     * Pops an animation from the animations-stack.
+     *
+     * This method will remove the given animation from the stack, regardless of its position.
+     */
+    fun popAnimation(animation: Animation): T
+    {
+        animationStack.remove(animation)
+        return this as T
+    }
+
+    /**
+     * Pops all animations from the given class from the animations-stack.
+     *
+     * This method will remove all animations with the class from the stack, regardless of their
+     * position. It is often easier than providing the animation object that should be removed.
+     */
+    fun popAnimation(`class`: Class<*>): T
+    {
+        animationStack.removeIf { it.javaClass == `class` }
+        return this as T
     }
 
     /**
@@ -102,21 +155,6 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
      * object, and the distance between the outline of the cloned object and the outline of the original
      * object is equal to the padding size.
      *
-     * The calculation works like this:
-     * ```
-     * x += padding/2
-     * y += padding/2
-     * width -= padding
-     * height -= padding
-     *
-     * ._______________.
-     * | .___________. |
-     * | |           | |
-     * | |  =cloned  | |  =original
-     * | |___________| |
-     * |_______________|
-     * ```
-     *
      * @see cloneWithMargin
      * @return a congruent copy of the object with the given padding to the original object
      */
@@ -128,19 +166,6 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
      * By adding a padding, the cloned object will get greater. It stays in the center of the original
      * object, and the distance between the outline of the original object and the outline of the cloned
      * object is equal to the padding size.
-     * ```
-     * x -= margin/2
-     * y -= margin/2
-     * width += margin
-     * height += margin
-     *
-     * ._______________.
-     * | .___________. |
-     * | |           | |
-     * | | =original | |  =cloned
-     * | |___________| |
-     * |_______________|
-     * ```
      *
      * @see cloneWithPadding
      * @return a congruent copy of the object with the given margin to the original object
@@ -170,7 +195,6 @@ abstract class Shape2D<T : Any> : IPosition, IDimension, IDrawable, IColorable
                 if (originalValue != cloneValue)
                 {
                     originalProperty.setter.call(this@Shape2D, cloneValue!!)
-                    println("${property.name}: $originalValue -> $cloneValue")
                 }
             }
     }

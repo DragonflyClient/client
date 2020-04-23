@@ -95,6 +95,29 @@ class Color2D
     }
 
     /**
+     * Compares two object and checks whether they are the same.
+     */
+    override fun equals(other: Any?): Boolean
+    {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Color2D
+
+        if (base != other.base) return false
+
+        return true
+    }
+
+    /**
+     * Generates the hash-code for the color object.
+     */
+    override fun hashCode(): Int
+    {
+        return base.hashCode()
+    }
+
+    /**
      * The base color stored in a [java.awt.Color] object.
      *
      * Whenever values of the [Color2D] object are accessed, the values of the base color will be used.
