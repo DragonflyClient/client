@@ -139,6 +139,8 @@ public abstract class Transition
                 default:
                     break;
             }
+        } else if (!originStackTrace.getClassName().contains("Animation")) {
+            directedUpdate();
         }
     }
 
