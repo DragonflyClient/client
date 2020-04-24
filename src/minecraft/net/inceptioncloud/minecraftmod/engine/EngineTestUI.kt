@@ -1,6 +1,7 @@
 package net.inceptioncloud.minecraftmod.engine
 
 import net.inceptioncloud.minecraftmod.engine.animation.`in`.FadeAnimationIn
+import net.inceptioncloud.minecraftmod.engine.animation.out.FadeAnimationOut
 import net.inceptioncloud.minecraftmod.engine.internal.Color2D
 import net.inceptioncloud.minecraftmod.engine.shapes.Rectangle
 import net.minecraft.client.gui.GuiScreen
@@ -26,7 +27,14 @@ class EngineTestUI : GuiScreen()
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int)
     {
-        animation.start()
+        if (!animation.finished)
+        {
+            animation.start()
+        } else
+        {
+            rectangle.pushAndStartAnimation(FadeAnimationOut(true))
+        }
+
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 }

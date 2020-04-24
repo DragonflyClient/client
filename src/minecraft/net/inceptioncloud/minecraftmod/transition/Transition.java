@@ -164,7 +164,7 @@ public abstract class Transition
     }
 
     /**
-     * Destorys the transition.
+     * Destroys the transition.
      */
     public void destroy ()
     {

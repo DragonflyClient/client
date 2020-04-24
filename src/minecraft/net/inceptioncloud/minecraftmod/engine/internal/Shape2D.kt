@@ -150,6 +150,22 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
      */
     fun pushAnimation(animation: Animation): T
     {
+        animation.initAnimation(this)
+        animationStack.add(animation)
+        update()
+
+        return this as T
+    }
+
+    /**
+     * Pushes an animation on top of the animations-stack and starts it.
+     *
+     * @see pushAnimation
+     */
+    fun pushAndStartAnimation(animation: Animation): T
+    {
+        animation.initAnimation(this)
+        animation.start()
         animationStack.add(animation)
         update()
 

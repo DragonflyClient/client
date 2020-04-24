@@ -14,7 +14,7 @@ import net.inceptioncloud.minecraftmod.transition.number.TransitionTypeNumber
  *
  * @param smooth decides whether a [SmoothDoubleTransition] or a default [DoubleTransition] should be used
  */
-class FadeAnimationIn(smooth: Boolean) : Animation()
+open class FadeAnimationIn(val smooth: Boolean) : Animation()
 {
     /**
      * A simple [Transition] that provides the opacity of the object.
@@ -22,12 +22,33 @@ class FadeAnimationIn(smooth: Boolean) : Animation()
      * This can either be a [SmoothDoubleTransition] or a [DoubleTransition] depending
      * on the smooth flag in the constructor of the animation.
      */
-    private var transition: TransitionTypeNumber
+    private lateinit var transition: TransitionTypeNumber
 
-    init
+    /**
+     * The start value of the transition.
+     *
+     * This can be modified to create a reversed (out) animation by simply extending this
+     * class and overriding this and the [endValue] value.
+     */
+    open val startValue = 0.0
+
+    /**
+     * The end value of the transition.
+     *
+     * @see startValue
+     */
+    open val endValue = 1.0
+
+    /**
+     * Initializes the animation.
+     *
+     * This function runs the required code to initialize (prepare) the animation in the specific
+     * subclass. It is for instance used to create transitions.
+     */
+    override fun initAnimation(parent: Shape2D<*>)
     {
-        val start = 0.0
-        val end = 1.0
+        super.initAnimation(parent)
+
         val fadeIn = 20
         val stay = 60
         val fadeOut = 20
@@ -35,8 +56,8 @@ class FadeAnimationIn(smooth: Boolean) : Animation()
         transition = if (smooth)
         {
             SmoothDoubleTransition.builder()
-                .start(start)
-                .end(end)
+                .start(startValue)
+                .end(endValue)
                 .fadeIn(fadeIn)
                 .stay(stay)
                 .fadeOut(fadeOut)
@@ -45,8 +66,8 @@ class FadeAnimationIn(smooth: Boolean) : Animation()
         } else
         {
             DoubleTransition.builder()
-                .start(start)
-                .end(end)
+                .start(startValue)
+                .end(endValue)
                 .amountOfSteps(fadeIn + stay + fadeOut)
                 .reachEnd { finish() }
                 .build()
@@ -66,7 +87,7 @@ class FadeAnimationIn(smooth: Boolean) : Animation()
      */
     override fun applyToShape(scratchpad: Shape2D<*>, base: Shape2D<*>)
     {
-        scratchpad.color.alphaDouble = transition.get()
+        scratchpad.color.alphaDouble = transition.get() * base.color.alphaDouble
     }
 
     /**
@@ -87,11 +108,13 @@ class FadeAnimationIn(smooth: Boolean) : Animation()
      * fade-in transitions that start after a given time, but the object should already be hidden before.
      * When using one or more [transitions][Transition], this should call [Transition.setForward].
      */
-    override fun start()
+    override fun start(): Animation
     {
+        // state-check
         super.start()
 
         transition.setForward()
+        return this
     }
 
 }
