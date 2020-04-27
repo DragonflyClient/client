@@ -2,53 +2,36 @@ package net.inceptioncloud.minecraftmod.engine.animation.`in`
 
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.internal.Shape2D
-import net.inceptioncloud.minecraftmod.transition.Transition
+import net.inceptioncloud.minecraftmod.engine.sequence.Sequence
+import net.inceptioncloud.minecraftmod.engine.sequence.types.DoubleSequence
 
-class FloatAnimationIn : Animation()
+/**
+ * ## Float Animation (Entrance)
+ *
+ * Makes the parent object rise up/down and increases the opacity from 0% to 100%.
+ *
+ * @property duration the duration of the animation in ticks
+ * @property distance the distance to the original point that can be negative (by default 40.0)
+ * @property easing an optional easing function
+ */
+open class FloatAnimationIn(val duration: Int, val distance: Double = 40.0, val easing: ((Double) -> Double)? = null)
+    : Animation()
 {
-    /**
-     * Applies the animation to the shape base.
-     *
-     * Do this by changing the values of the [scratchpad] parameter. This is a clone of the base
-     * shape to which the changes can be made. For manipulating values relative to a base value,
-     * the [base] parameter is passed.
-     *
-     * @param scratchpad the version of the shape that should be modified
-     * @param base a version of the shape that holds base values set by the [Shape2D.static] or
-     * [Shape2D.dynamic] function
-     */
+    open val sequence: Sequence<Double> = DoubleSequence(0.0, 1.0, duration)
+        .withEasing(easing)
+        .withEndHook { finish() }
+
     override fun applyToShape(scratchpad: Shape2D<*>, base: Shape2D<*>)
     {
-        TODO("Not yet implemented")
+        scratchpad.color.alphaDouble = base.color.alphaDouble * sequence.current
+        scratchpad.y = base.y + distance - (distance * sequence.current)
     }
 
-    /**
-     * Performs a tick on the animation.
-     *
-     * This is called from the [Shape2D.update] function. If the animation uses one or more
-     * [transitions][Transition], the [Transition.directedUpdate] method should be called here.
-     */
     override fun tick()
     {
-        TODO("Not yet implemented")
-    }
+        if (!running)
+            return
 
-    /**
-     * Starts the animation.
-     *
-     * **NOTE:** When overriding this method, the super-call should be the first statement as it validates the
-     * use of the method!
-     *
-     * Before this method is called, the animation shouldn't use any transitions. It is used to support
-     * fade-in transitions that start after a given time, but the object should already be hidden before.
-     * When using one or more [transitions][Transition], this should call [Transition.setForward].
-     *
-     * @throws IllegalStateException if the animation has already finished
-     */
-    override fun start(): Animation
-    {
-        super.start()
-
-        return this
+        sequence.next()
     }
 }

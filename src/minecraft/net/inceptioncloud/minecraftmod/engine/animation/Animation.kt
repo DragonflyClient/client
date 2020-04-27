@@ -22,6 +22,12 @@ abstract class Animation
         private set
 
     /**
+     * Whether the animation is currently running. By default, the flag is set to false but will be
+     * updated to true once the [start] method was called.
+     */
+    var running = false
+
+    /**
      * The parent of an animation is the shape object to which this animation applies. There can only
      * be one parent object for an animation, which means that an animation cannot be added to
      * multiple shapes.
@@ -64,6 +70,8 @@ abstract class Animation
         {
             throw IllegalStateException("The animation has already finished and cannot be started again!")
         }
+
+        running = true
 
         return this
     }

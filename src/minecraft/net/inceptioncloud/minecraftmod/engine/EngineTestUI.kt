@@ -1,21 +1,20 @@
 package net.inceptioncloud.minecraftmod.engine
 
-import net.inceptioncloud.minecraftmod.engine.animation.`in`.FadeAnimationIn
-import net.inceptioncloud.minecraftmod.engine.animation.out.FadeAnimationOut
+import net.inceptioncloud.minecraftmod.engine.animation.`in`.FloatAnimationIn
+import net.inceptioncloud.minecraftmod.engine.animation.out.FloatAnimationOut
 import net.inceptioncloud.minecraftmod.engine.internal.Color2D
+import net.inceptioncloud.minecraftmod.engine.sequence.easing.EaseBack
 import net.inceptioncloud.minecraftmod.engine.shapes.Rectangle
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 
 class EngineTestUI : GuiScreen()
 {
-    private val rectangle = Rectangle().static(10.0, 10.0, 50.0, 50.0, Color2D(Color.WHITE))
-
-    private val animation = FadeAnimationIn(true)
+    private val rectangle = Rectangle().static(100.0, 100.0, 100.0, 100.0, Color2D(Color.WHITE))
 
     override fun initGui()
     {
-        +rectangle.pushAnimation(animation)
+        +rectangle.pushAnimation(FloatAnimationIn(200, -50.0, EaseBack.IN_OUT))
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float)
@@ -27,12 +26,13 @@ class EngineTestUI : GuiScreen()
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int)
     {
-        if (!animation.finished)
+        val floatAnimation = rectangle.findAnimation(FloatAnimationIn::class.java)
+        if (floatAnimation != null)
         {
-            animation.start()
+            floatAnimation.start()
         } else
         {
-            rectangle.pushAndStartAnimation(FadeAnimationOut(true))
+            rectangle.pushAndStartAnimation(FloatAnimationOut(200, 50.0, EaseBack.IN_OUT))
         }
 
         super.mouseClicked(mouseX, mouseY, mouseButton)

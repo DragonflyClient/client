@@ -133,11 +133,9 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
     {
         if (scratchpad != null)
         {
-            println("Drawing scratchpad")
             scratchpad?.draw()
         } else
         {
-            println("Drawing base")
             draw()
         }
     }
@@ -189,10 +187,21 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
      * This method will remove all animations with the class from the stack, regardless of their
      * position. It is often easier than providing the animation object that should be removed.
      */
-    fun popAnimation(`class`: Class<*>): T
+    fun <T : Animation> popAnimation(`class`: Class<T>): T
     {
         animationStack.removeIf { it.javaClass == `class` }
         return this as T
+    }
+
+    /**
+     * Tries to find an animation that has the given java class.
+     *
+     * @param class the class of the animation
+     * @return the animation or null if no one was found
+     */
+    fun <T : Animation> findAnimation(`class`: Class<T>): Animation?
+    {
+        return animationStack.firstOrNull { it.javaClass == `class` }
     }
 
     /**
