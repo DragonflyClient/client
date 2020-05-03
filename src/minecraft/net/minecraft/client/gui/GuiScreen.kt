@@ -5,8 +5,8 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import net.inceptioncloud.minecraftmod.InceptionMod
 import net.inceptioncloud.minecraftmod.design.color.CloudColor
-import net.inceptioncloud.minecraftmod.engine.internal.Shape2D
-import net.inceptioncloud.minecraftmod.engine.internal.ShapeBuffer2D
+import net.inceptioncloud.minecraftmod.engine.internal.Widget
+import net.inceptioncloud.minecraftmod.engine.internal.WidgetBuffer
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton
 import net.inceptioncloud.minecraftmod.utils.RenderUtils
 import net.minecraft.client.Minecraft
@@ -98,7 +98,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     private var clickedLinkURI: URI? = null
 
     @JvmField
-    var buffer = ShapeBuffer2D()
+    var buffer = WidgetBuffer()
 
     /**
      * Draws a gradient background with the default colors.
@@ -131,7 +131,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
         {
             guiLabel.drawLabel(mc, mouseX, mouseY)
         }
-        buffer.renderBuffer()
+        buffer.render()
     }
 
     /**
@@ -687,16 +687,16 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     }
 
     /**
-     * An operator function that allows adding shapes to the buffer easily.
+     * An operator function that allows adding widgets to the buffer easily.
      *
      * ```
      * + Rectangle().static(x, y, width, height, color)
      * + Rectangle().dynamic { ... }
      * ```
      */
-    operator fun Shape2D<*>.unaryPlus()
+    operator fun Widget<*>.unaryPlus()
     {
-        buffer.addShape(this)
+        buffer.add(this)
     }
 
     companion object

@@ -9,8 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.net.*;
 import java.net.Proxy.Type;
 import java.util.List;

@@ -4,18 +4,18 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 /**
- * ## Color 2D
+ * ## Widget Color
  *
  * This is an advanced color class that extends the default [java.awt.Color] by providing more
  * security and number types. It keeps the color parameters in range when they are applied and
  * allows changing them without initializing a new color object.
  */
-class Color2D
+class WidgetColor
 {
     /**
-     * Instantiates a new [Color2D] object based on a [java.awt.Color].
+     * Instantiates a new [WidgetColor] object based on a [java.awt.Color].
      *
-     * @param awt the color that is used for the base [Color2D.base] variable
+     * @param awt the color that is used for the base [WidgetColor.base] variable
      */
     constructor(awt: Color)
     {
@@ -23,7 +23,7 @@ class Color2D
     }
 
     /**
-     * Instantiates a new [Color2D] object based on RGB integer values.
+     * Instantiates a new [WidgetColor] object based on RGB integer values.
      *
      * @param r the red value (0 - 255)
      * @param g the green value (0 - 255)
@@ -41,7 +41,7 @@ class Color2D
     }
 
     /**
-     * Instantiates a new [Color2D] object based on RGB float values.
+     * Instantiates a new [WidgetColor] object based on RGB float values.
      *
      * @param r the red value (0.0F - 1.0F)
      * @param g the green value (0.0F - 1.0F)
@@ -59,7 +59,7 @@ class Color2D
     }
 
     /**
-     * Instantiates a new [Color2D] object based on RGB double values.
+     * Instantiates a new [WidgetColor] object based on RGB double values.
      *
      * @param r the red value (0.0 - 1.0)
      * @param g the green value (0.0 - 1.0)
@@ -77,7 +77,7 @@ class Color2D
     }
 
     /**
-     * Instantiates a new [Color2D] object based on a hexadecimal value.
+     * Instantiates a new [WidgetColor] object based on a hexadecimal value.
      *
      * @param hex the hexadecimal value in integer format (eg. `0xFE0A6C`)
      */
@@ -102,7 +102,7 @@ class Color2D
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Color2D
+        other as WidgetColor
 
         if (base != other.base) return false
 
@@ -120,16 +120,16 @@ class Color2D
     /**
      * Returns an exact copy of this color object.
      */
-    fun clone(): Color2D
+    fun clone(): WidgetColor
     {
-        return Color2D(red, green, blue, alpha)
+        return WidgetColor(red, green, blue, alpha)
     }
 
     /**
      * The base color stored in a [java.awt.Color] object.
      *
-     * Whenever values of the [Color2D] object are accessed, the values of the base color will be used.
-     * Whenever values of the [Color2D] object are modified, the changes will be reflected on the base color.
+     * Whenever values of the [WidgetColor] object are accessed, the values of the base color will be used.
+     * Whenever values of the [WidgetColor] object are modified, the changes will be reflected on the base color.
      */
     var base: Color
 

@@ -1,11 +1,11 @@
 package net.inceptioncloud.minecraftmod.engine.shapes
 
-import net.inceptioncloud.minecraftmod.engine.internal.Color2D
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
-import net.inceptioncloud.minecraftmod.engine.internal.Shape2D
+import net.inceptioncloud.minecraftmod.engine.internal.Widget
+import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
 import org.lwjgl.opengl.GL11.*
 
-class Rectangle : Shape2D<Rectangle>()
+class Rectangle : Widget<Rectangle>()
 {
     /**
      * The x-position of the object on the screen.
@@ -50,9 +50,9 @@ class Rectangle : Shape2D<Rectangle>()
     override var height: Double = 50.0
 
     /**
-     * The color of the object represented by a [Color2D] wrapper.
+     * The color of the object represented by a [WidgetColor] wrapper.
      */
-    override var color: Color2D = Color2D(1.0, 1.0, 1.0, 1.0)
+    override var widgetColor: WidgetColor = WidgetColor(1.0, 1.0, 1.0, 1.0)
 
     /**
      * Contains the core rendering process of the object.
@@ -62,7 +62,7 @@ class Rectangle : Shape2D<Rectangle>()
      */
     override fun render()
     {
-        color.glBindColor()
+        widgetColor.glBindColor()
 
         glBegin(GL_QUADS)
 
@@ -86,7 +86,7 @@ class Rectangle : Shape2D<Rectangle>()
      */
     override fun clone(): Rectangle
     {
-        return Rectangle().static(x, y, width, height, color.clone())
+        return Rectangle().static(x, y, width, height, widgetColor.clone())
     }
 
     /**
@@ -101,7 +101,7 @@ class Rectangle : Shape2D<Rectangle>()
      */
     override fun cloneWithPadding(padding: Double): Rectangle
     {
-        return Rectangle().static(x + padding, y + padding, width - padding * 2, height - padding * 2, color.clone())
+        return Rectangle().static(x + padding, y + padding, width - padding * 2, height - padding * 2, widgetColor.clone())
     }
 
     /**
@@ -116,6 +116,6 @@ class Rectangle : Shape2D<Rectangle>()
      */
     override fun cloneWithMargin(margin: Double): Rectangle
     {
-        return Rectangle().static(x - margin, y - margin, width + margin * 2, height + margin * 2, color.clone())
+        return Rectangle().static(x - margin, y - margin, width + margin * 2, height + margin * 2, widgetColor.clone())
     }
 }

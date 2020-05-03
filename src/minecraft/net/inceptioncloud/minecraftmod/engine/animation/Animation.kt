@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.animation
 
-import net.inceptioncloud.minecraftmod.engine.internal.Shape2D
+import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.transition.Transition
 
 /**
@@ -15,7 +15,7 @@ abstract class Animation
      * Represents if the animation has run through it's lifecycle and is now finished.
      *
      * If this flag is set to true, the animation will be removed from its parent elements
-     * during the next [Shape2D.update] call, before the animation will be applied. It has a
+     * during the next [Widget.update] call, before the animation will be applied. It has a
      * private setter.
      */
     var finished = false
@@ -28,11 +28,11 @@ abstract class Animation
     var running = false
 
     /**
-     * The parent of an animation is the shape object to which this animation applies. There can only
+     * The parent of an animation is the widget object to which this animation applies. There can only
      * be one parent object for an animation, which means that an animation cannot be added to
-     * multiple shapes.
+     * multiple widgets.
      */
-    lateinit var parent: Shape2D<*>
+    lateinit var parent: Widget<*>
 
     /**
      * Initializes the animation.
@@ -44,7 +44,7 @@ abstract class Animation
      *
      * @throws IllegalArgumentException if the animation is already bound to a parent element
      */
-    open fun initAnimation(parent: Shape2D<*>)
+    open fun initAnimation(parent: Widget<*>)
     {
         if (this::parent.isInitialized)
         {
@@ -77,22 +77,22 @@ abstract class Animation
     }
 
     /**
-     * Applies the animation to the shape base.
+     * Applies the animation to the widget base.
      *
      * Do this by changing the values of the [scratchpad] parameter. This is a clone of the base
-     * shape to which the changes can be made. For manipulating values relative to a base value,
+     * widget to which the changes can be made. For manipulating values relative to a base value,
      * the [base] parameter is passed.
      *
-     * @param scratchpad the version of the shape that should be modified
-     * @param base a version of the shape that holds base values set by the [Shape2D.static] or
-     * [Shape2D.dynamic] function
+     * @param scratchpad the version of the widget that should be modified
+     * @param base a version of the widget that holds base values set by the [Widget.static] or
+     * [Widget.dynamic] function
      */
-    abstract fun applyToShape(scratchpad: Shape2D<*>, base: Shape2D<*>)
+    abstract fun applyToShape(scratchpad: Widget<*>, base: Widget<*>)
 
     /**
      * Performs a tick on the animation.
      *
-     * This is called from the [Shape2D.update] function. If the animation uses one or more
+     * This is called from the [Widget.update] function. If the animation uses one or more
      * [transitions][Transition], the [Transition.directedUpdate] method should be called here.
      */
     abstract fun tick()
@@ -100,8 +100,8 @@ abstract class Animation
     /**
      * Finishes the animation.
      *
-     * This sets the [finished] flag to true, what will lead the [Shape2D] to remove the animation from the
-     * [animation stack][Shape2D.animationStack] during the next call of the [update][Shape2D.update] function.
+     * This sets the [finished] flag to true, what will lead the [Widget] to remove the animation from the
+     * [animation stack][Widget.animationStack] during the next call of the [update][Widget.update] function.
      * It should be called when the animation was ran through its lifecycle what is mostly the case when all
      * [transitions][Transition] have reached their end. Therefore it makes sense to use the animation builder
      * and add a reach-end-hook.

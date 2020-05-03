@@ -10,9 +10,9 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
 /**
- * ## Shape2D Class
+ * ## Widget
  *
- * A two-dimensional object is a drawable shape that has a position (x and y), a size (width and height)
+ * A two-dimensional object is a drawable widget that has a position (x and y), a size (width and height)
  * and can receive a color. This interface provides specific methods that every 2D-object has to implement
  * in order to make drawing easier.
  *
@@ -26,30 +26,30 @@ import kotlin.reflect.full.memberProperties
  * @property T the type of the implementing class
  */
 @Suppress("UNCHECKED_CAST")
-abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColorable
+abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColorable
 {
     /**
-     * Whether the shape is currently visible.
+     * Whether the widget is currently visible.
      *
-     * If this flag is set to false, the [draw] method won't be called by the
-     * parent [ShapeBuffer2D] that contains the shape.
+     * If this flag is set to false, the [drawNative] method won't be called by the
+     * parent [WidgetBuffer] that contains the widget.
      */
     var visible = true
 
     /**
      * The animation scratchpad of this object.
      *
-     * Every shape object that contains animation has a scratchpad. The animations will be applied to
-     * the scratchpad, but the base shape will still be available to support relative value updates.
+     * Every widget object that contains animation has a scratchpad. The animations will be applied to
+     * the scratchpad, but the base widget will still be available to support relative value updates.
      *
      * The scratchpad is created or deleted in the [update] function depending on whether the
-     * [animationStack] is empty or not. When a scratchpad is available, the [drawShapeOrScratchpad]
+     * [animationStack] is empty or not. When a scratchpad is available, the [draw]
      * function will draw it instead.
      */
-    private var scratchpad: Shape2D<*>? = null
+    private var scratchpad: Widget<*>? = null
 
     /**
-     * A simple method that uses the shape as a receiver in order to allow changes to it during lifetime.
+     * A simple method that uses the widget as a receiver in order to allow changes to it during lifetime.
      *
      * This will be invoked on every tick. It is called on a clone of the current object to which the
      * changes will be made. After the execution, the new object will be compared to the original one
@@ -58,7 +58,7 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
     private var updateDynamic: (T.() -> Unit)? = null
 
     /**
-     * A stacking list with all animations that are currently being applied to the shape.
+     * A stacking list with all animations that are currently being applied to the widget.
      *
      * The transitions are prioritized in descending order, what means the last added animation can
      * override all animations that were applied before. To add an animation on top of the stack, use
@@ -67,27 +67,27 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
     private val animationStack = mutableListOf<Animation>()
 
     /**
-     * Sets the values of the shape statically without dynamic updating.
+     * Sets the values of the widget statically without dynamic updating.
      *
      * Note, that this doesn't remove the [updateDynamic] function so it doesn't prevent it.
      * It only sets the values for the moment but they can be updated by a future update.
      */
-    fun static(x: Double, y: Double, width: Double, height: Double, color: Color2D): T
+    fun static(x: Double, y: Double, width: Double, height: Double, widgetColor: WidgetColor): T
     {
         this.x = x
         this.y = y
         this.width = width
         this.height = height
-        this.color = color
+        this.widgetColor = widgetColor
 
         return this as T
     }
 
     /**
-     * Sets the function to dynamically update the shape.
+     * Sets the function to dynamically update the widget.
      *
-     * This function is called on every shape update by the buffer (on every mod tick) in order to
-     * make changes on a cloned version of the shape that will then be merged onto the original shape.
+     * This function is called on every widget update by the buffer (on every mod tick) in order to
+     * make changes on a cloned version of the widget that will then be merged onto the original widget.
      */
     fun dynamic(dynamicUpdate: T.() -> Unit): T
     {
@@ -120,23 +120,23 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
     }
 
     /**
-     * Draws the shape or the scratchpad of the object.
+     * Draws the widget or the scratchpad of the object.
      *
-     * This function is a safer way to draw shape objects as it will render the [scratchpad] if one is
-     * available. Without the scratchpad, animations wouldn't affect the behaviour of the shape at all!
+     * This function is a safer way to draw widget objects as it will render the [scratchpad] if one is
+     * available. Without the scratchpad, animations wouldn't affect the behaviour of the widget at all!
      *
-     * It suppresses deprecation-warnings at it calls the [draw] function that is deprecated for the
+     * It suppresses deprecation-warnings at it calls the [drawNative] function that is deprecated for the
      * reason mentioned above.
      */
     @Suppress("DEPRECATION")
-    fun drawShapeOrScratchpad()
+    fun draw()
     {
         if (scratchpad != null)
         {
-            scratchpad?.draw()
+            scratchpad?.drawNative()
         } else
         {
-            draw()
+            drawNative()
         }
     }
 
@@ -219,14 +219,14 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
             .filter { it.hasAnnotation<Dynamic>() && it is KMutableProperty<*> }
             .forEach { property ->
                 val originalProperty = property as KMutableProperty<*>
-                val originalValue = originalProperty.getter.call(this@Shape2D)
+                val originalValue = originalProperty.getter.call(this@Widget)
 
                 val cloneProperty = clone::class.memberProperties.find { it.name == property.name } as KMutableProperty<*>
                 val cloneValue = cloneProperty.getter.call(clone)
 
                 if (originalValue != cloneValue)
                 {
-                    originalProperty.setter.call(this@Shape2D, cloneValue!!)
+                    originalProperty.setter.call(this@Widget, cloneValue!!)
                 }
             }
     }
@@ -271,11 +271,11 @@ abstract class Shape2D<T : Shape2D<T>> : IPosition, IDimension, IDrawable, IColo
     @Deprecated
     (
         "This function won't render animations!",
-        ReplaceWith("drawShapeOrScratchpad()", "net.inceptioncloud.minecraftmod.engine.internal.Shape2D"),
+        ReplaceWith("draw()", "net.inceptioncloud.minecraftmod.engine.internal.Widget"),
         DeprecationLevel.WARNING
     )
-    override fun draw()
+    override fun drawNative()
     {
-        super.draw()
+        super.drawNative()
     }
 }

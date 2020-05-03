@@ -16,15 +16,14 @@ interface IDrawable
      * Calls the [preRender], [render] and [postRender] functions that the object should implement.
      * In case the rendering process fails, it makes sure that the post-render function is still called.
      */
-    fun draw()
+    fun drawNative()
     {
         preRender()
 
         try
         {
             render()
-        }
-        catch (e: Exception)
+        } catch (e: Exception)
         {
             LogManager.getRootLogger().error("An error occurred while rendering drawable!", e)
         }
@@ -47,7 +46,7 @@ interface IDrawable
      *
      * This is the first method that is called during the rendering process. By default, it contains
      * general calls that prepare the rendering, but it can be overwritten to add specific calls for the
-     * shape.
+     * widget.
      */
     fun preRender()
     {

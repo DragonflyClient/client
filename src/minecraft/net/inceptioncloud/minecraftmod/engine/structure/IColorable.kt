@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.structure
 
-import net.inceptioncloud.minecraftmod.engine.internal.Color2D
+import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
 
 /**
  * ## Colorable Interface
@@ -11,7 +11,7 @@ import net.inceptioncloud.minecraftmod.engine.internal.Color2D
 interface IColorable
 {
     /**
-     * The color of the object represented by a [Color2D] wrapper.
+     * The color of the object represented by a [WidgetColor] wrapper.
      */
-    var color: Color2D
+    var widgetColor: WidgetColor
 }

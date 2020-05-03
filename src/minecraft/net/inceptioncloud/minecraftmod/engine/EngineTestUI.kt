@@ -2,7 +2,7 @@ package net.inceptioncloud.minecraftmod.engine
 
 import net.inceptioncloud.minecraftmod.engine.animation.`in`.FloatAnimationIn
 import net.inceptioncloud.minecraftmod.engine.animation.out.FloatAnimationOut
-import net.inceptioncloud.minecraftmod.engine.internal.Color2D
+import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
 import net.inceptioncloud.minecraftmod.engine.sequence.easing.EaseBack
 import net.inceptioncloud.minecraftmod.engine.shapes.Rectangle
 import net.minecraft.client.gui.GuiScreen
@@ -10,7 +10,7 @@ import java.awt.Color
 
 class EngineTestUI : GuiScreen()
 {
-    private val rectangle = Rectangle().static(100.0, 100.0, 100.0, 100.0, Color2D(Color.WHITE))
+    private val rectangle = Rectangle().static(100.0, 100.0, 100.0, 100.0, WidgetColor(Color.WHITE))
 
     override fun initGui()
     {

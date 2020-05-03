@@ -3,7 +3,6 @@ package net.inceptioncloud.minecraftmod;
 import net.inceptioncloud.minecraftmod.design.font.FontManager;
 import net.inceptioncloud.minecraftmod.design.splash.ModSplashScreen;
 import net.inceptioncloud.minecraftmod.discord.RichPresenceManager;
-import net.inceptioncloud.minecraftmod.engine.internal.Dynamic;
 import net.inceptioncloud.minecraftmod.event.ModEventBus;
 import net.inceptioncloud.minecraftmod.event.client.ClientShutdownEvent;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
@@ -34,22 +33,16 @@ public class InceptionMod
      */
     private static InceptionMod instance;
 
-    @Dynamic
     private final GameStateManager gameStateManager;
 
-    @Dynamic
     private final RichPresenceManager richPresenceManager;
 
-    @Dynamic
     private final ModEventBus eventBus;
 
-    @Dynamic
     private final FontManager fontDesign;
 
-    @Dynamic
     private final ModSplashScreen splashScreen;
 
-    @Dynamic
     private final Options options;
 
     /**
@@ -305,7 +298,7 @@ public class InceptionMod
             new ArrayList<>(tickables).forEach(Tickable::modTick);
 
             if (Minecraft.getMinecraft().currentScreen != null)
-                Minecraft.getMinecraft().currentScreen.buffer.updateBuffer();
+                Minecraft.getMinecraft().currentScreen.buffer.update();
         }
     }
 }

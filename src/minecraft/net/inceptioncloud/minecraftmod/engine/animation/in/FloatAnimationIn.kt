@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.engine.animation.`in`
 
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
-import net.inceptioncloud.minecraftmod.engine.internal.Shape2D
+import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.sequence.Sequence
 import net.inceptioncloud.minecraftmod.engine.sequence.types.DoubleSequence
 
@@ -21,9 +21,9 @@ open class FloatAnimationIn(val duration: Int, val distance: Double = 40.0, val 
         .withEasing(easing)
         .withEndHook { finish() }
 
-    override fun applyToShape(scratchpad: Shape2D<*>, base: Shape2D<*>)
+    override fun applyToShape(scratchpad: Widget<*>, base: Widget<*>)
     {
-        scratchpad.color.alphaDouble = base.color.alphaDouble * sequence.current
+        scratchpad.widgetColor.alphaDouble = base.widgetColor.alphaDouble * sequence.current
         scratchpad.y = base.y + distance - (distance * sequence.current)
     }
 
