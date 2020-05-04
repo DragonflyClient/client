@@ -3,6 +3,7 @@ package net.minecraft.client.renderer;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.event.control.ZoomEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -50,9 +51,11 @@ import org.lwjgl.util.glu.Project;
 import shadersmod.client.Shaders;
 import shadersmod.client.ShadersRender;
 
+import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.Callable;
 
@@ -1208,12 +1211,20 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
                         public String call () throws Exception
                         {
-                            return String.format("Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %d", scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(), EntityRenderer.this.mc.displayWidth, EntityRenderer.this.mc.displayHeight, scaledresolution.getScaleFactor());
+                            return String.format("Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %d", scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(), EntityRenderer.this.mc.displayWidth, EntityRenderer.this.mc.displayHeight,
+                                scaledresolution.getScaleFactor());
                         }
                     });
                     throw new ReportedException(crashreport);
                 }
             }
+
+
+            // ICMM - Debug Mode
+            final String debugInfo = "MTPS " + InceptionMod.getInstance().getLastTPS();
+            final IFontRenderer font = InceptionMod.getInstance().getFontDesign()
+                .retrieveOrBuild("JetBrains Mono", Font.PLAIN, 12, 0);
+            font.drawString(debugInfo, scaledWidth - font.getStringWidth(debugInfo), 4, Color.WHITE.getRGB(), true);
         }
 
         this.frameFinish();

@@ -59,7 +59,11 @@ class WidgetBuffer
      */
     fun render()
     {
-        synchronized(this) { content.filter { it.visible }.forEach { it.draw() } }
+        synchronized(this) {
+            content.filter { it.visible }.forEach {
+                it.draw()
+            }
+        }
     }
 
     /**

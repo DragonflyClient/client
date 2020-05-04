@@ -16,17 +16,17 @@ import kotlin.reflect.full.memberProperties
  * and can receive a color. This interface provides specific methods that every 2D-object has to implement
  * in order to make drawing easier.
  *
- * Every class that implements this interface must specify its type with the type parameter `T`
+ * Every class that implements this interface must specify its type with the type parameter `Child`
  * in the interface. This allows it to return it's instance without forcing the user to use casts.
  *
  * @see IDrawable
  * @see IPosition
  * @see IDimension
  *
- * @property T the type of the implementing class
+ * @property Child the type of the implementing class
  */
 @Suppress("UNCHECKED_CAST")
-abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColorable
+abstract class Widget<Child : Widget<Child>> : IPosition, IDimension, IDrawable, IColorable
 {
     /**
      * Whether the widget is currently visible.
@@ -55,7 +55,7 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      * changes will be made. After the execution, the new object will be compared to the original one
      * and the changes will be applied to the original one.
      */
-    private var updateDynamic: (T.() -> Unit)? = null
+    private var updateDynamic: (Child.() -> Unit)? = null
 
     /**
      * A stacking list with all animations that are currently being applied to the widget.
@@ -72,7 +72,7 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      * Note, that this doesn't remove the [updateDynamic] function so it doesn't prevent it.
      * It only sets the values for the moment but they can be updated by a future update.
      */
-    fun static(x: Double, y: Double, width: Double, height: Double, widgetColor: WidgetColor): T
+    fun static(x: Double, y: Double, width: Double, height: Double, widgetColor: WidgetColor): Child
     {
         this.x = x
         this.y = y
@@ -80,7 +80,7 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
         this.height = height
         this.widgetColor = widgetColor
 
-        return this as T
+        return this as Child
     }
 
     /**
@@ -89,10 +89,10 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      * This function is called on every widget update by the buffer (on every mod tick) in order to
      * make changes on a cloned version of the widget that will then be merged onto the original widget.
      */
-    fun dynamic(dynamicUpdate: T.() -> Unit): T
+    fun dynamic(dynamicUpdate: Child.() -> Unit): Child
     {
         this.updateDynamic = dynamicUpdate
-        return this as T
+        return this as Child
     }
 
     /**
@@ -146,13 +146,13 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      * This animation can override all other animations that have been added to the stack before, but will
      * be overwritten by following animations.
      */
-    fun pushAnimation(animation: Animation): T
+    fun pushAnimation(animation: Animation): Child
     {
         animation.initAnimation(this)
         animationStack.add(animation)
         update()
 
-        return this as T
+        return this as Child
     }
 
     /**
@@ -160,14 +160,14 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      *
      * @see pushAnimation
      */
-    fun pushAndStartAnimation(animation: Animation): T
+    fun pushAndStartAnimation(animation: Animation): Child
     {
         animation.initAnimation(this)
         animation.start()
         animationStack.add(animation)
         update()
 
-        return this as T
+        return this as Child
     }
 
     /**
@@ -175,10 +175,10 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      *
      * This method will remove the given animation from the stack, regardless of its position.
      */
-    fun popAnimation(animation: Animation): T
+    fun popAnimation(animation: Animation): Child
     {
         animationStack.remove(animation)
-        return this as T
+        return this as Child
     }
 
     /**
@@ -213,7 +213,7 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      *
      * @param clone the cloned instance from which the changes are merged
      */
-    private fun mergeChangesFromClone(clone: T)
+    private fun mergeChangesFromClone(clone: Child)
     {
         this::class.memberProperties
             .filter { it.hasAnnotation<Dynamic>() && it is KMutableProperty<*> }
@@ -236,7 +236,7 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      *
      * @return an identical copy of the object that the function was called on
      */
-    abstract fun clone(): T
+    abstract fun clone(): Child
 
     /**
      * Clones the graphics object and adds a padding.
@@ -248,7 +248,7 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      * @see cloneWithMargin
      * @return a congruent copy of the object with the given padding to the original object
      */
-    abstract fun cloneWithPadding(padding: Double): T
+    abstract fun cloneWithPadding(padding: Double): Child
 
     /**
      * Clones the graphics object and adds a margin.
@@ -260,12 +260,12 @@ abstract class Widget<T : Widget<T>> : IPosition, IDimension, IDrawable, IColora
      * @see cloneWithPadding
      * @return a congruent copy of the object with the given margin to the original object
      */
-    abstract fun cloneWithMargin(margin: Double): T
+    abstract fun cloneWithMargin(margin: Double): Child
 
     /**
-     * Used to create a new instance of the subclass as [T] is the type of the subclass.
+     * Used to create a new instance of the subclass as [Child] is the type of the subclass.
      */
-    abstract fun newInstance(): T
+    abstract fun newInstance(): Child
 
     // This function is only implemented to deprecate it in this context.
     @Deprecated

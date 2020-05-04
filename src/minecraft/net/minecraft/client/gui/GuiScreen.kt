@@ -113,7 +113,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Draws a gradient from the left top to the right bottom corner with specific colors.
      */
-    fun drawGradientBackground(leftTop: Int, rightBottom: Int)
+    protected fun drawGradientBackground(leftTop: Int, rightBottom: Int)
     {
         drawGradientLeftTopRightBottom(0, 0, width, height, leftTop, rightBottom)
     }

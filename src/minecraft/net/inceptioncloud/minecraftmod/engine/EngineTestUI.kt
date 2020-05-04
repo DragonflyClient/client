@@ -29,9 +29,11 @@ class EngineTestUI : GuiScreen()
         val floatAnimation = rectangle.findAnimation(FloatAnimationIn::class.java)
         if (floatAnimation != null)
         {
+            println("In animation!")
             floatAnimation.start()
         } else
         {
+            println("Out animation!")
             rectangle.pushAndStartAnimation(FloatAnimationOut(200, 50.0, EaseBack.IN_OUT))
         }
 

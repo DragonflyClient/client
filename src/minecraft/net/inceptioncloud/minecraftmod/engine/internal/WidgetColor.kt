@@ -91,6 +91,7 @@ class WidgetColor
      */
     fun glBindColor()
     {
+//        GlStateManager.color(redFloat, greenFloat, blueFloat, alphaFloat)
         GL11.glColor4d(redDouble, greenDouble, blueDouble, alphaDouble)
     }
 

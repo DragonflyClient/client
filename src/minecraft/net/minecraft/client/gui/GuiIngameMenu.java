@@ -4,10 +4,10 @@ import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.inceptioncloud.minecraftmod.design.color.CloudColor;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.EngineTestUI;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
-import net.inceptioncloud.minecraftmod.ui.AboutUI;
 import net.inceptioncloud.minecraftmod.ui.ModOptionsUI;
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton;
 import net.inceptioncloud.minecraftmod.ui.components.button.SimpleButton;
@@ -266,7 +266,7 @@ public class GuiIngameMenu extends GuiScreen
         final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
         if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString)
             && mouseY >= 5 && mouseY <= 5 + fontRenderer.getHeight()) {
-            this.mc.displayGuiScreen(new AboutUI(this));
+            this.mc.displayGuiScreen(new EngineTestUI());
         }
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
