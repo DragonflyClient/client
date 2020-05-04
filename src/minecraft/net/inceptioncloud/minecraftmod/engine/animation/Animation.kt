@@ -28,11 +28,18 @@ abstract class Animation
     var running = false
 
     /**
+     * A list of actions that will be performed when the animation has finished.
+     * These functions have the animation as a receiver so the variables can be
+     * accessed easily.
+     */
+    val postActions = mutableListOf<(Animation, Widget<*>) -> Unit>()
+
+    /**
      * The parent of an animation is the widget object to which this animation applies. There can only
      * be one parent object for an animation, which means that an animation cannot be added to
      * multiple widgets.
      */
-    lateinit var parent: Widget<*>
+    lateinit var widget: Widget<*>
 
     /**
      * Initializes the animation.
@@ -44,12 +51,16 @@ abstract class Animation
      *
      * @throws IllegalArgumentException if the animation is already bound to a parent element
      */
-    open fun initAnimation(parent: Widget<*>)
+    open fun initAnimation(parent: Widget<*>): Boolean
     {
-        if (this::parent.isInitialized)
+        return if (this::widget.isInitialized || !isApplicable(parent))
         {
-            throw IllegalStateException("Animation is already bound to a parent element!")
-        } else this.parent = parent
+            false
+        } else
+        {
+            this.widget = parent
+            true
+        }
     }
 
     /**
@@ -77,27 +88,6 @@ abstract class Animation
     }
 
     /**
-     * Applies the animation to the widget base.
-     *
-     * Do this by changing the values of the [scratchpad] parameter. This is a clone of the base
-     * widget to which the changes can be made. For manipulating values relative to a base value,
-     * the [base] parameter is passed.
-     *
-     * @param scratchpad the version of the widget that should be modified
-     * @param base a version of the widget that holds base values set by the [Widget.static] or
-     * [Widget.dynamic] function
-     */
-    abstract fun applyToShape(scratchpad: Widget<*>, base: Widget<*>)
-
-    /**
-     * Performs a tick on the animation.
-     *
-     * This is called from the [Widget.update] function. If the animation uses one or more
-     * [transitions][Transition], the [Transition.directedUpdate] method should be called here.
-     */
-    abstract fun tick()
-
-    /**
      * Finishes the animation.
      *
      * This sets the [finished] flag to true, what will lead the [Widget] to remove the animation from the
@@ -112,5 +102,31 @@ abstract class Animation
     protected open fun finish()
     {
         finished = true
+        postActions.forEach { it.invoke(this, widget) }
     }
+
+    /**
+     * Applies the animation to the widget base.
+     *
+     * Do this by changing the values of the [scratchpad] parameter. This is a clone of the base
+     * widget to which the changes can be made. For manipulating values relative to a base value,
+     * the [base] parameter is passed.
+     *
+     * @param scratchpad the version of the widget that should be modified
+     * @param base a version of the widget that holds initial values
+     */
+    abstract fun applyToShape(scratchpad: Widget<*>, base: Widget<*>)
+
+    /**
+     * Checks if the animation is available for the given widget type.
+     */
+    abstract fun isApplicable(widget: Widget<*>): Boolean
+
+    /**
+     * Performs a tick on the animation.
+     *
+     * This is called from the [Widget.update] function. If the animation uses one or more
+     * [transitions][Transition], the [Transition.directedUpdate] method should be called here.
+     */
+    abstract fun tick()
 }

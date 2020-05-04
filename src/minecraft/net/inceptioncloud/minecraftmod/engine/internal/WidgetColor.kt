@@ -12,6 +12,11 @@ import java.awt.Color
  */
 class WidgetColor
 {
+    companion object
+    {
+        val DEFAULT = WidgetColor(1F, 1F, 1F, 1F)
+    }
+
     /**
      * Instantiates a new [WidgetColor] object based on a [java.awt.Color].
      *

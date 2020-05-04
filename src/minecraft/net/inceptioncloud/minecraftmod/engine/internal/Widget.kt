@@ -1,10 +1,8 @@
 package net.inceptioncloud.minecraftmod.engine.internal
 
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
-import net.inceptioncloud.minecraftmod.engine.structure.IColorable
-import net.inceptioncloud.minecraftmod.engine.structure.IDimension
+import net.inceptioncloud.minecraftmod.engine.animation.AttachmentBuilder
 import net.inceptioncloud.minecraftmod.engine.structure.IDrawable
-import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
@@ -20,13 +18,11 @@ import kotlin.reflect.full.memberProperties
  * in the interface. This allows it to return it's instance without forcing the user to use casts.
  *
  * @see IDrawable
- * @see IPosition
- * @see IDimension
  *
  * @property Child the type of the implementing class
  */
 @Suppress("UNCHECKED_CAST")
-abstract class Widget<Child : Widget<Child>> : IPosition, IDimension, IDrawable, IColorable
+abstract class Widget<Child : Widget<Child>> : IDrawable
 {
     /**
      * Whether the widget is currently visible.
@@ -35,6 +31,15 @@ abstract class Widget<Child : Widget<Child>> : IPosition, IDimension, IDrawable,
      * parent [WidgetBuffer] that contains the widget.
      */
     var visible = true
+
+    /**
+     * A stacking list with all animations that are currently being applied to the widget.
+     *
+     * The transitions are prioritized in descending order, what means the last added animation can
+     * override all animations that were applied before. To add an animation on top of the stack, use
+     * [attachAnimation]. Animations in any place of the stack can be removed by calling [detachAnimation].
+     */
+    val animationStack = mutableListOf<Animation>()
 
     /**
      * The animation scratchpad of this object.
@@ -58,38 +63,12 @@ abstract class Widget<Child : Widget<Child>> : IPosition, IDimension, IDrawable,
     private var updateDynamic: (Child.() -> Unit)? = null
 
     /**
-     * A stacking list with all animations that are currently being applied to the widget.
-     *
-     * The transitions are prioritized in descending order, what means the last added animation can
-     * override all animations that were applied before. To add an animation on top of the stack, use
-     * [pushAnimation]. Animations in any place of the stack can be removed by calling [popAnimation].
-     */
-    private val animationStack = mutableListOf<Animation>()
-
-    /**
-     * Sets the values of the widget statically without dynamic updating.
-     *
-     * Note, that this doesn't remove the [updateDynamic] function so it doesn't prevent it.
-     * It only sets the values for the moment but they can be updated by a future update.
-     */
-    fun static(x: Double, y: Double, width: Double, height: Double, widgetColor: WidgetColor): Child
-    {
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-        this.widgetColor = widgetColor
-
-        return this as Child
-    }
-
-    /**
      * Sets the function to dynamically update the widget.
      *
      * This function is called on every widget update by the buffer (on every mod tick) in order to
      * make changes on a cloned version of the widget that will then be merged onto the original widget.
      */
-    fun dynamic(dynamicUpdate: Child.() -> Unit): Child
+    open fun dynamic(dynamicUpdate: Child.() -> Unit): Child
     {
         this.updateDynamic = dynamicUpdate
         return this as Child
@@ -141,53 +120,35 @@ abstract class Widget<Child : Widget<Child>> : IPosition, IDimension, IDrawable,
     }
 
     /**
-     * Pushes an animation on top of the animations-stack.
+     * Attaches an animation on top of the animations-stack.
      *
      * This animation can override all other animations that have been added to the stack before, but will
      * be overwritten by following animations.
      */
-    fun pushAnimation(animation: Animation): Child
+    fun attachAnimation(animation: Animation, preferences: (AttachmentBuilder<Child>.() -> Unit)? = null): Child
     {
-        animation.initAnimation(this)
-        animationStack.add(animation)
-        update()
-
+        preferences?.invoke(AttachmentBuilder(animation, this))
         return this as Child
     }
 
     /**
-     * Pushes an animation on top of the animations-stack and starts it.
-     *
-     * @see pushAnimation
-     */
-    fun pushAndStartAnimation(animation: Animation): Child
-    {
-        animation.initAnimation(this)
-        animation.start()
-        animationStack.add(animation)
-        update()
-
-        return this as Child
-    }
-
-    /**
-     * Pops an animation from the animations-stack.
+     * Detaches an animation from the animations-stack.
      *
      * This method will remove the given animation from the stack, regardless of its position.
      */
-    fun popAnimation(animation: Animation): Child
+    fun detachAnimation(animation: Animation): Child
     {
         animationStack.remove(animation)
         return this as Child
     }
 
     /**
-     * Pops all animations from the given class from the animations-stack.
+     * Detaches all animations from the given class from the animations-stack.
      *
      * This method will remove all animations with the class from the stack, regardless of their
      * position. It is often easier than providing the animation object that should be removed.
      */
-    fun <T : Animation> popAnimation(`class`: Class<T>): T
+    fun <T : Animation> detachAnimation(`class`: Class<T>): T
     {
         animationStack.removeIf { it.javaClass == `class` }
         return this as T
