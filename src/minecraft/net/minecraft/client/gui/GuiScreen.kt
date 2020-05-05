@@ -7,6 +7,7 @@ import net.inceptioncloud.minecraftmod.InceptionMod
 import net.inceptioncloud.minecraftmod.design.color.CloudColor
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetBuffer
+import net.inceptioncloud.minecraftmod.engine.internal.WidgetIdBuilder
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton
 import net.inceptioncloud.minecraftmod.utils.RenderUtils
 import net.minecraft.client.Minecraft
@@ -687,16 +688,26 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     }
 
     /**
-     * An operator function that allows adding widgets to the buffer easily.
-     *
-     * ```
-     * + Rectangle().static(x, y, width, height, color)
-     * + Rectangle().dynamic { ... }
-     * ```
+     * An operator function that allows adding widgets to the buffer. After providing the widget,
+     * an id for it must be specified with the infix function [WidgetIdBuilder.id].
      */
-    operator fun Widget<*>.unaryPlus()
+    operator fun Widget<*>.unaryPlus(): WidgetIdBuilder
     {
-        buffer.add(this)
+        return WidgetIdBuilder(buffer, widget = this)
+    }
+
+    /**
+     * An operator function that allows adding widgets to the buffer. After providing the id,
+     * a widget for it must be specified with the infix function [WidgetIdBuilder.widget].
+     */
+    operator fun String.unaryPlus(): WidgetIdBuilder
+    {
+        return WidgetIdBuilder(buffer, id = this)
+    }
+
+    operator fun String.unaryMinus(): Widget<*>?
+    {
+        return buffer[this]
     }
 
     companion object

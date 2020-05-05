@@ -18,9 +18,12 @@ import net.inceptioncloud.minecraftmod.engine.structure.IDrawable
 class WidgetBuffer
 {
     /**
-     * A mutable list that contains all widgets of the buffer.
+     * A mutable map that contains all widgets of the buffer.
+     *
+     * Each buffer has a unique id which is the key in the map. When adding a new widget to the
+     * buffer with an already existing id, the widget will be overwritten.
      */
-    private val content = mutableListOf<Widget<*>>()
+    private val content = mutableMapOf<String, Widget<*>>()
 
     /**
      * Adds a [Widget] object to the buffer.
@@ -28,9 +31,11 @@ class WidgetBuffer
      * After the widget object has been added, it will automatically be included in the render
      * and update process. To add multiple widgets, use [add].
      */
-    fun add(shape: Widget<*>)
+    fun add(widgetWithId: Pair<String, Widget<*>>)
     {
-        synchronized(this) { content.add(shape) }
+        synchronized(this) {
+            content += widgetWithId
+        }
     }
 
     /**
@@ -38,9 +43,22 @@ class WidgetBuffer
      *
      * @see add
      */
-    fun add(vararg shape: Widget<*>)
+    fun add(vararg widgetWithId: Pair<String, Widget<*>>)
     {
-        synchronized(this) { content.addAll(shape) }
+        synchronized(this) {
+            content += widgetWithId
+        }
+    }
+
+    /**
+     * Finds a widget in the buffer by searching for its id. Since every id is unique, there
+     * will never be more than one result. If no widget was found, this function returns null.
+     */
+    operator fun get(id: String): Widget<*>?
+    {
+        synchronized(this) {
+            return content.getOrDefault(id, null)
+        }
     }
 
     /**
@@ -48,7 +66,9 @@ class WidgetBuffer
      */
     fun clear()
     {
-        synchronized(this) { content.clear() }
+        synchronized(this) {
+            content.clear()
+        }
     }
 
     /**
@@ -60,7 +80,7 @@ class WidgetBuffer
     fun render()
     {
         synchronized(this) {
-            content.filter { it.visible }.forEach {
+            content.values.filter { it.visible }.forEach {
                 it.draw()
             }
         }
@@ -73,6 +93,8 @@ class WidgetBuffer
      */
     fun update()
     {
-        synchronized(this) { content.forEach { it.update() } }
+        synchronized(this) {
+            content.values.forEach { it.update() }
+        }
     }
 }

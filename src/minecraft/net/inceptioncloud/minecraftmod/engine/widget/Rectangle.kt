@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.widget
 
+import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
@@ -8,33 +9,32 @@ import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
+import kotlin.properties.Delegates
 
-@Suppress("ConvertSecondaryConstructorToPrimary")
-class Rectangle : Widget<Rectangle>, IPosition, IDimension, IColorable
+class Rectangle(
+    x: Double = 50.0,
+    y: Double = 50.0,
+    width: Double = 50.0,
+    height: Double = 50.0,
+    widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    horizontalAlignment: Alignment = Alignment.START,
+    verticalAlignment: Alignment = Alignment.START
+) : Widget<Rectangle>(), IPosition, IDimension, IColorable
 {
-    constructor(x: Double, y: Double, width: Double, height: Double, widgetColor: WidgetColor) : super()
+    @Dynamic override var x by Delegates.notNull<Double>()
+    @Dynamic override var y by Delegates.notNull<Double>()
+    @Dynamic override var width by Delegates.notNull<Double>()
+    @Dynamic override var height by Delegates.notNull<Double>()
+    @Dynamic override var widgetColor by Delegates.notNull<WidgetColor>()
+
+    init
     {
-        this.x = x
-        this.y = y
+        this.x = horizontalAlignment.calcHorizontal(x, width)
+        this.y = verticalAlignment.calcVertical(y, height)
         this.width = width
         this.height = height
         this.widgetColor = widgetColor
     }
-
-    @Dynamic
-    override var x: Double = 50.0
-
-    @Dynamic
-    override var y: Double = 50.0
-
-    @Dynamic
-    override var width: Double = 50.0
-
-    @Dynamic
-    override var height: Double = 50.0
-
-    @Dynamic
-    override var widgetColor: WidgetColor = WidgetColor(Color.WHITE)
 
     override fun render()
     {
