@@ -4,7 +4,8 @@ import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.sequence.Sequence
 import net.inceptioncloud.minecraftmod.engine.sequence.types.DoubleSequence
-import net.inceptioncloud.minecraftmod.engine.structure.IColorable
+import net.inceptioncloud.minecraftmod.engine.structure.IColor
+import net.inceptioncloud.minecraftmod.engine.structure.IOutline
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 
 /**
@@ -28,13 +29,18 @@ open class FloatAnimationIn(val duration: Int, val distance: Double = 40.0, val 
 
     override fun applyToShape(scratchpad: Widget<*>, base: Widget<*>)
     {
-        scratchpad as IColorable
+        scratchpad as IColor
         scratchpad as IPosition
-        base as IColorable
+        base as IColor
         base as IPosition
 
         scratchpad.widgetColor.alphaDouble = base.widgetColor.alphaDouble * sequence.current
         scratchpad.y = base.y + distance - (distance * sequence.current)
+
+        if (scratchpad is IOutline && base is IOutline)
+        {
+            scratchpad.outlineColor.alphaDouble = base.outlineColor.alphaDouble * sequence.current
+        }
     }
 
     override fun tick()
@@ -46,5 +52,5 @@ open class FloatAnimationIn(val duration: Int, val distance: Double = 40.0, val 
     }
 
     override fun isApplicable(widget: Widget<*>): Boolean =
-        widget is IColorable && widget is IPosition
+        widget is IColor && widget is IPosition
 }

@@ -476,13 +476,18 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     open fun setWorldAndResolution(mc: Minecraft, width: Int, height: Int)
     {
         this.mc = mc
-        itemRender = mc.renderItem
-        fontRendererObj = mc.fontRendererObj
         this.width = width
         this.height = height
+
+        itemRender = mc.renderItem
+        fontRendererObj = mc.fontRendererObj
+        scaleFactor = ScaledResolution(mc).scaleFactor
         buttonList.clear()
+
         initGui()
     }
+
+    var scaleFactor = 0
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.

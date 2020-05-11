@@ -8,41 +8,53 @@ import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import net.inceptioncloud.minecraftmod.engine.structure.ISize
 import org.lwjgl.opengl.GL11.*
-import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.properties.Delegates
 
-class Circle(
+class FilledCircle(
     x: Double = 0.0,
     y: Double = 00.0,
     size: Double = 50.0,
     widgetColor: WidgetColor = WidgetColor.DEFAULT,
     private val horizontalAlignment: Alignment = Alignment.START,
     private val verticalAlignment: Alignment = Alignment.START
-) : Widget<Circle>(), IPosition, ISize, IColor
+) : Widget<FilledCircle>(), IPosition, ISize, IColor
 {
     override fun render()
     {
         widgetColor.glBindColor()
 
-        glEnable(GL_LINE_SMOOTH)
-        glLineWidth(2F)
+        val sections = 50
+        val radius = size / 2
+        val angle = 2 * Math.PI / sections
+        var circleX: Float
+        var circleY: Float
 
-        glBegin(GL_LINE_STRIP)
-        for (i in 360 downTo 0 step 4)
-            glVertex2f(
-                (x + size / 2 + (cos(i * PI / 180) * size / 2)).toFloat(),
-                (y + size / 2 + (sin(i * PI / 180) * size / 2)).toFloat()
-            )
+        glPushMatrix()
+        glEnable(GL_BLEND)
+        glDisable(GL_TEXTURE_2D)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_LINE_SMOOTH)
+        glBegin(GL_TRIANGLE_FAN)
+
+        for (i in 0 until sections)
+        {
+            circleX = (radius * sin(i * angle)).toFloat()
+            circleY = (radius * cos(i * angle)).toFloat()
+            glVertex2f((x + circleX + radius).toFloat(), (y + circleY + radius).toFloat())
+        }
 
         glEnd()
+        glEnable(GL_TEXTURE_2D)
+        glDisable(GL_BLEND)
         glDisable(GL_LINE_SMOOTH)
+        glPopMatrix()
     }
 
-    override fun clone(): Circle
+    override fun clone(): FilledCircle
     {
-        return Circle(
+        return FilledCircle(
             x = horizontalAlignment.reverse(x, size),
             y = verticalAlignment.reverse(y, size),
             size = size,
@@ -52,7 +64,7 @@ class Circle(
         )
     }
 
-    override fun cloneWithPadding(amount: Double): Circle
+    override fun cloneWithPadding(amount: Double): FilledCircle
     {
         val clone = clone()
         val size = clone.size - amount * 2
@@ -62,7 +74,7 @@ class Circle(
         return clone
     }
 
-    override fun cloneWithMargin(amount: Double): Circle
+    override fun cloneWithMargin(amount: Double): FilledCircle
     {
         val clone = clone()
         val size = clone.size + amount * 2
@@ -72,9 +84,9 @@ class Circle(
         return clone
     }
 
-    override fun newInstance(): Circle
+    override fun newInstance(): FilledCircle
     {
-        return Circle()
+        return FilledCircle()
     }
 
     @Dynamic override var x by Delegates.notNull<Double>()

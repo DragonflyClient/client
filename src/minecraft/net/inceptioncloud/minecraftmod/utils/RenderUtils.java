@@ -210,12 +210,41 @@ public final class RenderUtils
         GlStateManager.disableBlend();
     }
 
+    public static void drawFilledCircle (int xx, int yy, float radius, Color col)
+    {
+        int sections = 50;
+        double dAngle = 2 * Math.PI / sections;
+        float x, y;
+
+        glPushMatrix();
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glBegin(GL_TRIANGLE_FAN);
+
+        for (int i = 0 ; i < sections ; i++) {
+            x = (float) (radius * Math.sin((i * dAngle)));
+            y = (float) (radius * Math.cos((i * dAngle)));
+
+            glColor4f(col.getRed() / 255f, col.getGreen() / 255f, col.getBlue() / 255f, col.getAlpha() / 255f);
+            glVertex2f(xx + x, yy + y);
+        }
+
+        GlStateManager.color(0, 0, 0);
+        glEnd();
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
+        glPopMatrix();
+    }
+
     public static void drawArc (float x, float y, int start, int end, int width, int height, Color color)
     {
         int factor = 5;
 
-        glScaled(1D/factor, 1D/factor, 1D/factor);
-        glEnable( GL_BLEND );
+        glScaled(1D / factor, 1D / factor, 1D / factor);
+        glEnable(GL_BLEND);
         glEnable(GL_POLYGON_SMOOTH);
 
         glColor(color);
@@ -262,35 +291,6 @@ public final class RenderUtils
         drawArc((float) (x + arcSize + spaceHorizontal), (float) (y + arcSize + spaceVertical), 0, 90, arcSize, arcSize, color);
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
-    }
-
-    public static void drawFilledCircle (int xx, int yy, float radius, Color col)
-    {
-        int sections = 50;
-        double dAngle = 2 * Math.PI / sections;
-        float x, y;
-
-        glPushMatrix();
-        glEnable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LINE_SMOOTH);
-        glBegin(GL_TRIANGLE_FAN);
-
-        for (int i = 0 ; i < sections ; i++) {
-            x = (float) (radius * Math.sin((i * dAngle)));
-            y = (float) (radius * Math.cos((i * dAngle)));
-
-            glColor4f(col.getRed() / 255f, col.getGreen() / 255f, col.getBlue() / 255f, col.getAlpha() / 255f);
-            glVertex2f(xx + x, yy + y);
-        }
-
-        GlStateManager.color(0, 0, 0);
-        glEnd();
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
-        glDisable(GL_LINE_SMOOTH);
-        glPopMatrix();
     }
 
     public static void drawImage (ResourceLocation image, int x, int y, int width, int height)

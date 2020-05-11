@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.internal
 
-import net.inceptioncloud.minecraftmod.engine.structure.IDrawable
+import net.inceptioncloud.minecraftmod.engine.structure.IDraw
 
 /**
  * ## Widget Buffer Class
@@ -8,7 +8,7 @@ import net.inceptioncloud.minecraftmod.engine.structure.IDrawable
  * This class holds multiple widgets inside of it. The widgets can be dynamically updated during the drawing process.
  * All implemented functions are thread-safe.
  *
- * When the client screen is drawn, the [render] function is called which calls the [IDrawable.drawNative] function
+ * When the client screen is drawn, the [render] function is called which calls the [IDraw.drawNative] function
  * on the widgets. The [update] function updates the widgets' states (using [Widget.update]) on every mod tick.
  * This allows the client to only run the animations for the current screen.
  *
@@ -96,5 +96,19 @@ class WidgetBuffer
         synchronized(this) {
             content.values.forEach { it.update() }
         }
+    }
+
+    override fun toString(): String
+    {
+        val builder = StringBuilder("WidgetBuffer(${content.size})\n{\n")
+
+        content.forEach {
+            builder.append("\t${it.key}")
+            if (! it.value.visible)
+                builder.append(" (invisible)")
+            builder.append(": ${it.value}\n")
+        }
+
+        return builder.append("}").toString()
     }
 }

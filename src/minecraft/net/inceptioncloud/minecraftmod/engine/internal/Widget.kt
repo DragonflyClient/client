@@ -2,7 +2,7 @@ package net.inceptioncloud.minecraftmod.engine.internal
 
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.animation.AttachmentBuilder
-import net.inceptioncloud.minecraftmod.engine.structure.IDrawable
+import net.inceptioncloud.minecraftmod.engine.structure.IDraw
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
@@ -17,12 +17,12 @@ import kotlin.reflect.full.memberProperties
  * Every class that implements this interface must specify its type with the type parameter `Child`
  * in the interface. This allows it to return it's instance without forcing the user to use casts.
  *
- * @see IDrawable
+ * @see IDraw
  *
  * @property Child the type of the implementing class
  */
 @Suppress("UNCHECKED_CAST")
-abstract class Widget<Child : Widget<Child>> : IDrawable
+abstract class Widget<Child : Widget<Child>> : IDraw
 {
     /**
      * Whether the widget is currently visible.
@@ -209,7 +209,7 @@ abstract class Widget<Child : Widget<Child>> : IDrawable
      * @see cloneWithMargin
      * @return a congruent copy of the object with the given padding to the original object
      */
-    abstract fun cloneWithPadding(padding: Double): Child
+    abstract fun cloneWithPadding(amount: Double): Child
 
     /**
      * Clones the graphics object and adds a margin.
@@ -221,7 +221,7 @@ abstract class Widget<Child : Widget<Child>> : IDrawable
      * @see cloneWithPadding
      * @return a congruent copy of the object with the given margin to the original object
      */
-    abstract fun cloneWithMargin(margin: Double): Child
+    abstract fun cloneWithMargin(amount: Double): Child
 
     /**
      * Used to create a new instance of the subclass as [Child] is the type of the subclass.

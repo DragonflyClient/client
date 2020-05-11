@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager
  *
  * Every graphics object that can be drawn implements this interface.
  */
-interface IDrawable
+interface IDraw
 {
     /**
      * Invokes the full render process of the object.

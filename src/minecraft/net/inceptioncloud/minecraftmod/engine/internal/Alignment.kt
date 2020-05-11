@@ -10,22 +10,20 @@ import net.inceptioncloud.minecraftmod.engine.structure.ISize
  * This would only work if the widget implements the [IPosition] and one of both [IDimension]
  * and [ISize] interfaces.
  *
- * The alignment can be used both horizontally (by using the [calcHorizontal] function) and
- * vertically (by using the [calcVertical] function).
+ * The alignment can be used both horizontally and vertically using the [calc] function.
  */
 enum class Alignment
 (
     /**
-     * Calculates the x coordinate based on the input position and input width if the alignment
-     * is used horizontally. The output of this function will be the resulting x coordinate.
+     * Calculates the x or y coordinate based on the input position and input size.
+     * The output of this function will be the resulting x/y coordinate.
      */
-    private val calcHorizontal: (x: Double, width: Double) -> Double,
+    private val calc: (coordinate: Double, size: Double) -> Double,
 
     /**
-     * Calculates the y coordinate based on the input position and input height if the alignment
-     * is used vertically. The output of this function will be the resulting y coordinate.
+     * A mathematic function to reverse the calculation that was done by the [calc] function.
      */
-    private val calcVertical: (y: Double, height: Double) -> Double
+    private val reverse: (coordinate: Double, size: Double) -> Double
 )
 {
     /**
@@ -36,8 +34,8 @@ enum class Alignment
      * - Vertically = **Top**
      */
     START(
-        { x, _ -> x },
-        { y, _ -> y }
+        { coordinate, _ -> coordinate },
+        { coordinate, _ -> coordinate }
     ),
 
     /**
@@ -48,8 +46,8 @@ enum class Alignment
      * - Vertically = **Bottom**
      */
     END(
-        { x, width -> x - width },
-        { y, height -> y - height }
+        { coordinate, size -> coordinate - size },
+        { coordinate, size -> coordinate + size }
     ),
 
     /**
@@ -60,17 +58,17 @@ enum class Alignment
      * - Vertically = **Center**
      */
     CENTER(
-        { x, width -> x - width / 2 },
-        { y, height -> y - height / 2 }
+        { coordinate, size -> coordinate - size / 2 },
+        { coordinate, size -> coordinate + size / 2 }
     );
 
     /**
-     * Invokes the [calcHorizontal] function.
+     * Invokes the [calc] function.
      */
-    fun calcHorizontal(x: Double, width: Double) = calcHorizontal.invoke(x, width)
+    fun calc(coordinate: Double, size: Double) = calc.invoke(coordinate, size)
 
     /**
-     * Invokes the [calcVertical] function.
+     * Invokes the [reverse] function.
      */
-    fun calcVertical(y: Double, height: Double) = calcHorizontal.invoke(y, height)
+    fun reverse(coordinate: Double, size: Double) = reverse.invoke(coordinate, size)
 }
