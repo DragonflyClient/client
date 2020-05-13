@@ -2,9 +2,9 @@ package net.inceptioncloud.minecraftmod.engine
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
-import net.inceptioncloud.minecraftmod.engine.widget.Arc
-import net.inceptioncloud.minecraftmod.engine.widget.Circle
-import net.inceptioncloud.minecraftmod.engine.widget.FilledCircle
+import net.inceptioncloud.minecraftmod.engine.widget.base.Arc
+import net.inceptioncloud.minecraftmod.engine.widget.base.Circle
+import net.inceptioncloud.minecraftmod.engine.widget.base.FilledCircle
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 

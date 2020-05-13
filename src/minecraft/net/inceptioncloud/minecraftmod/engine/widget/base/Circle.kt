@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget
+package net.inceptioncloud.minecraftmod.engine.widget.base
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
@@ -14,11 +14,28 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.properties.Delegates
 
+/**
+ * ## Circle Base Widget
+ *
+ * A simple 360° circle.
+ *
+ * Note that this circle is not filled but only consists of an outline. The width of
+ * this outline can be changed using the [lineWidth] property.
+ *
+ * @param x X position of the circle. Can be aligned.
+ * @param y Y position of the circle. Can be aligned.
+ * @param size Width and Height of the circle.
+ * @param lineWidth Width of the circle's outline.
+ * @param widgetColor Color of the circle.
+ * @param horizontalAlignment Function to align the circle on the x-axis.
+ * @param verticalAlignment Function to align the circle on the y-axis.
+ */
 @Suppress("LeakingThis")
 open class Circle(
     x: Double = 0.0,
     y: Double = 0.0,
     size: Double = 50.0,
+    lineWidth: Float = 2F,
     widgetColor: WidgetColor = WidgetColor.DEFAULT,
     horizontalAlignment: Alignment = Alignment.START,
     verticalAlignment: Alignment = Alignment.START
@@ -29,7 +46,7 @@ open class Circle(
         widgetColor.glBindColor()
 
         glEnable(GL_LINE_SMOOTH)
-        glLineWidth(2F)
+        glLineWidth(lineWidth)
 
         glBegin(GL_LINE_STRIP)
         for (i in 360 downTo 0 step 4)
@@ -63,6 +80,13 @@ open class Circle(
     @Dynamic override var horizontalAlignment: Alignment by Delegates.notNull()
     @Dynamic override var verticalAlignment: Alignment by Delegates.notNull()
 
+    /**
+     * The width of the outline of the circle. This value is set during the rendering process
+     * using the OpenGL [glLineWidth] function. Notice that high-values can result in errors
+     * or ignorance.
+     */
+    @Dynamic var lineWidth: Float by Delegates.notNull()
+
     override fun align(x: Double, y: Double, width: Double, height: Double)
     {
         assert(width == height)
@@ -80,5 +104,6 @@ open class Circle(
         align(x, y, size, size)
 
         this.widgetColor = widgetColor
+        this.lineWidth = lineWidth
     }
 }

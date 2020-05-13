@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget
+package net.inceptioncloud.minecraftmod.engine.widget.base
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
@@ -6,6 +6,20 @@ import org.lwjgl.opengl.GL11.*
 import kotlin.math.cos
 import kotlin.math.sin
 
+/**
+ * ## Filled Circle Base Widget
+ *
+ * A filled version of the [Circle] widget.
+ *
+ * This widget inherits all functions of the base [Circle] widget but changes the
+ * render process. That's why the [lineWidth] property has no use in this widget and
+ * will be set to `0F` by default when calling the super constructor.
+ *
+ * In order to provide full cloning support, the [clone], [cloneWithMargin] and
+ * [cloneWithPadding] functions are also overridden.
+ *
+ * >*The full documentation of the constructor parameters can be found in the [Circle] widget.*
+ */
 class FilledCircle(
     x: Double = 0.0,
     y: Double = 0.0,
@@ -13,7 +27,7 @@ class FilledCircle(
     widgetColor: WidgetColor = WidgetColor.DEFAULT,
     horizontalAlignment: Alignment = Alignment.START,
     verticalAlignment: Alignment = Alignment.START
-) : Circle(x, y, size, widgetColor, horizontalAlignment, verticalAlignment)
+) : Circle(x, y, size, 0F, widgetColor, horizontalAlignment, verticalAlignment)
 {
     override fun render()
     {

@@ -19,7 +19,7 @@ interface IAlign
      */
     var verticalAlignment: Alignment
 
-    /*
+    /**
      * Applies the alignment on the parent's position.
      */
     fun align(x: Double, y: Double, width: Double, height: Double)

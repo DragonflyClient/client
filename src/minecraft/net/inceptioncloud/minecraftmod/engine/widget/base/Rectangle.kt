@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget
+package net.inceptioncloud.minecraftmod.engine.widget.base
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
@@ -8,6 +8,21 @@ import net.inceptioncloud.minecraftmod.engine.structure.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.properties.Delegates
 
+/**
+ * ## Rectangle Base Widget
+ *
+ * A simple rectangle widget.
+ *
+ * @param x X position of the rectangle. Can be aligned.
+ * @param y Y position of the rectangle. Can be aligned.
+ * @param width Width (horizontal size) of the rectangle.
+ * @param height Height (vertical size) of the rectangle.
+ * @param widgetColor Color of the rectangle.
+ * @param outlineStroke Width of the outline of the rectangle. Default value is 0 what makes it have no outline.
+ * @param outlineColor Color of the outline. Only needed if an outline is set.
+ * @param horizontalAlignment Function to align the rectangle on the x-axis.
+ * @param verticalAlignment Function to align the rectangle on the y-axis.
+ */
 class Rectangle(
     x: Double = 0.0,
     y: Double = 0.0,

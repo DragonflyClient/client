@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget
+package net.inceptioncloud.minecraftmod.engine.widget.base
 
 import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
@@ -12,6 +12,29 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.properties.Delegates
 
+/**
+ * ## Arc Base Widget
+ *
+ * This widget allows drawing an arc with any size by specifying the angle in degrees.
+ *
+ * The x and y always represent the center of the arc and the width and height work like
+ * the radius in a circle. The angles are arranged the following way.
+ * ```
+ *       270°
+ *        |
+ * 180° --*-- 0°
+ *        |
+ *       90°
+ * ```
+ *
+ * @param x X coordinate of the arc's center.
+ * @param y Y coordinate of the arc's center.
+ * @param width Width of the arc. From the center to the outermost point. Horizontal radius for an oval.
+ * @param height Height of the arc. From the center to the outermost point. Vertical radius for an oval.
+ * @param start Start angle in degrees from 0 - 360. Must be smaller than the [end] angle.
+ * @param end End angle in degrees from 0 - 360. Must be greater than the [start] angle.
+ * @param widgetColor Color of the arc.
+ */
 class Arc(
     x: Double = 0.0,
     y: Double = 0.0,
