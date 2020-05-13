@@ -209,7 +209,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      * @see cloneWithMargin
      * @return a congruent copy of the object with the given padding to the original object
      */
-    abstract fun cloneWithPadding(amount: Double): Child
+    open fun cloneWithPadding(amount: Double): Child = Defaults.cloneWithPadding(this as Child, amount)
 
     /**
      * Clones the graphics object and adds a margin.
@@ -221,7 +221,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      * @see cloneWithPadding
      * @return a congruent copy of the object with the given margin to the original object
      */
-    abstract fun cloneWithMargin(amount: Double): Child
+    open fun cloneWithMargin(amount: Double): Child = Defaults.cloneWithMargin(this as Child, amount)
 
     /**
      * Used to create a new instance of the subclass as [Child] is the type of the subclass.

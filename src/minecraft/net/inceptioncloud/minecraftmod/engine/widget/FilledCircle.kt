@@ -1,25 +1,19 @@
 package net.inceptioncloud.minecraftmod.engine.widget
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
-import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
-import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
-import net.inceptioncloud.minecraftmod.engine.structure.IColor
-import net.inceptioncloud.minecraftmod.engine.structure.IPosition
-import net.inceptioncloud.minecraftmod.engine.structure.ISize
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.properties.Delegates
 
 class FilledCircle(
     x: Double = 0.0,
-    y: Double = 00.0,
+    y: Double = 0.0,
     size: Double = 50.0,
     widgetColor: WidgetColor = WidgetColor.DEFAULT,
-    private val horizontalAlignment: Alignment = Alignment.START,
-    private val verticalAlignment: Alignment = Alignment.START
-) : Widget<FilledCircle>(), IPosition, ISize, IColor
+    horizontalAlignment: Alignment = Alignment.START,
+    verticalAlignment: Alignment = Alignment.START
+) : Circle(x, y, size, widgetColor, horizontalAlignment, verticalAlignment)
 {
     override fun render()
     {
@@ -42,7 +36,7 @@ class FilledCircle(
         {
             circleX = (radius * sin(i * angle)).toFloat()
             circleY = (radius * cos(i * angle)).toFloat()
-            glVertex2f((x + circleX + radius).toFloat(), (y + circleY + radius).toFloat())
+            glVertex2d(x + circleX + radius, y + circleY + radius)
         }
 
         glEnd()
@@ -64,46 +58,7 @@ class FilledCircle(
         )
     }
 
-    override fun cloneWithPadding(amount: Double): FilledCircle
-    {
-        val clone = clone()
-        val size = clone.size - amount * 2
-        val x = clone.horizontalAlignment.reverse(clone.x + amount, size)
-        val y = clone.verticalAlignment.reverse(clone.y + amount, size)
-        clone.align(x, y, size)
-        return clone
-    }
+    override fun cloneWithMargin(amount: Double): FilledCircle = super.cloneWithMargin(amount) as FilledCircle
 
-    override fun cloneWithMargin(amount: Double): FilledCircle
-    {
-        val clone = clone()
-        val size = clone.size + amount * 2
-        val x = clone.horizontalAlignment.reverse(clone.x - amount, size)
-        val y = clone.verticalAlignment.reverse(clone.y - amount, size)
-        clone.align(x, y, size)
-        return clone
-    }
-
-    override fun newInstance(): FilledCircle
-    {
-        return FilledCircle()
-    }
-
-    @Dynamic override var x by Delegates.notNull<Double>()
-    @Dynamic override var y by Delegates.notNull<Double>()
-    @Dynamic override var size by Delegates.notNull<Double>()
-    @Dynamic override var widgetColor by Delegates.notNull<WidgetColor>()
-
-    fun align(xIn: Double, yIn: Double, size: Double)
-    {
-        this.x = horizontalAlignment.calc(xIn, size)
-        this.y = verticalAlignment.calc(yIn, size)
-        this.size = size
-    }
-
-    init
-    {
-        align(x, y, size)
-        this.widgetColor = widgetColor
-    }
+    override fun cloneWithPadding(amount: Double): FilledCircle = super.cloneWithPadding(amount) as FilledCircle
 }

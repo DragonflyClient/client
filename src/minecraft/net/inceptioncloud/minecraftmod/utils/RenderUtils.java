@@ -268,7 +268,6 @@ public final class RenderUtils
         }
 
         glEnd();
-
         glScaled(factor, factor, factor);
     }
 

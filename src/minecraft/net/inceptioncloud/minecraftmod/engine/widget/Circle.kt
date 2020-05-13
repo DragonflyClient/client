@@ -4,6 +4,7 @@ import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.structure.IAlign
 import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import net.inceptioncloud.minecraftmod.engine.structure.ISize
@@ -13,14 +14,15 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.properties.Delegates
 
-class Circle(
+@Suppress("LeakingThis")
+open class Circle(
     x: Double = 0.0,
-    y: Double = 00.0,
+    y: Double = 0.0,
     size: Double = 50.0,
     widgetColor: WidgetColor = WidgetColor.DEFAULT,
-    private val horizontalAlignment: Alignment = Alignment.START,
-    private val verticalAlignment: Alignment = Alignment.START
-) : Widget<Circle>(), IPosition, ISize, IColor
+    horizontalAlignment: Alignment = Alignment.START,
+    verticalAlignment: Alignment = Alignment.START
+) : Widget<Circle>(), IPosition, ISize, IColor, IAlign
 {
     override fun render()
     {
@@ -31,9 +33,9 @@ class Circle(
 
         glBegin(GL_LINE_STRIP)
         for (i in 360 downTo 0 step 4)
-            glVertex2f(
-                (x + size / 2 + (cos(i * PI / 180) * size / 2)).toFloat(),
-                (y + size / 2 + (sin(i * PI / 180) * size / 2)).toFloat()
+            glVertex2d(
+                x + size / 2 + (cos(i * PI / 180) * size / 2),
+                y + size / 2 + (sin(i * PI / 180) * size / 2)
             )
 
         glEnd()
@@ -52,46 +54,31 @@ class Circle(
         )
     }
 
-    override fun cloneWithPadding(amount: Double): Circle
-    {
-        val clone = clone()
-        val size = clone.size - amount * 2
-        val x = clone.horizontalAlignment.reverse(clone.x + amount, size)
-        val y = clone.verticalAlignment.reverse(clone.y + amount, size)
-        clone.align(x, y, size)
-        return clone
-    }
-
-    override fun cloneWithMargin(amount: Double): Circle
-    {
-        val clone = clone()
-        val size = clone.size + amount * 2
-        val x = clone.horizontalAlignment.reverse(clone.x - amount, size)
-        val y = clone.verticalAlignment.reverse(clone.y - amount, size)
-        clone.align(x, y, size)
-        return clone
-    }
-
-    override fun newInstance(): Circle
-    {
-        return Circle()
-    }
+    override fun newInstance(): Circle = Circle()
 
     @Dynamic override var x by Delegates.notNull<Double>()
     @Dynamic override var y by Delegates.notNull<Double>()
     @Dynamic override var size by Delegates.notNull<Double>()
     @Dynamic override var widgetColor by Delegates.notNull<WidgetColor>()
+    @Dynamic override var horizontalAlignment: Alignment by Delegates.notNull()
+    @Dynamic override var verticalAlignment: Alignment by Delegates.notNull()
 
-    fun align(xIn: Double, yIn: Double, size: Double)
+    override fun align(x: Double, y: Double, width: Double, height: Double)
     {
-        this.x = horizontalAlignment.calc(xIn, size)
-        this.y = verticalAlignment.calc(yIn, size)
-        this.size = size
+        assert(width == height)
+
+        this.x = horizontalAlignment.calc(x, width)
+        this.y = verticalAlignment.calc(y, height)
+        this.size = width
     }
 
     init
     {
-        align(x, y, size)
+        this.horizontalAlignment = horizontalAlignment
+        this.verticalAlignment = verticalAlignment
+
+        align(x, y, size, size)
+
         this.widgetColor = widgetColor
     }
 }

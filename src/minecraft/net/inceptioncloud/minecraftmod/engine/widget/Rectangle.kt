@@ -4,24 +4,21 @@ import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
-import net.inceptioncloud.minecraftmod.engine.structure.IColor
-import net.inceptioncloud.minecraftmod.engine.structure.IDimension
-import net.inceptioncloud.minecraftmod.engine.structure.IOutline
-import net.inceptioncloud.minecraftmod.engine.structure.IPosition
+import net.inceptioncloud.minecraftmod.engine.structure.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.properties.Delegates
 
 class Rectangle(
     x: Double = 0.0,
-    y: Double = 00.0,
+    y: Double = 0.0,
     width: Double = 50.0,
     height: Double = 50.0,
     widgetColor: WidgetColor = WidgetColor.DEFAULT,
     outlineStroke: Double = 0.0,
     outlineColor: WidgetColor = WidgetColor.DEFAULT,
-    private val horizontalAlignment: Alignment = Alignment.START,
-    private val verticalAlignment: Alignment = Alignment.START
-) : Widget<Rectangle>(), IPosition, IDimension, IColor, IOutline
+    horizontalAlignment: Alignment = Alignment.START,
+    verticalAlignment: Alignment = Alignment.START
+) : Widget<Rectangle>(), IPosition, IDimension, IColor, IOutline, IAlign
 {
     override fun render()
     {
@@ -77,52 +74,33 @@ class Rectangle(
         )
     }
 
-    override fun cloneWithPadding(amount: Double): Rectangle
-    {
-        val clone = clone()
-        val width = clone.width - amount * 2
-        val height = clone.height - amount * 2
-        val x = clone.horizontalAlignment.reverse(clone.x + amount, width)
-        val y = clone.verticalAlignment.reverse(clone.y + amount, height)
-        clone.align(x, y, width, height)
-        return clone
-    }
+    override fun newInstance(): Rectangle = Rectangle()
 
-    override fun cloneWithMargin(amount: Double): Rectangle
-    {
-        val clone = clone()
-        val width = clone.width + amount * 2
-        val height = clone.height + amount * 2
-        val x = clone.horizontalAlignment.reverse(clone.x - amount, width)
-        val y = clone.verticalAlignment.reverse(clone.y - amount, height)
-        clone.align(x, y, width, height)
-        return clone
-    }
+    @Dynamic override var x: Double by Delegates.notNull()
+    @Dynamic override var y: Double by Delegates.notNull()
+    @Dynamic override var width: Double by Delegates.notNull()
+    @Dynamic override var height: Double by Delegates.notNull()
+    @Dynamic override var widgetColor: WidgetColor by Delegates.notNull()
+    @Dynamic override var outlineStroke: Double by Delegates.notNull()
+    @Dynamic override var outlineColor: WidgetColor by Delegates.notNull()
+    @Dynamic override var horizontalAlignment: Alignment by Delegates.notNull()
+    @Dynamic override var verticalAlignment: Alignment by Delegates.notNull()
 
-    override fun newInstance(): Rectangle
+    override fun align(x: Double, y: Double, width: Double, height: Double)
     {
-        return Rectangle()
-    }
-
-    @Dynamic override var x by Delegates.notNull<Double>()
-    @Dynamic override var y by Delegates.notNull<Double>()
-    @Dynamic override var width by Delegates.notNull<Double>()
-    @Dynamic override var height by Delegates.notNull<Double>()
-    @Dynamic override var widgetColor by Delegates.notNull<WidgetColor>()
-    @Dynamic override var outlineStroke by Delegates.notNull<Double>()
-    @Dynamic override var outlineColor by Delegates.notNull<WidgetColor>()
-
-    fun align(xIn: Double, yIn: Double, widthIn: Double, heightIn: Double)
-    {
-        this.x = horizontalAlignment.calc(xIn, widthIn)
-        this.y = verticalAlignment.calc(yIn, heightIn)
-        this.width = widthIn
-        this.height = heightIn
+        this.x = horizontalAlignment.calc(x, width)
+        this.y = verticalAlignment.calc(y, height)
+        this.width = width
+        this.height = height
     }
 
     init
     {
+        this.horizontalAlignment = horizontalAlignment
+        this.verticalAlignment = verticalAlignment
+
         align(x, y, width, height)
+
         this.widgetColor = widgetColor
         this.outlineStroke = outlineStroke
         this.outlineColor = outlineColor
