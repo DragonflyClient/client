@@ -74,6 +74,17 @@ class Rectangle(
         glEnd()
     }
 
+    override fun isStateChanged(clone: Rectangle): Boolean =
+        x == clone.x &&
+        y == clone.y &&
+        width == clone.width &&
+        height == clone.height &&
+        widgetColor == clone.widgetColor &&
+        outlineStroke == clone.outlineStroke &&
+        outlineColor == clone.outlineColor &&
+        horizontalAlignment == clone.horizontalAlignment &&
+        verticalAlignment == clone.verticalAlignment
+
     override fun clone(): Rectangle
     {
         return Rectangle(

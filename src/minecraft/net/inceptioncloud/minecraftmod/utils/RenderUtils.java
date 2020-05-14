@@ -277,8 +277,13 @@ public final class RenderUtils
         int spaceHorizontal = width - arcSize * 2;
         int spaceVertical = height - arcSize * 2;
 
+        // left
         Gui.drawRect(x, y + arcSize, x + arcSize, y + arcSize + spaceVertical, color.getRGB());
+
+        // center
         Gui.drawRect(x + arcSize, y, x + arcSize + spaceHorizontal, y + arcSize * 2 + spaceVertical, color.getRGB());
+
+        // right
         Gui.drawRect(x + arcSize + spaceHorizontal, y + arcSize, x + arcSize * 2 + spaceHorizontal, y + arcSize + spaceVertical, color.getRGB());
 
         GlStateManager.enableBlend();

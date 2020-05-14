@@ -59,6 +59,15 @@ open class Circle(
         glDisable(GL_LINE_SMOOTH)
     }
 
+    override fun isStateChanged(clone: Circle): Boolean =
+        x == clone.x &&
+        y == clone.y &&
+        size == clone.size &&
+        widgetColor == clone.widgetColor &&
+        horizontalAlignment == clone.horizontalAlignment &&
+        verticalAlignment == clone.verticalAlignment &&
+        lineWidth == clone.lineWidth
+
     override fun clone(): Circle
     {
         return Circle(

@@ -84,6 +84,15 @@ class Arc(
         GraphicsEngine.popScale()
     }
 
+    override fun isStateChanged(clone: Arc): Boolean =
+        x == clone.x &&
+        y == clone.y &&
+        width == clone.width &&
+        height == clone.height &&
+        widgetColor == clone.widgetColor &&
+        start == clone.start &&
+        end == clone.end
+
     override fun clone(): Arc
     {
         return Arc(

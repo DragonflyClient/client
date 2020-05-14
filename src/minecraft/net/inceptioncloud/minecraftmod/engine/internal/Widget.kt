@@ -21,7 +21,7 @@ import kotlin.reflect.full.memberProperties
  *
  * @property Child the type of the implementing class
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
 abstract class Widget<Child : Widget<Child>> : IDraw
 {
     /**
@@ -86,7 +86,12 @@ abstract class Widget<Child : Widget<Child>> : IDraw
         if (updateDynamic != null)
         {
             updateDynamic?.invoke(clone)
-            mergeChangesFromClone(clone)
+
+            if (isStateChanged(clone))
+            {
+                stateChanged(clone)
+                mergeChangesFromClone(clone)
+            }
         }
 
         if (!animationStack.isNullOrEmpty())
@@ -94,7 +99,12 @@ abstract class Widget<Child : Widget<Child>> : IDraw
             scratchpad = clone()
             animationStack.removeAll { it.finished }
             animationStack.forEach { it.tick() }
-            animationStack.forEach { it.applyToShape(scratchpad = scratchpad!!, base = clone) }
+            animationStack.forEach { it.applyToShape(scratchpad = scratchpad !!, base = clone) }
+
+            if (isStateChanged(scratchpad as Child))
+            {
+                stateChanged(scratchpad as Child)
+            }
         } else scratchpad = null
     }
 
@@ -187,9 +197,27 @@ abstract class Widget<Child : Widget<Child>> : IDraw
 
                 if (originalValue != cloneValue)
                 {
-                    originalProperty.setter.call(this@Widget, cloneValue!!)
+                    originalProperty.setter.call(this@Widget, cloneValue !!)
                 }
             }
+    }
+
+    /**
+     * Returns whether the state of the widget has been changed by a dynamic update or by an animation.
+     *
+     * Every widget should implement this function and adjust it to its structure, in particular the
+     * properties annotated with @[Dynamic].
+     *
+     * @param clone the clone which the base widget should be compared to
+     */
+    abstract fun isStateChanged(clone: Child): Boolean
+
+    /**
+     * Notifies the widget that its state has been changed by a dynamic update or by an animation.
+     * This is called when [isStateChanged] evaluates to true.
+     */
+    open fun stateChanged(new: Widget<*>)
+    {
     }
 
     /**
