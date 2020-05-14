@@ -74,7 +74,7 @@ class Rectangle(
         glEnd()
     }
 
-    override fun isStateChanged(clone: Rectangle): Boolean =
+    override fun isStateEqual(clone: Rectangle): Boolean =
         x == clone.x &&
         y == clone.y &&
         width == clone.width &&

@@ -33,11 +33,12 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
     {
         structure.values.forEach { it.stateChanged(new) }
         updateStructure()
+        println("State-changed structure update")
     }
 
     override fun render()
     {
-        if (! initialized)
+        if (!initialized)
         {
             updateStructure()
         }

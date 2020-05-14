@@ -88,7 +88,9 @@ class RoundedRectangle(
         }
 
         // changes the color of all base widgets
-        structure.values.forEach { (it as IColor).widgetColor = this@RoundedRectangle.widgetColor }
+        structure.values.forEach {
+            (it as IColor).widgetColor = this@RoundedRectangle.widgetColor
+        }
         // sets the width and height of the arcs
         structure
             .filter { it.key.endsWith("edge") }
@@ -101,7 +103,13 @@ class RoundedRectangle(
         initialized = true
     }
 
-    override fun isStateChanged(clone: RoundedRectangle): Boolean =
+    override fun render()
+    {
+        println(structure.values.sumByDouble { (it as IColor).widgetColor.alphaDouble } / structure.size)
+        super.render()
+    }
+
+    override fun isStateEqual(clone: RoundedRectangle): Boolean =
         x == clone.x &&
         y == clone.y &&
         width == clone.width &&

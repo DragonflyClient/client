@@ -87,7 +87,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw
         {
             updateDynamic?.invoke(clone)
 
-            if (isStateChanged(clone))
+            if (!isStateEqual(clone))
             {
                 stateChanged(clone)
                 mergeChangesFromClone(clone)
@@ -101,7 +101,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw
             animationStack.forEach { it.tick() }
             animationStack.forEach { it.applyToShape(scratchpad = scratchpad !!, base = clone) }
 
-            if (isStateChanged(scratchpad as Child))
+            if (!isStateEqual(scratchpad as Child))
             {
                 stateChanged(scratchpad as Child)
             }
@@ -210,11 +210,11 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      *
      * @param clone the clone which the base widget should be compared to
      */
-    abstract fun isStateChanged(clone: Child): Boolean
+    abstract fun isStateEqual(clone: Child): Boolean
 
     /**
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.
-     * This is called when [isStateChanged] evaluates to true.
+     * This is called when [isStateEqual] evaluates to true.
      */
     open fun stateChanged(new: Widget<*>)
     {

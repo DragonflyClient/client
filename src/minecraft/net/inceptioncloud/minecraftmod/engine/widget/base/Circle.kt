@@ -59,7 +59,7 @@ open class Circle(
         glDisable(GL_LINE_SMOOTH)
     }
 
-    override fun isStateChanged(clone: Circle): Boolean =
+    override fun isStateEqual(clone: Circle): Boolean =
         x == clone.x &&
         y == clone.y &&
         size == clone.size &&

@@ -1,6 +1,5 @@
 package net.minecraft.client.renderer;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import optifine.Config;

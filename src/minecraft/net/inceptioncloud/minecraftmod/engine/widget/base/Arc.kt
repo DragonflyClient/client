@@ -51,8 +51,8 @@ class Arc(
         GraphicsEngine.pushScale(1 / factor)
 
         widgetColor.glBindColor()
-        glEnable(GL_BLEND)
-        glEnable(GL_POLYGON_SMOOTH)
+
+        glDisable(GL_POLYGON_SMOOTH)
         glBegin(GL_POLYGON)
         glVertex2d(x * factor, y * factor)
 
@@ -65,26 +65,11 @@ class Arc(
         }
 
         glEnd()
-        glDisable(GL_POLYGON_SMOOTH)
-        glDisable(GL_BLEND)
-
-        glBegin(GL_POLYGON)
-        glVertex2d(x * factor, y * factor)
-
-        for (i in end downTo start)
-        {
-            glVertex2d(
-                (x + cos(i * Math.PI / 180) * (width - 1f)) * factor,
-                (y + sin(i * Math.PI / 180) * (height - 1f)) * factor
-            )
-        }
-
-        glEnd()
 
         GraphicsEngine.popScale()
     }
 
-    override fun isStateChanged(clone: Arc): Boolean =
+    override fun isStateEqual(clone: Arc): Boolean =
         x == clone.x &&
         y == clone.y &&
         width == clone.width &&
