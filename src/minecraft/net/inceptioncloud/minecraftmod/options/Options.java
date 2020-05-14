@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.options;
 
 import com.google.gson.*;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 
@@ -32,7 +32,7 @@ public class Options
      */
     public Options ()
     {
-        InceptionMod.getInstance().getEventBus().register(new OptionSaveSubscriber());
+        Dragonfly.getEventBus().register(new OptionSaveSubscriber());
         gson = new GsonBuilder().setPrettyPrinting().create();
         contentUpdate();
     }

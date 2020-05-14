@@ -169,7 +169,7 @@ public class Material
      */
     public boolean isOpaque()
     {
-        return this.isTranslucent ? false : this.blocksMovement();
+        return !this.isTranslucent && this.blocksMovement();
     }
 
     /**
@@ -207,9 +207,6 @@ public class Material
         return this;
     }
 
-    /**
-     * @see #isAdventureModeExempt()
-     */
     protected Material setAdventureModeExempt()
     {
         this.isAdventureModeExempt = true;

@@ -3,7 +3,7 @@ package net.minecraft.client.gui
 import com.google.common.base.Splitter
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
-import net.inceptioncloud.minecraftmod.InceptionMod
+import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.CloudColor
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetBuffer
@@ -187,7 +187,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
             GlStateManager.disableLighting()
             GlStateManager.disableDepth()
             var i = 0
-            val fontRenderer = InceptionMod.getInstance().fontDesign.medium
+            val fontRenderer = Dragonfly.fontDesign.medium
             for (s in textLines)
             {
                 val j = fontRenderer.getStringWidth(s)
@@ -576,8 +576,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
             mouseReleased(i, j, k)
         } else if (eventButton != -1 && lastMouseEvent > 0L)
         {
-            val l = Minecraft.getSystemTime() - lastMouseEvent
-            mouseClickMove(i, j, eventButton, l)
+            val timeSinceLastClick = Minecraft.getSystemTime() - lastMouseEvent
+            mouseClickMove(i, j, eventButton, timeSinceLastClick)
         }
     }
 

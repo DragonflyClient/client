@@ -56,7 +56,7 @@ public class MathHelper
 
     public static float sqrt_float(float value)
     {
-        return (float)Math.sqrt((double)value);
+        return (float)Math.sqrt(value);
     }
 
     public static float sqrt_double(double value)
@@ -385,8 +385,8 @@ public class MathHelper
         int j = (p_180188_1_ & 16711680) >> 16;
         int k = (p_180188_0_ & 65280) >> 8;
         int l = (p_180188_1_ & 65280) >> 8;
-        int i1 = (p_180188_0_ & 255) >> 0;
-        int j1 = (p_180188_1_ & 255) >> 0;
+        int i1 = (p_180188_0_ & 255);
+        int j1 = (p_180188_1_ & 255);
         int k1 = (int)((float)i * (float)j / 255.0F);
         int l1 = (int)((float)k * (float)l / 255.0F);
         int i2 = (int)((float)i1 * (float)j1 / 255.0F);
@@ -564,12 +564,12 @@ public class MathHelper
 
         for (int j = 0; j < 4096; ++j)
         {
-            SIN_TABLE_FAST[j] = (float)Math.sin((double)(((float)j + 0.5F) / 4096.0F * ((float)Math.PI * 2F)));
+            SIN_TABLE_FAST[j] = (float)Math.sin(((float)j + 0.5F) / 4096.0F * ((float)Math.PI * 2F));
         }
 
         for (int l = 0; l < 360; l += 90)
         {
-            SIN_TABLE_FAST[(int)((float)l * 11.377778F) & 4095] = (float)Math.sin((double)((float)l * 0.017453292F));
+            SIN_TABLE_FAST[(int)((float)l * 11.377778F) & 4095] = (float)Math.sin((float)l * 0.017453292F);
         }
 
         multiplyDeBruijnBitPosition = new int[] {0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9};

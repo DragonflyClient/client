@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.options.entries
 
-import net.inceptioncloud.minecraftmod.InceptionMod
+import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.options.OptionKey
 import net.inceptioncloud.minecraftmod.options.entries.util.ExternalApplier
@@ -108,7 +108,7 @@ class OptionEntryMultipleChoice(
         val viewX = x + width - viewWidth - 6
         val viewY = y + 3
 
-        val fontRenderer = InceptionMod.getInstance().fontDesign.regular
+        val fontRenderer = Dragonfly.fontDesign.regular
         fontRenderer.drawCenteredString(
                 selectedChoice.displayString,
                 viewX + viewWidth / 2, viewY + height / 2 - fontRenderer.height / 2,

@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.ui.components.button;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.*;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition;
@@ -70,7 +70,7 @@ public class SimpleButton extends GuiButton
         if (this.visible) {
             opacity = Math.min(opacity, 1.0F);
 
-            IFontRenderer fontrenderer = InceptionMod.getInstance().getFontDesign().getMedium();
+            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getMedium();
             final double border = 0.5;
             final double left = this.xPosition + border;
             final double top = this.yPosition + border;

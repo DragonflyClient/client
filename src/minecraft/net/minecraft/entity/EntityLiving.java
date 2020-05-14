@@ -1,45 +1,26 @@
 package net.minecraft.entity;
 
-import java.util.UUID;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.entity.ai.EntityJumpHelper;
-import net.minecraft.entity.ai.EntityLookHelper;
-import net.minecraft.entity.ai.EntityMoveHelper;
-import net.minecraft.entity.ai.EntitySenses;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.item.*;
+import net.minecraft.nbt.*;
 import net.minecraft.network.play.server.S1BPacketEntityAttach;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.stats.AchievementList;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.util.*;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
-import optifine.BlockPosM;
-import optifine.Config;
-import optifine.Reflector;
+import optifine.*;
+
+import java.util.UUID;
 
 public abstract class EntityLiving extends EntityLivingBase
 {
@@ -48,12 +29,12 @@ public abstract class EntityLiving extends EntityLivingBase
 
     /** The experience points the Entity gives. */
     protected int experienceValue;
-    private EntityLookHelper lookHelper;
+    private final EntityLookHelper lookHelper;
     protected EntityMoveHelper moveHelper;
 
     /** Entity jumping helper */
     protected EntityJumpHelper jumpHelper;
-    private EntityBodyHelper bodyHelper;
+    private final EntityBodyHelper bodyHelper;
     protected PathNavigate navigator;
 
     /** Passive tasks (wandering, look, idle, ...) */
@@ -64,10 +45,10 @@ public abstract class EntityLiving extends EntityLivingBase
 
     /** The active target the Task system uses for tracking */
     private EntityLivingBase attackTarget;
-    private EntitySenses senses;
+    private final EntitySenses senses;
 
     /** Equipment (armor and held item) for this entity. */
-    private ItemStack[] equipment = new ItemStack[5];
+    private final ItemStack[] equipment = new ItemStack[5];
 
     /** Chances for each equipment piece from dropping when this entity dies. */
     protected float[] equipmentDropChances = new float[5];
@@ -163,7 +144,7 @@ public abstract class EntityLiving extends EntityLivingBase
     public void setAttackTarget(EntityLivingBase entitylivingbaseIn)
     {
         this.attackTarget = entitylivingbaseIn;
-        Reflector.callVoid(Reflector.ForgeHooks_onLivingSetAttackTarget, new Object[] {this, entitylivingbaseIn});
+        Reflector.callVoid(Reflector.ForgeHooks_onLivingSetAttackTarget, this, entitylivingbaseIn);
     }
 
     /**
@@ -265,7 +246,7 @@ public abstract class EntityLiving extends EntityLivingBase
                 double d1 = this.rand.nextGaussian() * 0.02D;
                 double d2 = this.rand.nextGaussian() * 0.02D;
                 double d3 = 10.0D;
-                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width - d0 * d3, this.posY + (double)(this.rand.nextFloat() * this.height) - d1 * d3, this.posZ + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width - d2 * d3, d0, d1, d2, new int[0]);
+                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width - d0 * d3, this.posY + (double)(this.rand.nextFloat() * this.height) - d1 * d3, this.posZ + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width - d2 * d3, d0, d1, d2);
             }
         }
         else
@@ -609,7 +590,7 @@ public abstract class EntityLiving extends EntityLivingBase
         {
             this.entityAge = 0;
         }
-        else if ((this.entityAge & 31) == 31 && (object = Reflector.call(Reflector.ForgeEventFactory_canEntityDespawn, new Object[] {this})) != object1)
+        else if ((this.entityAge & 31) == 31 && (object = Reflector.call(Reflector.ForgeEventFactory_canEntityDespawn, this)) != object1)
         {
             if (object == object2)
             {
@@ -712,7 +693,7 @@ public abstract class EntityLiving extends EntityLivingBase
             d2 = (entityIn.getEntityBoundingBox().minY + entityIn.getEntityBoundingBox().maxY) / 2.0D - (this.posY + (double)this.getEyeHeight());
         }
 
-        double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d1 * d1);
+        double d3 = MathHelper.sqrt_double(d0 * d0 + d1 * d1);
         float f = (float)(MathHelper.func_181159_b(d1, d0) * 180.0D / Math.PI) - 90.0F;
         float f1 = (float)(-(MathHelper.func_181159_b(d2, d3) * 180.0D / Math.PI));
         this.rotationPitch = this.updateRotation(this.rotationPitch, f1, p_70625_3_);
@@ -1144,7 +1125,7 @@ public abstract class EntityLiving extends EntityLivingBase
                 }
             }
 
-            return this.interact(playerIn) ? true : super.interactFirst(playerIn);
+            return this.interact(playerIn) || super.interactFirst(playerIn);
         }
     }
 
@@ -1197,7 +1178,7 @@ public abstract class EntityLiving extends EntityLivingBase
 
             if (!this.worldObj.isRemote && sendPacket && this.worldObj instanceof WorldServer)
             {
-                ((WorldServer)this.worldObj).getEntityTracker().sendToAllTrackingEntity(this, new S1BPacketEntityAttach(1, this, (Entity)null));
+                ((WorldServer)this.worldObj).getEntityTracker().sendToAllTrackingEntity(this, new S1BPacketEntityAttach(1, this, null));
             }
         }
     }
@@ -1337,7 +1318,7 @@ public abstract class EntityLiving extends EntityLivingBase
 
             for (int i = 0; i < 8; ++i)
             {
-                double d0 = this.posX + (double)(((float)((i >> 0) % 2) - 0.5F) * this.width * 0.8F);
+                double d0 = this.posX + (double)(((float)((i) % 2) - 0.5F) * this.width * 0.8F);
                 double d1 = this.posY + (double)(((float)((i >> 1) % 2) - 0.5F) * 0.1F);
                 double d2 = this.posZ + (double)(((float)((i >> 2) % 2) - 0.5F) * this.width * 0.8F);
                 blockposm.setXyz(d0, d1 + (double)this.getEyeHeight(), d2);
@@ -1380,7 +1361,7 @@ public abstract class EntityLiving extends EntityLivingBase
             }
             else
             {
-                Entity entity = (Entity)world.playerEntities.get(0);
+                Entity entity = world.playerEntities.get(0);
                 double d0 = Math.max(Math.abs(this.posX - entity.posX) - 16.0D, 0.0D);
                 double d1 = Math.max(Math.abs(this.posZ - entity.posZ) - 16.0D, 0.0D);
                 double d2 = d0 * d0 + d1 * d1;
@@ -1406,7 +1387,7 @@ public abstract class EntityLiving extends EntityLivingBase
         this.despawnEntity();
     }
 
-    public static enum SpawnPlacementType
+    public enum SpawnPlacementType
     {
         ON_GROUND("ON_GROUND", 0),
         IN_AIR("IN_AIR", 1),
@@ -1415,7 +1396,7 @@ public abstract class EntityLiving extends EntityLivingBase
         private static final EntityLiving.SpawnPlacementType[] $VALUES = new EntityLiving.SpawnPlacementType[]{ON_GROUND, IN_AIR, IN_WATER};
         private static final String __OBFID = "CL_00002255";
 
-        private SpawnPlacementType(String p_i18_3_, int p_i18_4_)
+        SpawnPlacementType (String p_i18_3_, int p_i18_4_)
         {
         }
     }

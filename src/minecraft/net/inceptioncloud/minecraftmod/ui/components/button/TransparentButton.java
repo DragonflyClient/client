@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.ui.components.button;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.RGB;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
@@ -23,7 +23,7 @@ public class TransparentButton extends GuiButton
     /**
      * The font renderer with which the button text is drawn.
      */
-    private IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", 22);
+    private IFontRenderer fontRenderer = Dragonfly.getFontDesign().retrieveOrBuild(" Medium", 22);
     /**
      * Whether the clean button is highlighted by an underline.
      */

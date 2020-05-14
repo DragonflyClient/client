@@ -1,6 +1,6 @@
 package net.minecraft.client.renderer.entity;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
@@ -54,7 +54,7 @@ public class RenderItem implements IResourceManagerReloadListener
         }
 
         this.registerItems();
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     public static void forgeHooksClient_putQuadColor (WorldRenderer worldRenderer, BakedQuad bakedQuad, int integer)
@@ -486,7 +486,7 @@ public class RenderItem implements IResourceManagerReloadListener
      */
     public void renderItemOverlayIntoGUI (ItemStack stack, int xPosition, int yPosition, String text)
     {
-        final IFontRenderer fr = InceptionMod.getInstance().getFontDesign().getMedium();
+        final IFontRenderer fr = Dragonfly.getFontDesign().getMedium();
         if (stack != null) {
             if (stack.stackSize != 1 || text != null) {
                 String s = text == null ? String.valueOf(stack.stackSize) : text;

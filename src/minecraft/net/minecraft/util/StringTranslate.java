@@ -3,20 +3,21 @@ package net.minecraft.util;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.IllegalFormatException;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.IOUtils;
 
 public class StringTranslate
 {
     /**
      * Pattern that matches numeric variable placeholders in a resource string, such as "%d", "%3$d", "%.2f"
      */
-    private static final Pattern numericVariablePattern = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
+    private static final Pattern numericVariablePattern = Pattern.compile("%(\\d+\\$)?[\\d.]*[df]");
 
     /**
      * A Splitter that splits a string on the first "=".  For example, "a=b=c" would split into ["a", "b=c"].
@@ -24,8 +25,8 @@ public class StringTranslate
     private static final Splitter equalSignSplitter = Splitter.on('=').limit(2);
 
     /** Is the private singleton instance of StringTranslate. */
-    private static StringTranslate instance = new StringTranslate();
-    private final Map<String, String> languageList = Maps.<String, String>newHashMap();
+    private static final StringTranslate instance = new StringTranslate();
+    private final Map<String, String> languageList = Maps.newHashMap();
 
     /**
      * The time, in milliseconds since epoch, that this instance was last updated
@@ -42,7 +43,7 @@ public class StringTranslate
             {
                 if (!s.isEmpty() && s.charAt(0) != 35)
                 {
-                    String[] astring = (String[])Iterables.toArray(equalSignSplitter.split(s), String.class);
+                    String[] astring = Iterables.toArray(equalSignSplitter.split(s), String.class);
 
                     if (astring != null && astring.length == 2)
                     {
@@ -57,7 +58,6 @@ public class StringTranslate
         }
         catch (IOException var7)
         {
-            ;
         }
     }
 
@@ -112,7 +112,7 @@ public class StringTranslate
      */
     private String tryTranslateKey(String key)
     {
-        String s = (String)this.languageList.get(key);
+        String s = this.languageList.get(key);
         return s == null ? key : s;
     }
 

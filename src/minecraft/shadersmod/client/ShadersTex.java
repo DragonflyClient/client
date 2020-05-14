@@ -1,35 +1,24 @@
 package shadersmod.client;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.*;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
+import optifine.Config;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import shadersmod.common.SMCLog;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.imageio.ImageIO;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.LayeredTexture;
-import net.minecraft.client.renderer.texture.Stitcher;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-import optifine.Config;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-import shadersmod.common.SMCLog;
+import java.util.*;
 
 public class ShadersTex
 {
@@ -129,7 +118,7 @@ public class ShadersTex
     {
         int[] aint = getIntArray(size);
         IntBuffer intbuffer = getIntBuffer(size);
-        Arrays.fill((int[])intArray, 0, size, (int)value);
+        Arrays.fill(intArray, 0, size, value);
         intBuffer.put(intArray, 0, size);
         return intBuffer;
     }
@@ -137,18 +126,18 @@ public class ShadersTex
     public static int[] createAIntImage(int size)
     {
         int[] aint = new int[size * 3];
-        Arrays.fill((int[])aint, 0, size, (int)0);
+        Arrays.fill(aint, 0, size, 0);
         Arrays.fill(aint, size, size * 2, -8421377);
-        Arrays.fill((int[])aint, size * 2, size * 3, (int)0);
+        Arrays.fill(aint, size * 2, size * 3, 0);
         return aint;
     }
 
     public static int[] createAIntImage(int size, int color)
     {
         int[] aint = new int[size * 3];
-        Arrays.fill((int[])aint, 0, size, (int)color);
+        Arrays.fill(aint, 0, size, color);
         Arrays.fill(aint, size, size * 2, -8421377);
-        Arrays.fill((int[])aint, size * 2, size * 3, (int)0);
+        Arrays.fill(aint, size * 2, size * 3, 0);
         return aint;
     }
 
@@ -159,7 +148,7 @@ public class ShadersTex
         if (multitexid == null)
         {
             int i = tex.getGlTextureId();
-            multitexid = (MultiTexID)multiTexMap.get(Integer.valueOf(i));
+            multitexid = multiTexMap.get(Integer.valueOf(i));
 
             if (multitexid == null)
             {
@@ -275,7 +264,7 @@ public class ShadersTex
 
     public static void bindTextures(int baseTex)
     {
-        MultiTexID multitexid = (MultiTexID)multiTexMap.get(Integer.valueOf(baseTex));
+        MultiTexID multitexid = multiTexMap.get(Integer.valueOf(baseTex));
         bindTextures(multitexid);
     }
 
@@ -285,7 +274,7 @@ public class ShadersTex
         int[] aint = tex.getTextureData();
         int i = width * height;
         Arrays.fill(aint, i, i * 2, -8421377);
-        Arrays.fill((int[])aint, i * 2, i * 3, (int)0);
+        Arrays.fill(aint, i * 2, i * 3, 0);
         TextureUtil.allocateTexture(multitexid.base, width, height);
         TextureUtil.setTextureBlurMipmap(false, false);
         TextureUtil.setTextureClamped(false);
@@ -320,7 +309,7 @@ public class ShadersTex
         if (src.length >= j + i)
         {
             intbuffer.put(src, j, i).position(0).limit(i);
-            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, posX, posY, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)intbuffer);
+            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, posX, posY, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
             intbuffer.clear();
         }
     }
@@ -516,7 +505,7 @@ public class ShadersTex
             if (aint.length >= l1 * (page + 1))
             {
                 intbuffer.put(aint, l1 * page, l1).position(0).limit(l1);
-                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, k, j1, k1, l, i1, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)intbuffer);
+                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, k, j1, k1, l, i1, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
             }
 
             l >>= 1;
@@ -552,13 +541,15 @@ public class ShadersTex
         }
 
         int l1 = (k1 + 1) / 2;
-        int i2 = j1 << 24 | ((c0 >>> 16 & 255) * i + (c1 >>> 16 & 255) * j + (c2 >>> 16 & 255) * k + (c3 >>> 16 & 255) * l + l1) / k1 << 16 | ((c0 >>> 8 & 255) * i + (c1 >>> 8 & 255) * j + (c2 >>> 8 & 255) * k + (c3 >>> 8 & 255) * l + l1) / k1 << 8 | ((c0 >>> 0 & 255) * i + (c1 >>> 0 & 255) * j + (c2 >>> 0 & 255) * k + (c3 >>> 0 & 255) * l + l1) / k1 << 0;
+        int i2 = j1 << 24 | ((c0 >>> 16 & 255) * i + (c1 >>> 16 & 255) * j + (c2 >>> 16 & 255) * k + (c3 >>> 16 & 255) * l + l1) / k1 << 16 | ((c0 >>> 8 & 255) * i + (c1 >>> 8 & 255) * j + (c2 >>> 8 & 255) * k + (c3 >>> 8 & 255) * l + l1) / k1 << 8 |
+                 ((c0 & 255) * i + (c1 & 255) * j + (c2 & 255) * k + (c3 & 255) * l + l1) / k1;
         return i2;
     }
 
     public static int blend4Simple(int c0, int c1, int c2, int c3)
     {
-        int i = ((c0 >>> 24 & 255) + (c1 >>> 24 & 255) + (c2 >>> 24 & 255) + (c3 >>> 24 & 255) + 2) / 4 << 24 | ((c0 >>> 16 & 255) + (c1 >>> 16 & 255) + (c2 >>> 16 & 255) + (c3 >>> 16 & 255) + 2) / 4 << 16 | ((c0 >>> 8 & 255) + (c1 >>> 8 & 255) + (c2 >>> 8 & 255) + (c3 >>> 8 & 255) + 2) / 4 << 8 | ((c0 >>> 0 & 255) + (c1 >>> 0 & 255) + (c2 >>> 0 & 255) + (c3 >>> 0 & 255) + 2) / 4 << 0;
+        int i = ((c0 >>> 24 & 255) + (c1 >>> 24 & 255) + (c2 >>> 24 & 255) + (c3 >>> 24 & 255) + 2) / 4 << 24 | ((c0 >>> 16 & 255) + (c1 >>> 16 & 255) + (c2 >>> 16 & 255) + (c3 >>> 16 & 255) + 2) / 4 << 16 | ((c0 >>> 8 & 255) + (c1 >>> 8 & 255) + (c2 >>> 8 & 255) + (c3 >>> 8 & 255) + 2) / 4 << 8 |
+                ((c0 & 255) + (c1 & 255) + (c2 & 255) + (c3 & 255) + 2) / 4;
         return i;
     }
 
@@ -730,21 +721,21 @@ public class ShadersTex
         intbuffer.clear();
         intbuffer.put(src, 0, k).position(0).limit(k);
         GlStateManager.bindTexture(multiTex.base);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)intbuffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, i);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, i);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, j);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, j);
         intbuffer.put(src, k, k).position(0).limit(k);
         GlStateManager.bindTexture(multiTex.norm);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)intbuffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, i);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, i);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, j);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, j);
         intbuffer.put(src, k * 2, k).position(0).limit(k);
         GlStateManager.bindTexture(multiTex.spec);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)intbuffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, i);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, i);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, j);
@@ -764,7 +755,7 @@ public class ShadersTex
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, posX, posY, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)intbuffer);
+        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, posX, posY, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
 
         if (src.length == i * 3)
         {
@@ -778,7 +769,7 @@ public class ShadersTex
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, posX, posY, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)intbuffer);
+        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, posX, posY, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
 
         if (src.length == i * 3)
         {
@@ -792,7 +783,7 @@ public class ShadersTex
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, posX, posY, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)intbuffer);
+        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, posX, posY, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
         GlStateManager.setActiveTexture(33984);
     }
 
@@ -834,7 +825,6 @@ public class ShadersTex
         }
         catch (IOException var10)
         {
-            ;
         }
 
         if (!flag)
@@ -862,7 +852,8 @@ public class ShadersTex
     public static int blendColor(int color1, int color2, int factor1)
     {
         int i = 255 - factor1;
-        return ((color1 >>> 24 & 255) * factor1 + (color2 >>> 24 & 255) * i) / 255 << 24 | ((color1 >>> 16 & 255) * factor1 + (color2 >>> 16 & 255) * i) / 255 << 16 | ((color1 >>> 8 & 255) * factor1 + (color2 >>> 8 & 255) * i) / 255 << 8 | ((color1 >>> 0 & 255) * factor1 + (color2 >>> 0 & 255) * i) / 255 << 0;
+        return ((color1 >>> 24 & 255) * factor1 + (color2 >>> 24 & 255) * i) / 255 << 24 | ((color1 >>> 16 & 255) * factor1 + (color2 >>> 16 & 255) * i) / 255 << 16 | ((color1 >>> 8 & 255) * factor1 + (color2 >>> 8 & 255) * i) / 255 << 8 |
+               ((color1 & 255) * factor1 + (color2 & 255) * i) / 255;
     }
 
     public static void loadLayeredTexture(LayeredTexture tex, IResourceManager manager, List list)

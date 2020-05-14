@@ -1,6 +1,6 @@
 package net.minecraft.client.gui;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.color.RGB;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
@@ -217,21 +217,19 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
         // Title
         double percent = imageSize / 280D;
-        IFontRenderer fontRenderer = InceptionMod.getInstance()
-            .getFontDesign()
+        IFontRenderer fontRenderer = Dragonfly.getFontDesign()
             .retrieveOrBuild(" Medium", (int) (25 + (percent * 60)));
         fontRenderer.drawCenteredString(InceptionCloudVersion.FULL_VERSION, width / 2, height / 8 + imageSize + 10, 0xFFFFFF, true);
 
         // Subtitle
         int previousHeight = fontRenderer.getHeight();
         percent = imageSize / 280D;
-        fontRenderer = InceptionMod.getInstance()
-            .getFontDesign()
+        fontRenderer = Dragonfly.getFontDesign()
             .retrieveOrBuild("", (int) (15 + (percent * 40)));
         fontRenderer.drawCenteredString("Minecraft Mod 1.8.8", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true);
 
         // About
-        fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        fontRenderer = Dragonfly.getFontDesign().getRegular();
         fontRenderer.drawString(aboutString, 5, 5, Color.WHITE.getRGB(), true);
 
         // Bottom Bar
@@ -257,8 +255,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     {
         double percent = Math.min(height / 540D, 1.0D);
         final int BUTTON_FONT_SIZE = (int) (18 + (percent * 15));
-        IFontRenderer fontRenderer = InceptionMod.getInstance()
-            .getFontDesign()
+        IFontRenderer fontRenderer = Dragonfly.getFontDesign()
             .retrieveOrBuild("", BUTTON_FONT_SIZE);
 
         BUTTON_WIDTH = (int) (80 + (percent * 30));
@@ -404,7 +401,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
             }
         }
 
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
         if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString)
             && mouseY >= 5 && mouseY <= 5 + fontRenderer.getHeight()) {
             // TODO: Restore this

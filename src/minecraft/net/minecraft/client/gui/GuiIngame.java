@@ -2,7 +2,7 @@ package net.minecraft.client.gui;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.color.RGB;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
@@ -130,7 +130,7 @@ public class GuiIngame extends Gui
         this.streamIndicator = new GuiStreamIndicator(mcIn);
         this.overlayPlayerList = new GuiPlayerTabOverlay(mcIn, this);
         this.func_175177_a();
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     public void func_175177_a ()
@@ -260,7 +260,7 @@ public class GuiIngame extends Gui
             int color = recordAnimateColor ? i1 + ( k1 << 24 & -16777216 ) : 0xFFFFFF;
             color = RGB.of(color).alpha(( int ) (55 + (200D * actionBar.get() ) )).rgb();
 
-            IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getMedium();
+            IFontRenderer fontRenderer = Dragonfly.getFontDesign().getMedium();
             fontRenderer.drawCenteredString(this.recordPlaying, 0, posY, color, true);
 
             GlStateManager.disableBlend();
@@ -288,8 +288,8 @@ public class GuiIngame extends Gui
 
             if (l1 > 8) {
 
-                final IFontRenderer titleRenderer = InceptionMod.getInstance().getFontDesign().getTitle();
-                final IFontRenderer subtitleRenderer = InceptionMod.getInstance().getFontDesign().getSubtitle();
+                final IFontRenderer titleRenderer = Dragonfly.getFontDesign().getTitle();
+                final IFontRenderer subtitleRenderer = Dragonfly.getFontDesign().getSubtitle();
 
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(( float ) ( scaledWidth / 2 ), ( float ) ( scaledHeight / 2 ), 0.0F);
@@ -403,7 +403,7 @@ public class GuiIngame extends Gui
         this.mc.mcProfiler.startSection("expBar");
         this.mc.getTextureManager().bindTexture(Gui.icons);
         int i = this.mc.thePlayer.xpBarCap();
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getMedium();
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getMedium();
 
         if (i > 0) {
             short short1 = 182;
@@ -441,7 +441,7 @@ public class GuiIngame extends Gui
     public void drawSelectedItemName (ScaledResolution resolution)
     {
         this.mc.mcProfiler.startSection("selectedItemName");
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
 
         if (this.remainingHighlightTicks > 0 && this.highlightingItemStack != null) {
             String s = this.highlightingItemStack.getDisplayName();
@@ -479,7 +479,7 @@ public class GuiIngame extends Gui
     public void renderDemo (ScaledResolution p_175185_1_)
     {
         this.mc.mcProfiler.startSection("demo");
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
         String s = "";
 
         if (this.mc.theWorld.getTotalWorldTime() >= 120500L) {
@@ -521,8 +521,8 @@ public class GuiIngame extends Gui
 
     private void renderScoreboard (ScoreObjective objective, ScaledResolution resolution)
     {
-        IFontRenderer fontRegular = InceptionMod.getInstance().getFontDesign().getRegular();
-        IFontRenderer fontMedium = InceptionMod.getInstance().getFontDesign().getMedium();
+        IFontRenderer fontRegular = Dragonfly.getFontDesign().getRegular();
+        IFontRenderer fontMedium = Dragonfly.getFontDesign().getMedium();
         Scoreboard scoreboard = objective.getScoreboard();
         Collection<Score> sortedScores = scoreboard.getSortedScores(objective);
         ArrayList<Score> displayableScores = sortedScores.stream().filter(score -> score.getPlayerName() != null && !score.getPlayerName().startsWith("#")).collect(Collectors.toCollection(Lists::newArrayList));
@@ -855,7 +855,7 @@ public class GuiIngame extends Gui
     {
         if (BossStatus.bossName != null && BossStatus.statusBarTime > 0) {
             --BossStatus.statusBarTime;
-            IFontRenderer fontrenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getRegular();
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaledWidth();
             short short1 = 182;

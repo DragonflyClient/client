@@ -1,6 +1,6 @@
 package net.minecraft.client.gui;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.CloudColor;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
@@ -216,7 +216,7 @@ public class GuiIngameMenu extends GuiScreen
         /* Title */
         final float opacity = (float) transitionHeader.get();
         final Color color = new Color(1, 1, 1, Math.max(0.05f, opacity));
-        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", 22);
+        IFontRenderer fontRenderer = Dragonfly.getFontDesign().retrieveOrBuild(" Medium", 22);
 
         drawCenteredString(fontRenderer, "Ingame Menu", left + (width / 2), top + 9, color.getRGB());
         GlStateManager.color(1f, 1f, 1f, color.getAlpha() / 255f);
@@ -234,7 +234,7 @@ public class GuiIngameMenu extends GuiScreen
         }
 
         // About
-        fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        fontRenderer = Dragonfly.getFontDesign().getRegular();
         fontRenderer.drawString(aboutString, 5, 5, Color.WHITE.getRGB(), true);
     }
 
@@ -263,7 +263,7 @@ public class GuiIngameMenu extends GuiScreen
     @Override
     protected void mouseClicked (final int mouseX, final int mouseY, final int mouseButton) throws IOException
     {
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
         if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString)
             && mouseY >= 5 && mouseY <= 5 + fontRenderer.getHeight()) {
             this.mc.displayGuiScreen(new EngineTestUI());

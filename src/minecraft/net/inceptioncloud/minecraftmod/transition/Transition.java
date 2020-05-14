@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.transition;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.transition.color.*;
 import net.inceptioncloud.minecraftmod.transition.number.*;
 import net.inceptioncloud.minecraftmod.transition.string.*;
@@ -92,7 +92,7 @@ public abstract class Transition
         originClass = split[split.length - 1];
         originStackTrace = stackTrace;
 
-        InceptionMod.getInstance().handleTransition(this);
+        Dragonfly.handleTransition(this);
     }
 
     /**
@@ -170,7 +170,7 @@ public abstract class Transition
      */
     public void destroy ()
     {
-        InceptionMod.getInstance().stopTransition(this);
+        Dragonfly.stopTransition(this);
     }
 
     /**

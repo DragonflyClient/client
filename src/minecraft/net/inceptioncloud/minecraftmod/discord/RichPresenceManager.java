@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.discord;
 
 import net.arikia.dev.drpc.*;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.discord.custom.MenuRPC;
 import net.inceptioncloud.minecraftmod.discord.subscriber.RichPresenceSubscriber;
 import org.apache.logging.log4j.LogManager;
@@ -22,12 +22,12 @@ public class RichPresenceManager
     private RichPresenceAdapter status;
 
     /**
-     * Initialized when loading the {@link InceptionMod}.
+     * Initialized when loading the {@link Dragonfly}.
      */
     public RichPresenceManager ()
     {
         LogManager.getLogger().info("Enabling Discord Rich Presence...");
-        InceptionMod.getInstance().getEventBus().register(new RichPresenceSubscriber());
+        Dragonfly.getEventBus().register(new RichPresenceSubscriber());
 
         DiscordEventHandlers handlers = new DiscordEventHandlers.Builder()
             .setReadyEventHandler(discordUser -> LogManager.getLogger().info("Discord Rich Presence is ready!"))

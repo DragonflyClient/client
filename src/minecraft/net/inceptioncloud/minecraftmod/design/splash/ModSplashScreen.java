@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.design.splash;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.CloudColor;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
@@ -80,13 +80,13 @@ public class ModSplashScreen
     public void performRender (TextureManager textureManager)
     {
         if (titleFR == null)
-            titleFR = UnicodeFontRenderer.newInstance(InceptionMod.getInstance().getFontDesign().getFont() + " Medium", 132, Font.PLAIN);
+            titleFR = UnicodeFontRenderer.newInstance(Dragonfly.getFontDesign().getFont() + " Medium", 132, Font.PLAIN);
 
         if (defaultFR == null)
-            defaultFR = UnicodeFontRenderer.newInstance(InceptionMod.getInstance().getFontDesign().getFont() + " Medium", 75, Font.PLAIN);
+            defaultFR = UnicodeFontRenderer.newInstance(Dragonfly.getFontDesign().getFont() + " Medium", 75, Font.PLAIN);
 
         if (actionFR == null)
-            actionFR = UnicodeFontRenderer.newInstance(InceptionMod.getInstance().getFontDesign().getFont() + " Light", 65, Font.PLAIN);
+            actionFR = UnicodeFontRenderer.newInstance(Dragonfly.getFontDesign().getFont() + " Light", 65, Font.PLAIN);
 
         if (logo == null)
             logo = new ResourceLocation("inceptioncloud/splash.png");

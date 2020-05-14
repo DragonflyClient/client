@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.mojang.authlib.GameProfile;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
@@ -103,7 +103,7 @@ public class GuiPlayerTabOverlay extends Gui
         int x = mc.displayWidth / 2 - hotkeyFlyIn.castToInt();
         int y = mc.displayHeight / 2 - 50;
         drawRect(x - 3, y - 3, mc.displayWidth / 2, y + 20, new Color(0, 0, 0, 50).getRGB());
-        HotkeyRendererKt.render(InceptionMod.getInstance().getFontDesign().retrieveOrBuild("", 20), KeyEvent.VK_P, "Open Indicator Menu", x, y);
+        HotkeyRendererKt.render(Dragonfly.getFontDesign().retrieveOrBuild("", 20), KeyEvent.VK_P, "Open Indicator Menu", x, y);
     }
 
     /**
@@ -111,7 +111,7 @@ public class GuiPlayerTabOverlay extends Gui
      */
     public void renderPlayerlist (int width, Scoreboard scoreboard, ScoreObjective scoreObjective)
     {
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
         final double modifier = Math.max(1 - tablistFlyIn.get(), 0.1);
         final int offset = ( int ) ( tablistFlyIn.get() * estimatePlayerListHeight(fontRenderer, width) );
         final int backgroundColor = new Color(0, 0, 0, ( int ) ( 120 * modifier )).getRGB();

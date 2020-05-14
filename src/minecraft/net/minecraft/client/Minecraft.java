@@ -6,7 +6,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.client.ClientStartupEvent;
 import net.inceptioncloud.minecraftmod.event.client.GraphicsInitializedEvent;
 import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
@@ -465,11 +465,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.displayHeight = this.gameSettings.overrideHeight;
         }
 
-        InceptionMod.create();
-
         // EVENTBUS - Post the ClientStartupEvent when the Minecraft Client starts
         ClientStartupEvent clientStartupEvent = new ClientStartupEvent();
-        InceptionMod.getInstance().getEventBus().post(clientStartupEvent);
+        Dragonfly.getEventBus().post(clientStartupEvent);
 
         this.setWindowIcon();
         this.setInitialDisplayMode();
@@ -489,7 +487,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.mcResourceManager.registerReloadListener(this.renderEngine);
 
         // ICMM - Splash Screen First Draw
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
 
         this.initStream();
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
@@ -507,7 +505,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
         // EVENTBUS - Post the GraphicsInitializedEvent here as the Sound and Graphics Library can be used now
         GraphicsInitializedEvent graphicsInitializedEvent = new GraphicsInitializedEvent();
-        InceptionMod.getInstance().getEventBus().post(graphicsInitializedEvent);
+        Dragonfly.getEventBus().post(graphicsInitializedEvent);
 
         this.standardGalacticFontRenderer = new FontRenderer(this.gameSettings, new ResourceLocation("textures/font/ascii_sga.png"), this.renderEngine, false);
         this.mcResourceManager.registerReloadListener(this.fontRendererObj);
@@ -559,7 +557,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.checkGLError("Post startup");
         this.ingameGUI = new GuiIngame(this);
 
-        InceptionMod.getInstance().getSplashScreen().setActive(false);
+        Dragonfly.getSplashScreen().setActive(false);
 
         if (this.serverName != null) {
             this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
@@ -606,7 +604,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             logger.error("Couldn't initialize twitch stream");
         }
 
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     private void createDisplay () throws LWJGLException
@@ -900,7 +898,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
         // EVENTBUS - Calls the GuiScreenDisplayEvent when changing the current GuiScreen. Can be cancelled to abort the change.
         GuiScreenDisplayEvent event = new GuiScreenDisplayEvent(this.currentScreen, guiScreenIn);
-        InceptionMod.getInstance().getEventBus().post(event);
+        Dragonfly.getEventBus().post(event);
         if (event.isCancelled()) return;
 
         if (this.currentScreen != null) {
@@ -1297,7 +1295,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     public void shutdown ()
     {
-        InceptionMod.getInstance().shutdownInstance();
+        Dragonfly.shutdownInstance();
         this.running = false;
     }
 
@@ -1399,9 +1397,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     @SuppressWarnings ("incomplete-switch")
 
-    /**
-     * Called when user clicked he's mouse right button (place)
-     */
     private void rightClickMouse ()
     {
         if (!this.playerController.func_181040_m()) {
@@ -1915,7 +1910,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         // EVENTBUS - Calls the IntegratedServerStartingEvent event when an integrated server is being launched
         IntegratedServerStartingEvent launchEvent = new IntegratedServerStartingEvent(worldName, folderName, worldSettingsIn);
-        InceptionMod.getInstance().getEventBus().post(launchEvent);
+        Dragonfly.getEventBus().post(launchEvent);
         if (launchEvent.isCancelled()) return;
 
         this.loadWorld(null);

@@ -1,11 +1,11 @@
 {
   "lastServer": {
-    "serverName": "Rewinside",
-    "serverIP": "rewinside.tv",
+    "serverName": "Gomme",
+    "serverIP": "gommehd.net",
     "lan": false
   },
   "enableZoomAnimation": true,
-  "scoreboardBackground": false,
+  "scoreboardBackground": true,
   "scoreboardScores": 2,
   "scoreboardTitle": true,
   "zoomAnimation": true,

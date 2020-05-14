@@ -1,11 +1,10 @@
 package net.minecraft.item;
 
-import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.*;
 import net.minecraft.util.StatCollector;
+
+import java.util.List;
 
 public class ItemFireworkCharge extends Item
 {
@@ -42,7 +41,7 @@ public class ItemFireworkCharge extends Item
                     {
                         i += (l & 16711680) >> 16;
                         j += (l & 65280) >> 8;
-                        k += (l & 255) >> 0;
+                        k += (l & 255);
                     }
 
                     i = i / aint.length;

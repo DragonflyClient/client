@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.state;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.client.GameStateUpdateEvent;
 import net.inceptioncloud.minecraftmod.state.menu.subscriber.MenuSubscriber;
 import net.inceptioncloud.minecraftmod.state.play.subscriber.MultiplayerSubscriber;
@@ -22,7 +22,7 @@ public class GameStateManager
      */
     public GameStateManager ()
     {
-        InceptionMod.getInstance().getEventBus()
+        Dragonfly.getEventBus()
             .registerAnd(new SingleplayerSubscriber())
             .registerAnd(new MultiplayerSubscriber())
             .register(new MenuSubscriber());
@@ -45,7 +45,7 @@ public class GameStateManager
     {
         // EVENTBUS - Calls the GameStateUpdateEvent when the State is updated
         GameStateUpdateEvent event = new GameStateUpdateEvent(current, newState);
-        InceptionMod.getInstance().getEventBus().post(event);
+        Dragonfly.getEventBus().post(event);
 
         LogManager.getLogger().info("[Game State] " + newState);
 

@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.ui.components.button;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.BluePalette;
 import net.inceptioncloud.minecraftmod.design.font.GlyphFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition;
@@ -62,7 +62,7 @@ public class BluePaletteButton extends GuiButton
     public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
     {
         if (this.visible) {
-            GlyphFontRenderer fontrenderer = (GlyphFontRenderer) InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", 19);
+            GlyphFontRenderer fontrenderer = (GlyphFontRenderer) Dragonfly.getFontDesign().retrieveOrBuild(" Medium", 19);
             final double border = 1;
             final double left = this.xPosition + border;
             final double top = this.yPosition + border;

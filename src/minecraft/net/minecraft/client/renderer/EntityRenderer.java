@@ -2,7 +2,7 @@ package net.minecraft.client.renderer;
 
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.event.control.ZoomEvent;
 import net.minecraft.block.Block;
@@ -226,7 +226,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
             }
         }
 
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     public boolean isShaderActive ()
@@ -541,7 +541,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
             // EVENTBUS - Calls the ZoomEvent to make the client able to modify the FOV when zooming
             ZoomEvent zoomEvent = new ZoomEvent(fov);
-            InceptionMod.getInstance().getEventBus().post(zoomEvent);
+            Dragonfly.getEventBus().post(zoomEvent);
             fov = zoomEvent.getFieldOfView();
 
             if (entity instanceof EntityLivingBase && ( ( EntityLivingBase ) entity ).getHealth() <= 0.0F) {
@@ -1221,8 +1221,8 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
 
             // ICMM - Debug Mode
-            final String debugInfo = "MTPS " + InceptionMod.getInstance().getLastTPS();
-            final IFontRenderer font = InceptionMod.getInstance().getFontDesign()
+            final String debugInfo = "MTPS " + Dragonfly.getLastTPS();
+            final IFontRenderer font = Dragonfly.getFontDesign()
                 .retrieveOrBuild("JetBrains Mono", Font.PLAIN, 12, 0);
             font.drawString(debugInfo, scaledWidth - font.getStringWidth(debugInfo), 4, Color.WHITE.getRGB(), true);
         }

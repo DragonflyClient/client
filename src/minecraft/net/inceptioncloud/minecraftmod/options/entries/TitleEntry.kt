@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.options.entries
 
-import net.inceptioncloud.minecraftmod.InceptionMod
+import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.ui.components.list.UIListEntry
 import net.minecraft.client.gui.Gui
@@ -13,7 +13,7 @@ class TitleEntry(val string: String) : UIListEntry()
     override fun drawEntry(x: Int, y: Int, height: Int, width: Int)
     {
         Gui.drawRect(x, y, x + width, y + height, BluePalette.PRIMARY_LIGHT.rgb)
-        InceptionMod.getInstance().fontDesign.subtitle.drawCenteredString(string, x + width / 2, y + height / 2 - 3, BluePalette.BACKGROUND.rgb, false)
+        Dragonfly.fontDesign.subtitle.drawCenteredString(string, x + width / 2, y + height / 2 - 3, BluePalette.BACKGROUND.rgb, false)
     }
 
     /**
