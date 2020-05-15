@@ -5,6 +5,7 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.CloudColor
+import net.inceptioncloud.minecraftmod.engine.internal.MouseData
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetBuffer
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetIdBuilder
@@ -554,8 +555,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     @Throws(IOException::class)
     open fun handleMouseInput()
     {
-        val i = Mouse.getEventX() * width / mc.displayWidth
-        val j = height - Mouse.getEventY() * height / mc.displayHeight - 1
+        val mouseX = Mouse.getEventX() * width / mc.displayWidth
+        val mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1
         val k = Mouse.getEventButton()
         if (Mouse.getEventButtonState())
         {
@@ -565,7 +566,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
             }
             eventButton = k
             lastMouseEvent = Minecraft.getSystemTime()
-            mouseClicked(i, j, eventButton)
+            mouseClicked(mouseX, mouseY, eventButton)
+            buffer.handleMousePress(MouseData(mouseX, mouseY, button = eventButton))
         } else if (k != -1)
         {
             if (mc.gameSettings.touchscreen && --touchValue > 0)
@@ -573,11 +575,13 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
                 return
             }
             eventButton = -1
-            mouseReleased(i, j, k)
+            mouseReleased(mouseX, mouseY, k)
+            buffer.handleMouseRelease(MouseData(mouseX, mouseY, button = k))
         } else if (eventButton != -1 && lastMouseEvent > 0L)
         {
             val timeSinceLastClick = Minecraft.getSystemTime() - lastMouseEvent
-            mouseClickMove(i, j, eventButton, timeSinceLastClick)
+            mouseClickMove(mouseX, mouseY, eventButton, timeSinceLastClick)
+            buffer.handleMouseDrag(MouseData(mouseX, mouseY, button = k, draggingDuration = timeSinceLastClick))
         }
     }
 

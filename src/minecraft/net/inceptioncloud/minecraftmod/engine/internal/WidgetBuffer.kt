@@ -48,34 +48,6 @@ class WidgetBuffer
         }
     }
 
-    private fun handleMouseMove(data: MouseData)
-    {
-        content.values.forEach { it.handleMouseMove(data) }
-        content.values
-            .filter { it is IPosition && (it is IDimension || it is ISize) }
-            .forEach {
-                it as IPosition
-                val x = it.x
-                val y = it.y
-                val (width, height) = Defaults.getSizeOrDimension(it)
-
-                it.hovered = data.mouseX.toDouble() in x .. x + width
-                             && data.mouseY.toDouble() in y .. y + height
-            }
-    }
-
-    fun handleMousePress(data: MouseData)
-    {
-    }
-
-    fun handleMouseRelease(data: MouseData)
-    {
-    }
-
-    fun handleMouseDrag(data: MouseData)
-    {
-    }
-
     /**
      * Adds a [Widget] object to the buffer.
      *
@@ -110,9 +82,6 @@ class WidgetBuffer
         return content.getOrDefault(id, null)
     }
 
-    var mouseX: Int = 0
-    var mouseY: Int = 0
-
     /**
      * Updates the content on mod tick.
      *
@@ -128,6 +97,54 @@ class WidgetBuffer
 
         content.values.forEach { it.update() }
     }
+
+    //<editor-fold desc="Mouse Events">
+    var mouseX: Int = 0
+    var mouseY: Int = 0
+
+    /**
+     * Called when the mouse was moved.
+     */
+    private fun handleMouseMove(data: MouseData)
+    {
+        content.values.forEach { it.handleMouseMove(data) }
+        content.values
+            .filter { it is IPosition && (it is IDimension || it is ISize) }
+            .forEach {
+                it as IPosition
+                val x = it.x
+                val y = it.y
+                val (width, height) = Defaults.getSizeOrDimension(it)
+
+                it.hovered = data.mouseX.toDouble() in x .. x + width
+                             && data.mouseY.toDouble() in y .. y + height
+            }
+    }
+
+    /**
+     * Called when a mouse button is pressed.
+     */
+    fun handleMousePress(data: MouseData)
+    {
+        content.values.forEach { it.handleMousePress(data) }
+    }
+
+    /**
+     * Called when a mouse button is released.
+     */
+    fun handleMouseRelease(data: MouseData)
+    {
+        content.values.forEach { it.handleMouseRelease(data) }
+    }
+
+    /**
+     * Called when the mouse is moved while a button is holt down.
+     */
+    fun handleMouseDrag(data: MouseData)
+    {
+        content.values.forEach { it.handleMouseDrag(data) }
+    }
+    //</editor-fold>
 
     override fun toString(): String
     {
