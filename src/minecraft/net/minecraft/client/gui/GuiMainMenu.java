@@ -20,7 +20,7 @@ import net.inceptioncloud.minecraftmod.ui.mainmenu.quit.ReloadAction;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.quit.RestartAction;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer.CreateMapAction;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer.LastMapAction;
-import net.inceptioncloud.minecraftmod.utils.RenderUtils;
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.resources.I18n;

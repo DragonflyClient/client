@@ -18,6 +18,7 @@ public class DefaultSubscribers
             .registerAnd(new AuthenticationSubscriber())
             .registerAnd(new FileSaveSubscriber())
             .registerAnd(new TickSubscriber())
-            .register(new LastServerSaveSubscriber());
+            .registerAnd(new LastServerSaveSubscriber())
+            .register(new DebugModeSubscriber());
     }
 }

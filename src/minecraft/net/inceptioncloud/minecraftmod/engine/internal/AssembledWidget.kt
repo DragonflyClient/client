@@ -1,5 +1,17 @@
 package net.inceptioncloud.minecraftmod.engine.internal
 
+import net.inceptioncloud.minecraftmod.Dragonfly
+import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
+import net.inceptioncloud.minecraftmod.engine.structure.IDimension
+import net.inceptioncloud.minecraftmod.engine.structure.IPosition
+import net.inceptioncloud.minecraftmod.engine.structure.ISize
+import net.minecraft.client.gui.Gui
+import org.lwjgl.input.Keyboard
+
+private val structureColors = arrayOf(
+    0x1abc9c, 0x2ecc71, 0x3498db, 0x9b59b6, 0xf1c40f, 0xe67e22, 0xe74c3c
+)
+
 @Suppress("LeakingThis")
 abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
 {
@@ -9,11 +21,72 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
      */
     protected val structure: Map<String, Widget<*>>
 
+    /**
+     * Whether the assembled widget has been initialized by calling the first structure update.
+     *
+     * If this value is still set to false before a widget is rendered, a structure update
+     * ([updateStructure]) will be performed before the rendering process is started.
+     */
     protected var initialized = false
 
     init
     {
         structure = assemble()
+    }
+
+    override fun stateChanged(new: Widget<*>)
+    {
+        structure.values.forEach { it.stateChanged(new) }
+        updateStructure()
+    }
+
+    override fun render()
+    {
+        if (!initialized)
+        {
+            updateStructure()
+        }
+
+        structure.values.forEach { it.render() }
+
+        if (Dragonfly.debugModeEnabled)
+        {
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+            {
+                var index = 0
+                structure.values
+                    .forEach { widget ->
+                        val x = (widget as IPosition).x
+                        val y = (widget as IPosition).y
+                        val (width, height) = Defaults.getSizeOrDimension(widget)
+
+                        Gui.drawRect(x, y, x + width, y + height, WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb)
+
+                        index++
+                    }
+            }
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+            {
+                GraphicsEngine.renderDebugOverlay(structure.values)
+            }
+        }
+    }
+
+    override fun handleMouseMove(data: MouseData)
+    {
+        structure.values.forEach { it.handleMouseMove(data) }
+        structure.values
+            .filter { it is IPosition && (it is IDimension || it is ISize) }
+            .forEach {
+                it as IPosition
+                val x = it.x
+                val y = it.y
+                val (width, height) = Defaults.getSizeOrDimension(it)
+
+                it.hovered = data.mouseX.toDouble() in x .. x + width
+                             && data.mouseY.toDouble() in y .. y + height
+            }
     }
 
     /**
@@ -28,21 +101,4 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
      * Updates the structure of the assembled widget.
      */
     abstract fun updateStructure()
-
-    override fun stateChanged(new: Widget<*>)
-    {
-        structure.values.forEach { it.stateChanged(new) }
-        updateStructure()
-        println("State-changed structure update")
-    }
-
-    override fun render()
-    {
-        if (!initialized)
-        {
-            updateStructure()
-        }
-
-        structure.values.forEach { it.render() }
-    }
 }

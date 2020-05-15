@@ -48,19 +48,21 @@ class Arc(
     override fun render()
     {
         val factor = 5.0
+        val centerX = x + width / 2
+        val centerY = y + height / 2
         GraphicsEngine.pushScale(1 / factor)
 
         widgetColor.glBindColor()
 
         glDisable(GL_POLYGON_SMOOTH)
         glBegin(GL_POLYGON)
-        glVertex2d(x * factor, y * factor)
+        glVertex2d(centerX * factor, centerY * factor)
 
         for (i in end downTo start)
         {
             glVertex2d(
-                (x + cos(i * Math.PI / 180) * width) * factor,
-                (y + sin(i * Math.PI / 180) * height) * factor
+                (centerX + cos(i * Math.PI / 180) * width / 2) * factor,
+                (centerY + sin(i * Math.PI / 180) * height / 2) * factor
             )
         }
 
@@ -90,6 +92,16 @@ class Arc(
             end = end
         )
     }
+
+    override fun toInfo(): Array<String> = arrayOf(
+        "x = $x",
+        "y = $y",
+        "width = $width",
+        "height = $height",
+        "color = $widgetColor",
+        "start = $start",
+        "end = $end"
+    )
 
     override fun newInstance(): Arc = Arc()
 

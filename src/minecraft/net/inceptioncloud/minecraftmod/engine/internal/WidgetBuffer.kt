@@ -1,6 +1,12 @@
 package net.inceptioncloud.minecraftmod.engine.internal
 
+import net.inceptioncloud.minecraftmod.Dragonfly
+import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
+import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IDraw
+import net.inceptioncloud.minecraftmod.engine.structure.IPosition
+import net.inceptioncloud.minecraftmod.engine.structure.ISize
+import org.lwjgl.input.Keyboard
 
 /**
  * ## Widget Buffer
@@ -35,21 +41,38 @@ class WidgetBuffer
         content.values.filter { it.visible }.forEach {
             it.draw()
         }
+
+        if (Dragonfly.debugModeEnabled && !Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+        {
+            GraphicsEngine.renderDebugOverlay(content.values)
+        }
     }
 
-    fun handleMouseMove (data: MouseData)
+    private fun handleMouseMove(data: MouseData)
+    {
+        content.values.forEach { it.handleMouseMove(data) }
+        content.values
+            .filter { it is IPosition && (it is IDimension || it is ISize) }
+            .forEach {
+                it as IPosition
+                val x = it.x
+                val y = it.y
+                val (width, height) = Defaults.getSizeOrDimension(it)
+
+                it.hovered = data.mouseX.toDouble() in x .. x + width
+                             && data.mouseY.toDouble() in y .. y + height
+            }
+    }
+
+    fun handleMousePress(data: MouseData)
     {
     }
 
-    fun handleMousePress (data: MouseData)
+    fun handleMouseRelease(data: MouseData)
     {
     }
 
-    fun handleMouseRelease (data: MouseData)
-    {
-    }
-
-    fun handleMouseDrag (data: MouseData)
+    fun handleMouseDrag(data: MouseData)
     {
     }
 
@@ -87,12 +110,22 @@ class WidgetBuffer
         return content.getOrDefault(id, null)
     }
 
+    var mouseX: Int = 0
+    var mouseY: Int = 0
+
     /**
      * Updates the content on mod tick.
      *
      * Calls the [Widget.update] function on every widget regardless of the visibility state.
      */
     fun update() = synchronized(this) {
+        if (GraphicsEngine.getMouseX() != mouseX && GraphicsEngine.getMouseY() != mouseY)
+        {
+            mouseX = GraphicsEngine.getMouseX()
+            mouseY = GraphicsEngine.getMouseY()
+            handleMouseMove(MouseData(mouseX, mouseY))
+        }
+
         content.values.forEach { it.update() }
     }
 
@@ -102,7 +135,7 @@ class WidgetBuffer
 
         content.forEach {
             builder.append("\t${it.key}")
-            if (! it.value.visible)
+            if (!it.value.visible)
                 builder.append(" (invisible)")
             builder.append(": ${it.value}\n")
         }

@@ -3,7 +3,7 @@ package net.inceptioncloud.minecraftmod.ui
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.ui.components.button.ImageButton
-import net.inceptioncloud.minecraftmod.utils.RenderUtils
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen

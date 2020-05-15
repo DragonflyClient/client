@@ -50,6 +50,12 @@ object Dragonfly
     @JvmStatic var lastTPS = 0
 
     /**
+     * Whether the debug mode is currently enabled.
+     * It provides several features for developers or users to find, identify and fix bugs.
+     */
+    @JvmStatic var debugModeEnabled = true
+
+    /**
      * The [Timer] that performs the mod ticks.
      */
     private val tickTimer: Timer

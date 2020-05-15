@@ -63,15 +63,18 @@ class Rectangle(
             glEnd()
         }
 
-        widgetColor.glBindColor()
-        glBegin(GL_QUADS)
+        if (widgetColor.alpha > 0)
+        {
+            widgetColor.glBindColor()
+            glBegin(GL_QUADS)
 
-        glVertex2d(x + width, y)
-        glVertex2d(x, y)
-        glVertex2d(x, y + height)
-        glVertex2d(x + width, y + height)
+            glVertex2d(x + width, y)
+            glVertex2d(x, y)
+            glVertex2d(x, y + height)
+            glVertex2d(x + width, y + height)
 
-        glEnd()
+            glEnd()
+        }
     }
 
     override fun isStateEqual(clone: Rectangle): Boolean =
@@ -99,6 +102,18 @@ class Rectangle(
             verticalAlignment = verticalAlignment
         )
     }
+
+    override fun toInfo(): Array<String> = arrayOf(
+        "x = $x",
+        "y = $y",
+        "width = $width",
+        "height = $height",
+        "color = $widgetColor",
+        "outlineStroke = $outlineStroke",
+        "outlineColor = $outlineColor",
+        "horizontal = ${horizontalAlignment.name}",
+        "vertical = ${verticalAlignment.name}"
+    )
 
     override fun newInstance(): Rectangle = Rectangle()
 

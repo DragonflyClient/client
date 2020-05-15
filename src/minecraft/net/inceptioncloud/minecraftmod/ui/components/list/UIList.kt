@@ -2,7 +2,7 @@ package net.inceptioncloud.minecraftmod.ui.components.list
 
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.design.color.RGB
-import net.inceptioncloud.minecraftmod.utils.RenderUtils
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiSlot

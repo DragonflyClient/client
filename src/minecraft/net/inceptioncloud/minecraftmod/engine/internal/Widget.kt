@@ -32,6 +32,8 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      */
     var visible = true
 
+    var hovered = false
+
     /**
      * A stacking list with all animations that are currently being applied to the widget.
      *
@@ -255,6 +257,27 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      * Used to create a new instance of the subclass as [Child] is the type of the subclass.
      */
     abstract fun newInstance(): Child
+
+    /**
+     * Generates an info string for the widget that is used for debugging.
+     */
+    abstract fun toInfo(): Array<String>
+
+    open fun handleMouseMove(data: MouseData)
+    {
+    }
+
+    open fun handleMousePress(data: MouseData)
+    {
+    }
+
+    open fun handleMouseRelease(data: MouseData)
+    {
+    }
+
+    open fun handleMouseDrag(data: MouseData)
+    {
+    }
 
     // This function is only implemented to deprecate it in this context.
     @Deprecated

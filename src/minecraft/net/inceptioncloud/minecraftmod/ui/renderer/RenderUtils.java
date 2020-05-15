@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.utils;
+package net.inceptioncloud.minecraftmod.ui.renderer;
 
 import kotlin.ranges.RangesKt;
 import net.minecraft.client.Minecraft;

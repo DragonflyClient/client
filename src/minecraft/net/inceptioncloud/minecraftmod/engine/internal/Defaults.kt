@@ -86,7 +86,7 @@ object Defaults
      * - If the widget is based on a [size][ISize], the size will be set to the width.
      * - If the widget is based on a [dimension][IDimension], the width and height will be set to the parameters.
      */
-    private fun <Type : Widget<Type>> setSizeOrDimension(widget: Type, width: Double, height: Double): Type
+    fun <Type : Widget<Type>> setSizeOrDimension(widget: Type, width: Double, height: Double): Type
     {
         when (widget)
         {
@@ -113,7 +113,7 @@ object Defaults
      * - If the widget is based on a [size][ISize], the size will be returned for both the width and the height.
      * - If the widget is based on a [dimension][IDimension]. the width and height will be returned.
      */
-    private fun <Type : Widget<Type>> getSizeOrDimension(widget: Type): Pair<Double, Double> = when (widget)
+    fun getSizeOrDimension(widget: Widget<*>): Pair<Double, Double> = when (widget)
     {
         is IDimension -> widget.width to widget.height
         is ISize -> widget.size to widget.size

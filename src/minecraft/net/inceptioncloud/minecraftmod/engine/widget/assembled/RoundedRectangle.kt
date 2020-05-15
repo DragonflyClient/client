@@ -63,26 +63,26 @@ class RoundedRectangle(
         }
 
         (structure["left-top-edge"] as Arc).apply {
-            x = this@RoundedRectangle.x + arc
-            y = this@RoundedRectangle.y + arc
+            x = this@RoundedRectangle.x
+            y = this@RoundedRectangle.y
             start = 180
             end = 270
         }
         (structure["left-bottom-edge"] as Arc).apply {
-            x = this@RoundedRectangle.x + arc
-            y = this@RoundedRectangle.y + arc + spaceVertical
+            x = this@RoundedRectangle.x
+            y = this@RoundedRectangle.y + spaceVertical
             start = 90
             end = 180
         }
         (structure["right-top-edge"] as Arc).apply {
-            x = this@RoundedRectangle.x + arc + spaceHorizontal
-            y = this@RoundedRectangle.y + arc
+            x = this@RoundedRectangle.x + spaceHorizontal
+            y = this@RoundedRectangle.y
             start = 270
             end = 360
         }
         (structure["right-bottom-edge"] as Arc).apply {
-            x = this@RoundedRectangle.x + arc + spaceHorizontal
-            y = this@RoundedRectangle.y + arc + spaceVertical
+            x = this@RoundedRectangle.x + spaceHorizontal
+            y = this@RoundedRectangle.y + spaceVertical
             start = 0
             end = 90
         }
@@ -96,17 +96,11 @@ class RoundedRectangle(
             .filter { it.key.endsWith("edge") }
             .forEach {
                 (it.value as Arc).apply {
-                    width = arc
-                    height = arc
+                    width = arc * 2
+                    height = arc * 2
                 }
             }
         initialized = true
-    }
-
-    override fun render()
-    {
-        println(structure.values.sumByDouble { (it as IColor).widgetColor.alphaDouble } / structure.size)
-        super.render()
     }
 
     override fun isStateEqual(clone: RoundedRectangle): Boolean =
@@ -132,6 +126,17 @@ class RoundedRectangle(
             arc = arc
         )
     }
+
+    override fun toInfo(): Array<String> = arrayOf(
+        "x = $x",
+        "y = $y",
+        "width = $width",
+        "height = $height",
+        "color = $widgetColor",
+        "arc = $arc",
+        "horizontal = ${horizontalAlignment.name}",
+        "vertical = ${verticalAlignment.name}"
+    )
 
     override fun newInstance(): RoundedRectangle = RoundedRectangle()
 

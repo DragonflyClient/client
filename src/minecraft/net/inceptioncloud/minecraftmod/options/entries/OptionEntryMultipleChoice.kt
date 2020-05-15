@@ -8,7 +8,7 @@ import net.inceptioncloud.minecraftmod.options.entries.util.OptionChoice
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward
-import net.inceptioncloud.minecraftmod.utils.RenderUtils
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.client.gui.Gui

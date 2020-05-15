@@ -9,7 +9,7 @@ import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.ui.playerlist.indicators.*;
-import net.inceptioncloud.minecraftmod.ui.renderer.HotkeyRendererKt;
+import net.inceptioncloud.minecraftmod.ui.renderer.HotkeyRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -103,7 +103,7 @@ public class GuiPlayerTabOverlay extends Gui
         int x = mc.displayWidth / 2 - hotkeyFlyIn.castToInt();
         int y = mc.displayHeight / 2 - 50;
         drawRect(x - 3, y - 3, mc.displayWidth / 2, y + 20, new Color(0, 0, 0, 50).getRGB());
-        HotkeyRendererKt.render(Dragonfly.getFontDesign().retrieveOrBuild("", 20), KeyEvent.VK_P, "Open Indicator Menu", x, y);
+        HotkeyRenderer.render(Dragonfly.getFontDesign().retrieveOrBuild("", 20), KeyEvent.VK_P, "Open Indicator Menu", x, y);
     }
 
     /**

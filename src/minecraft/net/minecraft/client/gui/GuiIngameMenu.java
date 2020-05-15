@@ -11,7 +11,7 @@ import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
 import net.inceptioncloud.minecraftmod.ui.ModOptionsUI;
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton;
 import net.inceptioncloud.minecraftmod.ui.components.button.SimpleButton;
-import net.inceptioncloud.minecraftmod.utils.RenderUtils;
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.renderer.GlStateManager;

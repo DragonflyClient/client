@@ -3,7 +3,7 @@ package net.minecraft.client.renderer;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import net.inceptioncloud.minecraftmod.Dragonfly;
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.event.client.PostRenderEvent;
 import net.inceptioncloud.minecraftmod.event.control.ZoomEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -51,11 +51,9 @@ import org.lwjgl.util.glu.Project;
 import shadersmod.client.Shaders;
 import shadersmod.client.ShadersRender;
 
-import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
-import java.util.List;
 import java.util.*;
 import java.util.concurrent.Callable;
 
@@ -1220,11 +1218,8 @@ public class EntityRenderer implements IResourceManagerReloadListener
             }
 
 
-            // ICMM - Debug Mode
-            final String debugInfo = "MTPS " + Dragonfly.getLastTPS();
-            final IFontRenderer font = Dragonfly.getFontDesign()
-                .retrieveOrBuild("JetBrains Mono", Font.PLAIN, 12, 0);
-            font.drawString(debugInfo, scaledWidth - font.getStringWidth(debugInfo), 4, Color.WHITE.getRGB(), true);
+            // EVENTBUS - PostRenderEvent
+            Dragonfly.getEventBus().post(new PostRenderEvent(scaledWidth, scaledHeight, scaledMouseX, scaledMouseY));
         }
 
         this.frameFinish();

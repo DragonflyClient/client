@@ -123,6 +123,11 @@ class WidgetColor
         return base.hashCode()
     }
 
+    override fun toString(): String
+    {
+        return "WidgetColor($red, $green, $blue, $alpha)"
+    }
+
     /**
      * Returns an exact copy of this color object.
      */
@@ -130,6 +135,9 @@ class WidgetColor
     {
         return WidgetColor(red, green, blue, alpha)
     }
+
+    val rgb: Int
+        get() = base.rgb
 
     /**
      * The base color stored in a [java.awt.Color] object.

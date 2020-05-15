@@ -9,7 +9,7 @@ import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetBuffer
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetIdBuilder
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton
-import net.inceptioncloud.minecraftmod.utils.RenderUtils
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.stream.GuiTwitchUserMode
 import net.minecraft.client.renderer.GlStateManager
@@ -589,8 +589,16 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     {
         if (Keyboard.getEventKeyState())
         {
-            keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey())
+            val eventCharacter = Keyboard.getEventCharacter()
+            val eventKey = Keyboard.getEventKey()
+            keyTyped(eventCharacter, eventKey)
+
+            if (eventKey == Keyboard.KEY_PERIOD && isCtrlKeyDown && isShiftKeyDown)
+            {
+                Dragonfly.debugModeEnabled = !Dragonfly.debugModeEnabled
+            }
         }
+
         mc.dispatchKeypresses()
     }
 

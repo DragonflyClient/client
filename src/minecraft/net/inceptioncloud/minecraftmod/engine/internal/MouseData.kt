@@ -12,8 +12,8 @@ package net.inceptioncloud.minecraftmod.engine.internal
  * @param draggingDuration duration in milliseconds since the drag was started
  */
 data class MouseData(
-    val mouseX: Double,
-    val mouseY: Double,
-    val button: Int?,
-    val draggingDuration: Long?
+    val mouseX: Int,
+    val mouseY: Int,
+    val button: Int? = null,
+    val draggingDuration: Long? = null
 )

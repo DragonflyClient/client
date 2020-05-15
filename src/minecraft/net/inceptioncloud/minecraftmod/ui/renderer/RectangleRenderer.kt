@@ -6,7 +6,6 @@ import java.awt.Color
 
 object RectangleRenderer
 {
-
     @JvmStatic
     fun renderInline(left: Int, top: Int, right: Int, bottom: Int, color: Color, width: Int)
     {
@@ -24,19 +23,19 @@ object RectangleRenderer
     }
 
     @JvmStatic
-    fun renderOutline(left: Int, top: Int, right: Int, bottom: Int, color: Color, width: Int = 1)
+    fun renderOutline(left: Double, top: Double, right: Double, bottom: Double, color: Color, width: Double = 1.0)
     {
         // left:
-        Gui.drawRect(left, top, left - width, bottom + width - 1, color.rgb)
+        Gui.drawRect(left - width, top, left, bottom, color.rgb)
 
         // bottom:
-        Gui.drawRect(left - width, bottom + 1, right + 1 + width, bottom + 1 + width, color.rgb)
+        Gui.drawRect(left - width, bottom, right + width, bottom + width, color.rgb)
 
         // right:
-        Gui.drawRect(right + 1, top, right + 1 + width, bottom + width - 1, color.rgb)
+        Gui.drawRect(right, top, right + width, bottom, color.rgb)
 
         // top:
-        Gui.drawRect(left - width, top, right + 1 + width, top - width, color.rgb)
+        Gui.drawRect(left - width, top, right + width, top - width, color.rgb)
     }
 
     @JvmStatic
@@ -63,7 +62,7 @@ object RectangleRenderer
     fun renderInline(left: Double, top: Double, right: Double, bottom: Double, color: Color, width: Double) = renderInline(left.toInt(), top.toInt(), right.toInt(), bottom.toInt(), color, width.toInt())
 
     @JvmStatic
-    fun renderOutline(left: Double, top: Double, right: Double, bottom: Double, color: Color, width: Double) = renderOutline(left.toInt(), top.toInt(), right.toInt(), bottom.toInt(), color, width.toInt())
+    fun renderOutline(left: Int, top: Int, right: Int, bottom: Int, color: Color, width: Int) = renderOutline(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble(), color, width.toDouble())
 
     @JvmStatic
     fun drawOutline(left: Int, top: Int, right: Int, bottom: Int, color: Color) = drawOutline(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble(), color)
