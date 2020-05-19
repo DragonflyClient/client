@@ -30,7 +30,7 @@ public class FontManager
         if (cache.containsKey(info))
             return cache.get(info);
 
-        final GlyphFontRenderer fontRenderer = GlyphFontRenderer.create(info.name, info.size, info.letterSpacing,info.type == Font.BOLD, info.type == Font.ITALIC, false);
+        final GlyphFontRenderer fontRenderer = GlyphFontRenderer.create(info.name, info.size, info.letterSpacing, true, true, true);
         cache.put(info, fontRenderer);
 
         return fontRenderer;

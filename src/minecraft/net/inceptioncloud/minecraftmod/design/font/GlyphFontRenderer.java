@@ -101,23 +101,23 @@ public class GlyphFontRenderer implements IFontRenderer
      * Default Constructor
      */
     public GlyphFontRenderer (GlyphPage pageRegular, GlyphPage pageBold, GlyphPage pageItalic, GlyphPage pageBoldItalic,
-                              GlyphPage realPageRegular, GlyphPage realPageBold, GlyphPage realPageItalic, GlyphPage realPageBoldItalic)
+                              GlyphPage unscaledPageRegular, GlyphPage unscaledPageBold, GlyphPage unscaledPageItalic, GlyphPage unscaledPageBoldItalic)
     {
         this.pageRegular = pageRegular;
         this.pageBold = pageBold;
         this.pageItalic = pageItalic;
         this.pageBoldItalic = pageBoldItalic;
 
-        this.realPageRegular = realPageRegular;
-        this.realPageBold = realPageBold;
-        this.realPageItalic = realPageItalic;
-        this.realPageBoldItalic = realPageBoldItalic;
+        this.realPageRegular = unscaledPageRegular;
+        this.realPageBold = unscaledPageBold;
+        this.realPageItalic = unscaledPageItalic;
+        this.realPageBoldItalic = unscaledPageBoldItalic;
 
         for (int i = 0 ; i < 32 ; ++i) {
-            int j = ( i >> 3 & 1 ) * 85;
-            int k = ( i >> 2 & 1 ) * 170 + j;
-            int l = ( i >> 1 & 1 ) * 170 + j;
-            int i1 = ( i & 1 ) * 170 + j;
+            int j = (i >> 3 & 1) * 85;
+            int k = (i >> 2 & 1) * 170 + j;
+            int l = (i >> 1 & 1) * 170 + j;
+            int i1 = (i & 1) * 170 + j;
 
             if (i == 6) {
                 k += 85;
@@ -181,41 +181,41 @@ public class GlyphFontRenderer implements IFontRenderer
         GlyphPage italicPage = regularPage;
         GlyphPage boldItalicPage = regularPage;
 
-        GlyphPage realBold = regularPage;
-        GlyphPage realItalic = regularPage;
-        GlyphPage realBoldItalic = regularPage;
+        GlyphPage unscaledBold = regularPage;
+        GlyphPage unscaledItalic = regularPage;
+        GlyphPage unscaledBoldItalic = regularPage;
 
         if (bold) {
-            boldPage = new GlyphPage(font(fontName, Font.BOLD, ( int ) ( size * getFontQualityScale() ), letterSpacing), true, true);
+            boldPage = new GlyphPage(font(fontName, Font.BOLD, (int) (size * getFontQualityScale()), letterSpacing), true, true);
             boldPage.generateGlyphPage(chars);
             boldPage.setupTexture();
 
-            realBold = new GlyphPage(font(fontName, Font.BOLD, size, letterSpacing), true, true);
-            realBold.generateGlyphPage(chars);
-            realBold.setupTexture();
+            unscaledBold = new GlyphPage(font(fontName, Font.BOLD, size, letterSpacing), true, true);
+            unscaledBold.generateGlyphPage(chars);
+            unscaledBold.setupTexture();
         }
 
         if (italic) {
-            italicPage = new GlyphPage(font(fontName, Font.ITALIC, ( int ) ( size * getFontQualityScale() ), letterSpacing), true, true);
+            italicPage = new GlyphPage(font(fontName, Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing), true, true);
             italicPage.generateGlyphPage(chars);
             italicPage.setupTexture();
 
-            realItalic = new GlyphPage(font(fontName, Font.ITALIC, size, letterSpacing), true, true);
-            realItalic.generateGlyphPage(chars);
-            realItalic.setupTexture();
+            unscaledItalic = new GlyphPage(font(fontName, Font.ITALIC, size, letterSpacing), true, true);
+            unscaledItalic.generateGlyphPage(chars);
+            unscaledItalic.setupTexture();
         }
 
         if (boldItalic) {
-            boldItalicPage = new GlyphPage(font(fontName, Font.BOLD | Font.ITALIC, ( int ) ( size * getFontQualityScale() ), letterSpacing), true, true);
+            boldItalicPage = new GlyphPage(font(fontName, Font.BOLD | Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing), true, true);
             boldItalicPage.generateGlyphPage(chars);
             boldItalicPage.setupTexture();
 
-            realBoldItalic = new GlyphPage(font(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing), true, true);
-            realBoldItalic.generateGlyphPage(chars);
-            realBoldItalic.setupTexture();
+            unscaledBoldItalic = new GlyphPage(font(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing), true, true);
+            unscaledBoldItalic.generateGlyphPage(chars);
+            unscaledBoldItalic.setupTexture();
         }
 
-        return new GlyphFontRenderer(regularPage, boldPage, italicPage, boldItalicPage, realRegular, realBold, realItalic, realBoldItalic);
+        return new GlyphFontRenderer(regularPage, boldPage, italicPage, boldItalicPage, realRegular, unscaledBold, unscaledItalic, unscaledBoldItalic);
     }
 
     /**
