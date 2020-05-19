@@ -486,7 +486,7 @@ public class RenderItem implements IResourceManagerReloadListener
      */
     public void renderItemOverlayIntoGUI (ItemStack stack, int xPosition, int yPosition, String text)
     {
-        final IFontRenderer fr = Dragonfly.getFontDesign().getMedium();
+        final IFontRenderer fr = Dragonfly.getFontDesign().getRegular();
         if (stack != null) {
             if (stack.stackSize != 1 || text != null) {
                 String s = text == null ? String.valueOf(stack.stackSize) : text;

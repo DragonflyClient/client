@@ -20,6 +20,7 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.achievement.GuiAchievement;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.gui.stream.GuiStreamUnavailable;
 import net.minecraft.client.main.GameConfiguration;
@@ -1780,7 +1781,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                     this.thePlayer.sendHorseInventory();
                 } else {
                     this.getNetHandler().addToSendQueue(new C16PacketClientStatus(C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT));
-                    this.displayGuiScreen(new GuiInventory(this.thePlayer));
+                    this.displayGuiScreen(playerController.isInCreativeMode() ? new GuiContainerCreative(this.thePlayer) : new GuiInventory(this.thePlayer));
                 }
             }
 

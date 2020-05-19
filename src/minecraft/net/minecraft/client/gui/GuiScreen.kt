@@ -173,7 +173,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
      */
     protected open fun drawCreativeTabHoveringText(tabName: String, mouseX: Int, mouseY: Int)
     {
-        drawHoveringText(Arrays.asList(tabName), mouseX, mouseY)
+        drawHoveringText(listOf(tabName), mouseX, mouseY)
     }
 
     /**
@@ -181,14 +181,14 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
      */
     protected open fun drawHoveringText(textLines: List<String>, x: Int, y: Int)
     {
-        if (!textLines.isEmpty())
+        if (textLines.isNotEmpty())
         {
             GlStateManager.disableRescaleNormal()
             RenderHelper.disableStandardItemLighting()
             GlStateManager.disableLighting()
             GlStateManager.disableDepth()
             var i = 0
-            val fontRenderer = Dragonfly.fontDesign.medium
+            val fontRenderer = Dragonfly.fontDesign.regular
             for (s in textLines)
             {
                 val j = fontRenderer.getStringWidth(s)

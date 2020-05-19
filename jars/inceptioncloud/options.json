@@ -1,11 +1,11 @@
 {
   "lastServer": {
-    "serverName": "Rewinside",
-    "serverIP": "rewinside.tv:25565",
+    "serverName": "NeruxVace",
+    "serverIP": "neruxvace.net",
     "lan": false
   },
   "enableZoomAnimation": true,
-  "scoreboardBackground": true,
+  "scoreboardBackground": false,
   "scoreboardScores": 2,
   "scoreboardTitle": true,
   "zoomAnimation": true,

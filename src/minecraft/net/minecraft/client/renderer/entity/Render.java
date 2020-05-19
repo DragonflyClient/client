@@ -341,7 +341,7 @@ public abstract class Render<T extends Entity>
 
         if (d0 <= (double)(maxDistance * maxDistance))
         {
-            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getMedium();
+            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getRegular();
             float f = 1.6F;
             float f1 = 0.016666668F * f;
             GlStateManager.pushMatrix();

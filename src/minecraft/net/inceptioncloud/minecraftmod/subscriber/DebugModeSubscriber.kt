@@ -13,11 +13,12 @@ class DebugModeSubscriber
     @Subscribe
     fun postRender(event: PostRenderEvent)
     {
-        if (Dragonfly.debugModeEnabled)
+        if (!Dragonfly.debugModeEnabled)
             return
 
         renderDebugInfo("FPS: ", Minecraft.getDebugFPS().toString(), event.scaledWidth, 2)
         renderDebugInfo("TPS: ", Dragonfly.lastTPS.toString(), event.scaledWidth, 12)
+        renderDebugInfo("GUI: ", Minecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "null", event.scaledWidth, 22)
     }
 
     private fun renderDebugInfo(title: String, content: String, screenWidth: Int, y: Int)

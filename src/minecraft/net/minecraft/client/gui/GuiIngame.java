@@ -260,7 +260,7 @@ public class GuiIngame extends Gui
             int color = recordAnimateColor ? i1 + ( k1 << 24 & -16777216 ) : 0xFFFFFF;
             color = RGB.of(color).alpha(( int ) (55 + (200D * actionBar.get() ) )).rgb();
 
-            IFontRenderer fontRenderer = Dragonfly.getFontDesign().getMedium();
+            IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
             fontRenderer.drawCenteredString(this.recordPlaying, 0, posY, color, true);
 
             GlStateManager.disableBlend();
@@ -369,10 +369,10 @@ public class GuiIngame extends Gui
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
             RenderHelper.enableGUIStandardItemLighting();
 
-            for (int j = 0 ; j < 9 ; ++j) {
-                int k = sr.getScaledWidth() / 2 - 90 + j * 20 + 2;
-                int l = sr.getScaledHeight() - 16 - 3;
-                this.renderHotbarItem(j, k, l, partialTicks, entityplayer);
+            for (int slot = 0 ; slot < 9 ; ++slot) {
+                int x = sr.getScaledWidth() / 2 - 90 + slot * 20 + 2;
+                int y = sr.getScaledHeight() - 16 - 3;
+                this.renderHotbarItem(slot, x, y, partialTicks, entityplayer);
             }
 
             RenderHelper.disableStandardItemLighting();
@@ -522,7 +522,7 @@ public class GuiIngame extends Gui
     private void renderScoreboard (ScoreObjective objective, ScaledResolution resolution)
     {
         IFontRenderer fontRegular = Dragonfly.getFontDesign().getRegular();
-        IFontRenderer fontMedium = Dragonfly.getFontDesign().getMedium();
+        IFontRenderer fontMedium = Dragonfly.getFontDesign().getRegular();
         Scoreboard scoreboard = objective.getScoreboard();
         Collection<Score> sortedScores = scoreboard.getSortedScores(objective);
         ArrayList<Score> displayableScores = sortedScores.stream().filter(score -> score.getPlayerName() != null && !score.getPlayerName().startsWith("#")).collect(Collectors.toCollection(Lists::newArrayList));

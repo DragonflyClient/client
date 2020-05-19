@@ -17,11 +17,11 @@ class EngineTestUI : GuiScreen()
         +RoundedRectangle(
             x = this@EngineTestUI.width / 2.0,
             y = this@EngineTestUI.height / 2.0,
-            horizontalAlignment = Alignment.CENTER,
-            verticalAlignment = Alignment.CENTER,
             width = 200.0,
             height = 150.0,
             widgetColor = WidgetColor(BluePalette.PRIMARY),
+            horizontalAlignment = Alignment.CENTER,
+            verticalAlignment = Alignment.CENTER,
             arc = 20.0
         ).attachAnimation(FloatAnimationIn(150, 30.0, EaseBack.IN_OUT)) {
             start()
