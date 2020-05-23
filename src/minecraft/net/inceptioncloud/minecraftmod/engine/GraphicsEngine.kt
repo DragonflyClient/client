@@ -51,7 +51,8 @@ object GraphicsEngine {
             val titleRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono Medium", Font.PLAIN, 12)
             val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 9)
             val title = "${uppermostWidget.value::class.simpleName} #${it.key}"
-            val info = uppermostWidget.value.toInfo()
+            val info = uppermostWidget.value.toInfo().toMutableList()
+                .apply { add("scratchpad = ${uppermostWidget.value.scratchpad != null}") }
             val infoHeight = 2 + titleRenderer.height + fontRenderer.height * info.size
             val infoWidth =
                 2 + (titleRenderer.getStringWidth(title)).coerceAtLeast(info.map { fontRenderer.getStringWidth(it) }

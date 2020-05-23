@@ -60,7 +60,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      * [animationStack] is empty or not. When a scratchpad is available, the [draw]
      * function will draw it instead.
      */
-    private var scratchpad: Widget<*>? = null
+    var scratchpad: Widget<*>? = null
 
     /**
      * A simple method that uses the widget as a receiver in order to allow changes to it during lifetime.
@@ -94,11 +94,6 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
 
         if (updateDynamic != null) {
             updateDynamic?.invoke(clone)
-
-            if (!isStateEqual(clone)) {
-                stateChanged(clone)
-                mergeChangesFromClone(clone)
-            }
         }
 
         if (!animationStack.isNullOrEmpty()) {
@@ -111,6 +106,11 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
                 stateChanged(scratchpad as Child)
             }
         } else scratchpad = null
+
+        if (!isStateEqual(clone)) {
+            stateChanged(clone)
+            mergeChangesFromClone(clone)
+        }
     }
 
     /**
@@ -137,8 +137,10 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      * This animation can override all other animations that have been added to the stack before, but will
      * be overwritten by following animations.
      */
-    fun attachAnimation(animation: Animation, preferences: (AttachmentBuilder<Child>.() -> Unit)? = null): Child {
-        preferences?.invoke(AttachmentBuilder(animation, this))
+    fun attachAnimation(animation: Animation, preferences: (AttachmentBuilder<Child>.() -> Unit)? = { }): Child {
+        val attachmentBuilder = AttachmentBuilder(animation, this)
+        preferences?.invoke(attachmentBuilder)
+        attachmentBuilder.attach()
         return this as Child
     }
 

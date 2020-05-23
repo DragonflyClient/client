@@ -117,18 +117,25 @@ class Rectangle(
 
     override fun newInstance(): Rectangle = Rectangle()
 
-    @Dynamic override var x: Double by Delegates.notNull()
-    @Dynamic override var y: Double by Delegates.notNull()
-    @Dynamic override var width: Double by Delegates.notNull()
-    @Dynamic override var height: Double by Delegates.notNull()
-    @Dynamic override var widgetColor: WidgetColor by Delegates.notNull()
-    @Dynamic override var outlineStroke: Double by Delegates.notNull()
-    @Dynamic override var outlineColor: WidgetColor by Delegates.notNull()
-    @Dynamic override var horizontalAlignment: Alignment by Delegates.notNull()
-    @Dynamic override var verticalAlignment: Alignment by Delegates.notNull()
+    @Dynamic
+    override var x: Double by Delegates.notNull()
+    @Dynamic
+    override var y: Double by Delegates.notNull()
+    @Dynamic
+    override var width: Double by Delegates.notNull()
+    @Dynamic
+    override var height: Double by Delegates.notNull()
+    @Dynamic
+    override var widgetColor: WidgetColor by Delegates.notNull()
+    @Dynamic
+    override var outlineStroke: Double by Delegates.notNull()
+    @Dynamic
+    override var outlineColor: WidgetColor by Delegates.notNull()
 
-    override fun align(x: Double, y: Double, width: Double, height: Double)
-    {
+    override var horizontalAlignment: Alignment by Delegates.notNull()
+    override var verticalAlignment: Alignment by Delegates.notNull()
+
+    override fun align(x: Double, y: Double, width: Double, height: Double) {
         this.x = horizontalAlignment.calc(x, width)
         this.y = verticalAlignment.calc(y, height)
         this.width = width

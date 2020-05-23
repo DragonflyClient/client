@@ -91,22 +91,27 @@ open class Circle(
 
     override fun newInstance(): Circle = Circle()
 
-    @Dynamic override var x by Delegates.notNull<Double>()
-    @Dynamic override var y by Delegates.notNull<Double>()
-    @Dynamic override var size by Delegates.notNull<Double>()
-    @Dynamic override var widgetColor by Delegates.notNull<WidgetColor>()
-    @Dynamic override var horizontalAlignment: Alignment by Delegates.notNull()
-    @Dynamic override var verticalAlignment: Alignment by Delegates.notNull()
+    @Dynamic
+    override var x by Delegates.notNull<Double>()
+    @Dynamic
+    override var y by Delegates.notNull<Double>()
+    @Dynamic
+    override var size by Delegates.notNull<Double>()
+    @Dynamic
+    override var widgetColor by Delegates.notNull<WidgetColor>()
+
+    override var horizontalAlignment: Alignment by Delegates.notNull()
+    override var verticalAlignment: Alignment by Delegates.notNull()
 
     /**
      * The width of the outline of the circle. This value is set during the rendering process
      * using the OpenGL [glLineWidth] function. Notice that high-values can result in errors
      * or ignorance.
      */
-    @Dynamic var lineWidth: Float by Delegates.notNull()
+    @Dynamic
+    var lineWidth: Float by Delegates.notNull()
 
-    override fun align(x: Double, y: Double, width: Double, height: Double)
-    {
+    override fun align(x: Double, y: Double, width: Double, height: Double) {
         assert(width == height)
 
         this.x = horizontalAlignment.calc(x, width)

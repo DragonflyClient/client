@@ -1,5 +1,11 @@
 package net.inceptioncloud.minecraftmod.engine.sequence
 
+import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.sequence.types.DoubleSequence
+import net.inceptioncloud.minecraftmod.engine.sequence.types.WidgetColorSequence
+
+const val SEQUENCE_ALREADY_BEGUN = "The sequence has already begun! Changes to the behavior can no longer be made."
+
 /**
  * ## Sequence
  *
@@ -168,7 +174,7 @@ abstract class Sequence<T>
      */
     fun withEasing(function: ((Double) -> Double)?): Sequence<T> {
         if (time != 0)
-            throw IllegalStateException("The sequence has already begun! Changes to the behavior can no longer be made.")
+            throw IllegalStateException(SEQUENCE_ALREADY_BEGUN)
 
         this.easing = function
         return this
@@ -180,7 +186,7 @@ abstract class Sequence<T>
     fun withStartHook(function: Sequence<T>.() -> Unit): Sequence<T>
     {
         if (time != 0)
-            throw IllegalStateException("The sequence has already begun! Changes to the behavior can no longer be made.")
+            throw IllegalStateException(SEQUENCE_ALREADY_BEGUN)
 
         this.startHook = function
         return this
@@ -192,7 +198,7 @@ abstract class Sequence<T>
     fun withEndHook(function: Sequence<T>.() -> Unit): Sequence<T>
     {
         if (time != 0)
-            throw IllegalStateException("The sequence has already begun! Changes to the behavior can no longer be made.")
+            throw IllegalStateException(SEQUENCE_ALREADY_BEGUN)
 
         this.endHook = function
         return this
@@ -201,12 +207,22 @@ abstract class Sequence<T>
     /**
      * @see progressHook
      */
-    fun withProgressHook(function: Sequence<T>.(Double) -> Unit): Sequence<T>
-    {
+    fun withProgressHook(function: Sequence<T>.(Double) -> Unit): Sequence<T> {
         if (time != 0)
-            throw IllegalStateException("The sequence has already begun! Changes to the behavior can no longer be made.")
+            throw IllegalStateException(SEQUENCE_ALREADY_BEGUN)
 
         this.progressHook = function
         return this
+    }
+
+    /* --- Static Methods --- */
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun <T> generateSequence(start: T, end: T, duration: Int): Sequence<T> = when (start) {
+            is WidgetColor -> WidgetColorSequence(start, end as WidgetColor, duration) as Sequence<T>
+            is Double -> DoubleSequence(start, end as Double, duration) as Sequence<T>
+            else -> throw IllegalArgumentException("No sequence found for this type! ($start; $end)")
+        }
     }
 }
