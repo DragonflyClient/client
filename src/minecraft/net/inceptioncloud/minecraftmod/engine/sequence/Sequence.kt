@@ -72,20 +72,20 @@ abstract class Sequence<T>
      * A hook that is implemented into the sequence and fired when the [time] switches
      * from zero to one.
      */
-    protected var startHook: (Sequence<T>.() -> Unit)? = null
+    private var startHook: (Sequence<T>.() -> Unit)? = null
 
     /**
      * A hook that is implemented into the sequence and fired when the [time] switches
      * to the last value (= [duration]).
      */
-    protected var endHook: (Sequence<T>.() -> Unit)? = null
+    private var endHook: (Sequence<T>.() -> Unit)? = null
 
     /**
      * A hook that is implemented into the sequence and fired whenever the progress
      * changes. The passed parameter is the progress value (0.0 - 1.0) that hasn't been
      * transformed by the [easing] function.
      */
-    protected var progressHook: (Sequence<T>.(progress: Double) -> Unit)? = null
+    private var progressHook: (Sequence<T>.(progress: Double) -> Unit)? = null
 
     /**
      * A function to interpolate the value.
@@ -122,11 +122,42 @@ abstract class Sequence<T>
         progress = easing?.invoke(progress) ?: progress
         current = interpolate(progress)
 
-        if (time == duration)
-        {
+        if (time == duration) {
             current = to
             // Fire the end hook
             endHook?.invoke(this)
+        }
+    }
+
+    /**
+     * Steps into the previous execution of the sequence.
+     *
+     * Decrements the [time] value by one and calculates a new progress value. After transforming
+     * it by invoking the [easing] function, the interpolation will be executed and the value
+     * will be stored in the [current] variable.
+     *
+     * *This is has the opposite effect of calling the [next] function.*
+     */
+    fun previous() {
+        if (time == duration) {
+            // Fire the end hook
+            endHook?.invoke(this)
+        }
+
+        time = (time - 1).coerceAtLeast(0).coerceAtMost(duration)
+
+        var progress: Double = time / duration.toDouble()
+
+        // Fire the progress hook
+        progressHook?.invoke(this, progress)
+
+        progress = easing?.invoke(progress) ?: progress
+        current = interpolate(progress)
+
+        if (time == 0) {
+            current = from
+            // Fire the start hook
+            startHook?.invoke(this)
         }
     }
 
@@ -135,8 +166,7 @@ abstract class Sequence<T>
     /**
      * @see easing
      */
-    fun withEasing(function: ((Double) -> Double)?): Sequence<T>
-    {
+    fun withEasing(function: ((Double) -> Double)?): Sequence<T> {
         if (time != 0)
             throw IllegalStateException("The sequence has already begun! Changes to the behavior can no longer be made.")
 

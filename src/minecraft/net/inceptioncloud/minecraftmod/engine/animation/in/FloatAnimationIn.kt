@@ -2,7 +2,6 @@ package net.inceptioncloud.minecraftmod.engine.animation.`in`
 
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
-import net.inceptioncloud.minecraftmod.engine.sequence.Sequence
 import net.inceptioncloud.minecraftmod.engine.sequence.types.DoubleSequence
 import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IOutline
@@ -23,7 +22,7 @@ open class FloatAnimationIn(val duration: Int, val distance: Double = 40.0, val 
     /**
      * A sequence that provides the transition for the alpha and y values.
      */
-    open val sequence: Sequence<Double> = DoubleSequence(0.0, 1.0, duration)
+    open val sequence = DoubleSequence(0.0, 1.0, duration)
         .withEasing(easing)
         .withEndHook { finish() }
 
