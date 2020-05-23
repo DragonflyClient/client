@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget.base
+package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11.*
 import kotlin.properties.Delegates
 
 /**
- * ## Rectangle Base Widget
+ * ## Rectangle Primitive Widget
  *
  * A simple rectangle widget.
  *

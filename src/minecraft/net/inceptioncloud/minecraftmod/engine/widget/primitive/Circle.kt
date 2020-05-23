@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget.base
+package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
@@ -15,7 +15,7 @@ import kotlin.math.sin
 import kotlin.properties.Delegates
 
 /**
- * ## Circle Base Widget
+ * ## Circle Primitive Widget
  *
  * A simple 360° circle.
  *

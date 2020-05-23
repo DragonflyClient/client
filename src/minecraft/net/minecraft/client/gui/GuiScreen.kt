@@ -46,8 +46,7 @@ import java.net.URISyntaxException
 import java.util.*
 import java.util.function.Consumer
 
-abstract class GuiScreen : Gui(), GuiYesNoCallback
-{
+abstract class GuiScreen : Gui(), GuiYesNoCallback {
     /**
      * The width of the screen object.
      */
@@ -105,8 +104,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Draws a gradient background with the default colors.
      */
-    fun drawGradientBackground()
-    {
+    fun drawGradientBackground() {
         val startColor = CloudColor.DESIRE.rgb
         val endColor = CloudColor.ROYAL.rgb
         drawGradientBackground(startColor, endColor)
@@ -115,22 +113,18 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Draws a gradient from the left top to the right bottom corner with specific colors.
      */
-    protected fun drawGradientBackground(leftTop: Int, rightBottom: Int)
-    {
+    protected fun drawGradientBackground(leftTop: Int, rightBottom: Int) {
         drawGradientLeftTopRightBottom(0, 0, width, height, leftTop, rightBottom)
     }
 
     /**
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
-    open fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float)
-    {
-        for (guiButton in ArrayList(buttonList))
-        {
+    open fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        for (guiButton in ArrayList(buttonList)) {
             guiButton.drawButton(mc, mouseX, mouseY)
         }
-        for (guiLabel in ArrayList(labelList))
-        {
+        for (guiLabel in ArrayList(labelList)) {
             guiLabel.drawLabel(mc, mouseX, mouseY)
         }
         buffer.render()
@@ -140,28 +134,26 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
      * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
     @Throws(IOException::class)
-    protected open fun keyTyped(typedChar: Char, keyCode: Int)
-    {
-        if (keyCode == 1)
-        {
+    protected open fun keyTyped(typedChar: Char, keyCode: Int) {
+        if (keyCode == 1) {
             mc.displayGuiScreen(null)
-            if (mc.currentScreen == null)
-            {
+            if (mc.currentScreen == null) {
                 mc.setIngameFocus()
             }
+        } else if (keyCode == Keyboard.KEY_F5 && Dragonfly.isDebugMode) {
+            buttonList.clear()
+            buffer.clear()
+            onGuiClosed()
+            initGui()
         }
     }
 
-    protected open fun renderToolTip(stack: ItemStack, x: Int, y: Int)
-    {
+    protected open fun renderToolTip(stack: ItemStack, x: Int, y: Int) {
         val list = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips)
-        for (i in list.indices)
-        {
-            if (i == 0)
-            {
+        for (i in list.indices) {
+            if (i == 0) {
                 list[i] = stack.rarity.rarityColor.toString() + list[i]
-            } else
-            {
+            } else {
                 list[i] = EnumChatFormatting.GRAY.toString() + list[i]
             }
         }
@@ -171,45 +163,37 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Draws the text when mouse is over creative inventory tab. Params: current creative tab to be checked, current mouse x position, current mouse y position.
      */
-    protected open fun drawCreativeTabHoveringText(tabName: String, mouseX: Int, mouseY: Int)
-    {
+    protected open fun drawCreativeTabHoveringText(tabName: String, mouseX: Int, mouseY: Int) {
         drawHoveringText(listOf(tabName), mouseX, mouseY)
     }
 
     /**
      * Draws a List of strings as a tooltip. Every entry is drawn on a seperate line.
      */
-    protected open fun drawHoveringText(textLines: List<String>, x: Int, y: Int)
-    {
-        if (textLines.isNotEmpty())
-        {
+    protected open fun drawHoveringText(textLines: List<String>, x: Int, y: Int) {
+        if (textLines.isNotEmpty()) {
             GlStateManager.disableRescaleNormal()
             RenderHelper.disableStandardItemLighting()
             GlStateManager.disableLighting()
             GlStateManager.disableDepth()
             var i = 0
             val fontRenderer = Dragonfly.fontDesign.regular
-            for (s in textLines)
-            {
+            for (s in textLines) {
                 val j = fontRenderer.getStringWidth(s)
-                if (j > i)
-                {
+                if (j > i) {
                     i = j
                 }
             }
             var left = x + 12
             var top = y - 12
             var height = 8
-            if (textLines.size > 1)
-            {
+            if (textLines.size > 1) {
                 height += 2 + (textLines.size - 1) * 10
             }
-            if (left + i > width)
-            {
+            if (left + i > width) {
                 left -= 28 + i
             }
-            if (top + height + 6 > this.height)
-            {
+            if (top + height + 6 > this.height) {
                 top = this.height - height - 6
             }
             zLevel = 300.0f
@@ -227,12 +211,10 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
             drawGradientVertical(left - 3, top - 3, left + i + 3, top - 3 + 1, i1, i1)
             drawGradientVertical(left - 3, top + height + 2, left + i + 3, top + height + 3, j1, j1)
             top += 1
-            for (k1 in textLines.indices)
-            {
+            for (k1 in textLines.indices) {
                 val s1 = textLines[k1]
                 fontRenderer.drawStringWithShadow(s1, left.toFloat(), top.toFloat(), -1)
-                if (k1 == 0)
-                {
+                if (k1 == 0) {
                     top += 1
                 }
                 top += 10
@@ -249,82 +231,78 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Draws the hover event specified by the given chat component
      */
-    protected fun handleComponentHover(p_175272_1_: IChatComponent?, p_175272_2_: Int, p_175272_3_: Int)
-    {
-        if (p_175272_1_ != null && p_175272_1_.chatStyle.chatHoverEvent != null)
-        {
+    protected fun handleComponentHover(p_175272_1_: IChatComponent?, p_175272_2_: Int, p_175272_3_: Int) {
+        if (p_175272_1_ != null && p_175272_1_.chatStyle.chatHoverEvent != null) {
             val hoverevent = p_175272_1_.chatStyle.chatHoverEvent
-            if (hoverevent.action == HoverEvent.Action.SHOW_ITEM)
-            {
+            if (hoverevent.action == HoverEvent.Action.SHOW_ITEM) {
                 var itemstack: ItemStack? = null
-                try
-                {
+                try {
                     val nbtbase: NBTBase = JsonToNBT.getTagFromJson(hoverevent.value.unformattedText)
-                    if (nbtbase is NBTTagCompound)
-                    {
+                    if (nbtbase is NBTTagCompound) {
                         itemstack = ItemStack.loadItemStackFromNBT(nbtbase)
                     }
+                } catch (var11: NBTException) {
                 }
-                catch (var11: NBTException)
-                {
-                }
-                if (itemstack != null)
-                {
+                if (itemstack != null) {
                     renderToolTip(itemstack, p_175272_2_, p_175272_3_)
-                } else
-                {
-                    drawCreativeTabHoveringText(EnumChatFormatting.RED.toString() + "Invalid Item!", p_175272_2_, p_175272_3_)
+                } else {
+                    drawCreativeTabHoveringText(
+                        EnumChatFormatting.RED.toString() + "Invalid Item!",
+                        p_175272_2_,
+                        p_175272_3_
+                    )
                 }
-            } else if (hoverevent.action == HoverEvent.Action.SHOW_ENTITY)
-            {
-                if (mc.gameSettings.advancedItemTooltips)
-                {
-                    try
-                    {
+            } else if (hoverevent.action == HoverEvent.Action.SHOW_ENTITY) {
+                if (mc.gameSettings.advancedItemTooltips) {
+                    try {
                         val nbtbase1: NBTBase = JsonToNBT.getTagFromJson(hoverevent.value.unformattedText)
-                        if (nbtbase1 is NBTTagCompound)
-                        {
+                        if (nbtbase1 is NBTTagCompound) {
                             val list1: MutableList<String> = Lists.newArrayList()
                             val nbttagcompound = nbtbase1
                             list1.add(nbttagcompound.getString("name"))
-                            if (nbttagcompound.hasKey("type", 8))
-                            {
+                            if (nbttagcompound.hasKey("type", 8)) {
                                 val s = nbttagcompound.getString("type")
                                 list1.add("Type: " + s + " (" + EntityList.getIDFromString(s) + ")")
                             }
                             list1.add(nbttagcompound.getString("id"))
                             drawHoveringText(list1, p_175272_2_, p_175272_3_)
-                        } else
-                        {
-                            drawCreativeTabHoveringText(EnumChatFormatting.RED.toString() + "Invalid Entity!", p_175272_2_, p_175272_3_)
+                        } else {
+                            drawCreativeTabHoveringText(
+                                EnumChatFormatting.RED.toString() + "Invalid Entity!",
+                                p_175272_2_,
+                                p_175272_3_
+                            )
                         }
-                    }
-                    catch (var10: NBTException)
-                    {
-                        drawCreativeTabHoveringText(EnumChatFormatting.RED.toString() + "Invalid Entity!", p_175272_2_, p_175272_3_)
+                    } catch (var10: NBTException) {
+                        drawCreativeTabHoveringText(
+                            EnumChatFormatting.RED.toString() + "Invalid Entity!",
+                            p_175272_2_,
+                            p_175272_3_
+                        )
                     }
                 }
-            } else if (hoverevent.action == HoverEvent.Action.SHOW_TEXT)
-            {
+            } else if (hoverevent.action == HoverEvent.Action.SHOW_TEXT) {
                 drawHoveringText(NEWLINE_SPLITTER.splitToList(hoverevent.value.formattedText), p_175272_2_, p_175272_3_)
-            } else if (hoverevent.action == HoverEvent.Action.SHOW_ACHIEVEMENT)
-            {
+            } else if (hoverevent.action == HoverEvent.Action.SHOW_ACHIEVEMENT) {
                 val statbase = StatList.getOneShotStat(hoverevent.value.unformattedText)
-                if (statbase != null)
-                {
+                if (statbase != null) {
                     val ichatcomponent = statbase.statName
-                    val ichatcomponent1: IChatComponent = ChatComponentTranslation("stats.tooltip.type." + if (statbase.isAchievement) "achievement" else "statistic")
+                    val ichatcomponent1: IChatComponent =
+                        ChatComponentTranslation("stats.tooltip.type." + if (statbase.isAchievement) "achievement" else "statistic")
                     ichatcomponent1.chatStyle.italic = java.lang.Boolean.valueOf(true)
                     val s1 = if (statbase is Achievement) statbase.description else null
-                    val list: MutableList<String> = Lists.newArrayList(ichatcomponent.formattedText, ichatcomponent1.formattedText)
-                    if (s1 != null)
-                    {
+                    val list: MutableList<String> =
+                        Lists.newArrayList(ichatcomponent.formattedText, ichatcomponent1.formattedText)
+                    if (s1 != null) {
                         list.addAll(fontRendererObj!!.listFormattedStringToWidth(s1, 150))
                     }
                     drawHoveringText(list, p_175272_2_, p_175272_3_)
-                } else
-                {
-                    drawCreativeTabHoveringText(EnumChatFormatting.RED.toString() + "Invalid statistic/achievement!", p_175272_2_, p_175272_3_)
+                } else {
+                    drawCreativeTabHoveringText(
+                        EnumChatFormatting.RED.toString() + "Invalid statistic/achievement!",
+                        p_175272_2_,
+                        p_175272_3_
+                    )
                 }
             }
             GlStateManager.disableLighting()
@@ -334,75 +312,54 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Sets the text of the chat
      */
-    protected open fun setText(newChatText: String?, shouldOverwrite: Boolean)
-    {
+    protected open fun setText(newChatText: String?, shouldOverwrite: Boolean) {
     }
 
     /**
      * Executes the click event specified by the given chat component
      */
-    protected open fun handleComponentClick(p_175276_1_: IChatComponent?): Boolean
-    {
-        if (p_175276_1_ != null)
-        {
+    protected open fun handleComponentClick(p_175276_1_: IChatComponent?): Boolean {
+        if (p_175276_1_ != null) {
             val clickevent = p_175276_1_.chatStyle.chatClickEvent
-            if (isShiftKeyDown)
-            {
-                if (p_175276_1_.chatStyle.insertion != null)
-                {
+            if (isShiftKeyDown) {
+                if (p_175276_1_.chatStyle.insertion != null) {
                     setText(p_175276_1_.chatStyle.insertion, false)
                 }
-            } else if (clickevent != null)
-            {
-                if (clickevent.action == ClickEvent.Action.OPEN_URL)
-                {
-                    if (!mc.gameSettings.chatLinks)
-                    {
+            } else if (clickevent != null) {
+                if (clickevent.action == ClickEvent.Action.OPEN_URL) {
+                    if (!mc.gameSettings.chatLinks) {
                         return false
                     }
-                    try
-                    {
+                    try {
                         val uri = URI(clickevent.value)
                         val s = uri.scheme ?: throw URISyntaxException(clickevent.value, "Missing protocol")
-                        if (!PROTOCOLS.contains(s.toLowerCase()))
-                        {
+                        if (!PROTOCOLS.contains(s.toLowerCase())) {
                             throw URISyntaxException(clickevent.value, "Unsupported protocol: " + s.toLowerCase())
                         }
-                        if (mc.gameSettings.chatLinksPrompt)
-                        {
+                        if (mc.gameSettings.chatLinksPrompt) {
                             clickedLinkURI = uri
                             mc.displayGuiScreen(GuiConfirmOpenLink(this, clickevent.value, 31102009, false))
-                        } else
-                        {
+                        } else {
                             openWebLink(uri)
                         }
-                    }
-                    catch (urisyntaxexception: URISyntaxException)
-                    {
+                    } catch (urisyntaxexception: URISyntaxException) {
                         LOGGER.error("Can't open url for $clickevent", urisyntaxexception)
                     }
-                } else if (clickevent.action == ClickEvent.Action.OPEN_FILE)
-                {
+                } else if (clickevent.action == ClickEvent.Action.OPEN_FILE) {
                     val uri1 = File(clickevent.value).toURI()
                     openWebLink(uri1)
-                } else if (clickevent.action == ClickEvent.Action.SUGGEST_COMMAND)
-                {
+                } else if (clickevent.action == ClickEvent.Action.SUGGEST_COMMAND) {
                     setText(clickevent.value, true)
-                } else if (clickevent.action == ClickEvent.Action.RUN_COMMAND)
-                {
+                } else if (clickevent.action == ClickEvent.Action.RUN_COMMAND) {
                     sendChatMessage(clickevent.value, false)
-                } else if (clickevent.action == ClickEvent.Action.TWITCH_USER_INFO)
-                {
+                } else if (clickevent.action == ClickEvent.Action.TWITCH_USER_INFO) {
                     val chatuserinfo = mc.twitchStream.func_152926_a(clickevent.value)
-                    if (chatuserinfo != null)
-                    {
+                    if (chatuserinfo != null) {
                         mc.displayGuiScreen(GuiTwitchUserMode(mc.twitchStream, chatuserinfo))
-                    } else
-                    {
+                    } else {
                         LOGGER.error("Tried to handle twitch user but couldn't find them!")
                     }
-                } else
-                {
+                } else {
                     LOGGER.error("Don't know how to handle $clickevent")
                 }
                 return true
@@ -415,31 +372,23 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
     @Throws(IOException::class)
-    protected open fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int)
-    {
-        if (mouseButton == 0)
-        {
-            for (guibutton in ArrayList(buttonList))
-            {
+    protected open fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
+        if (mouseButton == 0) {
+            for (guibutton in ArrayList(buttonList)) {
                 if (guibutton is ConfirmationButton) continue
-                if (guibutton.mousePressed(mc, mouseX, mouseY))
-                {
+                if (guibutton.mousePressed(mc, mouseX, mouseY)) {
                     buttonClick(guibutton)
                 }
             }
         }
     }
 
-    fun buttonClick(guibutton: GuiButton)
-    {
-        try
-        {
+    fun buttonClick(guibutton: GuiButton) {
+        try {
             selectedButton = guibutton
             guibutton.playPressSound(mc.soundHandler)
             actionPerformed(guibutton)
-        }
-        catch (e: IOException)
-        {
+        } catch (e: IOException) {
             e.printStackTrace()
         }
     }
@@ -447,10 +396,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Called when a mouse button is released.  Args : mouseX, mouseY, releaseButton
      */
-    protected open fun mouseReleased(mouseX: Int, mouseY: Int, state: Int)
-    {
-        if (selectedButton != null && state == 0)
-        {
+    protected open fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
+        if (selectedButton != null && state == 0) {
             selectedButton!!.mouseReleased(mouseX, mouseY)
             selectedButton = null
         }
@@ -459,23 +406,20 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Called when a mouse button is pressed and the mouse is moved around. Parameters are : mouseX, mouseY, lastButtonClicked & timeSinceMouseClick.
      */
-    protected open fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long)
-    {
+    protected open fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
     }
 
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
     @Throws(IOException::class)
-    protected open fun actionPerformed(button: GuiButton?)
-    {
+    protected open fun actionPerformed(button: GuiButton?) {
     }
 
     /**
      * Causes the screen to lay out its subcomponents again. This is the equivalent of the Java call Container.validate()
      */
-    open fun setWorldAndResolution(mc: Minecraft, width: Int, height: Int)
-    {
+    open fun setWorldAndResolution(mc: Minecraft, width: Int, height: Int) {
         this.mc = mc
         this.width = width
         this.height = height
@@ -493,27 +437,21 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
      */
-    open fun initGui()
-    {
+    open fun initGui() {
     }
 
     /**
      * Delegates mouse and keyboard input.
      */
     @Throws(IOException::class)
-    fun handleInput()
-    {
-        if (Mouse.isCreated())
-        {
-            while (Mouse.next())
-            {
+    fun handleInput() {
+        if (Mouse.isCreated()) {
+            while (Mouse.next()) {
                 handleMouseInput()
             }
         }
-        if (Keyboard.isCreated())
-        {
-            while (Keyboard.next())
-            {
+        if (Keyboard.isCreated()) {
+            while (Keyboard.next()) {
                 handleKeyboardInput()
             }
         }
@@ -527,8 +465,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
      * When the size isn't enough, screen mustn't render it's content but instead call this method.
      * It doesn't use any font renderer as these can cause the game to crash when below a certain size.
      */
-    protected fun drawSizeNotSupported()
-    {
+    protected fun drawSizeNotSupported() {
         drawRect(0, 0, width, height, Color(0xeb3b5a).rgb)
         val line = Math.max(5.0, Math.min(50.0, mc.displayHeight / 2.5)).toInt()
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
@@ -541,44 +478,58 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
         RenderUtils.drawLine(15.0, height - 15.toDouble(), 15.0, height - line.toDouble(), 4f)
         RenderUtils.drawLine(13.0, height - 15.toDouble(), line.toDouble(), height - 15.toDouble(), 4f)
         RenderUtils.drawLine(15.0, height - 16.toDouble(), line.toDouble(), height - line.toDouble(), 6f)
-        RenderUtils.drawLine(width - 15.toDouble(), height - 15.toDouble(), width - 15.toDouble(), height - line.toDouble(), 4f)
-        RenderUtils.drawLine(width - line.toDouble(), height - 15.toDouble(), width - 13.toDouble(), height - 15.toDouble(), 4f)
-        RenderUtils.drawLine(width - 15.toDouble(), height - 16.toDouble(), width - line.toDouble(), height - line.toDouble(), 6f)
+        RenderUtils.drawLine(
+            width - 15.toDouble(),
+            height - 15.toDouble(),
+            width - 15.toDouble(),
+            height - line.toDouble(),
+            4f
+        )
+        RenderUtils.drawLine(
+            width - line.toDouble(),
+            height - 15.toDouble(),
+            width - 13.toDouble(),
+            height - 15.toDouble(),
+            4f
+        )
+        RenderUtils.drawLine(
+            width - 15.toDouble(),
+            height - 16.toDouble(),
+            width - line.toDouble(),
+            height - line.toDouble(),
+            6f
+        )
         drawRect(line + 15, line + 15, width - line - 15, height - line - 15, Color.WHITE.rgb)
-        drawRect(line + 19, line + 19, width - line - 19, height - line - 19,
-                Color(0xeb3b5a).darker().darker().rgb)
+        drawRect(
+            line + 19, line + 19, width - line - 19, height - line - 19,
+            Color(0xeb3b5a).darker().darker().rgb
+        )
     }
 
     /**
      * Handles mouse input.
      */
     @Throws(IOException::class)
-    open fun handleMouseInput()
-    {
+    open fun handleMouseInput() {
         val mouseX = Mouse.getEventX() * width / mc.displayWidth
         val mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1
         val k = Mouse.getEventButton()
-        if (Mouse.getEventButtonState())
-        {
-            if (mc.gameSettings.touchscreen && touchValue++ > 0)
-            {
+        if (Mouse.getEventButtonState()) {
+            if (mc.gameSettings.touchscreen && touchValue++ > 0) {
                 return
             }
             eventButton = k
             lastMouseEvent = Minecraft.getSystemTime()
             mouseClicked(mouseX, mouseY, eventButton)
             buffer.handleMousePress(MouseData(mouseX, mouseY, button = eventButton))
-        } else if (k != -1)
-        {
-            if (mc.gameSettings.touchscreen && --touchValue > 0)
-            {
+        } else if (k != -1) {
+            if (mc.gameSettings.touchscreen && --touchValue > 0) {
                 return
             }
             eventButton = -1
             mouseReleased(mouseX, mouseY, k)
             buffer.handleMouseRelease(MouseData(mouseX, mouseY, button = k))
-        } else if (eventButton != -1 && lastMouseEvent > 0L)
-        {
+        } else if (eventButton != -1 && lastMouseEvent > 0L) {
             val timeSinceLastClick = Minecraft.getSystemTime() - lastMouseEvent
             mouseClickMove(mouseX, mouseY, eventButton, timeSinceLastClick)
             buffer.handleMouseDrag(MouseData(mouseX, mouseY, button = k, draggingDuration = timeSinceLastClick))
@@ -589,17 +540,14 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
      * Handles keyboard input.
      */
     @Throws(IOException::class)
-    open fun handleKeyboardInput()
-    {
-        if (Keyboard.getEventKeyState())
-        {
+    open fun handleKeyboardInput() {
+        if (Keyboard.getEventKeyState()) {
             val eventCharacter = Keyboard.getEventCharacter()
             val eventKey = Keyboard.getEventKey()
             keyTyped(eventCharacter, eventKey)
 
-            if (eventKey == Keyboard.KEY_PERIOD && isCtrlKeyDown && isShiftKeyDown)
-            {
-                Dragonfly.debugModeEnabled = !Dragonfly.debugModeEnabled
+            if (eventKey == Keyboard.KEY_PERIOD && isCtrlKeyDown && isShiftKeyDown) {
+                Dragonfly.isDebugMode = !Dragonfly.isDebugMode
             }
         }
 
@@ -609,15 +557,13 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Called from the main game loop to update the screen.
      */
-    open fun updateScreen()
-    {
+    open fun updateScreen() {
     }
 
     /**
      * Called when the screen is unloaded. Used to disable keyboard repeat events
      */
-    open fun onGuiClosed()
-    {
+    open fun onGuiClosed() {
         buttonList.forEach(Consumer { obj: GuiButton -> obj.destroy() })
         buttonList.clear()
     }
@@ -625,18 +571,14 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Draws either a gradient over the background screen (when it exists) or a flat gradient over background.png
      */
-    open fun drawDefaultBackground()
-    {
+    open fun drawDefaultBackground() {
         drawWorldBackground(0)
     }
 
-    open fun drawWorldBackground(tint: Int)
-    {
-        if (mc.theWorld != null)
-        {
+    open fun drawWorldBackground(tint: Int) {
+        if (mc.theWorld != null) {
             drawGradientVertical(0, 0, width, height, -1072689136, -804253680)
-        } else
-        {
+        } else {
             drawBackground(tint)
         }
     }
@@ -644,8 +586,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Draws the background (i is always 0 as of 1.2.2)
      */
-    fun drawBackground(tint: Int)
-    {
+    fun drawBackground(tint: Int) {
         GlStateManager.disableLighting()
         GlStateManager.disableFog()
         val tessellator = Tessellator.getInstance()
@@ -654,9 +595,12 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
         val f = 32.0f
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR)
-        worldrenderer.pos(0.0, height.toDouble(), 0.0).tex(0.0, height.toFloat() / 32.0 + tint).color(64, 64, 64, 255).endVertex()
-        worldrenderer.pos(width.toDouble(), height.toDouble(), 0.0).tex(width.toFloat() / 32.0f.toDouble(), height.toFloat() / 32.0 + tint).color(64, 64, 64, 255).endVertex()
-        worldrenderer.pos(width.toDouble(), 0.0, 0.0).tex(width.toFloat() / 32.0f.toDouble(), tint.toDouble()).color(64, 64, 64, 255).endVertex()
+        worldrenderer.pos(0.0, height.toDouble(), 0.0).tex(0.0, height.toFloat() / 32.0 + tint).color(64, 64, 64, 255)
+            .endVertex()
+        worldrenderer.pos(width.toDouble(), height.toDouble(), 0.0)
+            .tex(width.toFloat() / 32.0f.toDouble(), height.toFloat() / 32.0 + tint).color(64, 64, 64, 255).endVertex()
+        worldrenderer.pos(width.toDouble(), 0.0, 0.0).tex(width.toFloat() / 32.0f.toDouble(), tint.toDouble())
+            .color(64, 64, 64, 255).endVertex()
         worldrenderer.pos(0.0, 0.0, 0.0).tex(0.0, tint.toDouble()).color(64, 64, 64, 255).endVertex()
         tessellator.draw()
     }
@@ -664,17 +608,13 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Returns true if this GUI should pause the game when it is displayed in single-player
      */
-    open fun doesGuiPauseGame(): Boolean
-    {
+    open fun doesGuiPauseGame(): Boolean {
         return true
     }
 
-    override fun confirmClicked(result: Boolean, id: Int)
-    {
-        if (id == 31102009)
-        {
-            if (result)
-            {
+    override fun confirmClicked(result: Boolean, id: Int) {
+        if (id == 31102009) {
+            if (result) {
                 openWebLink(clickedLinkURI)
             }
             clickedLinkURI = null
@@ -682,16 +622,12 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
         }
     }
 
-    private fun openWebLink(p_175282_1_: URI?)
-    {
-        try
-        {
+    private fun openWebLink(p_175282_1_: URI?) {
+        try {
             val oclass = Class.forName("java.awt.Desktop")
             val `object` = oclass.getMethod("getDesktop", *arrayOfNulls(0)).invoke(null)
             oclass.getMethod("browse", *arrayOf<Class<*>>(URI::class.java)).invoke(`object`, p_175282_1_)
-        }
-        catch (throwable: Throwable)
-        {
+        } catch (throwable: Throwable) {
             LOGGER.error("Couldn't open link", throwable)
         }
     }
@@ -699,8 +635,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
     /**
      * Called when the GUI is resized in order to update the world and the resolution
      */
-    fun onResize(mcIn: Minecraft, width: Int, height: Int)
-    {
+    fun onResize(mcIn: Minecraft, width: Int, height: Int) {
         setWorldAndResolution(mcIn, width, height)
     }
 
@@ -708,8 +643,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
      * An operator function that allows adding widgets to the buffer. After providing the widget,
      * an id for it must be specified with the infix function [WidgetIdBuilder.id].
      */
-    operator fun Widget<*>.unaryPlus(): WidgetIdBuilder
-    {
+    operator fun Widget<*>.unaryPlus(): WidgetIdBuilder {
         return WidgetIdBuilder(buffer, widget = this)
     }
 
@@ -717,18 +651,15 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
      * An operator function that allows adding widgets to the buffer. After providing the id,
      * a widget for it must be specified with the infix function [WidgetIdBuilder.widget].
      */
-    operator fun String.unaryPlus(): WidgetIdBuilder
-    {
+    operator fun String.unaryPlus(): WidgetIdBuilder {
         return WidgetIdBuilder(buffer, id = this)
     }
 
-    operator fun String.unaryMinus(): Widget<*>?
-    {
+    operator fun String.unaryMinus(): Widget<*>? {
         return buffer[this]
     }
 
-    companion object
-    {
+    companion object {
         private val LOGGER = LogManager.getLogger()
         private val PROTOCOLS: Set<String> = Sets.newHashSet("http", "https")
         private val NEWLINE_SPLITTER = Splitter.on('\n')
@@ -738,42 +669,30 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
          */
         @JvmStatic
         var clipboardString: String?
-            get()
-            {
-                try
-                {
+            get() {
+                try {
                     val transferable = Toolkit.getDefaultToolkit().systemClipboard.getContents(null)
-                    if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor))
-                    {
+                    if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                         return transferable.getTransferData(DataFlavor.stringFlavor) as String
                     }
-                }
-                catch (ignored: Exception)
-                {
+                } catch (ignored: Exception) {
                 }
                 return ""
             }
-            set(copyText)
-            {
-                if (!StringUtils.isEmpty(copyText))
-                {
-                    try
-                    {
+            set(copyText) {
+                if (!StringUtils.isEmpty(copyText)) {
+                    try {
                         val stringselection = StringSelection(copyText)
                         Toolkit.getDefaultToolkit().systemClipboard.setContents(stringselection, null)
-                    }
-                    catch (ignored: Exception)
-                    {
+                    } catch (ignored: Exception) {
                     }
                 }
             }
 
         @JvmStatic
         @JvmOverloads
-        fun sendChatMessage(msg: String?, addToChat: Boolean = true)
-        {
-            if (addToChat)
-            {
+        fun sendChatMessage(msg: String?, addToChat: Boolean = true) {
+            if (addToChat) {
                 Minecraft.getMinecraft().ingameGUI.chatGUI.addToSentMessages(msg)
             }
             Minecraft.getMinecraft().thePlayer.sendChatMessage(msg)
@@ -784,7 +703,9 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
          */
         @JvmStatic
         val isCtrlKeyDown: Boolean
-            get() = if (Minecraft.isRunningOnMac) Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220) else Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)
+            get() = if (Minecraft.isRunningOnMac) Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220) else Keyboard.isKeyDown(
+                29
+            ) || Keyboard.isKeyDown(157)
 
         /**
          * Returns true if either shift key is down
@@ -801,26 +722,22 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback
             get() = Keyboard.isKeyDown(56) || Keyboard.isKeyDown(184)
 
         @JvmStatic
-        fun isKeyComboCtrlX(p_175277_0_: Int): Boolean
-        {
+        fun isKeyComboCtrlX(p_175277_0_: Int): Boolean {
             return p_175277_0_ == 45 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
 
         @JvmStatic
-        fun isKeyComboCtrlV(p_175279_0_: Int): Boolean
-        {
+        fun isKeyComboCtrlV(p_175279_0_: Int): Boolean {
             return p_175279_0_ == 47 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
 
         @JvmStatic
-        fun isKeyComboCtrlC(p_175280_0_: Int): Boolean
-        {
+        fun isKeyComboCtrlC(p_175280_0_: Int): Boolean {
             return p_175280_0_ == 46 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
 
         @JvmStatic
-        fun isKeyComboCtrlA(p_175278_0_: Int): Boolean
-        {
+        fun isKeyComboCtrlA(p_175278_0_: Int): Boolean {
             return p_175278_0_ == 30 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
     }

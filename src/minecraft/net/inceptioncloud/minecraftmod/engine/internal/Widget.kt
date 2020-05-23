@@ -22,8 +22,12 @@ import kotlin.reflect.full.memberProperties
  * @property Child the type of the implementing class
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-abstract class Widget<Child : Widget<Child>> : IDraw
-{
+abstract class Widget<Child : Widget<Child>> : IDraw {
+    /**
+     * Whether the widget is an internal clone. Can be used to prevent spamming the console.
+     */
+    var isInternalClone = false
+
     /**
      * Whether the widget is currently visible.
      *
@@ -32,6 +36,9 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      */
     var visible = true
 
+    /**
+     * Whether the widget is currently hovered by the mouse.
+     */
     var hovered = false
 
     /**
@@ -70,8 +77,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      * This function is called on every widget update by the buffer (on every mod tick) in order to
      * make changes on a cloned version of the widget that will then be merged onto the original widget.
      */
-    open fun dynamic(dynamicUpdate: Child.() -> Unit): Child
-    {
+    open fun dynamic(dynamicUpdate: Child.() -> Unit): Child {
         this.updateDynamic = dynamicUpdate
         return this as Child
     }
@@ -81,30 +87,27 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      *
      * It performs things like state- and dynamic updates and allows the use of animations.
      */
-    open fun update()
-    {
-        val clone = clone()
+    open fun update() {
+        val clone by lazy {
+            clone().apply { isInternalClone = true }
+        }
 
-        if (updateDynamic != null)
-        {
+        if (updateDynamic != null) {
             updateDynamic?.invoke(clone)
 
-            if (!isStateEqual(clone))
-            {
+            if (!isStateEqual(clone)) {
                 stateChanged(clone)
                 mergeChangesFromClone(clone)
             }
         }
 
-        if (!animationStack.isNullOrEmpty())
-        {
-            scratchpad = clone()
+        if (!animationStack.isNullOrEmpty()) {
+            scratchpad = clone().apply { isInternalClone = true }
             animationStack.removeAll { it.finished }
             animationStack.forEach { it.tick() }
-            animationStack.forEach { it.applyToShape(scratchpad = scratchpad !!, base = clone) }
+            animationStack.forEach { it.applyToShape(scratchpad = scratchpad!!, base = clone) }
 
-            if (!isStateEqual(scratchpad as Child))
-            {
+            if (!isStateEqual(scratchpad as Child)) {
                 stateChanged(scratchpad as Child)
             }
         } else scratchpad = null
@@ -120,13 +123,10 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      * reason mentioned above.
      */
     @Suppress("DEPRECATION")
-    fun draw()
-    {
-        if (scratchpad != null)
-        {
+    fun draw() {
+        if (scratchpad != null) {
             scratchpad?.drawNative()
-        } else
-        {
+        } else {
             drawNative()
         }
     }
@@ -137,8 +137,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      * This animation can override all other animations that have been added to the stack before, but will
      * be overwritten by following animations.
      */
-    fun attachAnimation(animation: Animation, preferences: (AttachmentBuilder<Child>.() -> Unit)? = null): Child
-    {
+    fun attachAnimation(animation: Animation, preferences: (AttachmentBuilder<Child>.() -> Unit)? = null): Child {
         preferences?.invoke(AttachmentBuilder(animation, this))
         return this as Child
     }
@@ -148,8 +147,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      *
      * This method will remove the given animation from the stack, regardless of its position.
      */
-    fun detachAnimation(animation: Animation): Child
-    {
+    fun detachAnimation(animation: Animation): Child {
         animationStack.remove(animation)
         return this as Child
     }
@@ -160,8 +158,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      * This method will remove all animations with the class from the stack, regardless of their
      * position. It is often easier than providing the animation object that should be removed.
      */
-    fun <T : Animation> detachAnimation(`class`: Class<T>): T
-    {
+    fun <T : Animation> detachAnimation(`class`: Class<T>): T {
         animationStack.removeIf { it.javaClass == `class` }
         return this as T
     }
@@ -172,8 +169,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      * @param class the class of the animation
      * @return the animation or null if no one was found
      */
-    fun <T : Animation> findAnimation(`class`: Class<T>): Animation?
-    {
+    fun <T : Animation> findAnimation(`class`: Class<T>): Animation? {
         return animationStack.firstOrNull { it.javaClass == `class` }
     }
 
@@ -186,20 +182,19 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      *
      * @param clone the cloned instance from which the changes are merged
      */
-    private fun mergeChangesFromClone(clone: Child)
-    {
+    private fun mergeChangesFromClone(clone: Child) {
         this::class.memberProperties
             .filter { it.hasAnnotation<Dynamic>() && it is KMutableProperty<*> }
             .forEach { property ->
                 val originalProperty = property as KMutableProperty<*>
                 val originalValue = originalProperty.getter.call(this@Widget)
 
-                val cloneProperty = clone::class.memberProperties.find { it.name == property.name } as KMutableProperty<*>
+                val cloneProperty =
+                    clone::class.memberProperties.find { it.name == property.name } as KMutableProperty<*>
                 val cloneValue = cloneProperty.getter.call(clone)
 
-                if (originalValue != cloneValue)
-                {
-                    originalProperty.setter.call(this@Widget, cloneValue !!)
+                if (originalValue != cloneValue) {
+                    originalProperty.setter.call(this@Widget, cloneValue!!)
                 }
             }
     }
@@ -218,8 +213,8 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.
      * This is called when [isStateEqual] evaluates to true.
      */
-    open fun stateChanged(new: Widget<*>)
-    {
+    open fun stateChanged(new: Widget<*>) {
+        /* can be implemented by a subclass */
     }
 
     /**
@@ -263,31 +258,42 @@ abstract class Widget<Child : Widget<Child>> : IDraw
      */
     abstract fun toInfo(): Array<String>
 
-    open fun handleMouseMove(data: MouseData)
-    {
+    /**
+     * Notifies the widget when the mouse is moved.
+     */
+    open fun handleMouseMove(data: MouseData) {
+        /* can be implemented by a subclass */
     }
 
-    open fun handleMousePress(data: MouseData)
-    {
+    /**
+     * Notifies the widget when the mouse is pressed.
+     */
+    open fun handleMousePress(data: MouseData) {
+        /* can be implemented by a subclass */
     }
 
-    open fun handleMouseRelease(data: MouseData)
-    {
+    /**
+     * Notifies the widget when the mouse is released.
+     */
+    open fun handleMouseRelease(data: MouseData) {
+        /* can be implemented by a subclass */
     }
 
-    open fun handleMouseDrag(data: MouseData)
-    {
+    /**
+     * Notifies the widget when the mouse is dragged.
+     */
+    open fun handleMouseDrag(data: MouseData) {
+        /* can be implemented by a subclass */
     }
 
     // This function is only implemented to deprecate it in this context.
     @Deprecated
-    (
+        (
         "This function won't render animations!",
         ReplaceWith("draw()", "net.inceptioncloud.minecraftmod.engine.internal.Widget"),
         DeprecationLevel.WARNING
     )
-    override fun drawNative()
-    {
+    override fun drawNative() {
         super.drawNative()
     }
 }

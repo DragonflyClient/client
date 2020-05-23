@@ -42,9 +42,8 @@ class WidgetBuffer
             it.draw()
         }
 
-        if (Dragonfly.debugModeEnabled && !Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
-        {
-            GraphicsEngine.renderDebugOverlay(content.values)
+        if (Dragonfly.isDebugMode && !Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+            GraphicsEngine.renderDebugOverlay(content)
         }
     }
 

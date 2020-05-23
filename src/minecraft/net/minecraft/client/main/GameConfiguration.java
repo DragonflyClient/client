@@ -1,9 +1,10 @@
 package net.minecraft.client.main;
 
 import com.mojang.authlib.properties.PropertyMap;
+import net.minecraft.util.Session;
+
 import java.io.File;
 import java.net.Proxy;
-import net.minecraft.util.Session;
 
 public class GameConfiguration
 {
@@ -45,8 +46,7 @@ public class GameConfiguration
         public final File assetsDir;
         public final String assetIndex;
 
-        public FolderInformation(File mcDataDirIn, File resourcePacksDirIn, File assetsDirIn, String assetIndexIn)
-        {
+        public FolderInformation(File mcDataDirIn, File resourcePacksDirIn, File assetsDirIn, String assetIndexIn) {
             this.mcDataDir = mcDataDirIn;
             this.resourcePacksDir = resourcePacksDirIn;
             this.assetsDir = assetsDirIn;
@@ -54,14 +54,13 @@ public class GameConfiguration
         }
     }
 
-    public static class GameInformation
-    {
-        public final boolean isDemo;
+    public static class GameInformation {
+        public final boolean isDemo, isDrgnDebug;
         public final String version;
 
-        public GameInformation(boolean isDemoIn, String versionIn)
-        {
+        public GameInformation(boolean isDemoIn, String versionIn, boolean isDrgnDebug) {
             this.isDemo = isDemoIn;
+            this.isDrgnDebug = isDrgnDebug;
             this.version = versionIn;
         }
     }

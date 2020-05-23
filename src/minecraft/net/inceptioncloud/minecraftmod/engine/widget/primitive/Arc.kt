@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget.base
+package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
 import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
 import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
@@ -13,7 +13,7 @@ import kotlin.math.sin
 import kotlin.properties.Delegates
 
 /**
- * ## Arc Base Widget
+ * ## Arc Primitive Widget
  *
  * This widget allows drawing an arc with any size by specifying the angle in degrees.
  *

@@ -42,17 +42,14 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
 
     override fun render()
     {
-        if (!initialized)
-        {
+        if (!initialized) {
             updateStructure()
         }
 
         structure.values.forEach { it.render() }
 
-        if (Dragonfly.debugModeEnabled)
-        {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
-            {
+        if (Dragonfly.isDebugMode) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                 var index = 0
                 structure.values
                     .forEach { widget ->
@@ -60,7 +57,13 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
                         val y = (widget as IPosition).y
                         val (width, height) = Defaults.getSizeOrDimension(widget)
 
-                        Gui.drawRect(x, y, x + width, y + height, WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb)
+                        Gui.drawRect(
+                            x,
+                            y,
+                            x + width,
+                            y + height,
+                            WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb
+                        )
 
                         index++
                     }
@@ -68,7 +71,7 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
 
             if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
             {
-                GraphicsEngine.renderDebugOverlay(structure.values)
+                GraphicsEngine.renderDebugOverlay(structure)
             }
         }
     }

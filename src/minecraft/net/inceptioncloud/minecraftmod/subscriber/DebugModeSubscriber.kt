@@ -13,7 +13,7 @@ class DebugModeSubscriber
     @Subscribe
     fun postRender(event: PostRenderEvent)
     {
-        if (!Dragonfly.debugModeEnabled)
+        if (!Dragonfly.isDebugMode)
             return
 
         renderDebugInfo("FPS: ", Minecraft.getDebugFPS().toString(), event.scaledWidth, 2)

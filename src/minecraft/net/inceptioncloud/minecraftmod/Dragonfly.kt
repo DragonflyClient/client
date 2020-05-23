@@ -53,7 +53,8 @@ object Dragonfly
      * Whether the debug mode is currently enabled.
      * It provides several features for developers or users to find, identify and fix bugs.
      */
-    @JvmStatic var debugModeEnabled = false
+    @JvmStatic
+    var isDebugMode = false
 
     /**
      * The [Timer] that performs the mod ticks.

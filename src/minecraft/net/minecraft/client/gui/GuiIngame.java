@@ -12,13 +12,18 @@ import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +32,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
-import net.minecraft.scoreboard.*;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.*;
 import net.minecraft.world.border.WorldBorder;
 import optifine.Config;
@@ -35,11 +43,14 @@ import optifine.CustomColors;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
 import java.util.stream.Collectors;
 
-public class GuiIngame extends Gui
-{
+import static net.minecraft.client.gui.GuiScreen.sendChatMessage;
+
+public class GuiIngame extends Gui {
     private static final ResourceLocation vignetteTexPath = new ResourceLocation("textures/misc/vignette.png");
     private static final ResourceLocation widgetsTexPath = new ResourceLocation("textures/gui/widgets.png");
     private static final ResourceLocation pumpkinBlurTexPath = new ResourceLocation("textures/misc/pumpkinblur.png");
@@ -61,10 +72,10 @@ public class GuiIngame extends Gui
     private final GuiSpectator spectatorGui;
     private final GuiPlayerTabOverlay overlayPlayerList;
     private final SmoothDoubleTransition goodGameProcess = SmoothDoubleTransition.builder()
-        .fadeIn(0).stay(50).fadeOut(100)
-        .start(0).end(1)
-        .autoTransformator(( ForwardBackward ) () -> Keyboard.isCreated() && Keyboard.isKeyDown(Keyboard.KEY_G) && !GuiNewChat.isChatOpen())
-        .reachEnd(() -> GuiChat.sendChatMessage("gg", false))
+            .fadeIn(0).stay(50).fadeOut(100)
+            .start(0).end(1)
+            .autoTransformator((ForwardBackward) () -> Keyboard.isCreated() && Keyboard.isKeyDown(Keyboard.KEY_G) && !GuiNewChat.isChatOpen())
+            .reachEnd(() -> sendChatMessage("gg", false))
         .build();
     /**
      * Previous frame vignette brightness (slowly changes by 1% each frame)
@@ -246,7 +257,6 @@ public class GuiIngame extends Gui
                 k1 = 255;
             }
 
-//            if (k1 > 8) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(( float ) ( scaledWidth / 2 ), ( float ) ( scaledHeight - 68 ), 0.0F);
             GlStateManager.enableBlend();
@@ -265,7 +275,6 @@ public class GuiIngame extends Gui
 
             GlStateManager.disableBlend();
             GlStateManager.popMatrix();
-//            }
 
             this.mc.mcProfiler.endSection();
         }

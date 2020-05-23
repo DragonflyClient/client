@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget.base
+package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
@@ -7,7 +7,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * ## Filled Circle Base Widget
+ * ## Filled Circle Primitive Widget
  *
  * A filled version of the [Circle] widget.
  *
