@@ -33,12 +33,9 @@ class Rectangle(
     outlineColor: WidgetColor = WidgetColor.DEFAULT,
     horizontalAlignment: Alignment = Alignment.START,
     verticalAlignment: Alignment = Alignment.START
-) : Widget<Rectangle>(), IPosition, IDimension, IColor, IOutline, IAlign
-{
-    override fun render()
-    {
-        if (outlineStroke > 0.0)
-        {
+) : Widget<Rectangle>(), IPosition, IDimension, IColor, IOutline, IAlign {
+    override fun render() {
+        if (outlineStroke > 0.0) {
             outlineColor.glBindColor()
             glBegin(GL_QUADS)
 
@@ -63,8 +60,7 @@ class Rectangle(
             glEnd()
         }
 
-        if (widgetColor.alpha > 0)
-        {
+        if (widgetColor.alpha > 0) {
             widgetColor.glBindColor()
             glBegin(GL_QUADS)
 
@@ -79,17 +75,16 @@ class Rectangle(
 
     override fun isStateEqual(clone: Rectangle): Boolean =
         x == clone.x &&
-        y == clone.y &&
-        width == clone.width &&
-        height == clone.height &&
-        widgetColor == clone.widgetColor &&
-        outlineStroke == clone.outlineStroke &&
-        outlineColor == clone.outlineColor &&
-        horizontalAlignment == clone.horizontalAlignment &&
-        verticalAlignment == clone.verticalAlignment
+                y == clone.y &&
+                width == clone.width &&
+                height == clone.height &&
+                widgetColor == clone.widgetColor &&
+                outlineStroke == clone.outlineStroke &&
+                outlineColor == clone.outlineColor &&
+                horizontalAlignment == clone.horizontalAlignment &&
+                verticalAlignment == clone.verticalAlignment
 
-    override fun clone(): Rectangle
-    {
+    override fun clone(): Rectangle {
         return Rectangle(
             x = horizontalAlignment.reverse(x, width),
             y = verticalAlignment.reverse(y, height),
@@ -119,14 +114,19 @@ class Rectangle(
 
     @Dynamic
     override var x: Double by Delegates.notNull()
+
     @Dynamic
     override var y: Double by Delegates.notNull()
+
     @Dynamic
     override var width: Double by Delegates.notNull()
+
     @Dynamic
     override var height: Double by Delegates.notNull()
+
     @Dynamic
     override var widgetColor: WidgetColor by Delegates.notNull()
+
     @Dynamic
     override var outlineStroke: Double by Delegates.notNull()
     @Dynamic
@@ -142,8 +142,7 @@ class Rectangle(
         this.height = height
     }
 
-    init
-    {
+    init {
         this.horizontalAlignment = horizontalAlignment
         this.verticalAlignment = verticalAlignment
 

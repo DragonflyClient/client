@@ -33,8 +33,7 @@ class RoundedRectangle(
     verticalAlignment: Alignment = Alignment.START,
 
     arc: Double = 5.0
-) : AssembledWidget<RoundedRectangle>(), IPosition, IDimension, IColor, IAlign
-{
+) : AssembledWidget<RoundedRectangle>(), IPosition, IDimension, IColor, IAlign {
     override fun assemble(): Map<String, Widget<*>> {
         return mapOf(
             "left-top-edge" to Arc(),
@@ -115,8 +114,7 @@ class RoundedRectangle(
         initialized = true
     }
 
-    override fun isStateEqual(clone: RoundedRectangle): Boolean =
-        x == clone.x &&
+    override fun isStateEqual(clone: RoundedRectangle): Boolean = x == clone.x &&
             y == clone.y &&
             width == clone.width &&
             height == clone.height &&
@@ -151,15 +149,29 @@ class RoundedRectangle(
 
     override fun newInstance(): RoundedRectangle = RoundedRectangle()
 
-    @Dynamic override var x: Double by Delegates.notNull()
-    @Dynamic override var y: Double by Delegates.notNull()
-    @Dynamic override var width: Double by Delegates.notNull()
-    @Dynamic override var height: Double by Delegates.notNull()
-    @Dynamic override var widgetColor: WidgetColor by Delegates.notNull()
-    @Dynamic override var horizontalAlignment: Alignment by Delegates.notNull()
-    @Dynamic override var verticalAlignment: Alignment by Delegates.notNull()
+    @Dynamic
+    override var x: Double by Delegates.notNull()
 
-    @Dynamic var arc: Double by Delegates.notNull()
+    @Dynamic
+    override var y: Double by Delegates.notNull()
+
+    @Dynamic
+    override var width: Double by Delegates.notNull()
+
+    @Dynamic
+    override var height: Double by Delegates.notNull()
+
+    @Dynamic
+    override var widgetColor: WidgetColor by Delegates.notNull()
+
+    @Dynamic
+    override var horizontalAlignment: Alignment by Delegates.notNull()
+
+    @Dynamic
+    override var verticalAlignment: Alignment by Delegates.notNull()
+
+    @Dynamic
+    var arc: Double by Delegates.notNull()
 
     override fun align(x: Double, y: Double, width: Double, height: Double) {
         this.x = horizontalAlignment.calc(x, width)

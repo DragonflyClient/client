@@ -10,12 +10,32 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 
-class MorphAnimation(val destination: Widget<*>, val duration: Int = 100, val easing: ((Double) -> Double)? = null) :
-    Animation() {
+/**
+ * ## Morph Animation (Alter)
+ *
+ * A morph animation provides a smooth transition from one state (or instance) of a widget to another one.
+ * It interpolates all dynamic properties and also modifies the base of the widget instead of only the scratchpad widget.
+ *
+ * @param destination the target state (or instance) of the widget
+ * @param duration the amount of mod ticks (200 ^= 1s) that the animation should take to finish
+ * @param easing an optional easing function
+ */
+class MorphAnimation(
+    val destination: Widget<*>,
+    val duration: Int = 100,
+    val easing: ((Double) -> Double)? = null
+) : Animation() {
 
+    /**
+     * Simple extension function to easily find a property by its name.
+     */
     private fun KClass<*>.getPropertyByName(name: String): KProperty<*> =
         declaredMemberProperties.first { it.name == name }
 
+    /**
+     * Saves all dynamic properties of the parent widget with its corresponding sequences
+     * that are used to interpolate them.
+     */
     private val propertySequences: MutableMap<KMutableProperty<*>, Sequence<*>> = mutableMapOf()
 
     override fun initAnimation(parent: Widget<*>): Boolean {
@@ -28,8 +48,8 @@ class MorphAnimation(val destination: Widget<*>, val duration: Int = 100, val ea
                 .forEach {
                     val initialValue = it.getter.call(parent)
                     val destinationValue = destination::class.getPropertyByName(it.name).getter.call(destination)
-                    var sequence =
-                        Sequence.generateSequence(initialValue, destinationValue, duration).withEasing(easing)
+                    var sequence = Sequence.generateSequence(initialValue, destinationValue, duration)
+                        .withEasing(easing)
 
                     if (!endHookApplied) {
                         sequence = sequence.withEndHook { finish() }
