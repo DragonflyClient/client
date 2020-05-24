@@ -1,6 +1,10 @@
 package net.inceptioncloud.minecraftmod.engine.widget.assembled
 
-import net.inceptioncloud.minecraftmod.engine.internal.*
+import net.inceptioncloud.minecraftmod.engine.internal.Alignment
+import net.inceptioncloud.minecraftmod.engine.internal.AssembledWidget
+import net.inceptioncloud.minecraftmod.engine.internal.Widget
+import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.structure.IAlign
 import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
@@ -111,13 +115,6 @@ class RoundedRectangle(
         initialized = true
     }
 
-    override fun isStateEqual(clone: RoundedRectangle): Boolean = x == clone.x &&
-            y == clone.y &&
-            width == clone.width &&
-            height == clone.height &&
-            widgetColor == clone.widgetColor &&
-            arc == clone.arc
-
     override fun clone(): RoundedRectangle {
         return RoundedRectangle(
             x = horizontalAlignment.reverse(x, width),
@@ -144,22 +141,22 @@ class RoundedRectangle(
 
     override fun newInstance(): RoundedRectangle = RoundedRectangle()
 
-    @Dynamic
+    @Interpolate
     override var x: Double by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     override var y: Double by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     override var width: Double by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     override var height: Double by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     override var widgetColor: WidgetColor by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     var arc: Double by Delegates.notNull()
 
     override var horizontalAlignment: Alignment by Delegates.notNull()

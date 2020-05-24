@@ -1,9 +1,9 @@
 package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
 import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
-import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
@@ -71,15 +71,6 @@ class Arc(
         GraphicsEngine.popScale()
     }
 
-    override fun isStateEqual(clone: Arc): Boolean =
-        x == clone.x &&
-        y == clone.y &&
-        width == clone.width &&
-        height == clone.height &&
-        widgetColor == clone.widgetColor &&
-        start == clone.start &&
-        end == clone.end
-
     override fun clone(): Arc
     {
         return Arc(
@@ -105,17 +96,28 @@ class Arc(
 
     override fun newInstance(): Arc = Arc()
 
-    @Dynamic override var x: Double by Delegates.notNull()
-    @Dynamic override var y: Double by Delegates.notNull()
-    @Dynamic override var width: Double by Delegates.notNull()
-    @Dynamic override var height: Double by Delegates.notNull()
-    @Dynamic override var widgetColor: WidgetColor by Delegates.notNull()
+    @Interpolate
+    override var x: Double by Delegates.notNull()
 
-    @Dynamic var start: Int by Delegates.notNull()
-    @Dynamic var end: Int by Delegates.notNull()
+    @Interpolate
+    override var y: Double by Delegates.notNull()
 
-    init
-    {
+    @Interpolate
+    override var width: Double by Delegates.notNull()
+
+    @Interpolate
+    override var height: Double by Delegates.notNull()
+
+    @Interpolate
+    override var widgetColor: WidgetColor by Delegates.notNull()
+
+    @Interpolate
+    var start: Int by Delegates.notNull()
+
+    @Interpolate
+    var end: Int by Delegates.notNull()
+
+    init {
         this.x = x
         this.y = y
         this.width = width

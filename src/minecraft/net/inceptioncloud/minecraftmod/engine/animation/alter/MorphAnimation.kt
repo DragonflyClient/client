@@ -1,14 +1,14 @@
 package net.inceptioncloud.minecraftmod.engine.animation.alter
 
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
-import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.sequence.Sequence
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
 
 /**
  * ## Morph Animation (Alter)
@@ -29,8 +29,7 @@ class MorphAnimation(
     /**
      * Simple extension function to easily find a property by its name.
      */
-    private fun KClass<*>.getPropertyByName(name: String): KProperty<*> =
-        declaredMemberProperties.first { it.name == name }
+    private fun KClass<*>.getPropertyByName(name: String): KProperty<*> = memberProperties.first { it.name == name }
 
     /**
      * Saves all dynamic properties of the parent widget with its corresponding sequences
@@ -43,8 +42,8 @@ class MorphAnimation(
 
         return if (super.initAnimation(parent)) {
 
-            parent::class.declaredMemberProperties
-                .filter { it.hasAnnotation<Dynamic>() && it is KMutableProperty<*> }
+            parent::class.memberProperties
+                .filter { it.hasAnnotation<Interpolate>() && it is KMutableProperty<*> }
                 .forEach {
                     val initialValue = it.getter.call(parent)
                     val destinationValue = destination::class.getPropertyByName(it.name).getter.call(destination)

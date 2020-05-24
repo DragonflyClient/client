@@ -2,8 +2,9 @@ package net.inceptioncloud.minecraftmod.engine.internal
 
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.animation.AttachmentBuilder
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.structure.IDraw
-import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
@@ -65,20 +66,19 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
     /**
      * A simple method that uses the widget as a receiver in order to allow changes to it during lifetime.
      *
-     * This will be invoked on every tick. It is called on a clone of the current object to which the
-     * changes will be made. After the execution, the new object will be compared to the original one
-     * and the changes will be applied to the original one.
+     * This will be invoked on every tick. Before it is called, a clone will be created to which the current
+     * object will then be compared. If the dynamic update changed the state of the widget, [stateChanged]
+     * will be called.
      */
     private var updateDynamic: (Child.() -> Unit)? = null
 
     /**
      * Sets the function to dynamically update the widget.
      *
-     * This function is called on every widget update by the buffer (on every mod tick) in order to
-     * make changes on a cloned version of the widget that will then be merged onto the original widget.
+     * @see updateDynamic
      */
-    open fun dynamic(dynamicUpdate: Child.() -> Unit): Child {
-        this.updateDynamic = dynamicUpdate
+    open fun dynamic(updateFunction: Child.() -> Unit): Child {
+        this.updateDynamic = updateFunction
         return this as Child
     }
 
@@ -88,28 +88,25 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      * It performs things like state- and dynamic updates and allows the use of animations.
      */
     open fun update() {
-        val clone by lazy {
-            clone().apply { isInternalClone = true }
-        }
+        val before = clone()
 
         if (updateDynamic != null) {
-            updateDynamic?.invoke(clone)
+            updateDynamic?.invoke(this as Child)
         }
 
         if (!animationStack.isNullOrEmpty()) {
             scratchpad = clone().apply { isInternalClone = true }
             animationStack.removeAll { it.finished }
             animationStack.forEach { it.tick() }
-            animationStack.forEach { it.applyToShape(scratchpad = scratchpad!!, base = clone) }
+            animationStack.forEach { it.applyToShape(scratchpad = scratchpad!!, base = this) }
 
             if (!isStateEqual(scratchpad as Child)) {
                 stateChanged(scratchpad as Child)
             }
         } else scratchpad = null
 
-        if (!isStateEqual(clone)) {
-            stateChanged(clone)
-            mergeChangesFromClone(clone)
+        if (!isStateEqual(before)) {
+            stateChanged(this)
         }
     }
 
@@ -176,40 +173,16 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
     }
 
     /**
-     * Merges changes from the clone to the instance's values.
-     *
-     * Iterates over all member properties that are annotated with [@Dynamic][Dynamic] and compares their
-     * values to the ones in the cloned object. If they don't match, it will set the property on the current
-     * instance to the value of the cloned instance.
-     *
-     * @param clone the cloned instance from which the changes are merged
-     */
-    private fun mergeChangesFromClone(clone: Child) {
-        this::class.memberProperties
-            .filter { it.hasAnnotation<Dynamic>() && it is KMutableProperty<*> }
-            .forEach { property ->
-                val originalProperty = property as KMutableProperty<*>
-                val originalValue = originalProperty.getter.call(this@Widget)
-
-                val cloneProperty =
-                    clone::class.memberProperties.find { it.name == property.name } as KMutableProperty<*>
-                val cloneValue = cloneProperty.getter.call(clone)
-
-                if (originalValue != cloneValue) {
-                    originalProperty.setter.call(this@Widget, cloneValue!!)
-                }
-            }
-    }
-
-    /**
      * Returns whether the state of the widget has been changed by a dynamic update or by an animation.
      *
      * Every widget should implement this function and adjust it to its structure, in particular the
-     * properties annotated with @[Dynamic].
+     * properties annotated with @[Interpolate].
      *
      * @param clone the clone which the base widget should be compared to
      */
-    abstract fun isStateEqual(clone: Child): Boolean
+    fun isStateEqual(clone: Child) = this::class.memberProperties
+        .filter { it.hasAnnotation<Interpolate>() || it.hasAnnotation<State>() }
+        .any { it.getter.call(this) != it.getter.call(clone) }
 
     /**
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.

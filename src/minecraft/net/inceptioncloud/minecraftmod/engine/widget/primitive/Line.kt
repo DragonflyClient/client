@@ -1,8 +1,8 @@
 package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
-import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
@@ -11,13 +11,13 @@ import org.apache.logging.log4j.LogManager
 import org.lwjgl.opengl.GL11.*
 
 class Line(
-    @property:Dynamic override var x: Double = 0.0,
-    @property:Dynamic override var y: Double = 0.0,
-    @property:Dynamic override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate override var x: Double = 0.0,
+    @property:Interpolate override var y: Double = 0.0,
+    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
 
-    @property:Dynamic var endX: Double = 10.0,
-    @property:Dynamic var endY: Double = 10.0,
-    @property:Dynamic var lineWidth: Double = 1.0
+    @property:Interpolate var endX: Double = 10.0,
+    @property:Interpolate var endY: Double = 10.0,
+    @property:Interpolate var lineWidth: Double = 1.0
 ) : Widget<Line>(), IPosition, IColor, IDimension {
 
     override fun render() {
@@ -31,12 +31,6 @@ class Line(
 
         glEnd()
     }
-
-    override fun isStateEqual(clone: Line) = clone.x == x &&
-            clone.y == y &&
-            clone.widgetColor == widgetColor &&
-            clone.endX == endX &&
-            clone.endY == endY
 
     override fun clone() = Line(
         x = x,

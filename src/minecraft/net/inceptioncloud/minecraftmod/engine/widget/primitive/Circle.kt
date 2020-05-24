@@ -1,9 +1,9 @@
 package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
-import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.structure.IAlign
 import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
@@ -59,13 +59,6 @@ open class Circle(
         glDisable(GL_LINE_SMOOTH)
     }
 
-    override fun isStateEqual(clone: Circle): Boolean =
-        x == clone.x &&
-        y == clone.y &&
-        size == clone.size &&
-        widgetColor == clone.widgetColor &&
-        lineWidth == clone.lineWidth
-
     override fun clone(): Circle
     {
         return Circle(
@@ -89,13 +82,16 @@ open class Circle(
 
     override fun newInstance(): Circle = Circle()
 
-    @Dynamic
+    @Interpolate
     override var x by Delegates.notNull<Double>()
-    @Dynamic
+
+    @Interpolate
     override var y by Delegates.notNull<Double>()
-    @Dynamic
+
+    @Interpolate
     override var size by Delegates.notNull<Double>()
-    @Dynamic
+
+    @Interpolate
     override var widgetColor by Delegates.notNull<WidgetColor>()
 
     override var horizontalAlignment: Alignment by Delegates.notNull()
@@ -106,7 +102,7 @@ open class Circle(
      * using the OpenGL [glLineWidth] function. Notice that high-values can result in errors
      * or ignorance.
      */
-    @Dynamic
+    @Interpolate
     var lineWidth: Float by Delegates.notNull()
 
     override fun align(x: Double, y: Double, width: Double, height: Double) {

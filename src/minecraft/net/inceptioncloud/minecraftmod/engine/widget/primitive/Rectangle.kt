@@ -1,9 +1,9 @@
 package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
-import net.inceptioncloud.minecraftmod.engine.internal.Dynamic
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.structure.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.properties.Delegates
@@ -73,28 +73,17 @@ class Rectangle(
         }
     }
 
-    override fun isStateEqual(clone: Rectangle): Boolean =
-        x == clone.x &&
-                y == clone.y &&
-                width == clone.width &&
-                height == clone.height &&
-                widgetColor == clone.widgetColor &&
-                outlineStroke == clone.outlineStroke &&
-                outlineColor == clone.outlineColor
-
-    override fun clone(): Rectangle {
-        return Rectangle(
-            x = horizontalAlignment.reverse(x, width),
-            y = verticalAlignment.reverse(y, height),
-            width = width,
-            height = height,
-            widgetColor = widgetColor.clone(),
-            outlineStroke = outlineStroke,
-            outlineColor = outlineColor.clone(),
-            horizontalAlignment = horizontalAlignment,
-            verticalAlignment = verticalAlignment
-        )
-    }
+    override fun clone() = Rectangle(
+        x = horizontalAlignment.reverse(x, width),
+        y = verticalAlignment.reverse(y, height),
+        width = width,
+        height = height,
+        widgetColor = widgetColor.clone(),
+        outlineStroke = outlineStroke,
+        outlineColor = outlineColor.clone(),
+        horizontalAlignment = horizontalAlignment,
+        verticalAlignment = verticalAlignment
+    )
 
     override fun toInfo(): Array<String> = arrayOf(
         "x = $x",
@@ -110,24 +99,25 @@ class Rectangle(
 
     override fun newInstance(): Rectangle = Rectangle()
 
-    @Dynamic
+    @Interpolate
     override var x: Double by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     override var y: Double by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     override var width: Double by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     override var height: Double by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     override var widgetColor: WidgetColor by Delegates.notNull()
 
-    @Dynamic
+    @Interpolate
     override var outlineStroke: Double by Delegates.notNull()
-    @Dynamic
+
+    @Interpolate
     override var outlineColor: WidgetColor by Delegates.notNull()
 
     override var horizontalAlignment: Alignment by Delegates.notNull()

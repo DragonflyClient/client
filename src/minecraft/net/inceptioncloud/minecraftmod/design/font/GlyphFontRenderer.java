@@ -4,15 +4,19 @@ import net.inceptioncloud.minecraftmod.design.font.util.GlyphPage;
 import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.*;
+import java.util.Locale;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -134,8 +138,7 @@ public class GlyphFontRenderer implements IFontRenderer
         }
     }
 
-    private static Font font (String name, int style, int size, double letterSpacing)
-    {
+    private static Font makeFont(String name, int style, int size, double letterSpacing) {
         return FontManager.applyLetterSpacing(new Font(name, style, size), letterSpacing);
     }
 
@@ -169,11 +172,11 @@ public class GlyphFontRenderer implements IFontRenderer
             chars[i] = characterList.get(i);
         }
 
-        GlyphPage regularPage = new GlyphPage(font(fontName, Font.PLAIN, ( int ) ( size * getFontQualityScale() ), letterSpacing), true, true);
+        GlyphPage regularPage = new GlyphPage(makeFont(fontName, Font.PLAIN, (int) (size * getFontQualityScale()), letterSpacing), true, true);
         regularPage.generateGlyphPage(chars);
         regularPage.setupTexture();
 
-        GlyphPage realRegular = new GlyphPage(font(fontName, Font.PLAIN, size, letterSpacing), true, true);
+        GlyphPage realRegular = new GlyphPage(makeFont(fontName, Font.PLAIN, size, letterSpacing), true, true);
         realRegular.generateGlyphPage(chars);
         realRegular.setupTexture();
 
@@ -186,31 +189,31 @@ public class GlyphFontRenderer implements IFontRenderer
         GlyphPage unscaledBoldItalic = regularPage;
 
         if (bold) {
-            boldPage = new GlyphPage(font(fontName, Font.BOLD, (int) (size * getFontQualityScale()), letterSpacing), true, true);
+            boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, (int) (size * getFontQualityScale()), letterSpacing), true, true);
             boldPage.generateGlyphPage(chars);
             boldPage.setupTexture();
 
-            unscaledBold = new GlyphPage(font(fontName, Font.BOLD, size, letterSpacing), true, true);
+            unscaledBold = new GlyphPage(makeFont(fontName, Font.BOLD, size, letterSpacing), true, true);
             unscaledBold.generateGlyphPage(chars);
             unscaledBold.setupTexture();
         }
 
         if (italic) {
-            italicPage = new GlyphPage(font(fontName, Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing), true, true);
+            italicPage = new GlyphPage(makeFont(fontName, Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing), true, true);
             italicPage.generateGlyphPage(chars);
             italicPage.setupTexture();
 
-            unscaledItalic = new GlyphPage(font(fontName, Font.ITALIC, size, letterSpacing), true, true);
+            unscaledItalic = new GlyphPage(makeFont(fontName, Font.ITALIC, size, letterSpacing), true, true);
             unscaledItalic.generateGlyphPage(chars);
             unscaledItalic.setupTexture();
         }
 
         if (boldItalic) {
-            boldItalicPage = new GlyphPage(font(fontName, Font.BOLD | Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing), true, true);
+            boldItalicPage = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing), true, true);
             boldItalicPage.generateGlyphPage(chars);
             boldItalicPage.setupTexture();
 
-            unscaledBoldItalic = new GlyphPage(font(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing), true, true);
+            unscaledBoldItalic = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing), true, true);
             unscaledBoldItalic.generateGlyphPage(chars);
             unscaledBoldItalic.setupTexture();
         }
