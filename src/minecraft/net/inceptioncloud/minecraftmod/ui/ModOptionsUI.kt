@@ -3,7 +3,7 @@ package net.inceptioncloud.minecraftmod.ui
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.design.color.RGB
-import net.inceptioncloud.minecraftmod.design.font.GlyphFontRenderer
+import net.inceptioncloud.minecraftmod.engine.font.GlyphFontRenderer
 import net.inceptioncloud.minecraftmod.options.OptionKey
 import net.inceptioncloud.minecraftmod.options.Options
 import net.inceptioncloud.minecraftmod.options.entries.OptionEntry

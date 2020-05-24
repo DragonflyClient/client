@@ -2,7 +2,7 @@ package net.inceptioncloud.minecraftmod.ui.components.button;
 
 import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.BluePalette;
-import net.inceptioncloud.minecraftmod.design.font.GlyphFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.GlyphFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransitionBuilder;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;

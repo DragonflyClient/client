@@ -3,7 +3,7 @@ package net.inceptioncloud.minecraftmod.ui.components.button;
 import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.color.RGB;
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransitionBuilder;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;

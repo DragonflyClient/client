@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor

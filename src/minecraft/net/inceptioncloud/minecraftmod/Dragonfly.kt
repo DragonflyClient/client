@@ -1,8 +1,8 @@
 package net.inceptioncloud.minecraftmod
 
-import net.inceptioncloud.minecraftmod.design.font.FontManager
 import net.inceptioncloud.minecraftmod.design.splash.ModSplashScreen
 import net.inceptioncloud.minecraftmod.discord.RichPresenceManager
+import net.inceptioncloud.minecraftmod.engine.font.FontManager
 import net.inceptioncloud.minecraftmod.event.ModEventBus
 import net.inceptioncloud.minecraftmod.event.client.ClientShutdownEvent
 import net.inceptioncloud.minecraftmod.impl.Tickable

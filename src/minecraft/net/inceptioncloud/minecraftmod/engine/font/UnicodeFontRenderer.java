@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.design.font;
+package net.inceptioncloud.minecraftmod.engine.font;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.StringUtils;
@@ -10,8 +10,10 @@ import org.newdawn.slick.font.effects.ColorEffect;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 
 /**
  * A custom Font Renderer based on the Unicode.

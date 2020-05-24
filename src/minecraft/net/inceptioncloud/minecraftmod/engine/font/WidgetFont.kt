@@ -1,7 +1,5 @@
 package net.inceptioncloud.minecraftmod.engine.font
 
-import net.inceptioncloud.minecraftmod.design.font.GlyphFontRenderer
-
 /**
  * Represents any font that is loaded and can be rendered in the UI by
  * creating a font renderer.

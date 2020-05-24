@@ -1,6 +1,5 @@
-package net.inceptioncloud.minecraftmod.design.font;
+package net.inceptioncloud.minecraftmod.engine.font;
 
-import net.inceptioncloud.minecraftmod.design.font.util.GlyphPage;
 import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -8,15 +7,15 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -44,7 +43,7 @@ public class GlyphFontRenderer implements IFontRenderer
      */
     private final GlyphPage pageRegular, pageBold, pageItalic, pageBoldItalic;
 
-    private final GlyphPage realPageRegular, realPageBold, realPageItalic, realPageBoldItalic;
+    private final GlyphPage unscaledPageRegular, unscaledPageBold, unscaledPageItalic, unscaledPageBoldItalic;
 
     /**
      * Current X coordinate at which to draw the next character.
@@ -60,14 +59,12 @@ public class GlyphFontRenderer implements IFontRenderer
      * Used to specify new red value for the current color.
      */
     private float red;
-
+    /**
+     * Random used for generating chars when the {@link #randomStyle} is enabled.
+     */
+    private final Random fontRandom = new Random();
     /**
      * Used to specify new blue value for the current color.
-     */
-    private float blue;
-
-    /**
-     * Used to specify new green value for the current color.
      */
     private float green;
 
@@ -100,24 +97,27 @@ public class GlyphFontRenderer implements IFontRenderer
      * Set if the "m" style (strikethrough) is active in currently rendering string
      */
     private boolean strikethroughStyle;
+    /**
+     * Used to specify new green value for the current color.
+     */
+    private float blue;
 
     /**
      * Default Constructor
      */
-    public GlyphFontRenderer (GlyphPage pageRegular, GlyphPage pageBold, GlyphPage pageItalic, GlyphPage pageBoldItalic,
-                              GlyphPage unscaledPageRegular, GlyphPage unscaledPageBold, GlyphPage unscaledPageItalic, GlyphPage unscaledPageBoldItalic)
-    {
+    public GlyphFontRenderer(GlyphPage pageRegular, GlyphPage pageBold, GlyphPage pageItalic, GlyphPage pageBoldItalic,
+                             GlyphPage unscaledPageRegular, GlyphPage unscaledPageBold, GlyphPage unscaledPageItalic, GlyphPage unscaledPageBoldItalic) {
         this.pageRegular = pageRegular;
         this.pageBold = pageBold;
         this.pageItalic = pageItalic;
         this.pageBoldItalic = pageBoldItalic;
 
-        this.realPageRegular = unscaledPageRegular;
-        this.realPageBold = unscaledPageBold;
-        this.realPageItalic = unscaledPageItalic;
-        this.realPageBoldItalic = unscaledPageBoldItalic;
+        this.unscaledPageRegular = unscaledPageRegular;
+        this.unscaledPageBold = unscaledPageBold;
+        this.unscaledPageItalic = unscaledPageItalic;
+        this.unscaledPageBoldItalic = unscaledPageBoldItalic;
 
-        for (int i = 0 ; i < 32 ; ++i) {
+        for (int i = 0; i < 32; ++i) {
             int j = (i >> 3 & 1) * 85;
             int k = (i >> 2 & 1) * 170 + j;
             int l = (i >> 1 & 1) * 170 + j;
@@ -134,8 +134,34 @@ public class GlyphFontRenderer implements IFontRenderer
                 i1 /= 4;
             }
 
-            this.colorCode[i] = ( k & 255 ) << 16 | ( l & 255 ) << 8 | i1 & 255;
+            this.colorCode[i] = (k & 255) << 16 | (l & 255) << 8 | i1 & 255;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GlyphFontRenderer that = (GlyphFontRenderer) o;
+
+        return new EqualsBuilder()
+                .append(pageRegular, that.pageRegular)
+                .append(pageBold, that.pageBold)
+                .append(pageItalic, that.pageItalic)
+                .append(pageBoldItalic, that.pageBoldItalic)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(pageRegular)
+                .append(pageBold)
+                .append(pageItalic)
+                .append(pageBoldItalic)
+                .toHashCode();
     }
 
     private static Font makeFont(String name, int style, int size, double letterSpacing) {
@@ -145,8 +171,7 @@ public class GlyphFontRenderer implements IFontRenderer
     /**
      * Convenient Builder
      */
-    public static GlyphFontRenderer create (String fontName, int size, double letterSpacing, boolean bold, boolean italic, boolean boldItalic)
-    {
+    public static GlyphFontRenderer create(String fontName, int size, double letterSpacing, boolean bold, boolean italic, boolean boldItalic) {
         // If the font isn't already loaded, import it from a .ttf file
         if (!LOADED_FONTS.contains(fontName)) {
             try {
@@ -355,7 +380,7 @@ public class GlyphFontRenderer implements IFontRenderer
     @Override
     public int getHeight ()
     {
-        return ( int ) ( realPageRegular.getMaxFontHeight() / 2.2D );
+        return (int) (unscaledPageRegular.getMaxFontHeight() / 2.2D);
     }
 
     /**
@@ -368,13 +393,13 @@ public class GlyphFontRenderer implements IFontRenderer
     @Override
     public float getCharWidthFloat (final char ch)
     {
-        GlyphPage.Glyph glyph = realPageRegular.glyphCharacterMap.get(ch == '▏' ? '|' : ch);
+        GlyphPage.Glyph glyph = unscaledPageRegular.glyphCharacterMap.get(ch == '▏' ? '|' : ch);
 
         if (glyph == null) {
             return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch) * 2;
         }
 
-        return realPageRegular.getWidth(ch) - 8;
+        return unscaledPageRegular.getWidth(ch) - 8;
     }
 
     /**
@@ -390,24 +415,24 @@ public class GlyphFontRenderer implements IFontRenderer
             x *= getFontQualityScale();
             y *= getFontQualityScale();
 
-            if (( color & -67108864 ) == 0) {
+            if ((color & -67108864) == 0) {
                 color |= -16777216;
             }
 
             if (dropShadow) {
-                color = ( color & 16579836 ) >> 2 | color & -16777216;
+                color = (color & 16579836) >> 2 | color & -16777216;
             }
 
-            this.red = ( float ) ( color >> 16 & 255 ) / 255.0F;
-            this.blue = ( float ) ( color >> 8 & 255 ) / 255.0F;
-            this.green = ( float ) ( color & 255 ) / 255.0F;
-            this.alpha = ( float ) ( color >> 24 & 255 ) / 255.0F;
-            GlStateManager.color(this.red, this.blue, this.green, this.alpha);
+            this.red = (float) (color >> 16 & 255) / 255.0F;
+            this.green = (float) (color >> 8 & 255) / 255.0F;
+            this.blue = (float) (color & 255) / 255.0F;
+            this.alpha = (float) (color >> 24 & 255) / 255.0F;
+            GlStateManager.color(this.red, this.green, this.blue, this.alpha);
             this.posX = x * 2.0f;
             this.posY = y * 2.0f;
             this.renderStringAtPos(text, dropShadow);
             GlStateManager.scale(getFontQualityScale(), getFontQualityScale(), getFontQualityScale());
-            return ( int ) ( this.posX / ( 2.0f * getFontQualityScale() ) ); /* NOTE: This was originally 4.0F */
+            return (int) (this.posX / (2.0f * getFontQualityScale())); /* NOTE: This was originally 4.0F */
         }
     }
 
@@ -429,7 +454,9 @@ public class GlyphFontRenderer implements IFontRenderer
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        for (int charIndex = 0 ; charIndex < text.length() ; ++charIndex) {
+        float currentRed = 0, currentGreen = 0, currentBlue = 0;
+
+        for (int charIndex = 0; charIndex < text.length(); ++charIndex) {
             char currentChar = text.charAt(charIndex);
 
             if (currentChar == 167 /* = § */ && charIndex + 1 < text.length()) {
@@ -455,7 +482,13 @@ public class GlyphFontRenderer implements IFontRenderer
                     }
 
                     int j1 = this.colorCode[i1];
-                    GlStateManager.color(( float ) ( j1 >> 16 ) / 255.0F, ( float ) ( j1 >> 8 & 255 ) / 255.0F, ( float ) ( j1 & 255 ) / 255.0F, this.alpha);
+                    final float red = (float) (j1 >> 16) / 255.0F;
+                    final float green = (float) (j1 >> 8 & 255) / 255.0F;
+                    final float blue = (float) (j1 & 255) / 255.0F;
+                    currentRed = red;
+                    currentGreen = green;
+                    currentBlue = blue;
+                    GlStateManager.color(red, green, blue, this.alpha);
                 } else if (i1 == 16) {
                     this.randomStyle = true;
                 } else if (i1 == 17) {
@@ -473,7 +506,10 @@ public class GlyphFontRenderer implements IFontRenderer
                     this.underlineStyle = false;
                     this.italicStyle = false;
 
-                    GlStateManager.color(this.red, this.blue, this.green, this.alpha);
+                    currentRed = this.red;
+                    currentGreen = this.green;
+                    currentBlue = this.blue;
+                    GlStateManager.color(this.red, this.green, this.blue, this.alpha);
                 }
 
                 ++charIndex;
@@ -481,17 +517,30 @@ public class GlyphFontRenderer implements IFontRenderer
                 glyphPage = getCurrentGlyphPage();
                 glyphPage.bindTexture();
 
+                int j = "\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000".indexOf(currentChar);
+                if (this.randomStyle && j != -1) {
+                    int k = this.getCharWidth(currentChar);
+                    char c1;
+
+                    do {
+                        j = this.fontRandom.nextInt("\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000".length());
+                        c1 = "\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000".charAt(j);
+                    } while (k != this.getCharWidth(c1));
+
+                    currentChar = c1;
+                }
+
                 float f = glyphPage.drawChar(currentChar, posX, posY);
 
-                if (f != -1)
-                    finishDraw(f, glyphPage);
-                else {
+                if (f != -1) {
+                    finishDraw(f, glyphPage, currentRed, currentGreen, currentBlue);
+                } else {
                     final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-                    final float factor = ( float ) ( 2F * getFontQualityScale() );
+                    final float factor = (float) (2F * getFontQualityScale());
 
                     glScaled(factor, factor, factor);
 
-                    fontRenderer.setPosX(( posX / factor ) + 1).setPosY(( posY / factor ) + 2).renderUnicodeChar(currentChar, false);
+                    fontRenderer.setPosX((posX / factor) + 1).setPosY((posY / factor) + 2).renderUnicodeChar(currentChar, false);
                     this.posX += fontRenderer.getCharWidthFloat(currentChar) * factor;
 
                     glScaled(1 / factor, 1 / factor, 1 / factor);
@@ -504,32 +553,33 @@ public class GlyphFontRenderer implements IFontRenderer
         glPopMatrix();
     }
 
-    private void finishDraw (float f, GlyphPage glyphPage)
-    {
+    private void finishDraw(float f, GlyphPage glyphPage, float r, float g, float b) {
         if (this.strikethroughStyle) {
             Tessellator tessellator = Tessellator.getInstance();
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+            WorldRenderer worldRenderer = tessellator.getWorldRenderer();
             GlStateManager.disableTexture2D();
-            worldrenderer.begin(7, DefaultVertexFormats.POSITION);
-            worldrenderer.pos(this.posX, this.posY + ( float ) ( glyphPage.getMaxFontHeight() / 2 ) + 2, 0.0D).endVertex();
-            worldrenderer.pos(this.posX + f, this.posY + ( float ) ( glyphPage.getMaxFontHeight() / 2 ) + 2, 0.0D).endVertex();
-            worldrenderer.pos(this.posX + f, this.posY + ( float ) ( glyphPage.getMaxFontHeight() / 2 ) + 1, 0.0D).endVertex();
-            worldrenderer.pos(this.posX, this.posY + ( float ) ( glyphPage.getMaxFontHeight() / 2 ) + 1, 0.0D).endVertex();
+            GlStateManager.color(r, g, b, alpha);
+            worldRenderer.begin(7, DefaultVertexFormats.POSITION);
+            worldRenderer.pos(this.posX, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) + 3, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) + 3, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) - 2, 0.0D).endVertex();
+            worldRenderer.pos(this.posX, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) - 2, 0.0D).endVertex();
             tessellator.draw();
             GlStateManager.enableTexture2D();
         }
 
         if (this.underlineStyle) {
-            Tessellator tessellator1 = Tessellator.getInstance();
-            WorldRenderer worldrenderer1 = tessellator1.getWorldRenderer();
+            Tessellator tessellator = Tessellator.getInstance();
+            WorldRenderer worldRenderer = tessellator.getWorldRenderer();
             GlStateManager.disableTexture2D();
-            worldrenderer1.begin(7, DefaultVertexFormats.POSITION);
+            GlStateManager.color(r, g, b, alpha);
+            worldRenderer.begin(7, DefaultVertexFormats.POSITION);
             int l = this.underlineStyle ? -1 : 0;
-            worldrenderer1.pos(this.posX + ( float ) l, this.posY + ( float ) glyphPage.getMaxFontHeight() - 3.0F, 0.0D).endVertex();
-            worldrenderer1.pos(this.posX + f, this.posY + ( float ) glyphPage.getMaxFontHeight() - 3.0F, 0.0D).endVertex();
-            worldrenderer1.pos(this.posX + f, this.posY + ( float ) glyphPage.getMaxFontHeight() - 4.0F, 0.0D).endVertex();
-            worldrenderer1.pos(this.posX + ( float ) l, this.posY + ( float ) glyphPage.getMaxFontHeight() - 4.0F, 0.0D).endVertex();
-            tessellator1.draw();
+            worldRenderer.pos(this.posX + (float) l, this.posY + (float) glyphPage.getMaxFontHeight() - 1F, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + f, this.posY + (float) glyphPage.getMaxFontHeight() - 1F, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + f, this.posY + (float) glyphPage.getMaxFontHeight() - 6F, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + (float) l, this.posY + (float) glyphPage.getMaxFontHeight() - 6F, 0.0D).endVertex();
+            tessellator.draw();
             GlStateManager.enableTexture2D();
         }
 
@@ -551,13 +601,13 @@ public class GlyphFontRenderer implements IFontRenderer
     private GlyphPage getCurrentRealGlyphPage ()
     {
         if (boldStyle && italicStyle)
-            return realPageBoldItalic;
+            return unscaledPageBoldItalic;
         else if (boldStyle)
-            return realPageBold;
+            return unscaledPageBold;
         else if (italicStyle)
-            return realPageItalic;
+            return unscaledPageItalic;
         else
-            return realPageRegular;
+            return unscaledPageRegular;
     }
 
     /**

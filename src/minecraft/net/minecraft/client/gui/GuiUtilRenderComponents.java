@@ -1,16 +1,15 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
-import java.util.List;
-
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
-public class GuiUtilRenderComponents
-{
+import java.util.List;
+
+public class GuiUtilRenderComponents {
     /**
      * Remove the formatting colors from the text if it was configured in the chat settings and it
      * the color isn't forced.

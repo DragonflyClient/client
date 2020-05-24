@@ -1,16 +1,15 @@
-package net.inceptioncloud.minecraftmod.design.font.util;
+package net.inceptioncloud.minecraftmod.engine.font;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -27,15 +26,37 @@ public class GlyphPage
     private BufferedImage bufferedImage;
     private DynamicTexture loadedTexture;
 
-    public GlyphPage (Font font, boolean antiAliasing, boolean fractionalMetrics)
-    {
+    public GlyphPage(Font font, boolean antiAliasing, boolean fractionalMetrics) {
         this.font = font;
         this.antiAliasing = antiAliasing;
         this.fractionalMetrics = fractionalMetrics;
     }
 
-    public void generateGlyphPage (char[] chars)
-    {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GlyphPage glyphPage = (GlyphPage) o;
+
+        return new EqualsBuilder()
+                .append(antiAliasing, glyphPage.antiAliasing)
+                .append(fractionalMetrics, glyphPage.fractionalMetrics)
+                .append(font, glyphPage.font)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(font)
+                .append(antiAliasing)
+                .append(fractionalMetrics)
+                .toHashCode();
+    }
+
+    public void generateGlyphPage(char[] chars) {
         // Calculate glyphPageSize
         double maxWidth = -1;
         double maxHeight = -1;
