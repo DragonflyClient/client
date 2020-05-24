@@ -48,9 +48,6 @@ class RoundedRectangle(
     }
 
     override fun updateStructure() {
-        val smallest = width.coerceAtMost(height) / 2
-        arc = arc.coerceAtMost(smallest)
-
         val spaceVertical = height - arc * 2
         val spaceHorizontal = width - arc * 2
 
@@ -119,8 +116,6 @@ class RoundedRectangle(
             width == clone.width &&
             height == clone.height &&
             widgetColor == clone.widgetColor &&
-            horizontalAlignment == clone.horizontalAlignment &&
-            verticalAlignment == clone.verticalAlignment &&
             arc == clone.arc
 
     override fun clone(): RoundedRectangle {
@@ -165,13 +160,10 @@ class RoundedRectangle(
     override var widgetColor: WidgetColor by Delegates.notNull()
 
     @Dynamic
-    override var horizontalAlignment: Alignment by Delegates.notNull()
-
-    @Dynamic
-    override var verticalAlignment: Alignment by Delegates.notNull()
-
-    @Dynamic
     var arc: Double by Delegates.notNull()
+
+    override var horizontalAlignment: Alignment by Delegates.notNull()
+    override var verticalAlignment: Alignment by Delegates.notNull()
 
     override fun align(x: Double, y: Double, width: Double, height: Double) {
         this.x = horizontalAlignment.calc(x, width)
@@ -186,7 +178,8 @@ class RoundedRectangle(
 
         align(x, y, width, height)
 
+        val smallest = width.coerceAtMost(height) / 2
+        this.arc = arc.coerceAtMost(smallest)
         this.widgetColor = widgetColor
-        this.arc = arc
     }
 }

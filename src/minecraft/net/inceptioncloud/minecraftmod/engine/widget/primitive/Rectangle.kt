@@ -80,9 +80,7 @@ class Rectangle(
                 height == clone.height &&
                 widgetColor == clone.widgetColor &&
                 outlineStroke == clone.outlineStroke &&
-                outlineColor == clone.outlineColor &&
-                horizontalAlignment == clone.horizontalAlignment &&
-                verticalAlignment == clone.verticalAlignment
+                outlineColor == clone.outlineColor
 
     override fun clone(): Rectangle {
         return Rectangle(

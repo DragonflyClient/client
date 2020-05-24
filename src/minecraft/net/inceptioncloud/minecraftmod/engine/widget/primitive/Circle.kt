@@ -64,8 +64,6 @@ open class Circle(
         y == clone.y &&
         size == clone.size &&
         widgetColor == clone.widgetColor &&
-        horizontalAlignment == clone.horizontalAlignment &&
-        verticalAlignment == clone.verticalAlignment &&
         lineWidth == clone.lineWidth
 
     override fun clone(): Circle
