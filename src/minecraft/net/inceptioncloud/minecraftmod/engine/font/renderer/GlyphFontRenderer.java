@@ -314,6 +314,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     @Override
     public int drawString(String text, float x, float y, int color, boolean dropShadow) {
+        y -= 3;
         GlStateManager.enableAlpha();
         this.resetStyles();
         int i;
@@ -332,6 +333,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      * Draws the specified string with a shadow that can have a custom color and distance.
      */
     public int drawStringWithCustomShadow(String text, int x, int y, int color, int shadowColor, float distance) {
+        y -= 3;
         GlStateManager.enableAlpha();
         this.resetStyles();
         int i;
@@ -431,7 +433,7 @@ public class GlyphFontRenderer implements IFontRenderer {
             return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch) * 2;
         }
 
-        return getCurrentRealGlyphPage().getWidth(ch) - (ch == 'i' ? 14 : 6);
+        return getCurrentRealGlyphPage().getWidth(ch) - 6;
     }
 
     /**
