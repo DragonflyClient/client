@@ -4,7 +4,7 @@ import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.CloudColor;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.engine.EngineTestUI;
-import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;

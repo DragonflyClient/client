@@ -4,7 +4,6 @@ import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.engine.internal.Defaults
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
-import net.inceptioncloud.minecraftmod.ui.renderer.RectangleRenderer
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.ScaledResolution
@@ -33,10 +32,10 @@ object GraphicsEngine {
                 val (width, height) = Defaults.getSizeOrDimension(widget)
 
                 Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 100).rgb)
-                RectangleRenderer.renderOutline(
-                    x, y, x + width, y + height,
-                    Color(debugColors[index % (debugColors.size)]), 0.7
-                )
+//                RectangleRenderer.renderOutline(
+//                    x, y, x + width, y + height,
+//                    Color(debugColors[index % (debugColors.size)]), 0.5
+//                )
                 index++
             }
 
@@ -46,7 +45,7 @@ object GraphicsEngine {
             val (width, height) = Defaults.getSizeOrDimension(uppermostWidget.value)
 
             Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 100).rgb)
-            RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 1.0)
+//            RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 0.7)
 
             val titleRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono Medium", Font.PLAIN, 12)
             val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 9)

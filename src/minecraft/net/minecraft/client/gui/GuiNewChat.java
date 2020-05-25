@@ -2,7 +2,7 @@ package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
 import net.inceptioncloud.minecraftmod.Dragonfly;
-import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;

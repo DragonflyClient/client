@@ -25,8 +25,8 @@ class DebugModeSubscriber
     {
         val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 14)
         val height = fontRenderer.height
-        val framesTitleWidth = fontRenderer.getStringWidth(title)
-        val framesWidth = framesTitleWidth + fontRenderer.getStringWidth(content)
+        val framesTitleWidth = fontRenderer.getStringWidth(title).toInt()
+        val framesWidth = framesTitleWidth + fontRenderer.getStringWidth(content).toInt()
 
         Gui.drawRect(screenWidth - 2 - framesWidth - 2, y, screenWidth - 2, y + height, Color(0, 0, 0, 150).rgb)
         fontRenderer.drawString(title, screenWidth - 3 - framesWidth, y + 2, Color.WHITE.rgb)

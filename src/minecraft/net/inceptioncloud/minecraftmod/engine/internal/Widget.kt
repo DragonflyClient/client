@@ -180,9 +180,14 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      *
      * @param clone the clone which the base widget should be compared to
      */
-    fun isStateEqual(clone: Child) = this::class.memberProperties
-        .filter { it.hasAnnotation<Interpolate>() || it.hasAnnotation<State>() }
-        .any { it.getter.call(this) != it.getter.call(clone) }
+    fun isStateEqual(clone: Child): Boolean {
+        val compare = this::class.memberProperties
+            .filter { it.hasAnnotation<Interpolate>() || it.hasAnnotation<State>() }
+
+        return compare.none {
+            it.getter.call(this) != it.getter.call(clone)
+        }
+    }
 
     /**
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.
@@ -231,7 +236,9 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
     /**
      * Generates an info string for the widget that is used for debugging.
      */
-    abstract fun toInfo(): Array<String>
+    open fun toInfo(): Array<String> = ArrayList(this::class.memberProperties
+        .filter { it.hasAnnotation<State>() || it.hasAnnotation<Interpolate>() }
+        .map { "${it.name} = ${it.getter.call(this@Widget)}" }).toArray(arrayOf<String>())
 
     /**
      * Notifies the widget when the mouse is moved.
