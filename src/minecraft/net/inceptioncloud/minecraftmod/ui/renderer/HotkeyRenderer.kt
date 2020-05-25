@@ -2,7 +2,7 @@ package net.inceptioncloud.minecraftmod.ui.renderer
 
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor
 import net.inceptioncloud.minecraftmod.design.color.RGB
-import net.inceptioncloud.minecraftmod.engine.font.renderer.IFontRenderer
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer
 import net.minecraft.client.gui.Gui
 import java.awt.event.KeyEvent
 

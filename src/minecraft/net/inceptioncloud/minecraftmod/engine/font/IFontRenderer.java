@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.font.renderer;
+package net.inceptioncloud.minecraftmod.engine.font;
 
 import net.minecraft.client.gui.FontRenderer;
 

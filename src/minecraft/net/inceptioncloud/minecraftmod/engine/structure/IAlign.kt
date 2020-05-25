@@ -21,6 +21,5 @@ interface IAlign {
     /**
      * Applies the alignment on the parent's position.
      */
-    fun align(x: Double, y: Double, width: Double, height: Double) =
-        horizontalAlignment.calc(x, width) to verticalAlignment.calc(y, height)
+    fun align(x: Double, y: Double, width: Double, height: Double)
 }

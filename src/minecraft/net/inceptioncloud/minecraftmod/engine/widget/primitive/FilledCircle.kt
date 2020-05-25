@@ -27,7 +27,7 @@ class FilledCircle(
     widgetColor: WidgetColor = WidgetColor.DEFAULT,
     horizontalAlignment: Alignment = Alignment.START,
     verticalAlignment: Alignment = Alignment.START
-) : Circle(x, y, size, widgetColor, horizontalAlignment, verticalAlignment, 0F) {
+) : Circle(x, y, size, 0F, widgetColor, horizontalAlignment, verticalAlignment) {
     override fun render() {
         widgetColor.glBindColor()
 

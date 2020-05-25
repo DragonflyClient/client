@@ -29,7 +29,7 @@ class WidgetBuffer
      * Each buffer has a unique id which is the key in the map. When adding a new widget to the
      * buffer with an already existing id, the widget will be overwritten.
      */
-    val content = mutableMapOf<String, Widget<*>>()
+    private val content = mutableMapOf<String, Widget<*>>()
 
     /**
      * Renders all [Widget] objects in the buffer.

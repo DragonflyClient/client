@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.font.renderer;
+package net.inceptioncloud.minecraftmod.engine.font;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class GlyphPage
 {
     private int imgSize;
-    private double maxFontHeight = -1;
+    private int maxFontHeight = -1;
     private final Font font;
     private final boolean antiAliasing;
     private final boolean fractionalMetrics;
@@ -72,16 +72,20 @@ public class GlyphPage
         }
 
         // Leave some additional space
+
+        maxWidth += 2;
         maxHeight += 2;
 
-        imgSize = ( int ) Math.ceil(
-            Math.max(Math.ceil(Math.sqrt(maxWidth * maxWidth * chars.length) / maxWidth),
-            Math.ceil(Math.sqrt(maxHeight * maxHeight * chars.length) / maxHeight))
-                                    * Math.max(maxWidth, maxHeight)) + 1;
+        imgSize = (int) Math.ceil(
+                Math.max(
+                        Math.ceil(Math.sqrt(maxWidth * maxWidth * chars.length) / maxWidth),
+                        Math.ceil(Math.sqrt(maxHeight * maxHeight * chars.length) / maxHeight)
+                )
+                        * Math.max(maxWidth, maxHeight)) + 1;
 
         bufferedImage = new BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D g = ( Graphics2D ) bufferedImage.getGraphics();
+        Graphics2D g = (Graphics2D) bufferedImage.getGraphics();
 
         g.setFont(font);
         // Set Color to Transparent
@@ -106,24 +110,24 @@ public class GlyphPage
 
         FontMetrics fontMetrics = g.getFontMetrics();
 
-        double currentCharHeight = 0;
-        double posX = 0;
-        double posY = 1;
+        int currentCharHeight = 0;
+        int posX = 0;
+        int posY = 1;
 
         for (char ch : chars) {
             Glyph glyph = new Glyph();
 
             Rectangle2D bounds = fontMetrics.getStringBounds(Character.toString(ch), g);
 
-            glyph.width = bounds.getWidth() + 6;
-            glyph.height = bounds.getHeight();
+            glyph.width = bounds.getBounds().width + 8; // Leave some additional space
+            glyph.height = bounds.getBounds().height;
 
             if (posY + glyph.height >= imgSize) {
                 throw new IllegalStateException("Not all characters will fit");
             }
 
-            if (ch == 'i')
-                glyph.width += 8;
+            if (ch == 'j')
+                glyph.width += 4;
 
             if (posX + glyph.width >= imgSize) {
                 posX = 0;
@@ -134,22 +138,16 @@ public class GlyphPage
             glyph.x = posX;
             glyph.y = posY;
 
-            if (glyph.height > maxFontHeight) {
-                maxFontHeight = glyph.height;
-            }
+            if (glyph.height > maxFontHeight) maxFontHeight = glyph.height;
 
-            if (glyph.height > currentCharHeight)
-                currentCharHeight = glyph.height;
+            if (glyph.height > currentCharHeight) currentCharHeight = glyph.height;
 
-            g.drawString(
-                    Character.toString(ch),
-                    (int) posX + (ch == 'j' ? 6 : 2),
-                    (int) posY + fontMetrics.getAscent()
-            );
+            g.drawString(Character.toString(ch), posX + (ch == 'j' ? 5 : 2), posY + fontMetrics.getAscent());
 
             posX += glyph.width;
 
             glyphCharacterMap.put(ch, glyph);
+
         }
     }
 
@@ -158,33 +156,29 @@ public class GlyphPage
         loadedTexture = new DynamicTexture(bufferedImage);
     }
 
-    public void bindTexture ()
-    {
+    public void bindTexture() {
         GlStateManager.bindTexture(loadedTexture.getGlTextureId());
     }
 
-    public void unbindTexture ()
-    {
+    public void unbindTexture() {
         GlStateManager.bindTexture(0);
     }
 
-    public float drawChar (char ch, float x, float y) {
+    public float drawChar(char ch, float x, float y) {
         Glyph glyph = glyphCharacterMap.get(ch == '▏' ? '|' : ch);
 
         if (glyph == null) {
             return -1;
         }
 
-        float pageX = (float) (glyph.x / (float) imgSize);
-        float pageY = (float) (glyph.y / (float) imgSize);
+        float pageX = glyph.x / (float) imgSize;
+        float pageY = glyph.y / (float) imgSize;
 
-        float pageWidth = (float) (glyph.width / (float) imgSize);
-        float pageHeight = (float) (glyph.height / (float) imgSize);
+        float pageWidth = glyph.width / (float) imgSize;
+        float pageHeight = glyph.height / (float) imgSize;
 
-        float width = (float) glyph.width;
-        float height = (float) glyph.height;
-
-//        Gui.drawRect(x, y, x + width, y + height, new Color(0, 100, 200, 40).getRGB());
+        float width = glyph.width;
+        float height = glyph.height;
 
         glBegin(GL_TRIANGLES);
 
@@ -206,60 +200,57 @@ public class GlyphPage
         glTexCoord2f(pageX + pageWidth, pageY);
         glVertex2f(x + width, y);
 
+
         glEnd();
 
-        return ch == 'i' ? width - 14 : width - 6;
+        return width - 8;
     }
 
-    public float getWidth (char ch)
-    {
-        return glyphCharacterMap.containsKey(ch) ? (float) glyphCharacterMap.get(ch).width : 0;
+    public float getWidth(char ch) {
+        return glyphCharacterMap.containsKey(ch) ? glyphCharacterMap.get(ch).width : 0;
     }
 
-    public double getMaxFontHeight() {
+    public int getMaxFontHeight() {
         return maxFontHeight;
     }
 
-    public boolean isAntiAliasingEnabled ()
-    {
+    public boolean isAntiAliasingEnabled() {
         return antiAliasing;
     }
 
-    public boolean isFractionalMetricsEnabled ()
-    {
+    public boolean isFractionalMetricsEnabled() {
         return fractionalMetrics;
     }
 
     public static class Glyph {
-        private double x;
-        private double y;
-        private double width;
-        private double height;
+        private int x;
+        private int y;
+        private int width;
+        private int height;
 
-        Glyph(double x, double y, double width, double height) {
+        Glyph(int x, int y, int width, int height) {
             this.x = x;
             this.y = y;
             this.width = width;
             this.height = height;
         }
 
-        Glyph()
-        {
+        Glyph() {
         }
 
-        public double getX() {
+        public int getX() {
             return x;
         }
 
-        public double getY() {
+        public int getY() {
             return y;
         }
 
-        public double getWidth() {
+        public int getWidth() {
             return width;
         }
 
-        public double getHeight() {
+        public int getHeight() {
             return height;
         }
     }

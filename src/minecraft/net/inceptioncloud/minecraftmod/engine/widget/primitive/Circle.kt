@@ -34,12 +34,11 @@ import kotlin.properties.Delegates
 open class Circle(
     x: Double = 0.0,
     y: Double = 0.0,
-    @property:Interpolate override var size: Double = 50.0,
-    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
-    override var horizontalAlignment: Alignment = Alignment.START,
-    override var verticalAlignment: Alignment = Alignment.START,
-
-    @property:Interpolate var lineWidth: Float = 2F
+    size: Double = 50.0,
+    lineWidth: Float = 2F,
+    widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    horizontalAlignment: Alignment = Alignment.START,
+    verticalAlignment: Alignment = Alignment.START
 ) : Widget<Circle>(), IPosition, ISize, IColor, IAlign {
     override fun render() {
         widgetColor.glBindColor()
@@ -86,9 +85,38 @@ open class Circle(
     @Interpolate
     override var y by Delegates.notNull<Double>()
 
+    @Interpolate
+    override var size by Delegates.notNull<Double>()
+
+    @Interpolate
+    override var widgetColor by Delegates.notNull<WidgetColor>()
+
+    override var horizontalAlignment: Alignment by Delegates.notNull()
+    override var verticalAlignment: Alignment by Delegates.notNull()
+
+    /**
+     * The width of the outline of the circle. This value is set during the rendering process
+     * using the OpenGL [glLineWidth] function. Notice that high-values can result in errors
+     * or ignorance.
+     */
+    @Interpolate
+    var lineWidth: Float by Delegates.notNull()
+
+    override fun align(x: Double, y: Double, width: Double, height: Double) {
+        assert(width == height)
+
+        this.x = horizontalAlignment.calc(x, width)
+        this.y = verticalAlignment.calc(y, height)
+        this.size = width
+    }
+
     init {
-        val (alignedX, alignedY) = align(x, y, size, size)
-        this.x = alignedX
-        this.y = alignedY
+        this.horizontalAlignment = horizontalAlignment
+        this.verticalAlignment = verticalAlignment
+
+        align(x, y, size, size)
+
+        this.widgetColor = widgetColor
+        this.lineWidth = lineWidth
     }
 }
