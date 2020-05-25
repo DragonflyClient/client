@@ -71,15 +71,6 @@ open class Circle(
         )
     }
 
-    override fun toInfo(): Array<String> = arrayOf(
-        "x = $x",
-        "y = $y",
-        "size = $size",
-        "color = $widgetColor",
-        "horizontal = ${horizontalAlignment.name}",
-        "vertical = ${verticalAlignment.name}"
-    )
-
     override fun newInstance(): Circle = Circle()
 
     @Interpolate

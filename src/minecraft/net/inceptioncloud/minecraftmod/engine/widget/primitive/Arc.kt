@@ -84,16 +84,6 @@ class Arc(
         )
     }
 
-    override fun toInfo(): Array<String> = arrayOf(
-        "x = $x",
-        "y = $y",
-        "width = $width",
-        "height = $height",
-        "color = $widgetColor",
-        "start = $start",
-        "end = $end"
-    )
-
     override fun newInstance(): Arc = Arc()
 
     @Interpolate

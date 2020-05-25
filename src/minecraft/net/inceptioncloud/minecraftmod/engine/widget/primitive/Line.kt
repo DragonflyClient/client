@@ -42,14 +42,6 @@ class Line(
 
     override fun newInstance() = Line()
 
-    override fun toInfo() = arrayOf(
-        "x = $x",
-        "y = $y",
-        "endX = $endX",
-        "endY = $endY",
-        "color = $widgetColor"
-    )
-
     /**
      * Checks if the two points are able to create a dimension.
      * If this isn't possible, a warning will be sent to the console.
