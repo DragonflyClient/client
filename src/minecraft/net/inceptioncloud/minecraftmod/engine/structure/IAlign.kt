@@ -7,8 +7,7 @@ import net.inceptioncloud.minecraftmod.engine.internal.Alignment
  *
  * Specifies that the parent widget can be aligned by the [Alignment] enum.
  */
-interface IAlign
-{
+interface IAlign {
     /**
      * The horizontal alignment for the x-axis.
      */
@@ -22,5 +21,6 @@ interface IAlign
     /**
      * Applies the alignment on the parent's position.
      */
-    fun align(x: Double, y: Double, width: Double, height: Double)
+    fun align(x: Double, y: Double, width: Double, height: Double) =
+        horizontalAlignment.calc(x, width) to verticalAlignment.calc(y, height)
 }

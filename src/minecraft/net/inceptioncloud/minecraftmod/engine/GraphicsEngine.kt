@@ -35,7 +35,7 @@ object GraphicsEngine {
                 Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 100).rgb)
                 RectangleRenderer.renderOutline(
                     x, y, x + width, y + height,
-                    Color(debugColors[index % (debugColors.size)]), 0.7
+                    Color(debugColors[index % (debugColors.size)]), 0.5
                 )
                 index++
             }
@@ -46,7 +46,7 @@ object GraphicsEngine {
             val (width, height) = Defaults.getSizeOrDimension(uppermostWidget.value)
 
             Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 100).rgb)
-            RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 1.0)
+            RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 0.7)
 
             val titleRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono Medium", Font.PLAIN, 12)
             val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 9)

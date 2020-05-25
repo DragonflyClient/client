@@ -26,14 +26,27 @@ import kotlin.properties.Delegates
 class Rectangle(
     x: Double = 0.0,
     y: Double = 0.0,
-    width: Double = 50.0,
-    height: Double = 50.0,
-    widgetColor: WidgetColor = WidgetColor.DEFAULT,
-    outlineStroke: Double = 0.0,
-    outlineColor: WidgetColor = WidgetColor.DEFAULT,
-    horizontalAlignment: Alignment = Alignment.START,
-    verticalAlignment: Alignment = Alignment.START
+    @property:Interpolate override var width: Double = 50.0,
+    @property:Interpolate override var height: Double = 50.0,
+    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate override var outlineStroke: Double = 0.0,
+    @property:Interpolate override var outlineColor: WidgetColor = WidgetColor.DEFAULT,
+    override var horizontalAlignment: Alignment = Alignment.START,
+    override var verticalAlignment: Alignment = Alignment.START
 ) : Widget<Rectangle>(), IPosition, IDimension, IColor, IOutline, IAlign {
+
+    @Interpolate
+    override var x: Double by Delegates.notNull()
+
+    @Interpolate
+    override var y: Double by Delegates.notNull()
+
+    init {
+        val (alignedX, alignedY) = align(x, y, width, height)
+        this.x = alignedX
+        this.y = alignedY
+    }
+
     override fun render() {
         if (outlineStroke > 0.0) {
             outlineColor.glBindColor()
@@ -86,46 +99,4 @@ class Rectangle(
     )
 
     override fun newInstance(): Rectangle = Rectangle()
-
-    @Interpolate
-    override var x: Double by Delegates.notNull()
-
-    @Interpolate
-    override var y: Double by Delegates.notNull()
-
-    @Interpolate
-    override var width: Double by Delegates.notNull()
-
-    @Interpolate
-    override var height: Double by Delegates.notNull()
-
-    @Interpolate
-    override var widgetColor: WidgetColor by Delegates.notNull()
-
-    @Interpolate
-    override var outlineStroke: Double by Delegates.notNull()
-
-    @Interpolate
-    override var outlineColor: WidgetColor by Delegates.notNull()
-
-    override var horizontalAlignment: Alignment by Delegates.notNull()
-    override var verticalAlignment: Alignment by Delegates.notNull()
-
-    override fun align(x: Double, y: Double, width: Double, height: Double) {
-        this.x = horizontalAlignment.calc(x, width)
-        this.y = verticalAlignment.calc(y, height)
-        this.width = width
-        this.height = height
-    }
-
-    init {
-        this.horizontalAlignment = horizontalAlignment
-        this.verticalAlignment = verticalAlignment
-
-        align(x, y, width, height)
-
-        this.widgetColor = widgetColor
-        this.outlineStroke = outlineStroke
-        this.outlineColor = outlineColor
-    }
 }

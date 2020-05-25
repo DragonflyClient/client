@@ -140,7 +140,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen()
     {
         mc.textureManager.bindTexture(ResourceLocation("inceptioncloud/icons/about/$name.png"))
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F)
-        Gui.drawModalRectWithCustomSizedTexture(x, y, 0F, 0F, size, size, size.toFloat(), size.toFloat())
+        drawModalRectWithCustomSizedTexture(x, y, 0F, 0F, size, size, size.toFloat(), size.toFloat())
     }
 
     /**

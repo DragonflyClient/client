@@ -1,5 +1,8 @@
 package net.inceptioncloud.minecraftmod.engine.font;
 
+import net.inceptioncloud.minecraftmod.engine.font.renderer.GlyphFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.renderer.IFontRenderer;
+
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.util.HashMap;
