@@ -70,6 +70,15 @@ class FilledCircle(
         )
     }
 
+    override fun toInfo(): Array<String> = arrayOf(
+        "x = $x",
+        "y = $y",
+        "size = $size",
+        "color = $widgetColor",
+        "horizontal = ${horizontalAlignment.name}",
+        "vertical = ${verticalAlignment.name}"
+    )
+
     override fun cloneWithMargin(amount: Double): FilledCircle = super.cloneWithMargin(amount) as FilledCircle
 
     override fun cloneWithPadding(amount: Double): FilledCircle = super.cloneWithPadding(amount) as FilledCircle

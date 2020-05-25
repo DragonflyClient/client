@@ -148,5 +148,16 @@ class RoundedRectangle(
         )
     }
 
+    override fun toInfo(): Array<String> = arrayOf(
+        "x = $x",
+        "y = $y",
+        "width = $width",
+        "height = $height",
+        "color = $widgetColor",
+        "arc = $arc",
+        "horizontal = ${horizontalAlignment.name}",
+        "vertical = ${verticalAlignment.name}"
+    )
+
     override fun newInstance(): RoundedRectangle = RoundedRectangle()
 }

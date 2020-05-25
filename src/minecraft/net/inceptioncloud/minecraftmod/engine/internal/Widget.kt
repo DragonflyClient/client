@@ -236,9 +236,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
     /**
      * Generates an info string for the widget that is used for debugging.
      */
-    open fun toInfo(): Array<String> = ArrayList(this::class.memberProperties
-        .filter { it.hasAnnotation<State>() || it.hasAnnotation<Interpolate>() }
-        .map { "${it.name} = ${it.getter.call(this@Widget)}" }).toArray(arrayOf<String>())
+    abstract fun toInfo(): Array<String>
 
     /**
      * Notifies the widget when the mouse is moved.

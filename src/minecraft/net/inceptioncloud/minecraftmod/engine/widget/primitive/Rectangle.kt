@@ -98,5 +98,17 @@ class Rectangle(
         verticalAlignment = verticalAlignment
     )
 
+    override fun toInfo(): Array<String> = arrayOf(
+        "x = $x",
+        "y = $y",
+        "width = $width",
+        "height = $height",
+        "color = $widgetColor",
+        "outlineStroke = $outlineStroke",
+        "outlineColor = $outlineColor",
+        "horizontal = ${horizontalAlignment.name}",
+        "vertical = ${verticalAlignment.name}"
+    )
+
     override fun newInstance(): Rectangle = Rectangle()
 }
