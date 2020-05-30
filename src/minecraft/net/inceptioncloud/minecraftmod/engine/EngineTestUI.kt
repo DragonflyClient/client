@@ -3,6 +3,7 @@ package net.inceptioncloud.minecraftmod.engine
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
 import net.inceptioncloud.minecraftmod.engine.widget.primitive.TextRenderer
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 
@@ -12,12 +13,20 @@ class EngineTestUI : GuiScreen() {
 
     override fun initGui() {
         +TextRenderer(
-            text = "This is my sample text!",
+            text = "Àlors mon Sample Text!ß",
             x = 20.0,
             y = 20.0,
             widgetColor = Color.YELLOW.widget,
             fontRenderer = Dragonfly.fontDesign.regular
-        ) id "sample-text"
+        ) id "sample-text-glyph"
+
+        +TextRenderer(
+            text = "Àlors mon Sample Text!ß",
+            x = 120.0,
+            y = 20.0,
+            widgetColor = Color.GREEN.widget,
+            fontRenderer = Minecraft.getMinecraft().fontRendererObj
+        ) id "sample-text-mc"
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {

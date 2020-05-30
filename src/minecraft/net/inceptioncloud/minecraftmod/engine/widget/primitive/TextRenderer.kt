@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
+import net.inceptioncloud.minecraftmod.engine.font.GlyphFontRenderer
 import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
@@ -21,9 +22,15 @@ class TextRenderer(
     @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT
 ) : Widget<TextRenderer>(), IPosition, IColor, IDimension {
 
+    override fun preRender() {
+    }
+
     override fun render() {
+        val posX = x.toFloat()
+        val posY = if (fontRenderer is GlyphFontRenderer) y.toFloat() + 3F else y.toFloat()
+
         height = fontRenderer.height.toDouble()
-        width = fontRenderer.drawString(text, x.toFloat(), y.toFloat(), widgetColor.rgb, dropShadow).toDouble()
+        width = fontRenderer.drawString(text, posX, posY, widgetColor.rgb, dropShadow).toDouble()
     }
 
     override fun clone() = TextRenderer(

@@ -135,14 +135,21 @@ public class ServerData
 
         private final IChatComponent motd;
 
-        ServerResourceMode (String name)
-        {
+        ServerResourceMode(String name) {
             this.motd = new ChatComponentTranslation("addServer.resourcePack." + name);
         }
 
-        public IChatComponent getMotd ()
-        {
+        public IChatComponent getMotd() {
             return this.motd;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ServerData{" +
+                "serverName='" + serverName + '\'' +
+                ", serverIP='" + serverIP + '\'' +
+                ", lan=" + lan +
+                '}';
     }
 }
