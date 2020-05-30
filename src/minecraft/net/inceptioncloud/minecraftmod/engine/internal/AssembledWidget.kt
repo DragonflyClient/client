@@ -2,9 +2,7 @@ package net.inceptioncloud.minecraftmod.engine.internal
 
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
-import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
-import net.inceptioncloud.minecraftmod.engine.structure.ISize
 import net.minecraft.client.gui.Gui
 import org.lwjgl.input.Keyboard
 
@@ -76,21 +74,7 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
         }
     }
 
-    override fun handleMouseMove(data: MouseData)
-    {
-        structure.values.forEach { it.handleMouseMove(data) }
-        structure.values
-            .filter { it is IPosition && (it is IDimension || it is ISize) }
-            .forEach {
-                it as IPosition
-                val x = it.x
-                val y = it.y
-                val (width, height) = Defaults.getSizeOrDimension(it)
-
-                it.hovered = data.mouseX.toDouble() in x .. x + width
-                             && data.mouseY.toDouble() in y .. y + height
-            }
-    }
+    override fun handleMouseMove(data: MouseData) = Defaults.handleMouseMove(structure.values, data)
 
     /**
      * Assembles the widget by initializing the base widgets.

@@ -2,6 +2,8 @@ package net.inceptioncloud.minecraftmod.engine.font;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.UnicodeFont;
@@ -358,8 +360,7 @@ public class UnicodeFontRenderer implements IFontRenderer
     @Override
     public List<String> listFormattedStringToWidth (final String text, final int width)
     {
-        throw new UnsupportedOperationException("TODO!");
-        // TODO [01.03.2020]: Support Operation!
+        throw new UnsupportedOperationException("Not supported!");
     }
 
     /**
@@ -373,8 +374,7 @@ public class UnicodeFontRenderer implements IFontRenderer
     @Override
     public String wrapFormattedStringToWidth (final String text, final int width)
     {
-        throw new UnsupportedOperationException("TODO!");
-        // TODO [01.03.2020]: Support Operation!
+        throw new UnsupportedOperationException("Not supported!");
     }
 
     /**
@@ -388,8 +388,7 @@ public class UnicodeFontRenderer implements IFontRenderer
     @Override
     public int sizeStringToWidth (final String text, final int width)
     {
-        throw new UnsupportedOperationException("TODO!");
-        // TODO [01.03.2020]: Support Operation!
+        throw new UnsupportedOperationException("Not supported!");
     }
 
     //<editor-fold desc="<--- Extra Content --->">
@@ -474,4 +473,24 @@ public class UnicodeFontRenderer implements IFontRenderer
         return lines;
     }
     //</editor-fold>
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UnicodeFontRenderer that = (UnicodeFontRenderer) o;
+
+        return new EqualsBuilder()
+                .append(unicodeFont.getFont(), that.unicodeFont.getFont())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(unicodeFont.getFont())
+                .toHashCode();
+    }
 }

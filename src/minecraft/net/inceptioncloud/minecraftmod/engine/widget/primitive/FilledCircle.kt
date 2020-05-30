@@ -27,7 +27,7 @@ class FilledCircle(
     widgetColor: WidgetColor = WidgetColor.DEFAULT,
     horizontalAlignment: Alignment = Alignment.START,
     verticalAlignment: Alignment = Alignment.START
-) : Circle(x, y, size, 0F, widgetColor, horizontalAlignment, verticalAlignment) {
+) : Circle(x, y, size, widgetColor, horizontalAlignment, verticalAlignment, 0F) {
     override fun render() {
         widgetColor.glBindColor()
 
@@ -69,15 +69,6 @@ class FilledCircle(
             verticalAlignment = verticalAlignment
         )
     }
-
-    override fun toInfo(): Array<String> = arrayOf(
-        "x = $x",
-        "y = $y",
-        "size = $size",
-        "color = $widgetColor",
-        "horizontal = ${horizontalAlignment.name}",
-        "vertical = ${verticalAlignment.name}"
-    )
 
     override fun cloneWithMargin(amount: Double): FilledCircle = super.cloneWithMargin(amount) as FilledCircle
 

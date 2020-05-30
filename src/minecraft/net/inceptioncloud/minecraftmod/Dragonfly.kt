@@ -175,10 +175,7 @@ object Dragonfly
      * @param target The target transition
      */
     @JvmStatic
-    fun stopTransition(target: Transition)
-    {
-        if (!transitions.remove(target)) LogManager.getLogger().error("Could not stop " + target.javaClass.simpleName + " from " + target.originClass + "! (not running)")
-    }
+    fun stopTransition(target: Transition) = transitions.remove(target)
 
     /**
      * Add a tickable interface to handle.

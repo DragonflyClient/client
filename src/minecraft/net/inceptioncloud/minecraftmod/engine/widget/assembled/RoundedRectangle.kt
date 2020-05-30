@@ -5,6 +5,7 @@ import net.inceptioncloud.minecraftmod.engine.internal.AssembledWidget
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.structure.IAlign
 import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
@@ -33,8 +34,8 @@ class RoundedRectangle(
     width: Double = 50.0,
     height: Double = 50.0,
     widgetColor: WidgetColor = WidgetColor.DEFAULT,
-    horizontalAlignment: Alignment = Alignment.START,
-    verticalAlignment: Alignment = Alignment.START,
+    @property:State override var horizontalAlignment: Alignment = Alignment.START,
+    @property:State override var verticalAlignment: Alignment = Alignment.START,
 
     arc: Double = 5.0
 ) : AssembledWidget<RoundedRectangle>(), IPosition, IDimension, IColor, IAlign {
@@ -128,17 +129,6 @@ class RoundedRectangle(
         )
     }
 
-    override fun toInfo(): Array<String> = arrayOf(
-        "x = $x",
-        "y = $y",
-        "width = $width",
-        "height = $height",
-        "color = $widgetColor",
-        "arc = $arc",
-        "horizontal = ${horizontalAlignment.name}",
-        "vertical = ${verticalAlignment.name}"
-    )
-
     override fun newInstance(): RoundedRectangle = RoundedRectangle()
 
     @Interpolate
@@ -159,9 +149,6 @@ class RoundedRectangle(
     @Interpolate
     var arc: Double by Delegates.notNull()
 
-    override var horizontalAlignment: Alignment by Delegates.notNull()
-    override var verticalAlignment: Alignment by Delegates.notNull()
-
     override fun align(x: Double, y: Double, width: Double, height: Double) {
         this.x = horizontalAlignment.calc(x, width)
         this.y = verticalAlignment.calc(y, height)
@@ -170,9 +157,6 @@ class RoundedRectangle(
     }
 
     init {
-        this.horizontalAlignment = horizontalAlignment
-        this.verticalAlignment = verticalAlignment
-
         align(x, y, width, height)
 
         val smallest = width.coerceAtMost(height) / 2

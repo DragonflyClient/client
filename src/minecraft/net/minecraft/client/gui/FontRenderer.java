@@ -20,6 +20,8 @@ import optifine.Config;
 import optifine.CustomColors;
 import optifine.FontUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.image.BufferedImage;
@@ -1036,13 +1038,33 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
         GlStateManager.enableAlpha();
     }
 
-    protected void bindTexture (ResourceLocation p_bindTexture_1_)
-    {
+    protected void bindTexture(ResourceLocation p_bindTexture_1_) {
         this.renderEngine.bindTexture(p_bindTexture_1_);
     }
 
-    protected InputStream getResourceInputStream (ResourceLocation p_getResourceInputStream_1_) throws IOException
-    {
+    protected InputStream getResourceInputStream(ResourceLocation p_getResourceInputStream_1_) throws IOException {
         return Minecraft.getMinecraft().getResourceManager().getResource(p_getResourceInputStream_1_).getInputStream();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FontRenderer that = (FontRenderer) o;
+
+        return new EqualsBuilder()
+                .append(locationFontTextureBase, that.locationFontTextureBase)
+                .append(locationFontTexture, that.locationFontTexture)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(locationFontTextureBase)
+                .append(locationFontTexture)
+                .toHashCode();
     }
 }

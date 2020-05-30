@@ -32,23 +32,9 @@ class Line(
         glEnd()
     }
 
-    override fun clone() = Line(
-        x = x,
-        y = y,
-        widgetColor = widgetColor.clone(),
-        endX = endX,
-        endY = endY
-    )
+    override fun clone() = Line(x, y, widgetColor.clone(), endX, endY, lineWidth)
 
     override fun newInstance() = Line()
-
-    override fun toInfo() = arrayOf(
-        "x = $x",
-        "y = $y",
-        "endX = $endX",
-        "endY = $endY",
-        "color = $widgetColor"
-    )
 
     /**
      * Checks if the two points are able to create a dimension.

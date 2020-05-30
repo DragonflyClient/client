@@ -113,10 +113,26 @@ object Defaults
      * - If the widget is based on a [size][ISize], the size will be returned for both the width and the height.
      * - If the widget is based on a [dimension][IDimension]. the width and height will be returned.
      */
-    fun getSizeOrDimension(widget: Widget<*>): Pair<Double, Double> = when (widget)
-    {
+    fun getSizeOrDimension(widget: Widget<*>): Pair<Double, Double> = when (widget) {
         is IDimension -> widget.width to widget.height
         is ISize -> widget.size to widget.size
         else -> throw IllegalArgumentException("Cannot get size or dimension for widget $widget")
+    }
+
+    /**
+     * A default implementation for the mouse move event.
+     */
+    fun handleMouseMove(widgets: Collection<Widget<*>>, data: MouseData) {
+        widgets.forEach { it.handleMouseMove(data) }
+        widgets.filter { it is IPosition && (it is IDimension || it is ISize) }
+            .forEach {
+                it as IPosition
+                val x = it.x
+                val y = it.y
+                val (width, height) = getSizeOrDimension(it)
+
+                it.hovered = data.mouseX.toDouble() in x..x + width
+                        && data.mouseY.toDouble() in y..y + height
+            }
     }
 }

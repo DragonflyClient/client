@@ -10,7 +10,6 @@ import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.properties.Delegates
 
 /**
  * ## Arc Primitive Widget
@@ -36,13 +35,14 @@ import kotlin.properties.Delegates
  * @param widgetColor Color of the arc.
  */
 class Arc(
-    x: Double = 0.0,
-    y: Double = 0.0,
-    width: Double = 50.0,
-    height: Double = 50.0,
-    start: Int = 0,
-    end: Int = 90,
-    widgetColor: WidgetColor = WidgetColor.DEFAULT
+    @property:Interpolate override var x: Double = 0.0,
+    @property:Interpolate override var y: Double = 0.0,
+    @property:Interpolate override var width: Double = 50.0,
+    @property:Interpolate override var height: Double = 50.0,
+    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
+
+    @property:Interpolate var start: Int = 0,
+    @property:Interpolate var end: Int = 90
 ) : Widget<Arc>(), IPosition, IDimension, IColor
 {
     override fun render()
@@ -84,46 +84,5 @@ class Arc(
         )
     }
 
-    override fun toInfo(): Array<String> = arrayOf(
-        "x = $x",
-        "y = $y",
-        "width = $width",
-        "height = $height",
-        "color = $widgetColor",
-        "start = $start",
-        "end = $end"
-    )
-
     override fun newInstance(): Arc = Arc()
-
-    @Interpolate
-    override var x: Double by Delegates.notNull()
-
-    @Interpolate
-    override var y: Double by Delegates.notNull()
-
-    @Interpolate
-    override var width: Double by Delegates.notNull()
-
-    @Interpolate
-    override var height: Double by Delegates.notNull()
-
-    @Interpolate
-    override var widgetColor: WidgetColor by Delegates.notNull()
-
-    @Interpolate
-    var start: Int by Delegates.notNull()
-
-    @Interpolate
-    var end: Int by Delegates.notNull()
-
-    init {
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-        this.widgetColor = widgetColor
-        this.start = start
-        this.end = end
-    }
 }

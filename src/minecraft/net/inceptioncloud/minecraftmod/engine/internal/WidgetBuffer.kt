@@ -2,10 +2,7 @@ package net.inceptioncloud.minecraftmod.engine.internal
 
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
-import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IDraw
-import net.inceptioncloud.minecraftmod.engine.structure.IPosition
-import net.inceptioncloud.minecraftmod.engine.structure.ISize
 import org.lwjgl.input.Keyboard
 
 /**
@@ -104,21 +101,7 @@ class WidgetBuffer
     /**
      * Called when the mouse was moved.
      */
-    private fun handleMouseMove(data: MouseData)
-    {
-        content.values.forEach { it.handleMouseMove(data) }
-        content.values
-            .filter { it is IPosition && (it is IDimension || it is ISize) }
-            .forEach {
-                it as IPosition
-                val x = it.x
-                val y = it.y
-                val (width, height) = Defaults.getSizeOrDimension(it)
-
-                it.hovered = data.mouseX.toDouble() in x .. x + width
-                             && data.mouseY.toDouble() in y .. y + height
-            }
-    }
+    private fun handleMouseMove(data: MouseData) = Defaults.handleMouseMove(content.values, data)
 
     /**
      * Called when a mouse button is pressed.
