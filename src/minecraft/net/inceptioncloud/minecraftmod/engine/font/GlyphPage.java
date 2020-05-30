@@ -14,15 +14,13 @@ import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class GlyphPage
-{
-    private int imgSize;
-    private int maxFontHeight = -1;
+public class GlyphPage {
     private final Font font;
     private final boolean antiAliasing;
     private final boolean fractionalMetrics;
     public HashMap<Character, Glyph> glyphCharacterMap = new HashMap<>();
-
+    private int imgSize;
+    private int maxFontHeight = -1;
     private BufferedImage bufferedImage;
     private DynamicTexture loadedTexture;
 
@@ -76,12 +74,10 @@ public class GlyphPage
         maxWidth += 2;
         maxHeight += 2;
 
-        imgSize = (int) Math.ceil(
-                Math.max(
-                        Math.ceil(Math.sqrt(maxWidth * maxWidth * chars.length) / maxWidth),
-                        Math.ceil(Math.sqrt(maxHeight * maxHeight * chars.length) / maxHeight)
-                )
-                        * Math.max(maxWidth, maxHeight)) + 1;
+        imgSize = (int) Math.ceil(Math.max(
+                Math.ceil(Math.sqrt(maxWidth * maxWidth * chars.length) / maxWidth),
+                Math.ceil(Math.sqrt(maxHeight * maxHeight * chars.length) / maxHeight)
+        ) * Math.max(maxWidth, maxHeight)) + 1;
 
         bufferedImage = new BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB);
 
@@ -120,7 +116,7 @@ public class GlyphPage
             Rectangle2D bounds = fontMetrics.getStringBounds(Character.toString(ch), g);
 
             glyph.width = bounds.getBounds().width + 8; // Leave some additional space
-            glyph.height = bounds.getBounds().height;
+            glyph.height = ((int) bounds.getHeight());
 
             if (posY + glyph.height >= imgSize) {
                 throw new IllegalStateException("Not all characters will fit");
@@ -138,21 +134,23 @@ public class GlyphPage
             glyph.x = posX;
             glyph.y = posY;
 
-            if (glyph.height > maxFontHeight) maxFontHeight = glyph.height;
+            if (glyph.height > maxFontHeight) {
+                maxFontHeight = glyph.height;
+            }
 
-            if (glyph.height > currentCharHeight) currentCharHeight = glyph.height;
+            if (glyph.height > currentCharHeight) {
+                currentCharHeight = glyph.height;
+            }
 
             g.drawString(Character.toString(ch), posX + (ch == 'j' ? 5 : 2), posY + fontMetrics.getAscent());
 
             posX += glyph.width;
 
             glyphCharacterMap.put(ch, glyph);
-
         }
     }
 
-    public void setupTexture ()
-    {
+    public void setupTexture() {
         loadedTexture = new DynamicTexture(bufferedImage);
     }
 

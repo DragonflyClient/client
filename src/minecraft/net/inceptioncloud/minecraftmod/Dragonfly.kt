@@ -24,30 +24,44 @@ import java.util.function.Consumer
 /**
  * The main class of the Inception Cloud Minecraft Mod.
  */
-object Dragonfly
-{
+object Dragonfly {
     /**
      * The current Minecraft Mod version
      */
     const val version: String = "1.0.1.0-alpha"
 
-    @JvmStatic val gameStateManager: GameStateManager
-    @JvmStatic val richPresenceManager: RichPresenceManager
-    @JvmStatic val eventBus: ModEventBus
-    @JvmStatic val fontDesign: FontManager
-    @JvmStatic val splashScreen: ModSplashScreen
-    @JvmStatic val options: Options
-    @JvmStatic val logger: Logger = LogManager.getLogger()
+    @JvmStatic
+    val gameStateManager: GameStateManager
+
+    @JvmStatic
+    val richPresenceManager: RichPresenceManager
+
+    @JvmStatic
+    val eventBus: ModEventBus
+
+    @JvmStatic
+    val fontDesign: FontManager
+
+    @JvmStatic
+    val splashScreen: ModSplashScreen
+
+    @JvmStatic
+    val options: Options
+
+    @JvmStatic
+    val logger: Logger = LogManager.getLogger()
 
     /**
      * All transitions handled by the mod.
      */
-    @JvmStatic val transitions: MutableList<Transition> = Collections.synchronizedList(ArrayList())
+    @JvmStatic
+    val transitions: MutableList<Transition> = Collections.synchronizedList(ArrayList())
 
     /**
      * The last amount of mod ticks per second.
      */
-    @JvmStatic var lastTPS = 0
+    @JvmStatic
+    var lastTPS = 0
 
     /**
      * Whether the debug mode is currently enabled.
@@ -87,8 +101,7 @@ object Dragonfly
      *
      * Called when loading the Minecraft client.
      */
-    init
-    {
+    init {
         Display.setTitle(InceptionCloudVersion.FULL_VERSION + " | Minecraft Mod 1.8.8")
         eventBus = ModEventBus()
         options = Options()
@@ -101,16 +114,12 @@ object Dragonfly
         OptionsSectionScoreboard.init()
         OptionsSectionZoom.init()
         tickTimer = Timer("Minecraft Mod Tick Timer")
-        tickTimer.scheduleAtFixedRate(object : TimerTask()
-        {
-            override fun run()
-            {
-                try
-                {
+        tickTimer.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                try {
                     tick()
                     recordTick()
-                } catch (exception: Exception)
-                {
+                } catch (exception: Exception) {
                     LogManager.getLogger().error("Inception Cloud Mod Tick failed!")
                     exception.printStackTrace()
                 }
@@ -128,8 +137,7 @@ object Dragonfly
      * Used to shut down the current InceptionCloud Minecraft Mod Instance.
      */
     @JvmStatic
-    fun shutdownInstance()
-    {
+    fun shutdownInstance() {
         LogManager.getLogger().info("Shutting down InceptionCloud Minecraft Mod Instance...")
         tickTimer.cancel()
     }
@@ -138,8 +146,7 @@ object Dragonfly
      * Reloads the Minecraft Mod.
      */
     @JvmStatic
-    fun reload()
-    {
+    fun reload() {
         options.contentSave()
         fontDesign.clearCache()
     }
@@ -147,11 +154,10 @@ object Dragonfly
     /**
      * Record the procedure of the tick for the debug screen.
      */
-    private fun recordTick()
-    {
+    private fun recordTick() {
         ticks++
-        if (firstTick == 0L) firstTick = System.currentTimeMillis() else if (System.currentTimeMillis() - firstTick >= 1000)
-        {
+        if (firstTick == 0L) firstTick =
+            System.currentTimeMillis() else if (System.currentTimeMillis() - firstTick >= 1000) {
             lastTPS = ticks
             firstTick = 0
             ticks = 0
@@ -164,8 +170,7 @@ object Dragonfly
      * @param target The target transition
      */
     @JvmStatic
-    fun handleTransition(target: Transition)
-    {
+    fun handleTransition(target: Transition) {
         transitions.add(target)
     }
 
@@ -185,10 +190,8 @@ object Dragonfly
      */
     @JvmOverloads
     @JvmStatic
-    fun handleTickable(tickable: Tickable, associatedClass: Class<*>? = null)
-    {
-        if (associatedClass != null && associatedTickables.containsKey(associatedClass))
-        {
+    fun handleTickable(tickable: Tickable, associatedClass: Class<*>? = null) {
+        if (associatedClass != null && associatedTickables.containsKey(associatedClass)) {
             val previous = associatedTickables[associatedClass]
             tickables.remove(previous)
             LogManager.getLogger().info("Replaced previous Tickable " + previous!!.javaClass.simpleName)
@@ -202,8 +205,7 @@ object Dragonfly
     /**
      * Perform the mod tick.
      */
-    private fun tick()
-    {
+    private fun tick() {
         synchronized(this) {
             ArrayList(transitions).forEach(Consumer { obj: Transition -> obj.tick() })
             ArrayList(tickables).forEach(Consumer { obj: Tickable? -> obj!!.modTick() })

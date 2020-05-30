@@ -13,7 +13,7 @@ class EngineTestUI : GuiScreen() {
 
     override fun initGui() {
         +TextRenderer(
-            text = "Àlors mon Sample Text!ß",
+            text = "InceptionCloud | This is a sample text!",
             x = 20.0,
             y = 20.0,
             widgetColor = Color.YELLOW.widget,
@@ -21,7 +21,7 @@ class EngineTestUI : GuiScreen() {
         ) id "sample-text-glyph"
 
         +TextRenderer(
-            text = "Àlors mon Sample Text!ß",
+            text = "InceptionCloud | This is a sample text!",
             x = 120.0,
             y = 20.0,
             widgetColor = Color.GREEN.widget,

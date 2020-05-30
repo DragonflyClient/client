@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.font;
 
+import net.inceptioncloud.minecraftmod.engine.GraphicsEngine;
 import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -170,17 +171,7 @@ public class GlyphFontRenderer implements IFontRenderer {
             }
         }
 
-        List<Character> characterList = new ArrayList<>();
-
-        for (int i = 0; i < 256; i++) {
-            characterList.add((char) i);
-        }
-
-        final char[] chars = new char[characterList.size()];
-
-        for (int i = 0; i < characterList.size(); i++) {
-            chars[i] = characterList.get(i);
-        }
+        final char[] chars = GraphicsEngine.CHARACTERS;
 
         GlyphPage regularPage =
                 new GlyphPage(makeFont(fontName, Font.PLAIN, (int) (size * getFontQualityScale()), letterSpacing),

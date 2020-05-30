@@ -17,9 +17,10 @@ import java.util.*
 object GraphicsEngine {
     private val scaleStack: Stack<Double> = Stack()
 
-    private val debugColors = arrayOf(
-        0x27ae60, 0xf39c12, 0x2980b9
-    )
+    private val debugColors = arrayOf(0x27ae60, 0xf39c12, 0x2980b9)
+
+    @JvmField
+    val CHARACTERS = ((32..126) + (166..187)).map { it.toChar() }.toCharArray()
 
     fun renderDebugOverlay(mapped: Map<String, Widget<*>>) {
         val content = mapped.values
