@@ -4,7 +4,7 @@ import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward
-import net.inceptioncloud.minecraftmod.utils.RenderUtils
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.renderer.GlStateManager
 import java.awt.Color
 import java.util.function.BooleanSupplier

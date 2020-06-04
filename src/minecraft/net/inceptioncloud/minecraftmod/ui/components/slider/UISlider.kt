@@ -1,8 +1,8 @@
 package net.inceptioncloud.minecraftmod.ui.components.slider
 
-import net.inceptioncloud.minecraftmod.InceptionMod
+import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
-import net.inceptioncloud.minecraftmod.utils.RenderUtils
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
@@ -125,7 +125,7 @@ class UISlider(var x: Int, var y: Int, var width: Int,
         RenderUtils.drawRoundRect((x * f).toInt(), (y * f - 1).toInt(), (width * f).toInt(), 2, 0, BluePalette.FOREGROUND)
         RenderUtils.drawFilledCircle(((x + (width * sliderPosition)) * f).toInt(), (y * f).toInt(), 4F, BluePalette.PRIMARY_LIGHT)
 
-        val fontRenderer = InceptionMod.getInstance().fontDesign.retrieveOrBuild("", 34)
+        val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("", 34)
         val stringWidth = fontRenderer.getStringWidth(displayString)
 
         fontRenderer.drawString(displayString, ((x - 5) * f - stringWidth).toInt(), ((y - 3.5) * f).toInt(), BluePalette.PRIMARY_LIGHT.rgb)

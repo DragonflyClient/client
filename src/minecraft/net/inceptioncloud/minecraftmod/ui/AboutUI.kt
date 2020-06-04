@@ -1,9 +1,9 @@
 package net.inceptioncloud.minecraftmod.ui
 
-import net.inceptioncloud.minecraftmod.InceptionMod
+import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.ui.components.button.ImageButton
-import net.inceptioncloud.minecraftmod.utils.RenderUtils
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
@@ -46,7 +46,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen()
 
             val header = wHeight / 11
             val body = wHeight - header
-            val fontRenderer = InceptionMod.getInstance().fontDesign.retrieveOrBuild(" Medium", (header * 1.1).toInt())
+            val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild(" Medium", (header * 1.1).toInt())
 
             // Header
             RenderUtils.drawRoundRect(wX, wY, wWidth, header, 100, BluePalette.PRIMARY)
@@ -59,9 +59,9 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen()
             Gui.drawRect(wX, wY + header, wX + wWidth, wY + wHeight - header / 2, BluePalette.FOREGROUND.rgb)
 
             //region Content
-            val titleFont = InceptionMod.getInstance().fontDesign.retrieveOrBuild("", (header * 1.15).toInt())
-            val largeFont = InceptionMod.getInstance().fontDesign.retrieveOrBuild("", header / 1)
-            val smallFont = InceptionMod.getInstance().fontDesign.retrieveOrBuild("", (header / 1.5).toInt())
+            val titleFont = Dragonfly.fontDesign.retrieveOrBuild("", (header * 1.15).toInt())
+            val largeFont = Dragonfly.fontDesign.retrieveOrBuild("", header / 1)
+            val smallFont = Dragonfly.fontDesign.retrieveOrBuild("", (header / 1.5).toInt())
             val largeColor = 0x545454
             val smallColor = 0x6D6D6D
             val imageSize = (smallFont.height * 1.2).toInt()
@@ -70,7 +70,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen()
             //region Title
             titleFont.drawCenteredString("Inception Cloud Minecraft Mod", wX + wWidth / 2, textY, largeColor, false)
             textY += titleFont.height + 2
-            smallFont.drawCenteredString(InceptionMod.getVersion(), wX + wWidth / 2, textY, smallColor, false)
+            smallFont.drawCenteredString(Dragonfly.version, wX + wWidth / 2, textY, smallColor, false)
             textY += smallFont.height + 12
             //endregion
 

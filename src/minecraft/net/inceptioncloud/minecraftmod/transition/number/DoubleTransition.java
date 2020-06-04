@@ -1,8 +1,5 @@
 package net.inceptioncloud.minecraftmod.transition.number;
 
-import lombok.Builder;
-import lombok.Getter;
-
 import java.util.function.IntSupplier;
 
 /**
@@ -11,7 +8,6 @@ import java.util.function.IntSupplier;
  * The transition that supplies a double value that transforms from the start value to the end value
  * in only that direction.
  */
-@Getter
 public class DoubleTransition extends TransitionTypeNumber
 {
     /**
@@ -25,31 +21,26 @@ public class DoubleTransition extends TransitionTypeNumber
     /**
      * The start value.
      */
-    @Builder.Default
     protected double start = 10;
 
     /**
      * The end value.
      */
-    @Builder.Default
     protected double end = 100;
 
     /**
      * The amount the current value is changed with when processing a step.
      */
-    @Builder.Default
     protected double perStep = 10;
 
     /**
      * Whether the transition goes from positive to negative values.
      */
-    @Builder.Default
     protected boolean negative = false;
 
     /**
      * The current double value.
      */
-    @Builder.Default
     protected double current = 0;
 
     /**
@@ -71,8 +62,7 @@ public class DoubleTransition extends TransitionTypeNumber
      * @param reachEnd      {@link #reachEnd}
      * @param reachStart    {@link #reachStart}
      */
-    @Builder ( toBuilder = true )
-    private DoubleTransition (final double start, final double end, final int amountOfSteps, final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
+    DoubleTransition (final double start, final double end, final int amountOfSteps, final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
     {
         super(reachEnd, reachStart, autoTransformator);
 
@@ -183,14 +173,20 @@ public class DoubleTransition extends TransitionTypeNumber
         return (int) get();
     }
 
+    public static DoubleTransitionBuilder builder ()
+    {
+        return new DoubleTransitionBuilder();
+    }
+
     /**
      * Change the end value
+     *
      * @param end The end value
      */
     public void setEnd (final double end)
     {
         this.end = end;
-        this.perStep = ( Math.max(start, end) - Math.min(start, end) ) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
+        this.perStep = (Math.max(start, end) - Math.min(start, end)) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
     }
 
     @Override
@@ -199,5 +195,6 @@ public class DoubleTransition extends TransitionTypeNumber
         return "DoubleTransition{" +
                "originStackTrace=" + originStackTrace +
                '}';
+
     }
 }

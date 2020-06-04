@@ -2,23 +2,28 @@ package net.minecraft.client.gui;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.color.RGB;
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionScoreboard;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +32,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
-import net.minecraft.scoreboard.*;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.*;
 import net.minecraft.world.border.WorldBorder;
 import optifine.Config;
@@ -35,11 +43,14 @@ import optifine.CustomColors;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
 import java.util.stream.Collectors;
 
-public class GuiIngame extends Gui
-{
+import static net.minecraft.client.gui.GuiScreen.sendChatMessage;
+
+public class GuiIngame extends Gui {
     private static final ResourceLocation vignetteTexPath = new ResourceLocation("textures/misc/vignette.png");
     private static final ResourceLocation widgetsTexPath = new ResourceLocation("textures/gui/widgets.png");
     private static final ResourceLocation pumpkinBlurTexPath = new ResourceLocation("textures/misc/pumpkinblur.png");
@@ -61,10 +72,10 @@ public class GuiIngame extends Gui
     private final GuiSpectator spectatorGui;
     private final GuiPlayerTabOverlay overlayPlayerList;
     private final SmoothDoubleTransition goodGameProcess = SmoothDoubleTransition.builder()
-        .fadeIn(0).stay(50).fadeOut(100)
-        .start(0).end(1)
-        .autoTransformator(( ForwardBackward ) () -> Keyboard.isCreated() && Keyboard.isKeyDown(Keyboard.KEY_G) && !GuiNewChat.isChatOpen())
-        .reachEnd(() -> GuiChat.sendChatMessage("gg", false))
+            .fadeIn(0).stay(50).fadeOut(100)
+            .start(0).end(1)
+            .autoTransformator((ForwardBackward) () -> Keyboard.isCreated() && Keyboard.isKeyDown(Keyboard.KEY_G) && !GuiNewChat.isChatOpen())
+            .reachEnd(() -> sendChatMessage("gg", false))
         .build();
     /**
      * Previous frame vignette brightness (slowly changes by 1% each frame)
@@ -130,7 +141,7 @@ public class GuiIngame extends Gui
         this.streamIndicator = new GuiStreamIndicator(mcIn);
         this.overlayPlayerList = new GuiPlayerTabOverlay(mcIn, this);
         this.func_175177_a();
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     public void func_175177_a ()
@@ -246,7 +257,6 @@ public class GuiIngame extends Gui
                 k1 = 255;
             }
 
-//            if (k1 > 8) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(( float ) ( scaledWidth / 2 ), ( float ) ( scaledHeight - 68 ), 0.0F);
             GlStateManager.enableBlend();
@@ -260,12 +270,11 @@ public class GuiIngame extends Gui
             int color = recordAnimateColor ? i1 + ( k1 << 24 & -16777216 ) : 0xFFFFFF;
             color = RGB.of(color).alpha(( int ) (55 + (200D * actionBar.get() ) )).rgb();
 
-            IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getMedium();
+            IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
             fontRenderer.drawCenteredString(this.recordPlaying, 0, posY, color, true);
 
             GlStateManager.disableBlend();
             GlStateManager.popMatrix();
-//            }
 
             this.mc.mcProfiler.endSection();
         }
@@ -288,8 +297,8 @@ public class GuiIngame extends Gui
 
             if (l1 > 8) {
 
-                final IFontRenderer titleRenderer = InceptionMod.getInstance().getFontDesign().getTitle();
-                final IFontRenderer subtitleRenderer = InceptionMod.getInstance().getFontDesign().getSubtitle();
+                final IFontRenderer titleRenderer = Dragonfly.getFontDesign().getTitle();
+                final IFontRenderer subtitleRenderer = Dragonfly.getFontDesign().getSubtitle();
 
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(( float ) ( scaledWidth / 2 ), ( float ) ( scaledHeight / 2 ), 0.0F);
@@ -369,10 +378,10 @@ public class GuiIngame extends Gui
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
             RenderHelper.enableGUIStandardItemLighting();
 
-            for (int j = 0 ; j < 9 ; ++j) {
-                int k = sr.getScaledWidth() / 2 - 90 + j * 20 + 2;
-                int l = sr.getScaledHeight() - 16 - 3;
-                this.renderHotbarItem(j, k, l, partialTicks, entityplayer);
+            for (int slot = 0 ; slot < 9 ; ++slot) {
+                int x = sr.getScaledWidth() / 2 - 90 + slot * 20 + 2;
+                int y = sr.getScaledHeight() - 16 - 3;
+                this.renderHotbarItem(slot, x, y, partialTicks, entityplayer);
             }
 
             RenderHelper.disableStandardItemLighting();
@@ -403,7 +412,7 @@ public class GuiIngame extends Gui
         this.mc.mcProfiler.startSection("expBar");
         this.mc.getTextureManager().bindTexture(Gui.icons);
         int i = this.mc.thePlayer.xpBarCap();
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getMedium();
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getMedium();
 
         if (i > 0) {
             short short1 = 182;
@@ -441,7 +450,7 @@ public class GuiIngame extends Gui
     public void drawSelectedItemName (ScaledResolution resolution)
     {
         this.mc.mcProfiler.startSection("selectedItemName");
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
 
         if (this.remainingHighlightTicks > 0 && this.highlightingItemStack != null) {
             String s = this.highlightingItemStack.getDisplayName();
@@ -479,7 +488,7 @@ public class GuiIngame extends Gui
     public void renderDemo (ScaledResolution p_175185_1_)
     {
         this.mc.mcProfiler.startSection("demo");
-        final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
         String s = "";
 
         if (this.mc.theWorld.getTotalWorldTime() >= 120500L) {
@@ -521,8 +530,8 @@ public class GuiIngame extends Gui
 
     private void renderScoreboard (ScoreObjective objective, ScaledResolution resolution)
     {
-        IFontRenderer fontRegular = InceptionMod.getInstance().getFontDesign().getRegular();
-        IFontRenderer fontMedium = InceptionMod.getInstance().getFontDesign().getMedium();
+        IFontRenderer fontRegular = Dragonfly.getFontDesign().getRegular();
+        IFontRenderer fontMedium = Dragonfly.getFontDesign().getRegular();
         Scoreboard scoreboard = objective.getScoreboard();
         Collection<Score> sortedScores = scoreboard.getSortedScores(objective);
         ArrayList<Score> displayableScores = sortedScores.stream().filter(score -> score.getPlayerName() != null && !score.getPlayerName().startsWith("#")).collect(Collectors.toCollection(Lists::newArrayList));
@@ -855,7 +864,7 @@ public class GuiIngame extends Gui
     {
         if (BossStatus.bossName != null && BossStatus.statusBarTime > 0) {
             --BossStatus.statusBarTime;
-            IFontRenderer fontrenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getRegular();
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaledWidth();
             short short1 = 182;

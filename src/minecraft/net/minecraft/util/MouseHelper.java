@@ -1,6 +1,6 @@
 package net.minecraft.util;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
@@ -14,7 +14,7 @@ public class MouseHelper
 
     public MouseHelper ()
     {
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     /**

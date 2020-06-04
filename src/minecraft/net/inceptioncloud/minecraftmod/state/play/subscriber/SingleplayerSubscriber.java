@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.state.play.subscriber;
 
 import com.google.common.eventbus.Subscribe;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.minecraftmod.event.play.IntegratedServerLoggedInEvent;
 import net.inceptioncloud.minecraftmod.state.play.SingleplayerState;
@@ -18,7 +18,7 @@ public class SingleplayerSubscriber
     @Subscribe
     public void integratedServerStartup (IntegratedServerLoggedInEvent event)
     {
-        InceptionMod.getInstance().getGameStateManager().updateState(new SingleplayerState(false, System.currentTimeMillis(), event.getIntegratedServer()));
+        Dragonfly.getGameStateManager().updateState(new SingleplayerState(false, System.currentTimeMillis(), event.getIntegratedServer()));
     }
 
     /**
@@ -31,10 +31,10 @@ public class SingleplayerSubscriber
         if (event.isCancelled()) return;
         boolean paused = event.getNewScreen() instanceof GuiIngameMenu;
 
-        InceptionMod.getInstance().getGameStateManager().getCurrent().ifSingleplayer(state ->
+        Dragonfly.getGameStateManager().getCurrent().ifSingleplayer(state ->
         {
             if (paused != state.isPaused())
-                InceptionMod.getInstance().getGameStateManager().updateState(new SingleplayerState(paused, state.getJoinTime(), state.getIntegratedServer()));
+                Dragonfly.getGameStateManager().updateState(new SingleplayerState(paused, state.getJoinTime(), state.getIntegratedServer()));
         });
     }
 }

@@ -1,31 +1,20 @@
 package net.minecraft.world.chunk.storage;
 
 import com.google.common.collect.Lists;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.minecraft.client.AnvilConverterException;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraft.world.biome.WorldChunkManagerHell;
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.SaveFormatComparator;
-import net.minecraft.world.storage.SaveFormatOld;
-import net.minecraft.world.storage.WorldInfo;
+import net.minecraft.world.biome.*;
+import net.minecraft.world.storage.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.*;
+import java.util.*;
 
 public class AnvilSaveConverter extends SaveFormatOld
 {
@@ -34,7 +23,7 @@ public class AnvilSaveConverter extends SaveFormatOld
     public AnvilSaveConverter(File p_i2144_1_)
     {
         super(p_i2144_1_);
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     /**
@@ -49,7 +38,7 @@ public class AnvilSaveConverter extends SaveFormatOld
     {
         if (this.savesDirectory != null && this.savesDirectory.exists() && this.savesDirectory.isDirectory())
         {
-            List<SaveFormatComparator> list = Lists.<SaveFormatComparator>newArrayList();
+            List<SaveFormatComparator> list = Lists.newArrayList();
             File[] afile = this.savesDirectory.listFiles();
 
             for (File file1 : afile)
@@ -122,9 +111,9 @@ public class AnvilSaveConverter extends SaveFormatOld
     public boolean convertMapFormat(String filename, IProgressUpdate progressCallback)
     {
         progressCallback.setLoadingProgress(0);
-        List<File> list = Lists.<File>newArrayList();
-        List<File> list1 = Lists.<File>newArrayList();
-        List<File> list2 = Lists.<File>newArrayList();
+        List<File> list = Lists.newArrayList();
+        List<File> list1 = Lists.newArrayList();
+        List<File> list2 = Lists.newArrayList();
         File file1 = new File(this.savesDirectory, filename);
         File file2 = new File(file1, "DIM-1");
         File file3 = new File(file1, "DIM1");

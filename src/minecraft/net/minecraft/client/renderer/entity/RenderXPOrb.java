@@ -1,9 +1,6 @@
 package net.minecraft.client.renderer.entity;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityXPOrb;
@@ -72,14 +69,14 @@ public class RenderXPOrb extends Render
             {
                 j1 = i2 >> 16 & 255;
                 k1 = i2 >> 8 & 255;
-                l1 = i2 >> 0 & 255;
+                l1 = i2 & 255;
             }
         }
 
-        worldrenderer.pos((double)(0.0F - f5), (double)(0.0F - f6), 0.0D).tex((double)f, (double)f3).color(j1, k1, l1, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
-        worldrenderer.pos((double)(f4 - f5), (double)(0.0F - f6), 0.0D).tex((double)f1, (double)f3).color(j1, k1, l1, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
-        worldrenderer.pos((double)(f4 - f5), (double)(1.0F - f6), 0.0D).tex((double)f1, (double)f2).color(j1, k1, l1, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
-        worldrenderer.pos((double)(0.0F - f5), (double)(1.0F - f6), 0.0D).tex((double)f, (double)f2).color(j1, k1, l1, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
+        worldrenderer.pos(0.0F - f5, 0.0F - f6, 0.0D).tex(f, f3).color(j1, k1, l1, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
+        worldrenderer.pos(f4 - f5, 0.0F - f6, 0.0D).tex(f1, f3).color(j1, k1, l1, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
+        worldrenderer.pos(f4 - f5, 1.0F - f6, 0.0D).tex(f1, f2).color(j1, k1, l1, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
+        worldrenderer.pos(0.0F - f5, 1.0F - f6, 0.0D).tex(f, f2).color(j1, k1, l1, 128).normal(0.0F, 1.0F, 0.0F).endVertex();
         tessellator.draw();
         GlStateManager.disableBlend();
         GlStateManager.disableRescaleNormal();

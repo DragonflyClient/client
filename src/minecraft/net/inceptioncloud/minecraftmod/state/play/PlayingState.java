@@ -1,21 +1,19 @@
 package net.inceptioncloud.minecraftmod.state.play;
 
-import lombok.*;
 import net.inceptioncloud.minecraftmod.state.GameState;
+
+import java.util.Objects;
 
 /**
  * The superclass of any Game State in which the user is playing.
  * These are {@link SingleplayerState} and {@link MultiplayerState}.
  */
-@Getter
-@ToString
-@EqualsAndHashCode ( callSuper = true )
 public abstract class PlayingState extends GameState
 {
     /**
      * Whether the game is currently paused.
      */
-    private boolean paused;
+    private final boolean paused;
 
     /**
      * The time (in millis) when the user joined in-game.
@@ -29,5 +27,40 @@ public abstract class PlayingState extends GameState
     {
         this.paused = paused;
         this.joinTime = joinTime;
+    }
+
+    @Override
+    public boolean equals (final Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final PlayingState that = (PlayingState) o;
+        return paused == that.paused &&
+               joinTime == that.joinTime;
+    }
+
+    @Override
+    public String toString ()
+    {
+        return "PlayingState{" +
+               "paused=" + paused +
+               ", joinTime=" + joinTime +
+               '}';
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        return Objects.hash(paused, joinTime);
+    }
+
+    public boolean isPaused ()
+    {
+        return paused;
+    }
+
+    public long getJoinTime ()
+    {
+        return joinTime;
     }
 }

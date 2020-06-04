@@ -1,6 +1,5 @@
 package net.inceptioncloud.minecraftmod.transition.number;
 
-import lombok.Builder;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.IntSupplier;
@@ -47,7 +46,6 @@ public class OverflowDoubleTransition extends TransitionTypeNumber
      * @param reachEnd     {@link #reachEnd}
      * @param reachStart   {@link #reachStart}
      */
-    @Builder
     public OverflowDoubleTransition (final double start, final double overflow, final double end, final int firstAmount, final int secondAmount,
                                      final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
     {
@@ -144,5 +142,10 @@ public class OverflowDoubleTransition extends TransitionTypeNumber
         return "OverflowDoubleTransition{" +
                "originStackTrace=" + originStackTrace +
                '}';
+    }
+
+    public static OverflowDoubleTransitionBuilder builder ()
+    {
+        return new OverflowDoubleTransitionBuilder();
     }
 }

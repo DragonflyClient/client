@@ -1,7 +1,7 @@
 {
   "lastServer": {
-    "serverName": "Gomme",
-    "serverIP": "gommehd.net",
+    "serverName": "Inception Cloud :^)",
+    "serverIP": "inceptioncloud.net",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -12,7 +12,7 @@
   "fontQualityScale": 3.1,
   "borderlessWindow": true,
   "windowedFullscreen": true,
-  "zoomFieldOfView": 25,
-  "zoomMouseSensitivity": 100,
-  "fontQuality": 2.5000000000000013
+  "zoomFieldOfView": 30,
+  "zoomMouseSensitivity": 79,
+  "fontQuality": 2.9508196721311473
 }

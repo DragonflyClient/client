@@ -1,16 +1,15 @@
 package net.inceptioncloud.minecraftmod.options;
 
-import lombok.Getter;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
  * Represents a value that is set in the options file for a specific key.
+ *
  * @param <T> The type of the value
  */
-@Getter
 public class OptionKey<T>
 {
     /**
@@ -35,8 +34,9 @@ public class OptionKey<T>
 
     /**
      * Initialize a new Options Key.
-     * @param key The key in String-Format under which the value is saved
-     * @param validator Validates whether the current value is acceptable
+     *
+     * @param key          The key in String-Format under which the value is saved
+     * @param validator    Validates whether the current value is acceptable
      * @param defaultValue Supplies the default value
      */
     public OptionKey (final Class<T> typeClass, final String key, final Predicate<T> validator, final Supplier<T> defaultValue)
@@ -48,11 +48,19 @@ public class OptionKey<T>
     }
 
     /**
+     * Returns a new {@link OptionKeyBuilder} to build a new instance of the {@link OptionKey} class.
+     */
+    public static <T> OptionKeyBuilder<T> newInstance (Class<T> typeClass)
+    {
+        return new OptionKeyBuilder<>(typeClass);
+    }
+
+    /**
      * @see Options#getValue(OptionKey) Documentation
      */
     public T get ()
     {
-        return InceptionMod.getInstance().getOptions().getValue(this);
+        return Dragonfly.getOptions().getValue(this);
     }
 
     /**
@@ -60,14 +68,26 @@ public class OptionKey<T>
      */
     public boolean set (T value)
     {
-        return InceptionMod.getInstance().getOptions().setValue(this, value);
+        return Dragonfly.getOptions().setValue(this, value);
     }
 
-    /**
-     * Returns a new {@link OptionKeyBuilder} to build a new instance of the {@link OptionKey} class.
-     */
-    public static <T> OptionKeyBuilder<T> newInstance (Class<T> typeClass)
+    public Class<T> getTypeClass ()
     {
-        return new OptionKeyBuilder<>(typeClass);
+        return typeClass;
+    }
+
+    public String getKey ()
+    {
+        return key;
+    }
+
+    public Predicate<T> getValidator ()
+    {
+        return validator;
+    }
+
+    public Supplier<T> getDefaultValue ()
+    {
+        return defaultValue;
     }
 }

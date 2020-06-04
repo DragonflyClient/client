@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.discord.subscriber;
 
 import com.google.common.eventbus.Subscribe;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.client.GameStateUpdateEvent;
 
 /**
@@ -16,6 +16,6 @@ public class RichPresenceSubscriber
     @Subscribe
     public void gameStateUpdate (GameStateUpdateEvent event)
     {
-        InceptionMod.getInstance().getRichPresenceManager().update(event.getNext().getBelongingRichPresence());
+        Dragonfly.getRichPresenceManager().update(event.getNext().getBelongingRichPresence());
     }
 }

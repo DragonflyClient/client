@@ -2,7 +2,7 @@
 
 package net.inceptioncloud.minecraftmod.options.sections
 
-import net.inceptioncloud.minecraftmod.InceptionMod
+import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.options.entries.factories.OptionEntryRangeDoubleFactory.Companion.optionEntryRangeDouble
 import net.inceptioncloud.minecraftmod.options.sections.OptionSectionFactory.Companion.optionSection
 import java.text.DecimalFormat
@@ -30,7 +30,7 @@ object OptionsSectionUI
         maxValue = 8.0
         externalApply = { value, optionKey ->
             optionKey.set(value)
-            InceptionMod.getInstance().reload()
+            Dragonfly.reload()
         }
         formatter = {
             val round = (it * 10).roundToInt() / 10.0

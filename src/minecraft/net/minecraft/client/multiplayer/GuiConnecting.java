@@ -1,6 +1,6 @@
 package net.minecraft.client.multiplayer;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.play.ServerConnectingEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -52,7 +52,7 @@ public class GuiConnecting extends GuiScreen
 
         // EVENTBUS - Calls the ServerConnectingEvent that can be cancelled to interrupt the connection
         ServerConnectingEvent connectingEvent = new ServerConnectingEvent(ip, port);
-        InceptionMod.getInstance().getEventBus().post(connectingEvent);
+        Dragonfly.getEventBus().post(connectingEvent);
         if (connectingEvent.isCancelled()) return;
 
         new Thread("Server Connector #" + CONNECTION_ID.incrementAndGet())
@@ -150,9 +150,9 @@ public class GuiConnecting extends GuiScreen
         this.drawDefaultBackground();
 
         if (this.networkManager == null) {
-            this.drawCenteredString(this.fontRendererObj, I18n.format("connect.connecting"), this.width / 2, this.height / 2 - 50, 16777215);
+            drawCenteredString(this.fontRendererObj, I18n.format("connect.connecting"), this.width / 2, this.height / 2 - 50, 16777215);
         } else {
-            this.drawCenteredString(this.fontRendererObj, I18n.format("connect.authorizing"), this.width / 2, this.height / 2 - 50, 16777215);
+            drawCenteredString(this.fontRendererObj, I18n.format("connect.authorizing"), this.width / 2, this.height / 2 - 50, 16777215);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);

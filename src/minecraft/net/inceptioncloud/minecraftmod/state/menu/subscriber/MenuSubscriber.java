@@ -1,10 +1,10 @@
 package net.inceptioncloud.minecraftmod.state.menu.subscriber;
 
 import com.google.common.eventbus.Subscribe;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.minecraftmod.state.menu.MenuState;
-import net.inceptioncloud.minecraftmod.state.play.*;
+import net.inceptioncloud.minecraftmod.state.play.PlayingState;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -22,8 +22,8 @@ public class MenuSubscriber
         if(Minecraft.getMinecraft().theWorld != null)
             return;
 
-        InceptionMod.getInstance().getGameStateManager().getCurrent().ifPlaying(playingState ->
-            InceptionMod.getInstance().getGameStateManager().updateState(new MenuState())
+        Dragonfly.getGameStateManager().getCurrent().ifPlaying(playingState ->
+            Dragonfly.getGameStateManager().updateState(new MenuState())
         );
     }
 }

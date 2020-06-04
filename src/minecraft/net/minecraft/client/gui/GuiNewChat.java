@@ -1,8 +1,8 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
-import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.Dragonfly;
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.impl.Tickable;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
@@ -10,14 +10,17 @@ import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.*;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.MathHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.*;
 import java.util.function.IntSupplier;
 
 public class GuiNewChat extends Gui implements Tickable
@@ -76,7 +79,7 @@ public class GuiNewChat extends Gui implements Tickable
     {
         this.mc = mcIn;
 
-        InceptionMod.getInstance().handleTickable(this);
+        Dragonfly.handleTickable(this);
     }
 
     public static int calculateChatboxWidth (float chatWidthSetting)
@@ -126,7 +129,7 @@ public class GuiNewChat extends Gui implements Tickable
             int visibleChatLines = 0;
             int amountOfSeperateLines = this.seperateChatLines.size();
             float f = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
-            final IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getRegular();
+            final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
 
             if (amountOfSeperateLines > 0) {
 
@@ -311,7 +314,7 @@ public class GuiNewChat extends Gui implements Tickable
         }
 
         int i = MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale());
-        List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, InceptionMod.getInstance().getFontDesign().getRegular(), false, false);
+        List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, Dragonfly.getFontDesign().getRegular(), false, false);
         boolean chatOpen = isChatOpen();
 
         for (IChatComponent ichatcomponent : list) {
@@ -408,8 +411,8 @@ public class GuiNewChat extends Gui implements Tickable
             if (j >= 0 && k >= 0) {
                 int l = Math.min(this.getLineCount(), this.seperateChatLines.size());
 
-                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < InceptionMod.getInstance().getFontDesign().getRegular().getHeight() * l + l) {
-                    int i1 = k / InceptionMod.getInstance().getFontDesign().getRegular().getHeight() + this.scrollPos;
+                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < Dragonfly.getFontDesign().getRegular().getHeight() * l + l) {
+                    int i1 = k / Dragonfly.getFontDesign().getRegular().getHeight() + this.scrollPos;
 
                     if (i1 >= 0 && i1 < this.seperateChatLines.size()) {
                         ChatLine chatline = this.seperateChatLines.get(i1);
@@ -417,7 +420,7 @@ public class GuiNewChat extends Gui implements Tickable
 
                         for (IChatComponent ichatcomponent : chatline.getChatComponent()) {
                             if (ichatcomponent instanceof ChatComponentText) {
-                                j1 += InceptionMod.getInstance().getFontDesign().getRegular().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
+                                j1 += Dragonfly.getFontDesign().getRegular().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
 
                                 if (j1 > j) {
                                     return ichatcomponent;

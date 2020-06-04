@@ -1,7 +1,8 @@
 package net.inceptioncloud.minecraftmod.transition.number;
 
-import lombok.Builder;
 import net.inceptioncloud.minecraftmod.transition.FloatingDirection;
+
+import java.util.function.IntSupplier;
 
 /**
  * <h2>Floating Double Transition</h2>
@@ -29,7 +30,6 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
     /**
      * The current floating direction.
      */
-    @Builder.Default
     private FloatingDirection direction = FloatingDirection.FORWARD;
 
     /**
@@ -37,13 +37,12 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
      *
      * @see DoubleTransition Parameter Documentation
      */
-    @Builder
-    private FloatingDoubleTransition (final double start, final double end, final int amountOfSteps, final Runnable reachEnd, final Runnable autoTransformator)
+    FloatingDoubleTransition (final double start, final double end, final int amountOfSteps, final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
     {
-        super(null, null, null);
+        super(null, null, autoTransformator);
 
         synchronized (threadLock) {
-            this.base = DoubleTransition.builder().start(start).end(end).amountOfSteps(amountOfSteps).reachEnd(reachEnd).reachStart(autoTransformator).build();
+            this.base = DoubleTransition.builder().start(start).end(end).amountOfSteps(amountOfSteps).reachEnd(reachEnd).reachStart(reachStart).build();
         }
     }
 
@@ -134,5 +133,10 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
         return "FloatingDoubleTransition{" +
                "originStackTrace=" + originStackTrace +
                '}';
+    }
+
+    public static FloatingDoubleTransitionBuilder builder ()
+    {
+        return new FloatingDoubleTransitionBuilder();
     }
 }

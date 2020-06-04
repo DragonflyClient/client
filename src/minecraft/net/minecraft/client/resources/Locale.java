@@ -3,22 +3,21 @@ package net.minecraft.client.resources;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.IllegalFormatException;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class Locale
 {
     /** Splits on "=" */
     private static final Splitter splitter = Splitter.on('=').limit(2);
-    private static final Pattern pattern = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
-    Map<String, String> properties = Maps.<String, String>newHashMap();
+    private static final Pattern pattern = Pattern.compile("%(\\d+\\$)?[\\d.]*[df]");
+    Map<String, String> properties = Maps.newHashMap();
     private boolean unicode;
 
     /**
@@ -31,7 +30,7 @@ public class Locale
 
         for (String s : p_135022_2_)
         {
-            String s1 = String.format("lang/%s.lang", new Object[] {s});
+            String s1 = String.format("lang/%s.lang", s);
 
             for (String s2 : resourceManager.getResourceDomains())
             {
@@ -41,7 +40,6 @@ public class Locale
                 }
                 catch (IOException var9)
                 {
-                    ;
                 }
             }
         }
@@ -104,7 +102,7 @@ public class Locale
         {
             if (!s.isEmpty() && s.charAt(0) != 35)
             {
-                String[] astring = (String[])Iterables.toArray(splitter.split(s), String.class);
+                String[] astring = Iterables.toArray(splitter.split(s), String.class);
 
                 if (astring != null && astring.length == 2)
                 {
@@ -121,7 +119,7 @@ public class Locale
      */
     private String translateKeyPrivate(String p_135026_1_)
     {
-        String s = (String)this.properties.get(p_135026_1_);
+        String s = this.properties.get(p_135026_1_);
         return s == null ? p_135026_1_ : s;
     }
 

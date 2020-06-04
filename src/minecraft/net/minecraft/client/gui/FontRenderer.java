@@ -1,10 +1,14 @@
 package net.minecraft.client.gui;
 
-import com.ibm.icu.text.*;
-import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import com.ibm.icu.text.ArabicShaping;
+import com.ibm.icu.text.ArabicShapingException;
+import com.ibm.icu.text.Bidi;
+import net.inceptioncloud.minecraftmod.Dragonfly;
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -12,14 +16,21 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ResourceLocation;
-import optifine.*;
+import optifine.Config;
+import optifine.CustomColors;
+import optifine.FontUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.Random;
 
 public class FontRenderer implements IResourceManagerReloadListener, IFontRenderer
 {
@@ -166,7 +177,7 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
         }
 
         this.readGlyphSizes();
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     /**
@@ -1027,13 +1038,33 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
         GlStateManager.enableAlpha();
     }
 
-    protected void bindTexture (ResourceLocation p_bindTexture_1_)
-    {
+    protected void bindTexture(ResourceLocation p_bindTexture_1_) {
         this.renderEngine.bindTexture(p_bindTexture_1_);
     }
 
-    protected InputStream getResourceInputStream (ResourceLocation p_getResourceInputStream_1_) throws IOException
-    {
+    protected InputStream getResourceInputStream(ResourceLocation p_getResourceInputStream_1_) throws IOException {
         return Minecraft.getMinecraft().getResourceManager().getResource(p_getResourceInputStream_1_).getInputStream();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FontRenderer that = (FontRenderer) o;
+
+        return new EqualsBuilder()
+                .append(locationFontTextureBase, that.locationFontTextureBase)
+                .append(locationFontTexture, that.locationFontTexture)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(locationFontTextureBase)
+                .append(locationFontTexture)
+                .toHashCode();
     }
 }

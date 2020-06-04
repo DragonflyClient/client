@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.options;
 
 import com.google.common.eventbus.Subscribe;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.client.ClientShutdownEvent;
 
 /**
@@ -15,6 +15,6 @@ public class OptionSaveSubscriber
     @Subscribe
     public void clientShutdown (ClientShutdownEvent event)
     {
-        InceptionMod.getInstance().getOptions().contentSave();
+        Dragonfly.getOptions().contentSave();
     }
 }

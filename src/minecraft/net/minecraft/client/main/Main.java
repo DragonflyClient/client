@@ -4,14 +4,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.properties.PropertyMap.Serializer;
-import joptsimple.*;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.net.*;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.util.List;
 
@@ -25,6 +28,7 @@ public class Main
         optionparser.accepts("demo");
         optionparser.accepts("fullscreen");
         optionparser.accepts("checkGlErrors");
+        optionparser.accepts("drgn-debug");
         OptionSpec<String> specServer = optionparser.accepts("server").withRequiredArg();
         OptionSpec<Integer> specPort = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(25565);
         OptionSpec<File> specGameDir = optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
@@ -64,39 +68,43 @@ public class Main
 
         final String s1 = optionset.valueOf(specProxyUser);
         final String s2 = optionset.valueOf(specProxyPass);
+        final boolean isDrgnDebug = optionset.has("drgn-debug");
 
         if (!proxy.equals(Proxy.NO_PROXY) && isNullOrEmpty(s1) && isNullOrEmpty(s2)) {
-            Authenticator.setDefault(new Authenticator()
-            {
-                protected PasswordAuthentication getPasswordAuthentication ()
-                {
+            Authenticator.setDefault(new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(s1, s2.toCharArray());
                 }
             });
         }
 
-        int i = optionset.valueOf(specWidth);
-        int j = optionset.valueOf(specHeight);
-        boolean flag = optionset.has("fullscreen");
-        boolean flag1 = optionset.has("checkGlErrors");
-        boolean flag2 = optionset.has("demo");
-        String s3 = optionset.valueOf(specVersion);
-        Gson gson = ( new GsonBuilder() ).registerTypeAdapter(PropertyMap.class, new Serializer()).create();
-        PropertyMap propertymap = gson.fromJson(optionset.valueOf(specUserProperties), PropertyMap.class);
-        PropertyMap propertymap1 = gson.fromJson(optionset.valueOf(specProfileProperties), PropertyMap.class);
-        File file1 = optionset.valueOf(specGameDir);
-        File file2 = optionset.has(specAssetsDir) ? optionset.valueOf(specAssetsDir) : new File(file1, "assets/");
-        File file3 = optionset.has(specResourcePackDir) ? optionset.valueOf(specResourcePackDir) : new File(file1, "resourcepacks/");
-        String s4 = optionset.has(specUUID) ? specUUID.value(optionset) : specUsername.value(optionset);
-        String s5 = optionset.has(specAssetIndex) ? specAssetIndex.value(optionset) : null;
-        String s6 = optionset.valueOf(specServer);
-        Integer integer = optionset.valueOf(specPort);
-        Session session = new Session(specUsername.value(optionset), s4, specAccessToken.value(optionset), specUserType.value(optionset));
-        GameConfiguration gameconfiguration = new GameConfiguration(new GameConfiguration.UserInformation(session, propertymap, propertymap1, proxy), new GameConfiguration.DisplayInformation(i, j, flag, flag1), new GameConfiguration.FolderInformation(file1, file3, file2, s5), new GameConfiguration.GameInformation(flag2, s3), new GameConfiguration.ServerInformation(s6, integer));
-        Runtime.getRuntime().addShutdownHook(new Thread("Client Shutdown Thread")
-        {
-            public void run ()
-            {
+        int width = optionset.valueOf(specWidth);
+        int height = optionset.valueOf(specHeight);
+        boolean fullscreen = optionset.has("fullscreen");
+        boolean checkGlErrors = optionset.has("checkGlErrors");
+        boolean demo = optionset.has("demo");
+        String version = optionset.valueOf(specVersion);
+        Gson gson = (new GsonBuilder()).registerTypeAdapter(PropertyMap.class, new Serializer()).create();
+        PropertyMap userProperties = gson.fromJson(optionset.valueOf(specUserProperties), PropertyMap.class);
+        PropertyMap profileProperties = gson.fromJson(optionset.valueOf(specProfileProperties), PropertyMap.class);
+        File gameDir = optionset.valueOf(specGameDir);
+        File assetsDir = optionset.has(specAssetsDir) ? optionset.valueOf(specAssetsDir) : new File(gameDir, "assets/");
+        File resourcePacksDir = optionset.has(specResourcePackDir) ? optionset.valueOf(specResourcePackDir) : new File(gameDir, "resourcepacks/");
+        String uuid = optionset.has(specUUID) ? specUUID.value(optionset) : specUsername.value(optionset);
+        String assetsIndex = optionset.has(specAssetIndex) ? specAssetIndex.value(optionset) : null;
+        String server = optionset.valueOf(specServer);
+        Integer port = optionset.valueOf(specPort);
+        Session session = new Session(specUsername.value(optionset), uuid, specAccessToken.value(optionset), specUserType.value(optionset));
+        GameConfiguration gameconfiguration = new GameConfiguration(
+                new GameConfiguration.UserInformation(session, userProperties, profileProperties, proxy),
+                new GameConfiguration.DisplayInformation(width, height, fullscreen, checkGlErrors),
+                new GameConfiguration.FolderInformation(gameDir, resourcePacksDir, assetsDir, assetsIndex),
+                new GameConfiguration.GameInformation(demo, version, isDrgnDebug),
+                new GameConfiguration.ServerInformation(server, port)
+        );
+        Runtime.getRuntime().addShutdownHook(new Thread("Client Shutdown Thread") {
+            public void run() {
                 Minecraft.stopIntegratedServer();
             }
         });

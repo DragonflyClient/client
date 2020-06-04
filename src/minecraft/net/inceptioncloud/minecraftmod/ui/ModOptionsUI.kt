@@ -1,9 +1,9 @@
 package net.inceptioncloud.minecraftmod.ui
 
-import net.inceptioncloud.minecraftmod.InceptionMod
+import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.design.color.RGB
-import net.inceptioncloud.minecraftmod.design.font.GlyphFontRenderer
+import net.inceptioncloud.minecraftmod.engine.font.GlyphFontRenderer
 import net.inceptioncloud.minecraftmod.options.OptionKey
 import net.inceptioncloud.minecraftmod.options.Options
 import net.inceptioncloud.minecraftmod.options.entries.OptionEntry
@@ -144,7 +144,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
         val titleString = "Mod Options"
         val fontSize = 16
         val y = 15 - fontSize / 2 + 2
-        val fontRenderer = InceptionMod.getInstance().fontDesign
+        val fontRenderer = Dragonfly.fontDesign
             .retrieveOrBuild(" Medium", fontSize * 2) as GlyphFontRenderer
         val stringWidth = fontRenderer.getStringWidth(titleString)
 
@@ -159,8 +159,8 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
     private fun drawFooter()
     {
         Gui.drawRect(0, height - 18, width, height, BluePalette.FOREGROUND.rgb)
-        InceptionMod.getInstance().fontDesign.retrieveOrBuild("", 15)
-            .drawString("v${InceptionMod.getVersion()}", 5, height - 10, Color(0, 0, 0, 50).rgb)
+        Dragonfly.fontDesign.retrieveOrBuild("", 15)
+            .drawString("v${Dragonfly.version}", 5, height - 10, Color(0, 0, 0, 50).rgb)
     }
 
     /**
@@ -188,7 +188,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
             mc.displayGuiScreen(previousScreen)
         } else if (button?.id == 1)
         {
-            TimeUtils.requireDelay("ingame-reload-button", 1000L) { InceptionMod.getInstance().reload() }
+            TimeUtils.requireDelay("ingame-reload-button", 1000L) { Dragonfly.reload() }
         }
     }
 

@@ -2,36 +2,24 @@ package net.minecraft.client.particle;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.Callable;
-
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.ReportedException;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import optifine.Config;
 import optifine.Reflector;
+
+import java.util.*;
+import java.util.concurrent.Callable;
 
 public class EffectRenderer
 {
@@ -39,13 +27,13 @@ public class EffectRenderer
 
     /** Reference to the World object. */
     protected World worldObj;
-    private List[][] fxLayers = new List[4][];
-    private List particleEmitters = Lists.newArrayList();
-    private TextureManager renderer;
+    private final List[][] fxLayers = new List[4][];
+    private final List particleEmitters = Lists.newArrayList();
+    private final TextureManager renderer;
 
     /** RNG. */
-    private Random rand = new Random();
-    private Map particleTypes = Maps.newHashMap();
+    private final Random rand = new Random();
+    private final Map particleTypes = Maps.newHashMap();
     private static final String __OBFID = "CL_00000915";
 
     public EffectRenderer(World worldIn, TextureManager rendererIn)
@@ -64,7 +52,7 @@ public class EffectRenderer
         }
 
         this.registerVanillaParticles();
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     private void registerVanillaParticles()
@@ -387,8 +375,8 @@ public class EffectRenderer
         if (Reflector.ForgeBlock_addDestroyEffects.exists() && Reflector.ForgeBlock_isAir.exists())
         {
             Block block = state.getBlock();
-            Reflector.callBoolean(block, Reflector.ForgeBlock_isAir, new Object[] {this.worldObj, pos});
-            flag = !Reflector.callBoolean(block, Reflector.ForgeBlock_isAir, new Object[] {this.worldObj, pos}) && !Reflector.callBoolean(block, Reflector.ForgeBlock_addDestroyEffects, new Object[] {this.worldObj, pos, this});
+            Reflector.callBoolean(block, Reflector.ForgeBlock_isAir, this.worldObj, pos);
+            flag = !Reflector.callBoolean(block, Reflector.ForgeBlock_isAir, this.worldObj, pos) && !Reflector.callBoolean(block, Reflector.ForgeBlock_addDestroyEffects, this.worldObj, pos, this);
         }
         else
         {
@@ -522,7 +510,7 @@ public class EffectRenderer
     public void addBlockHitEffects(BlockPos p_addBlockHitEffects_1_, MovingObjectPosition p_addBlockHitEffects_2_)
     {
         Block block = this.worldObj.getBlockState(p_addBlockHitEffects_1_).getBlock();
-        boolean flag = Reflector.callBoolean(block, Reflector.ForgeBlock_addHitEffects, new Object[] {this.worldObj, p_addBlockHitEffects_2_, this});
+        boolean flag = Reflector.callBoolean(block, Reflector.ForgeBlock_addHitEffects, this.worldObj, p_addBlockHitEffects_2_, this);
 
         if (block != null && !flag)
         {

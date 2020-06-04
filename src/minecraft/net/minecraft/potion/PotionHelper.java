@@ -2,14 +2,11 @@ package net.minecraft.potion;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.util.IntegerCache;
 import optifine.Config;
 import optifine.CustomColors;
+
+import java.util.*;
 
 public class PotionHelper
 {
@@ -98,7 +95,7 @@ public class PotionHelper
                     {
                         f += (float)(j >> 16 & 255) / 255.0F;
                         f1 += (float)(j >> 8 & 255) / 255.0F;
-                        f2 += (float)(j >> 0 & 255) / 255.0F;
+                        f2 += (float)(j & 255) / 255.0F;
                         ++f3;
                     }
                 }

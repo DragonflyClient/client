@@ -1445,7 +1445,7 @@ func_150258_a,appendText,2,Appends the given text to the end of this component.
 func_150259_f,createCopy,2,"Creates a copy of this component.  Almost a deep copy, except the style is shallow-copied."
 func_150260_c,getUnformattedText,2,"Get the text of this component, <em>and all child components</em>, with all special formatting codes removed."
 func_150261_e,getUnformattedTextForChat,2,"Gets the text of this component, without any special formatting codes added, for chat.
-func_150262_a,createDeepCopyIterator,2,"Creates an iterator that iterates over the given components, returning deep copies of each component in turn so that the properties of the returned objects will remain externally consistent after being returned."
+func_150262_a,createDeepCopyIterator,2,",Creates an iterator that iterates over the given components, returning deep copies of each component in turn so that the properties of the returned objects will remain externally consistent after being returned."
 func_150265_g,getChatComponentText_TextValue,2,Gets the text value of this ChatComponentText.
 func_150268_i,getKey,2,
 func_150269_b,initializeFromFormat,2,"initializes our children from a format string, using the format args to fill in the placeholder variables."

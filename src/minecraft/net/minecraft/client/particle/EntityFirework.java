@@ -44,16 +44,16 @@ public class EntityFirework
             int i = this.getBrightnessForRender(partialTicks);
             int j = i >> 16 & 65535;
             int k = i & 65535;
-            worldRendererIn.pos((double)(f5 - p_180434_4_ * f4 - p_180434_7_ * f4), (double)(f6 - p_180434_5_ * f4), (double)(f7 - p_180434_6_ * f4 - p_180434_8_ * f4)).tex(0.5D, 0.375D).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-            worldRendererIn.pos((double)(f5 - p_180434_4_ * f4 + p_180434_7_ * f4), (double)(f6 + p_180434_5_ * f4), (double)(f7 - p_180434_6_ * f4 + p_180434_8_ * f4)).tex(0.5D, 0.125D).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-            worldRendererIn.pos((double)(f5 + p_180434_4_ * f4 + p_180434_7_ * f4), (double)(f6 + p_180434_5_ * f4), (double)(f7 + p_180434_6_ * f4 + p_180434_8_ * f4)).tex(0.25D, 0.125D).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-            worldRendererIn.pos((double)(f5 + p_180434_4_ * f4 - p_180434_7_ * f4), (double)(f6 - p_180434_5_ * f4), (double)(f7 + p_180434_6_ * f4 - p_180434_8_ * f4)).tex(0.25D, 0.375D).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+            worldRendererIn.pos(f5 - p_180434_4_ * f4 - p_180434_7_ * f4, f6 - p_180434_5_ * f4, f7 - p_180434_6_ * f4 - p_180434_8_ * f4).tex(0.5D, 0.375D).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+            worldRendererIn.pos(f5 - p_180434_4_ * f4 + p_180434_7_ * f4, f6 + p_180434_5_ * f4, f7 - p_180434_6_ * f4 + p_180434_8_ * f4).tex(0.5D, 0.125D).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+            worldRendererIn.pos(f5 + p_180434_4_ * f4 + p_180434_7_ * f4, f6 + p_180434_5_ * f4, f7 + p_180434_6_ * f4 + p_180434_8_ * f4).tex(0.25D, 0.125D).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+            worldRendererIn.pos(f5 + p_180434_4_ * f4 - p_180434_7_ * f4, f6 - p_180434_5_ * f4, f7 + p_180434_6_ * f4 - p_180434_8_ * f4).tex(0.25D, 0.375D).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
         }
     }
 
     public static class SparkFX extends EntityFX
     {
-        private int baseTextureIndex = 160;
+        private final int baseTextureIndex = 160;
         private boolean trail;
         private boolean twinkle;
         private final EffectRenderer field_92047_az;
@@ -88,7 +88,7 @@ public class EntityFirework
         {
             float f = (float)((colour & 16711680) >> 16) / 255.0F;
             float f1 = (float)((colour & 65280) >> 8) / 255.0F;
-            float f2 = (float)((colour & 255) >> 0) / 255.0F;
+            float f2 = (float)((colour & 255)) / 255.0F;
             float f3 = 1.0F;
             this.setRBGColorF(f * f3, f1 * f3, f2 * f3);
         }
@@ -97,7 +97,7 @@ public class EntityFirework
         {
             this.fadeColourRed = (float)((faceColour & 16711680) >> 16) / 255.0F;
             this.fadeColourGreen = (float)((faceColour & 65280) >> 8) / 255.0F;
-            this.fadeColourBlue = (float)((faceColour & 255) >> 0) / 255.0F;
+            this.fadeColourBlue = (float)((faceColour & 255)) / 255.0F;
             this.hasFadeColour = true;
         }
 
@@ -301,7 +301,7 @@ public class EntityFirework
                 int j = aint[0];
                 float f = (float)((j & 16711680) >> 16) / 255.0F;
                 float f1 = (float)((j & 65280) >> 8) / 255.0F;
-                float f2 = (float)((j & 255) >> 0) / 255.0F;
+                float f2 = (float)((j & 255)) / 255.0F;
                 EntityFirework.OverlayFX entityfirework$overlayfx = new EntityFirework.OverlayFX(this.worldObj, this.posX, this.posY, this.posZ);
                 entityfirework$overlayfx.setRBGColorF(f, f1, f2);
                 this.theEffectRenderer.addEffect(entityfirework$overlayfx);

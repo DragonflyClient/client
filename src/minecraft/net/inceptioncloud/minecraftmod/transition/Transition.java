@@ -1,11 +1,9 @@
 package net.inceptioncloud.minecraftmod.transition;
 
-import lombok.Getter;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.transition.color.*;
 import net.inceptioncloud.minecraftmod.transition.number.*;
-import net.inceptioncloud.minecraftmod.transition.string.SubstringTransition;
-import net.inceptioncloud.minecraftmod.transition.string.TransitionTypeString;
+import net.inceptioncloud.minecraftmod.transition.string.*;
 import net.inceptioncloud.minecraftmod.ui.components.button.*;
 import net.inceptioncloud.minecraftmod.utils.RuntimeUtils;
 import net.minecraft.client.gui.GuiButton;
@@ -19,7 +17,6 @@ import java.util.function.IntSupplier;
  * The transition superclass represents any transition.
  * It can be a {@link TransitionTypeNumber number}-, {@link TransitionTypeString string}- or {@link TransitionTypeColor color}-transition.
  */
-@Getter
 public abstract class Transition
 {
     /**
@@ -77,12 +74,12 @@ public abstract class Transition
             FloatingColorTransition.class,
             OverflowDoubleTransition.class,
             SmoothDoubleTransition.class,
-            DoubleTransition.DoubleTransitionBuilder.class,
+            DoubleTransitionBuilder.class,
             ColorTransitionBuilder.class,
-            SubstringTransition.SubstringTransitionBuilder.class,
-            FloatingDoubleTransition.FloatingDoubleTransitionBuilder.class,
-            FloatingColorTransition.FloatingColorTransitionBuilder.class,
-            OverflowDoubleTransition.OverflowDoubleTransitionBuilder.class,
+            SubstringTransitionBuilder.class,
+            FloatingDoubleTransitionBuilder.class,
+            FloatingColorTransitionBuilder.class,
+            OverflowDoubleTransitionBuilder.class,
             SmoothDoubleTransitionBuilder.class,
 
             TransparentButton.class,
@@ -95,7 +92,7 @@ public abstract class Transition
         originClass = split[split.length - 1];
         originStackTrace = stackTrace;
 
-        InceptionMod.getInstance().handleTransition(this);
+        Dragonfly.handleTransition(this);
     }
 
     /**
@@ -127,7 +124,32 @@ public abstract class Transition
      */
     public final void tick ()
     {
-        int direction = autoTransformator != null ? autoTransformator.getAsInt() : getDirection();
+        if (autoTransformator != null) {
+            int direction = autoTransformator.getAsInt();
+
+            switch (direction) {
+                case 1:
+                    doForward();
+                    break;
+
+                case -1:
+                    doBackward();
+                    break;
+
+                default:
+                    break;
+            }
+        } else if (!originStackTrace.getClassName().contains("Animation")) {
+            directedUpdate();
+        }
+    }
+
+    /**
+     * The default tick method.
+     */
+    public final void directedUpdate ()
+    {
+        int direction = getDirection();
 
         switch (direction) {
             case 1:
@@ -144,11 +166,11 @@ public abstract class Transition
     }
 
     /**
-     * Destorys the transition.
+     * Destroys the transition.
      */
-    public void destroy()
+    public void destroy ()
     {
-        InceptionMod.getInstance().stopTransition(this);
+        Dragonfly.stopTransition(this);
     }
 
     /**
@@ -177,5 +199,35 @@ public abstract class Transition
         return "Transition{" +
                "originStackTrace=" + originStackTrace +
                '}';
+    }
+
+    public Runnable getReachEnd ()
+    {
+        return reachEnd;
+    }
+
+    public Runnable getReachStart ()
+    {
+        return reachStart;
+    }
+
+    public IntSupplier getAutoTransformator ()
+    {
+        return autoTransformator;
+    }
+
+    public String getOriginClass ()
+    {
+        return originClass;
+    }
+
+    public StackTraceElement getOriginStackTrace ()
+    {
+        return originStackTrace;
+    }
+
+    public int getDirection ()
+    {
+        return direction;
     }
 }

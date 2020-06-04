@@ -1,12 +1,10 @@
 package net.inceptioncloud.minecraftmod.design.splash;
 
-import lombok.Getter;
-import lombok.Setter;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.CloudColor;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
-import net.inceptioncloud.minecraftmod.design.font.UnicodeFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.UnicodeFontRenderer;
 import net.inceptioncloud.minecraftmod.utils.RuntimeUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -57,7 +55,6 @@ public class ModSplashScreen
     /**
      * Whether the splash screen is active due to the loading of the client.
      */
-    @Setter @Getter
     private boolean active = true;
 
     /**
@@ -83,13 +80,13 @@ public class ModSplashScreen
     public void performRender (TextureManager textureManager)
     {
         if (titleFR == null)
-            titleFR = UnicodeFontRenderer.newInstance(InceptionMod.getInstance().getFontDesign().getFont() + " Medium", 132, Font.PLAIN);
+            titleFR = UnicodeFontRenderer.newInstance(Dragonfly.getFontDesign().getFont() + " Medium", 132, Font.PLAIN);
 
         if (defaultFR == null)
-            defaultFR = UnicodeFontRenderer.newInstance(InceptionMod.getInstance().getFontDesign().getFont() + " Medium", 75, Font.PLAIN);
+            defaultFR = UnicodeFontRenderer.newInstance(Dragonfly.getFontDesign().getFont() + " Medium", 75, Font.PLAIN);
 
         if (actionFR == null)
-            actionFR = UnicodeFontRenderer.newInstance(InceptionMod.getInstance().getFontDesign().getFont() + " Light", 65, Font.PLAIN);
+            actionFR = UnicodeFontRenderer.newInstance(Dragonfly.getFontDesign().getFont() + " Light", 65, Font.PLAIN);
 
         if (logo == null)
             logo = new ResourceLocation("inceptioncloud/splash.png");
@@ -159,5 +156,15 @@ public class ModSplashScreen
         GlStateManager.resetColor();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
+    }
+
+    public boolean isActive ()
+    {
+        return active;
+    }
+
+    public void setActive (final boolean active)
+    {
+        this.active = active;
     }
 }

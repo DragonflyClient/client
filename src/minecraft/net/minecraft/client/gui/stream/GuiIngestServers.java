@@ -121,7 +121,7 @@ public class GuiIngestServers extends GuiScreen
         protected void drawSlot(int entryID, int x, int y, int height, int mouseXIn, int mouseYIn)
         {
             IngestServer ingestserver = this.mc.getTwitchStream().func_152925_v()[entryID];
-            String s = ingestserver.serverUrl.replaceAll("\\{stream_key\\}", "");
+            String s = ingestserver.serverUrl.replaceAll("\\{stream_key}", "");
             String s1 = (int)ingestserver.bitrateKbps + " kbps";
             String s2 = null;
             IngestServerTester ingestservertester = this.mc.getTwitchStream().func_152932_y();

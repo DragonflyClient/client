@@ -1,9 +1,9 @@
 package net.inceptioncloud.minecraftmod.ui.components.button;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.color.RGB;
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransition;
 import net.inceptioncloud.minecraftmod.transition.color.ColorTransitionBuilder;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
@@ -56,7 +56,7 @@ public class OutlineButton extends GuiButton
     public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
     {
         if (this.visible) {
-            IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().getMedium();
+            IFontRenderer fontRenderer = Dragonfly.getFontDesign().getMedium();
 
             double transition = 1 - hoverTransition.get();
             int offset = ( int ) ( 7 * transition );
@@ -89,6 +89,6 @@ public class OutlineButton extends GuiButton
     @Override
     public void destroy ()
     {
-        InceptionMod.getInstance().stopTransition(hoverTransition);
+        Dragonfly.stopTransition(hoverTransition);
     }
 }

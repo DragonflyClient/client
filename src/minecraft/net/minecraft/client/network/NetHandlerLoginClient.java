@@ -3,7 +3,7 @@ package net.minecraft.client.network;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.*;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.play.IntegratedServerLoggedInEvent;
 import net.inceptioncloud.minecraftmod.event.play.ServerLoggedInEvent;
 import net.minecraft.client.Minecraft;
@@ -82,12 +82,12 @@ public class NetHandlerLoginClient implements INetHandlerLoginClient
         {
             // EVENTBUS - Call the ServerLoggedInEvent if the packet was sent from a server and not from an integrated server
             ServerLoggedInEvent event = new ServerLoggedInEvent(mc.getCurrentServerData());
-            InceptionMod.getInstance().getEventBus().post(event);
+            Dragonfly.getEventBus().post(event);
         } else if (mc.getIntegratedServer() != null)
         {
             // EVENTBUS - Calls the IntegratedServerLoggedInEvent if the packet was sent from an integrated server
             IntegratedServerLoggedInEvent startupEvent = new IntegratedServerLoggedInEvent(mc.getIntegratedServer());
-            InceptionMod.getInstance().getEventBus().post(startupEvent);
+            Dragonfly.getEventBus().post(startupEvent);
         }
         this.gameProfile = packetIn.getProfile();
         this.networkManager.setConnectionState(EnumConnectionState.PLAY);
