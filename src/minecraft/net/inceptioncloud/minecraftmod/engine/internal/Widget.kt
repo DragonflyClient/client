@@ -5,7 +5,6 @@ import net.inceptioncloud.minecraftmod.engine.animation.AttachmentBuilder
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.structure.IDraw
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
@@ -232,8 +231,8 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
     /**
      * Generates an info string for the widget that is used for debugging.
      */
-    open fun toInfo(): List<String> = this::class.declaredMemberProperties
-        .filter { it.hasAnnotation<State>() && it.hasAnnotation<Interpolate>() }
+    open fun toInfo(): List<String> = this::class.memberProperties
+        .filter { it.hasAnnotation<State>() || it.hasAnnotation<Interpolate>() }
         .joinToString("\n") { "${it.name} = ${it.getter.call(this)}" }.split("\n")
 
     /**

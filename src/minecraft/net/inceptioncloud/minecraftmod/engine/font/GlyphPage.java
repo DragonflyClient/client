@@ -15,7 +15,7 @@ import java.util.HashMap;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GlyphPage {
-    private final Font font;
+    final Font font;
     private final boolean antiAliasing;
     private final boolean fractionalMetrics;
     public HashMap<Character, Glyph> glyphCharacterMap = new HashMap<>();

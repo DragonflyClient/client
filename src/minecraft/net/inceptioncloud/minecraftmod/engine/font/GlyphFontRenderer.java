@@ -805,4 +805,12 @@ public class GlyphFontRenderer implements IFontRenderer {
 
         return j != i && k != -1 && k < j ? k : j;
     }
+
+    @Override
+    public String toString() {
+        return "GlyphFontRenderer{" +
+                "family=" + pageRegular.font.getFamily() +
+                ", size=" + pageRegular.font.getSize() +
+                '}';
+    }
 }

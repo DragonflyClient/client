@@ -83,14 +83,9 @@ open class Circle(
     @Interpolate
     override var y by Delegates.notNull<Double>()
 
-    override fun align(x: Double, y: Double, width: Double, height: Double) {
-        assert(width == height)
-
-        this.x = horizontalAlignment.calc(x, width)
-        this.y = verticalAlignment.calc(y, height)
-    }
-
     init {
-        align(x, y, size, size)
+        val (alignedX, alignedY) = align(x, y, size, size)
+        this.x = alignedX
+        this.y = alignedY
     }
 }

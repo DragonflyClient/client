@@ -21,5 +21,6 @@ interface IAlign {
     /**
      * Applies the alignment on the parent's position.
      */
-    fun align(x: Double, y: Double, width: Double, height: Double)
+    fun align(x: Double, y: Double, width: Double, height: Double): Pair<Double, Double> =
+        horizontalAlignment.calc(x, width) to verticalAlignment.calc(y, height)
 }

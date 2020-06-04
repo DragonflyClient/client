@@ -95,12 +95,9 @@ class Rectangle(
     @Interpolate
     override var y: Double by Delegates.notNull()
 
-    override fun align(x: Double, y: Double, width: Double, height: Double) {
-        this.x = horizontalAlignment.calc(x, width)
-        this.y = verticalAlignment.calc(y, height)
-    }
-
     init {
-        align(x, y, width, height)
+        val (alignedX, alignedY) = align(x, y, width, height)
+        this.x = alignedX
+        this.y = alignedY
     }
 }

@@ -31,14 +31,15 @@ import kotlin.properties.Delegates
 class RoundedRectangle(
     x: Double = 0.0,
     y: Double = 0.0,
-    width: Double = 50.0,
-    height: Double = 50.0,
-    widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate override var width: Double = 50.0,
+    @property:Interpolate override var height: Double = 50.0,
+    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
     @property:State override var horizontalAlignment: Alignment = Alignment.START,
     @property:State override var verticalAlignment: Alignment = Alignment.START,
 
     arc: Double = 5.0
 ) : AssembledWidget<RoundedRectangle>(), IPosition, IDimension, IColor, IAlign {
+
     override fun assemble(): Map<String, Widget<*>> {
         return mapOf(
             "left-top-edge" to Arc(),
@@ -138,29 +139,14 @@ class RoundedRectangle(
     override var y: Double by Delegates.notNull()
 
     @Interpolate
-    override var width: Double by Delegates.notNull()
-
-    @Interpolate
-    override var height: Double by Delegates.notNull()
-
-    @Interpolate
-    override var widgetColor: WidgetColor by Delegates.notNull()
-
-    @Interpolate
     var arc: Double by Delegates.notNull()
 
-    override fun align(x: Double, y: Double, width: Double, height: Double) {
-        this.x = horizontalAlignment.calc(x, width)
-        this.y = verticalAlignment.calc(y, height)
-        this.width = width
-        this.height = height
-    }
-
     init {
-        align(x, y, width, height)
+        val (alignedX, alignedY) = align(x, y, width, height)
+        this.x = alignedX
+        this.y = alignedY
 
         val smallest = width.coerceAtMost(height) / 2
         this.arc = arc.coerceAtMost(smallest)
-        this.widgetColor = widgetColor
     }
 }

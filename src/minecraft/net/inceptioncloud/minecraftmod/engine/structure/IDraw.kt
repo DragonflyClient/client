@@ -8,27 +8,22 @@ import org.apache.logging.log4j.LogManager
  *
  * Every graphics object that can be drawn implements this interface.
  */
-interface IDraw
-{
+interface IDraw {
+
     /**
      * Invokes the full render process of the object.
      *
      * Calls the [preRender], [render] and [postRender] functions that the object should implement.
      * In case the rendering process fails, it makes sure that the post-render function is still called.
      */
-    fun drawNative()
-    {
+    fun drawNative() {
         preRender()
 
-        try
-        {
+        try {
             render()
-        } catch (e: Exception)
-        {
+        } catch (e: Exception) {
             LogManager.getRootLogger().error("An error occurred while rendering drawable!", e)
-        }
-        finally
-        {
+        } finally {
             postRender()
         }
     }
@@ -48,8 +43,7 @@ interface IDraw
      * general calls that prepare the rendering, but it can be overwritten to add specific calls for the
      * widget.
      */
-    fun preRender()
-    {
+    fun preRender() {
         GlStateManager.enableBlend()
         GlStateManager.disableTexture2D()
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
@@ -60,8 +54,7 @@ interface IDraw
      *
      * This is the last method that is called during the rendering process.
      */
-    fun postRender()
-    {
+    fun postRender() {
         GlStateManager.enableTexture2D()
         GlStateManager.disableBlend()
     }

@@ -11,7 +11,6 @@ import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.input.Mouse
 import java.awt.Color
-import java.awt.Font
 import java.util.*
 
 object GraphicsEngine {
@@ -20,7 +19,7 @@ object GraphicsEngine {
     private val debugColors = arrayOf(0x27ae60, 0xf39c12, 0x2980b9)
 
     @JvmField
-    val CHARACTERS = ((32..126) + (166..187)).map { it.toChar() }.toCharArray()
+    val CHARACTERS = (0..300).map { it.toChar() }.toCharArray()
 
     fun renderDebugOverlay(mapped: Map<String, Widget<*>>) {
         val content = mapped.values
@@ -41,7 +40,7 @@ object GraphicsEngine {
                 index++
             }
 
-        uppermostWidget?.let {
+        uppermostWidget?.let { widget ->
             val x = (uppermostWidget.value as IPosition).x
             val y = (uppermostWidget.value as IPosition).y
             val (width, height) = Defaults.getSizeOrDimension(uppermostWidget.value)
@@ -49,29 +48,26 @@ object GraphicsEngine {
             Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 100).rgb)
             RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 1.0)
 
-            val titleRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono Medium", Font.PLAIN, 12)
-            val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 9)
-            val title = "${uppermostWidget.value::class.simpleName} #${it.key}"
+            val titleRenderer = Dragonfly.fontDesign.retrieveOrBuild(" Medium", 12)
+            val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("", 10)
+            val title = "${uppermostWidget.value::class.simpleName} #${widget.key}"
             val info = uppermostWidget.value.toInfo().toMutableList()
                 .apply { add("scratchpad = ${uppermostWidget.value.scratchpad != null}") }
-            val infoHeight = 2 + titleRenderer.height + fontRenderer.height * info.size
-            val infoWidth =
-                2 + (titleRenderer.getStringWidth(title)).coerceAtLeast(info.map { fontRenderer.getStringWidth(it) }
-                    .max()!!)
+            val infoHeight = 2 + titleRenderer.height + (fontRenderer.height + 0.5) * info.size
+            val infoWidth = 2 + (titleRenderer.getStringWidth(title))
+                .coerceAtLeast(info.map { fontRenderer.getStringWidth(it) }.max()!!)
 
             Gui.drawRect(
-                x + width + 10,
-                y - 5,
-                x + width + 10 + infoWidth,
-                y - 5 + infoHeight,
+                x + width + 10, y - 5,
+                x + width + 10 + infoWidth, y - 5 + infoHeight,
                 Color(255, 255, 255, 220).rgb
             )
 
-            var infoTextY = y - 2 + titleRenderer.height
+            var infoTextY = y - 1 + titleRenderer.height
             titleRenderer.drawString(title, (x + width + 11).toInt(), (y - 2).toInt(), Color(0, 0, 0, 200).rgb)
             info.forEach {
                 fontRenderer.drawString(it, (x + width + 11).toInt(), infoTextY.toInt(), Color(0, 0, 0, 200).rgb)
-                infoTextY += fontRenderer.height
+                infoTextY += fontRenderer.height + 0.5
             }
         }
     }
