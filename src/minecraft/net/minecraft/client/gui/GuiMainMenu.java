@@ -3,13 +3,13 @@ package net.minecraft.client.gui;
 import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.color.RGB;
-import net.inceptioncloud.minecraftmod.engine.EngineTestUI;
 import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
+import net.inceptioncloud.minecraftmod.ui.AboutUI;
 import net.inceptioncloud.minecraftmod.ui.components.button.TransparentButton;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.multiplayer.DirectConnectAction;
@@ -404,9 +404,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
         if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString)
             && mouseY >= 5 && mouseY <= 5 + fontRenderer.getHeight()) {
-            // TODO: Restore this
-            // this.mc.displayGuiScreen(new AboutUI(this));
-            mc.displayGuiScreen(new EngineTestUI());
+            this.mc.displayGuiScreen(new AboutUI(this));
         }
     }
 
