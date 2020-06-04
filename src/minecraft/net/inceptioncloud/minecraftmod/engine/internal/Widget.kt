@@ -233,7 +233,9 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      */
     open fun toInfo(): List<String> = this::class.memberProperties
         .filter { it.hasAnnotation<State>() || it.hasAnnotation<Interpolate>() }
-        .joinToString("\n") { "${it.name} = ${it.getter.call(this)}" }.split("\n")
+        .joinToString("\n") {
+            (if (it.hasAnnotation<State>()) "--state" else "") + "${it.name} = ${it.getter.call(this)}"
+        }.split("\n")
 
     /**
      * Notifies the widget when the mouse is moved.

@@ -1,8 +1,10 @@
 package net.inceptioncloud.minecraftmod.engine.widget.primitive
 
 import net.inceptioncloud.minecraftmod.Dragonfly
+import net.inceptioncloud.minecraftmod.engine.font.FontWeight
 import net.inceptioncloud.minecraftmod.engine.font.GlyphFontRenderer
 import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer
+import net.inceptioncloud.minecraftmod.engine.font.WidgetFont
 import net.inceptioncloud.minecraftmod.engine.internal.Defaults
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
@@ -25,7 +27,11 @@ import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 class TextRenderer(
     @property:Interpolate var text: String = "Default Text",
     @property:Interpolate var dropShadow: Boolean = false,
+
     @property:State var fontRenderer: IFontRenderer = Dragonfly.fontDesign.regular,
+    @property:State var font: WidgetFont? = null,
+    @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
+    @property:Interpolate var fontSize: Double = 19.0,
 
     @property:Interpolate override var x: Double = 0.0,
     @property:Interpolate override var y: Double = 0.0,
@@ -34,13 +40,22 @@ class TextRenderer(
     @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT
 ) : Widget<TextRenderer>(), IPosition, IColor, IDimension {
 
-    override fun preRender() { /* kept empty since the render preparations would break the font-rendering */
+    override fun preRender() {
+        /* kept empty since the render preparations would break the font-rendering */
     }
 
-    override fun postRender() { /* kept empty for the above reason */
+    override fun postRender() {
+        /* kept empty for the above reason */
     }
 
     override fun render() {
+        if (font != null) {
+            fontRenderer = font?.fontRenderer {
+                fontWeight = this@TextRenderer.fontWeight
+                size = fontSize.toInt()
+            } ?: fontRenderer
+        }
+
         val posX = x.toFloat()
         val posY = if (fontRenderer is GlyphFontRenderer) y.toFloat() + 3F else y.toFloat()
 
@@ -81,7 +96,7 @@ class TextRenderer(
     }
 
     override fun clone() = TextRenderer(
-        text, dropShadow, fontRenderer, x, y, width, height, widgetColor
+        text, dropShadow, fontRenderer, font, fontWeight, fontSize, x, y, width, height, widgetColor
     )
 
     override fun newInstance() = TextRenderer()

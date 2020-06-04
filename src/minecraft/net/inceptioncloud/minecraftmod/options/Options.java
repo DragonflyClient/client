@@ -5,7 +5,10 @@ import net.inceptioncloud.minecraftmod.Dragonfly;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * This class manages the reading and writing of the options to the specific file.
@@ -43,14 +46,12 @@ public class Options
     public void contentUpdate ()
     {
         try {
-
             LogManager.getLogger().info("Loading Settings...");
 
             if (!OPTIONS_FILE.exists()) jsonObject = new JsonObject();
             else jsonObject = new JsonParser().parse(new FileReader(OPTIONS_FILE)).getAsJsonObject();
 
             LogManager.getLogger().info(jsonObject);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,7 +63,6 @@ public class Options
     public void contentSave ()
     {
         try {
-
             if (!OPTIONS_FILE.exists() && !OPTIONS_FILE.createNewFile())
                 throw new IOException("Unable to create options.json file!");
 
@@ -90,7 +90,6 @@ public class Options
         Validate.notNull(optionKey, "The key for the options value cannot be null!");
 
         if (jsonObject.has(optionKey.getKey())) {
-
             try {
                 JsonElement jsonElement = jsonObject.get(optionKey.getKey());
                 T value = gson.fromJson(jsonElement, optionKey.getTypeClass());

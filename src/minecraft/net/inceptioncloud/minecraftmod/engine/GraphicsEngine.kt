@@ -55,7 +55,7 @@ object GraphicsEngine {
                 .apply { add("scratchpad = ${uppermostWidget.value.scratchpad != null}") }
             val infoHeight = 2 + titleRenderer.height + (fontRenderer.height + 0.5) * info.size
             val infoWidth = 2 + (titleRenderer.getStringWidth(title))
-                .coerceAtLeast(info.map { fontRenderer.getStringWidth(it) }.max()!!)
+                .coerceAtLeast(info.map { fontRenderer.getStringWidth(it.replaceFirst("--state", "")) }.max()!!)
 
             Gui.drawRect(
                 x + width + 10, y - 5,
@@ -66,7 +66,12 @@ object GraphicsEngine {
             var infoTextY = y - 1 + titleRenderer.height
             titleRenderer.drawString(title, (x + width + 11).toInt(), (y - 2).toInt(), Color(0, 0, 0, 200).rgb)
             info.forEach {
-                fontRenderer.drawString(it, (x + width + 11).toInt(), infoTextY.toInt(), Color(0, 0, 0, 200).rgb)
+                val isState = it.startsWith("--state")
+                val string = it.replaceFirst("--state", "")
+                fontRenderer.drawString(
+                    string, (x + width + 11).toInt(),
+                    infoTextY.toInt(), Color(0, 0, if (isState) 150 else 0, 200).rgb
+                )
                 infoTextY += fontRenderer.height + 0.5
             }
         }

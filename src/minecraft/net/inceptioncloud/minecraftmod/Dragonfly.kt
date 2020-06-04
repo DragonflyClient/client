@@ -19,7 +19,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.lwjgl.opengl.Display
 import java.util.*
-import java.util.function.Consumer
 
 /**
  * The main class of the Inception Cloud Minecraft Mod.
@@ -207,8 +206,8 @@ object Dragonfly {
      */
     private fun tick() {
         synchronized(this) {
-            ArrayList(transitions).forEach(Consumer { obj: Transition -> obj.tick() })
-            ArrayList(tickables).forEach(Consumer { obj: Tickable? -> obj!!.modTick() })
+            transitions.toTypedArray().forEach { obj: Transition -> obj.tick() }
+            tickables.toTypedArray().forEach { obj: Tickable? -> obj!!.modTick() }
             if (Minecraft.getMinecraft().currentScreen != null) Minecraft.getMinecraft().currentScreen.buffer.update()
         }
     }

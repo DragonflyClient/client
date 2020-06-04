@@ -38,14 +38,21 @@ class WidgetFont @JvmOverloads constructor(
         val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
         building?.invoke(builder)
 
-        return cachedFontRenderer.getOrDefault(
-            builder, GlyphFontRenderer.create(
+        return if (cachedFontRenderer.containsKey(builder)) {
+            cachedFontRenderer[builder]!!
+        } else {
+            GlyphFontRenderer.create(
                 fontWeights[builder.fontWeight],
                 builder.size,
                 builder.letterSpacing,
                 true,
                 true,
                 true
-            ).also { cachedFontRenderer[builder] = it })
+            ).also { cachedFontRenderer[builder] = it }
+        }
+    }
+
+    override fun toString(): String {
+        return "WidgetFont(name='$name', letterSpacing=$letterSpacing, fontWeights=$fontWeights)"
     }
 }
