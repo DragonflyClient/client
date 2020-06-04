@@ -1,8 +1,6 @@
 package net.minecraft.nbt;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+import java.io.*;
 
 public class NBTTagLong extends NBTBase.NBTPrimitive
 {
@@ -78,7 +76,7 @@ public class NBTTagLong extends NBTBase.NBTPrimitive
 
     public int getInt()
     {
-        return (int)(this.data & -1L);
+        return (int)(this.data);
     }
 
     public short getShort()

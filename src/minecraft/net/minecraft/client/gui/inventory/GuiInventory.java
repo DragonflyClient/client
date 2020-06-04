@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 
@@ -79,6 +80,7 @@ public class GuiInventory extends InventoryEffectRenderer
     public void updateScreen ()
     {
         if (this.mc.playerController.isInCreativeMode()) {
+            LogManager.getLogger().info("Switched from survival to creative inventory.");
             this.mc.displayGuiScreen(new GuiContainerCreative(this.mc.thePlayer));
         }
 

@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.tracking.transitions;
 
 import com.google.common.eventbus.Subscribe;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.mod.ModTickEvent;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.utils.TimeUtils;
@@ -30,7 +30,7 @@ public class TickSubscriber
 
             final int trackingPoint = ( int ) ( ( System.currentTimeMillis() - startUp ) / 5000 );
             final Map<String, Integer> groupedAmounts =
-                InceptionMod.getInstance().getTransitions().stream().collect(Collectors.groupingBy(Transition::getOriginClass)).entrySet().stream()                                                      // Group Transitions by Origin
+                Dragonfly.getTransitions().stream().collect(Collectors.groupingBy(Transition::getOriginClass)).entrySet().stream()                                                      // Group Transitions by Origin
                     .map(( Function<Map.Entry<String, List<Transition>>, Map.Entry<String, Integer>> ) stringListEntry -> new Map.Entry<String, Integer>()          // Map to an String-Integer Map by counting the amount of Transitions
                     {
                         @Override

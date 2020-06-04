@@ -3,7 +3,8 @@
 package net.inceptioncloud.minecraftmod.options.sections
 
 import net.inceptioncloud.minecraftmod.options.entries.factories.OptionEntryBooleanFactory.Companion.optionEntryBoolean
-import net.inceptioncloud.minecraftmod.options.entries.factories.OptionEntryRangeIntFactory.Companion.optionEntryRangeInt
+import net.inceptioncloud.minecraftmod.options.entries.factories.OptionEntryMultipleChoiceFactory.Companion.optionEntryMultipleChoice
+import net.inceptioncloud.minecraftmod.options.entries.util.OptionChoice
 import net.inceptioncloud.minecraftmod.options.sections.OptionSectionFactory.Companion.optionSection
 
 /**
@@ -52,18 +53,19 @@ object OptionsSectionScoreboard
      * - 2 = auto
      */
     @JvmStatic
-    val scoreboardScores =
-            optionEntryRangeInt {
-                name = "Scores"
-                description = "Select the mode in which the scoreboard scores (red numbers on the right) " +
-                        "should be displayed. (0 = off, 1 = on, 2 = auto)"
-                minValue = 0
-                maxValue = 2
-                key {
-                    fileKey = "scoreboardScores"
-                    default = { 2 }
-                }
-            }
+    val scoreboardScores = optionEntryMultipleChoice {
+        name = "Scores"
+        description = "Select the mode in which the scoreboard scores (red numbers on the right) " +
+                "should be displayed. (0 = off, 1 = on, 2 = auto)"
+        default = 2
+        +OptionChoice(0, "Off")
+        +OptionChoice(1, "On")
+        +OptionChoice(2, "Auto")
+        key {
+            fileKey = "scoreboardScores"
+            default = { 2 }
+        }
+    }
 
     /**
      * The init block creates the option section and adds all elements to it.

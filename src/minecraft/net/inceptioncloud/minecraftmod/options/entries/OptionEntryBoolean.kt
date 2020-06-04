@@ -14,8 +14,7 @@ class OptionEntryBoolean(
         description: String,
         private val typeKey: OptionKey<Boolean>,
         override var externalApplier: ((Boolean, OptionKey<Boolean>) -> Unit)? = null
-) :
-        OptionEntry<Boolean>(name, description), ExternalApplier<Boolean>
+) : OptionEntry<Boolean>(name, description), ExternalApplier<Boolean>
 {
     /**
      * Width of the switch.

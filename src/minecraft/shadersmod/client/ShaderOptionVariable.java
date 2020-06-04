@@ -1,15 +1,15 @@
 package shadersmod.client;
 
+import optifine.Config;
+import optifine.StrUtils;
+
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import optifine.Config;
-import optifine.StrUtils;
-
 public class ShaderOptionVariable extends ShaderOption
 {
-    private static final Pattern PATTERN_VARIABLE = Pattern.compile("^\\s*#define\\s+(\\w+)\\s+(-?[0-9\\.Ff]+|\\w+)\\s*(//.*)?$");
+    private static final Pattern PATTERN_VARIABLE = Pattern.compile("^\\s*#define\\s+(\\w+)\\s+(-?[0-9.Ff]+|\\w+)\\s*(//.*)?$");
 
     public ShaderOptionVariable(String name, String description, String value, String[] values, String path)
     {
@@ -108,7 +108,7 @@ public class ShaderOptionVariable extends ShaderOption
                 {
                     if (!Arrays.asList(astring1).contains(value))
                     {
-                        astring1 = (String[])((String[])Config.addObjectToArray(astring1, value, 0));
+                        astring1 = (String[]) Config.addObjectToArray(astring1, value, 0);
                     }
 
                     return astring1;

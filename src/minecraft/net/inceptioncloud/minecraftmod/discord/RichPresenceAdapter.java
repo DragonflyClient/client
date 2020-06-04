@@ -1,14 +1,11 @@
 package net.inceptioncloud.minecraftmod.discord;
 
-import lombok.*;
 import net.arikia.dev.drpc.DiscordRichPresence;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * The superclass of any game status that is displayed in the Discord Rich Presence.
  */
-@Setter
 public class RichPresenceAdapter
 {
     /**
@@ -66,5 +63,45 @@ public class RichPresenceAdapter
             .setParty("myPartyId", 1, 6)
             .setSecrets("secret-abababa", null)
             .build();
+    }
+
+    public void setTitle (final String title)
+    {
+        this.title = title;
+    }
+
+    public void setExtra (final String extra)
+    {
+        this.extra = extra;
+    }
+
+    public void setStartMillis (final long startMillis)
+    {
+        this.startMillis = startMillis;
+    }
+
+    public void setEndMillis (final long endMillis)
+    {
+        this.endMillis = endMillis;
+    }
+
+    public void setBigImageKey (final String bigImageKey)
+    {
+        this.bigImageKey = bigImageKey;
+    }
+
+    public void setBigImageText (final String bigImageText)
+    {
+        this.bigImageText = bigImageText;
+    }
+
+    public void setSmallImageKey (final String smallImageKey)
+    {
+        this.smallImageKey = smallImageKey;
+    }
+
+    public void setSmallImageText (final String smallImageText)
+    {
+        this.smallImageText = smallImageText;
     }
 }

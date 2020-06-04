@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.ui.mainmenu.quit;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
 
 /**
@@ -13,6 +13,6 @@ public class ReloadAction extends QuickAction
      */
     public ReloadAction ()
     {
-        super(3, 17, "Reload", () -> InceptionMod.getInstance().reload());
+        super(3, 17, "Reload", () -> Dragonfly.reload());
     }
 }

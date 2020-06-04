@@ -1,12 +1,10 @@
 package net.minecraft.client.audio;
 
-import java.util.Random;
-
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
+
+import java.util.Random;
 
 public class MusicTicker implements ITickable
 {
@@ -18,7 +16,7 @@ public class MusicTicker implements ITickable
     public MusicTicker(Minecraft mcIn)
     {
         this.mc = mcIn;
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     /**
@@ -66,7 +64,7 @@ public class MusicTicker implements ITickable
         }
     }
 
-    public static enum MusicType
+    public enum MusicType
     {
         MENU(new ResourceLocation("minecraft:music.menu"), 20, 600),
         GAME(new ResourceLocation("minecraft:music.game"), 12000, 24000),
@@ -80,7 +78,7 @@ public class MusicTicker implements ITickable
         private final int minDelay;
         private final int maxDelay;
 
-        private MusicType(ResourceLocation location, int minDelayIn, int maxDelayIn)
+        MusicType (ResourceLocation location, int minDelayIn, int maxDelayIn)
         {
             this.musicLocation = location;
             this.minDelay = minDelayIn;

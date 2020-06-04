@@ -62,15 +62,31 @@ abstract class UIListEntry
     abstract fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int,
                          entryHeight: Int)
 
+    /**
+     * Called by the list when the mouse is dragged anywhere on the screen.
+     */
     open fun mouseDragged(mouseX: Int, mouseY: Int, eventButton: Int, duration: Long)
     {
     }
 
+    /**
+     * Called by the list when the mouse is released anywhere on the screen.
+     */
     open fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int)
     {
     }
 
+    /**
+     * Called by the list when the mouse is pressed anywhere on the screen.
+     */
     open fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int)
+    {
+    }
+
+    /**
+     * Called by the list when a key is pressed.
+     */
+    open fun keyTyped(typedChar: Char, keyCode: Int)
     {
     }
 }

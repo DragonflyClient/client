@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.options.entries
 
-import net.inceptioncloud.minecraftmod.InceptionMod
+import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette.BACKGROUND
 import net.inceptioncloud.minecraftmod.design.color.BluePalette.FOREGROUND
 import net.inceptioncloud.minecraftmod.design.color.RGB
@@ -66,7 +66,7 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
         this.height = height
 
         drawRect(x, y, x + width, y + height, RGB.of(BACKGROUND).alpha(0.7F).rgb())
-        InceptionMod.getInstance().fontDesign.regular.drawString(name, x + 5 + textOffset, y + 7, FOREGROUND.rgb)
+        Dragonfly.fontDesign.regular.drawString(name, x + 5 + textOffset, y + 7, FOREGROUND.rgb)
 
         drawContent(x, y, height, width)
 
@@ -90,7 +90,7 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
         drawRect(x, y, x + 1, y + height, RGB.of(FOREGROUND).alpha(transitionHoverHint.get().toFloat() / 2).rgb())
         drawRect(x, y, x + (width * transitionDescription.get()).toInt(), y + height, BACKGROUND.rgb)
 
-        val fontRenderer = InceptionMod.getInstance().fontDesign.retrieveOrBuild("", 12)
+        val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("", 12)
         val lines = fontRenderer.listFormattedStringToWidth(description, width * 2)
         val centerY = y + height / 2 - 1
         var fontY = centerY - (lines.size * fontRenderer.height / 2)
@@ -130,27 +130,6 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
      * Called when the entry is (double-) clicked.
      */
     override fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int, entryHeight: Int)
-    {
-    }
-
-    /**
-     * Called by the list when the mouse is pressed anywhere on the screen.
-     */
-    override fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int)
-    {
-    }
-
-    /**
-     * Called by the list when the mouse is dragged anywhere on the screen.
-     */
-    override fun mouseDragged(mouseX: Int, mouseY: Int, eventButton: Int, duration: Long)
-    {
-    }
-
-    /**
-     * Called by the list when the mouse is released anywhere on the screen.
-     */
-    override fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int)
     {
     }
 

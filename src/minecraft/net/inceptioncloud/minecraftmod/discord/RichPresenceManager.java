@@ -1,52 +1,55 @@
 package net.inceptioncloud.minecraftmod.discord;
 
-import lombok.Getter;
-import net.arikia.dev.drpc.*;
-import net.arikia.dev.drpc.callbacks.JoinRequestCallback;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.arikia.dev.drpc.DiscordEventHandlers;
+import net.arikia.dev.drpc.DiscordRPC;
+import net.arikia.dev.drpc.DiscordRichPresence;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.discord.custom.MenuRPC;
 import net.inceptioncloud.minecraftmod.discord.subscriber.RichPresenceSubscriber;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiIngameMenu;
 import org.apache.logging.log4j.LogManager;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Manages the updating and displaying of the Discord Rich Presence.
  */
-public class RichPresenceManager
-{
+public class RichPresenceManager {
     /**
      * Whether the Rich Presence Channel is open.
      */
-    @Getter
     private boolean open = true;
 
     /**
      * The current rich presence status.
      */
-    @Getter
     private RichPresenceAdapter status;
 
     /**
-     * Initialized when loading the {@link InceptionMod}.
+     * Initialized when loading the {@link Dragonfly}.
      */
     public RichPresenceManager ()
     {
         LogManager.getLogger().info("Enabling Discord Rich Presence...");
-        InceptionMod.getInstance().getEventBus().register(new RichPresenceSubscriber());
+        Dragonfly.getEventBus().register(new RichPresenceSubscriber());
 
         DiscordEventHandlers handlers = new DiscordEventHandlers.Builder()
-            .setReadyEventHandler(discordUser -> LogManager.getLogger().info("Discord Rich Presence is ready!"))
-            .build();
+                .setReadyEventHandler(discordUser -> LogManager.getLogger().info("Discord Rich Presence is ready!"))
+                .build();
 
         DiscordRPC.discordInitialize("696368023333765120", handlers, true);
 
         // KeepAlive-Thread
-        new Thread(() ->
-        {
-            while (open)
+        Timer timer = new Timer("Discord RPC Callback");
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!open)
+                    timer.cancel();
+
                 DiscordRPC.discordRunCallbacks();
-        }, "Discord RPC Callback").start();
+            }
+        }, 10_000, 10_000);
 
         update(new MenuRPC());
     }
@@ -79,5 +82,15 @@ public class RichPresenceManager
     {
         open = false;
         DiscordRPC.discordShutdown();
+    }
+
+    public boolean isOpen ()
+    {
+        return open;
+    }
+
+    public RichPresenceAdapter getStatus ()
+    {
+        return status;
     }
 }

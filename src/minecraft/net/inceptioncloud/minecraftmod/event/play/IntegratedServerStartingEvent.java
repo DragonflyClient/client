@@ -1,6 +1,5 @@
 package net.inceptioncloud.minecraftmod.event.play;
 
-import lombok.*;
 import net.inceptioncloud.minecraftmod.event.Cancellable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.WorldSettings;
@@ -8,8 +7,6 @@ import net.minecraft.world.WorldSettings;
 /**
  * When the player joins a singleplayer world and the client launches an integrated server via {@link Minecraft#launchIntegratedServer(String, String, WorldSettings)}.
  */
-@Getter
-@RequiredArgsConstructor
 public class IntegratedServerStartingEvent extends Cancellable
 {
     /**
@@ -27,4 +24,26 @@ public class IntegratedServerStartingEvent extends Cancellable
      * Could be null!
      */
     private final WorldSettings settings;
+
+    public IntegratedServerStartingEvent (final String worldName, final String folderName, final WorldSettings settings)
+    {
+        this.worldName = worldName;
+        this.folderName = folderName;
+        this.settings = settings;
+    }
+
+    public String getWorldName ()
+    {
+        return worldName;
+    }
+
+    public String getFolderName ()
+    {
+        return folderName;
+    }
+
+    public WorldSettings getSettings ()
+    {
+        return settings;
+    }
 }

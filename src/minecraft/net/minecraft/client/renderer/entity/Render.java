@@ -1,7 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.Dragonfly;
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -21,7 +21,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import optifine.Config;
-
 import org.lwjgl.opengl.GL11;
 import shadersmod.client.Shaders;
 
@@ -347,7 +346,7 @@ public abstract class Render<T extends Entity>
 
         if (d0 <= (double)(maxDistance * maxDistance))
         {
-            IFontRenderer fontrenderer = InceptionMod.getInstance().getFontDesign().getMedium();
+            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getRegular();
             float f = 1.6F;
             float f1 = 0.016666668F * f;
             GlStateManager.pushMatrix();

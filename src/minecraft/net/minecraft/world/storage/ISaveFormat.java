@@ -1,8 +1,9 @@
 package net.minecraft.world.storage;
 
-import java.util.List;
 import net.minecraft.client.AnvilConverterException;
 import net.minecraft.util.IProgressUpdate;
+
+import java.util.List;
 
 public interface ISaveFormat
 {
@@ -28,7 +29,7 @@ public interface ISaveFormat
     boolean func_154335_d(String p_154335_1_);
 
     /**
-     * @args: Takes one argument - the name of the directory of the world to delete. @desc: Delete the world by deleting
+     * args: Takes one argument - the name of the directory of the world to delete. @desc: Delete the world by deleting
      * the associated directory recursively.
      */
     boolean deleteWorldDirectory(String p_75802_1_);

@@ -1,7 +1,5 @@
 package net.inceptioncloud.minecraftmod.transition.number;
 
-import lombok.Getter;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Objects;
@@ -14,7 +12,6 @@ import java.util.function.IntSupplier;
  * <p>
  * The transition that supplies a double value that transforms from the start value to the end value in only that direction.
  */
-@Getter
 public class SmoothDoubleTransition extends TransitionTypeNumber
 {
     /**

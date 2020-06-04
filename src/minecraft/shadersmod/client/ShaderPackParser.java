@@ -1,34 +1,18 @@
 package shadersmod.client;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.CharArrayReader;
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import optifine.Config;
 import optifine.StrUtils;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ShaderPackParser
 {
     private static final Pattern PATTERN_VERSION = Pattern.compile("^\\s*#version\\s+.*$");
-    private static final Pattern PATTERN_INCLUDE = Pattern.compile("^\\s*#include\\s+\"([A-Za-z0-9_/\\.]+)\".*$");
+    private static final Pattern PATTERN_INCLUDE = Pattern.compile("^\\s*#include\\s+\"([A-Za-z0-9_/.]+)\".*$");
     private static final Set<String> setConstNames = makeSetConstNames();
 
     public static ShaderOption[] parseShaderPackOptions(IShaderPack shaderPack, String[] programNames, List<Integer> listDimensions)
@@ -45,13 +29,13 @@ public class ShaderPackParser
 
             while (iterator.hasNext())
             {
-                int i = ((Integer)iterator.next()).intValue();
+                int i = iterator.next().intValue();
                 String s = "/shaders/world" + i;
                 collectShaderOptions(shaderPack, s, programNames, map);
             }
 
             Collection<ShaderOption> collection = map.values();
-            ShaderOption[] ashaderoption = (ShaderOption[])((ShaderOption[])collection.toArray(new ShaderOption[collection.size()]));
+            ShaderOption[] ashaderoption = collection.toArray(new ShaderOption[collection.size()]);
             Comparator<ShaderOption> comparator = new Comparator<ShaderOption>()
             {
                 public int compare(ShaderOption o1, ShaderOption o2)
@@ -92,15 +76,15 @@ public class ShaderPackParser
             if (shaderoption != null && !shaderoption.getName().startsWith(ShaderMacros.getPrefixMacro()) && (!shaderoption.checkUsed() || isOptionUsed(shaderoption, astring)))
             {
                 String s1 = shaderoption.getName();
-                ShaderOption shaderoption1 = (ShaderOption)mapOptions.get(s1);
+                ShaderOption shaderoption1 = mapOptions.get(s1);
 
                 if (shaderoption1 != null)
                 {
                     if (!Config.equals(shaderoption1.getValueDefault(), shaderoption.getValueDefault()))
                     {
                         Config.warn("Ambiguous shader option: " + shaderoption.getName());
-                        Config.warn(" - in " + Config.arrayToString((Object[])shaderoption1.getPaths()) + ": " + shaderoption1.getValueDefault());
-                        Config.warn(" - in " + Config.arrayToString((Object[])shaderoption.getPaths()) + ": " + shaderoption.getValueDefault());
+                        Config.warn(" - in " + Config.arrayToString(shaderoption1.getPaths()) + ": " + shaderoption1.getValueDefault());
+                        Config.warn(" - in " + Config.arrayToString(shaderoption.getPaths()) + ": " + shaderoption.getValueDefault());
                         shaderoption1.setEnabled(false);
                     }
 
@@ -148,7 +132,7 @@ public class ShaderPackParser
             else
             {
                 ByteArrayInputStream bytearrayinputstream = new ByteArrayInputStream(s.getBytes());
-                String[] astring = Config.readLines((InputStream)bytearrayinputstream);
+                String[] astring = Config.readLines(bytearrayinputstream);
                 return astring;
             }
         }
@@ -261,7 +245,7 @@ public class ShaderPackParser
         }
         else
         {
-            ShaderProfile[] ashaderprofile = (ShaderProfile[])((ShaderProfile[])list.toArray(new ShaderProfile[list.size()]));
+            ShaderProfile[] ashaderprofile = list.toArray(new ShaderProfile[list.size()]);
             return ashaderprofile;
         }
     }
@@ -401,7 +385,7 @@ public class ShaderPackParser
 
                 if (s1.equals("<empty>"))
                 {
-                    list.add((ShaderOption)null);
+                    list.add(null);
                 }
                 else if (set.contains(s1))
                 {
@@ -453,7 +437,7 @@ public class ShaderPackParser
                         if (shaderoption == null)
                         {
                             Config.warn("[Shaders] Invalid option: " + s1 + ", key: " + key);
-                            list.add((ShaderOption)null);
+                            list.add(null);
                         }
                         else
                         {
@@ -464,7 +448,7 @@ public class ShaderPackParser
                 }
             }
 
-            ShaderOption[] ashaderoption = (ShaderOption[])((ShaderOption[])list.toArray(new ShaderOption[list.size()]));
+            ShaderOption[] ashaderoption = list.toArray(new ShaderOption[list.size()]);
             map.put(key, ashaderoption);
             return true;
         }
@@ -589,7 +573,7 @@ public class ShaderPackParser
             }
         }
 
-        String[] astring = (String[])((String[])list.toArray(new String[list.size()]));
+        String[] astring = list.toArray(new String[list.size()]);
         return astring;
     }
 
@@ -610,7 +594,7 @@ public class ShaderPackParser
             }
             else
             {
-                InputStreamReader inputstreamreader = new InputStreamReader(inputstream, "ASCII");
+                InputStreamReader inputstreamreader = new InputStreamReader(inputstream, StandardCharsets.US_ASCII);
                 BufferedReader bufferedreader = new BufferedReader(inputstreamreader);
                 bufferedreader = resolveIncludes(bufferedreader, filePath, shaderPack, fileIndex, listFiles, includeLevel);
                 CharArrayWriter chararraywriter = new CharArrayWriter();

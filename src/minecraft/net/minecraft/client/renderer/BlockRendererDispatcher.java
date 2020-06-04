@@ -1,21 +1,16 @@
 package net.minecraft.client.renderer;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.SimpleBakedModel;
-import net.minecraft.client.resources.model.WeightedBakedModel;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ReportedException;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import optifine.Config;
@@ -24,7 +19,7 @@ import shadersmod.client.SVertexBuilder;
 
 public class BlockRendererDispatcher implements IResourceManagerReloadListener
 {
-    private BlockModelShapes blockModelShapes;
+    private final BlockModelShapes blockModelShapes;
     private final GameSettings gameSettings;
     private final BlockModelRenderer blockModelRenderer = new BlockModelRenderer();
     private final ChestRenderer chestRenderer = new ChestRenderer();
@@ -35,7 +30,7 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener
     {
         this.blockModelShapes = blockModelShapesIn;
         this.gameSettings = gameSettingsIn;
-        InceptionMod.getInstance().getSplashScreen().update();
+        Dragonfly.getSplashScreen().update();
     }
 
     public BlockModelShapes getBlockModelShapes()
@@ -59,9 +54,9 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener
 
                 for (EnumWorldBlockLayer enumworldblocklayer : EnumWorldBlockLayer.values())
                 {
-                    if (Reflector.callBoolean(block, Reflector.ForgeBlock_canRenderInLayer, new Object[] {enumworldblocklayer}))
+                    if (Reflector.callBoolean(block, Reflector.ForgeBlock_canRenderInLayer, enumworldblocklayer))
                     {
-                        Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, new Object[] {enumworldblocklayer});
+                        Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, enumworldblocklayer);
                         IBakedModel ibakedmodel2 = (IBakedModel)Reflector.call(ibakedmodel, Reflector.ISmartBlockModel_handleBlockState, new Object[] {iblockstate});
                         IBakedModel ibakedmodel3 = (new SimpleBakedModel.Builder(ibakedmodel2, texture)).makeBakedModel();
                         this.blockModelRenderer.renderModel(blockAccess, ibakedmodel3, state, pos, Tessellator.getInstance().getWorldRenderer());
@@ -168,7 +163,6 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener
             }
             catch (Exception var7)
             {
-                ;
             }
         }
 
@@ -205,7 +199,7 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener
                     break;
 
                 case 3:
-                    IBakedModel ibakedmodel = this.getBakedModel(state, (BlockPos)null);
+                    IBakedModel ibakedmodel = this.getBakedModel(state, null);
                     this.blockModelRenderer.renderModelBrightness(ibakedmodel, state, brightness, true);
             }
         }
@@ -220,7 +214,7 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener
         else
         {
             int i = p_175021_1_.getRenderType();
-            return i == 3 ? false : i == 2;
+            return i != 3 && i == 2;
         }
     }
 

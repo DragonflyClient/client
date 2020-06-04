@@ -1,6 +1,5 @@
 package net.inceptioncloud.minecraftmod.transition.color;
 
-import lombok.Builder;
 import net.inceptioncloud.minecraftmod.transition.FloatingDirection;
 
 import java.awt.*;
@@ -32,7 +31,6 @@ public class FloatingColorTransition extends TransitionTypeColor
     /**
      * The current floating direction.
      */
-    @Builder.Default
     private FloatingDirection direction = FloatingDirection.FORWARD;
 
     /**
@@ -40,7 +38,6 @@ public class FloatingColorTransition extends TransitionTypeColor
      *
      * @see ColorTransition Parameter Documentation
      */
-    @Builder
     public FloatingColorTransition (final Color start, final Color end, final int amountOfSteps,
                                     final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
     {
@@ -49,6 +46,11 @@ public class FloatingColorTransition extends TransitionTypeColor
         synchronized (threadLock) {
             this.base = new ColorTransitionBuilder().start(start).end(end).amountOfSteps(amountOfSteps).reachStart(reachStart).reachEnd(reachEnd).build();
         }
+    }
+
+    public static FloatingColorTransitionBuilder builder ()
+    {
+        return new FloatingColorTransitionBuilder();
     }
 
     /**

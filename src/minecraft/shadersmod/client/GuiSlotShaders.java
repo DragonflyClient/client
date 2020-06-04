@@ -1,5 +1,6 @@
 package shadersmod.client;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiSlot;
 import optifine.Lang;
 
@@ -14,7 +15,7 @@ class GuiSlotShaders extends GuiSlot
 
     public GuiSlotShaders(GuiShaders par1GuiShaders, int width, int height, int top, int bottom, int slotHeight)
     {
-        super(par1GuiShaders.getMc(), width, height, top, bottom, slotHeight);
+        super(Minecraft.getMinecraft(), width, height, top, bottom, slotHeight);
         this.shadersGui = par1GuiShaders;
         this.updateList();
         this.amountScrolled = 0.0F;

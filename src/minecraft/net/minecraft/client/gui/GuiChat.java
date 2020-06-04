@@ -1,7 +1,7 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C14PacketTabComplete;
@@ -76,7 +76,7 @@ public class GuiChat extends GuiScreen
         transition.setForward();
         this.sentHistoryCursor = this.mc.ingameGUI.getChatGUI().getSentMessages().size();
 
-        this.inputField = new GuiTextField(0, InceptionMod.getInstance().getFontDesign().getRegular(), 5, this.height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth) - 10, 12);
+        this.inputField = new GuiTextField(0, Dragonfly.getFontDesign().getRegular(), 5, this.height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth) - 10, 12);
         this.inputField.setMaxStringLength(100);
         this.inputField.setEnableBackgroundDrawing(false);
         this.inputField.setFocused(true);

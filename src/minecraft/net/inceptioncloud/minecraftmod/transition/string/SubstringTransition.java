@@ -1,6 +1,5 @@
 package net.inceptioncloud.minecraftmod.transition.string;
 
-import lombok.Builder;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import org.apache.commons.lang3.Validate;
 
@@ -24,7 +23,6 @@ public class SubstringTransition extends TransitionTypeString
     /**
      * The content of the string transition.
      */
-    @Builder.Default
     protected String content = "This is a string transition.";
 
     /**
@@ -41,7 +39,6 @@ public class SubstringTransition extends TransitionTypeString
      * @param reachStart           {@link #reachStart}
      * @param autoTransformator {@link #autoTransformator}
      */
-    @Builder
     public SubstringTransition (final String content, final int amountOfSteps, final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
     {
         super(reachEnd, reachStart, autoTransformator);
@@ -122,5 +119,10 @@ public class SubstringTransition extends TransitionTypeString
         return "SubstringTransition{" +
                "originStackTrace=" + originStackTrace +
                '}';
+    }
+
+    public static SubstringTransitionBuilder builder ()
+    {
+        return new SubstringTransitionBuilder();
     }
 }

@@ -470,6 +470,11 @@ public class GlStateManager
         GL11.glScaled(x, y, z);
     }
 
+    public static void scale (double factor)
+    {
+        scale(factor, factor, factor);
+    }
+
     public static void translate (float x, float y, float z)
     {
         GL11.glTranslatef(x, y, z);

@@ -1,6 +1,5 @@
 package net.inceptioncloud.minecraftmod.ui.mainmenu;
 
-import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 
@@ -9,7 +8,6 @@ import net.minecraft.client.gui.GuiMainMenu;
  * Every category (Singleplayer, Multiplayer, Options, Quit Game) has two quick actions.
  * The Button ID that is used for the category can be found {@link GuiMainMenu#addButtons() here}.
  */
-@Getter
 public class QuickAction
 {
     /**
@@ -46,5 +44,25 @@ public class QuickAction
         this.ownButtonId = ownButtonId;
         this.display = display;
         this.handleClick = handleClick;
+    }
+
+    public int getHeadButtonId ()
+    {
+        return headButtonId;
+    }
+
+    public int getOwnButtonId ()
+    {
+        return ownButtonId;
+    }
+
+    public String getDisplay ()
+    {
+        return display;
+    }
+
+    public Runnable getHandleClick ()
+    {
+        return handleClick;
     }
 }

@@ -1,8 +1,8 @@
 package net.minecraft.client.gui.inventory;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.renderer.*;
@@ -18,6 +18,7 @@ import net.minecraft.inventory.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
+import org.apache.logging.log4j.LogManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -30,7 +31,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer
      * The location of the creative inventory tabs texture
      */
     private static final ResourceLocation creativeInventoryTabs = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
-    private static InventoryBasic field_147060_v = new InventoryBasic("tmp", true, 45);
+    private static final InventoryBasic field_147060_v = new InventoryBasic("tmp", true, 45);
 
     /**
      * Currently selected creative inventory tab index.
@@ -72,6 +73,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer
     public void updateScreen ()
     {
         if (!this.mc.playerController.isInCreativeMode()) {
+            LogManager.getLogger().info("Switched from creative to survival inventory.");
             this.mc.displayGuiScreen(new GuiInventory(this.mc.thePlayer));
         }
 
@@ -325,6 +327,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer
 
         if (creativetabs.drawInForegroundOfTab()) {
             GlStateManager.disableBlend();
+            assert this.fontRendererObj != null;
             this.fontRendererObj.drawString(I18n.format(creativetabs.getTranslatedTabLabel()), 8, 6, 4210752);
         }
     }

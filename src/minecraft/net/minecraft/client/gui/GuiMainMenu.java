@@ -1,14 +1,15 @@
 package net.minecraft.client.gui;
 
-import net.inceptioncloud.minecraftmod.InceptionMod;
+import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
 import net.inceptioncloud.minecraftmod.design.color.RGB;
-import net.inceptioncloud.minecraftmod.design.font.IFontRenderer;
+import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardBackward;
 import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
+import net.inceptioncloud.minecraftmod.ui.AboutUI;
 import net.inceptioncloud.minecraftmod.ui.components.button.TransparentButton;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.multiplayer.DirectConnectAction;
@@ -19,7 +20,7 @@ import net.inceptioncloud.minecraftmod.ui.mainmenu.quit.ReloadAction;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.quit.RestartAction;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer.CreateMapAction;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.singleplayer.LastMapAction;
-import net.inceptioncloud.minecraftmod.utils.RenderUtils;
+import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils;
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.resources.I18n;
@@ -53,8 +54,11 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      * Provides the value for the fading in of the main menu after the splash screen.
      */
     private static final SmoothDoubleTransition fadeInTransition = SmoothDoubleTransition.builder()
-        .start(1).end(0)
-        .fadeIn(75).stay(75).fadeOut(0)
+        .start(1)
+        .end(0)
+        .fadeIn(75)
+        .stay(75)
+        .fadeOut(0)
         .autoTransformator((ForwardNothing) () -> drawTime != -1 && System.currentTimeMillis() - drawTime > 1000)
         .build();
 
@@ -77,6 +81,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      * The transitions that are responsible for the different Quick Action Buttons.
      */
     private final Map<Integer, DoubleTransition> quickActionTransitions = new HashMap<>();
+    private final String aboutString = "About ICM";
 
     /**
      * The transition that lets the navigation bar rise when it's hovered.
@@ -134,17 +139,17 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         }
     }
 
-
     /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
+     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
      */
     public void initGui ()
     {
         riseTransition = SmoothDoubleTransition.builder()
             .start(1)
             .end(2)
-            .fadeIn(0).stay(10).fadeOut(20)
+            .fadeIn(0)
+            .stay(10)
+            .fadeOut(20)
             .autoTransformator((ForwardBackward) () -> navbarHovered)
             .build();
 
@@ -198,7 +203,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
             .map(TransparentButton.class::cast)
             .forEach(transparentButton ->
             {
-                double percent = quickActionTransitions.get(transparentButton.id).get();
+                double percent = quickActionTransitions.get(transparentButton.id)
+                    .get();
                 transparentButton.setPositionY((int) (height - BUTTON_HEIGHT * 1.7 * percent));
                 transparentButton.setFontRenderer(finalFontRenderer);
             });
@@ -211,24 +217,35 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
         // Title
         double percent = imageSize / 280D;
-        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild(" Medium", (int) (25 + (percent * 60)));
+        IFontRenderer fontRenderer = Dragonfly.getFontDesign()
+            .retrieveOrBuild(" Medium", (int) (25 + (percent * 60)));
         fontRenderer.drawCenteredString(InceptionCloudVersion.FULL_VERSION, width / 2, height / 8 + imageSize + 10, 0xFFFFFF, true);
 
         // Subtitle
         int previousHeight = fontRenderer.getHeight();
         percent = imageSize / 280D;
-        fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("", (int) (15 + (percent * 40)));
+        fontRenderer = Dragonfly.getFontDesign()
+            .retrieveOrBuild("", (int) (15 + (percent * 40)));
         fontRenderer.drawCenteredString("Minecraft Mod 1.8.8", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true);
+
+        // About
+        fontRenderer = Dragonfly.getFontDesign().getRegular();
+        fontRenderer.drawString(aboutString, 5, 5, Color.WHITE.getRGB(), true);
 
         // Bottom Bar
         drawRect(0, height - getNavbarHeight(), width, height, new Color(0, 0, 0, 100).getRGB());
 
         // Buttons
         super.drawScreen(mouseX, mouseY, partialTicks);
-        this.buttonList.remove(this.buttonList.stream().filter(guiButton -> guiButton.id == 5).findFirst().orElse(null));
+        this.buttonList.remove(this.buttonList.stream()
+            .filter(guiButton -> guiButton.id == 5)
+            .findFirst()
+            .orElse(null));
 
         // Fade-In Overlay
-        drawRect(0, 0, width, height, RGB.of(GreyToneColor.DARK_GREY).alpha((float) fadeInTransition.get()).rgb());
+        drawRect(0, 0, width, height, RGB.of(GreyToneColor.DARK_GREY)
+            .alpha((float) fadeInTransition.get())
+            .rgb());
     }
 
     /**
@@ -238,7 +255,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     {
         double percent = Math.min(height / 540D, 1.0D);
         final int BUTTON_FONT_SIZE = (int) (18 + (percent * 15));
-        IFontRenderer fontRenderer = InceptionMod.getInstance().getFontDesign().retrieveOrBuild("", BUTTON_FONT_SIZE);
+        IFontRenderer fontRenderer = Dragonfly.getFontDesign()
+            .retrieveOrBuild("", BUTTON_FONT_SIZE);
 
         BUTTON_WIDTH = (int) (80 + (percent * 30));
         BUTTON_HEIGHT = fontRenderer.getHeight();
@@ -276,7 +294,12 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
             final int buttonId = quickAction.getOwnButtonId();
 
             this.buttonList.add(new TransparentButton(buttonId, xPosition, height, stringWidth, 20, quickAction.getDisplay()).setOpacity(0.5F));
-            quickActionTransitions.put(buttonId, DoubleTransition.builder().start(0).end(1).amountOfSteps(20).autoTransformator((ForwardBackward) () -> riseTransition.isAtEnd() && isQuickActionSelected(buttonId)).build());
+            quickActionTransitions.put(buttonId, DoubleTransition.builder()
+                .start(0)
+                .end(1)
+                .amountOfSteps(20)
+                .autoTransformator((ForwardBackward) () -> riseTransition.isAtEnd() && isQuickActionSelected(buttonId))
+                .build());
 
             left = !left;
         }
@@ -287,8 +310,12 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      */
     private boolean isQuickActionSelected (int quickActionButtonId)
     {
-        final List<QuickAction> actions = AVAILABLE_ACTIONS.stream().filter(action -> action.getHeadButtonId() == selectedButton).collect(Collectors.toList());
-        return quickActionButtonId == actions.get(0).getOwnButtonId() || quickActionButtonId == actions.get(1).getOwnButtonId();
+        final List<QuickAction> actions = AVAILABLE_ACTIONS.stream()
+            .filter(action -> action.getHeadButtonId() == selectedButton)
+            .collect(Collectors.toList());
+
+        return quickActionButtonId == actions.get(0).getOwnButtonId()
+               || quickActionButtonId == actions.get(1).getOwnButtonId();
     }
 
     /**
@@ -331,7 +358,10 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      */
     private QuickAction getActionByButtonId (int buttonId)
     {
-        return AVAILABLE_ACTIONS.stream().filter(quickAction -> quickAction.getOwnButtonId() == buttonId).findFirst().orElse(null);
+        return AVAILABLE_ACTIONS.stream()
+            .filter(quickAction -> quickAction.getOwnButtonId() == buttonId)
+            .findFirst()
+            .orElse(null);
     }
 
     public void confirmClicked (boolean result, int id)
@@ -370,12 +400,19 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
                 this.mc.displayGuiScreen(guiconfirmopenlink);
             }
         }
+
+        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
+        if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString)
+            && mouseY >= 5 && mouseY <= 5 + fontRenderer.getHeight()) {
+            this.mc.displayGuiScreen(new AboutUI(this));
+        }
     }
 
     @Override
     public void onGuiClosed ()
     {
-        quickActionTransitions.values().forEach(Transition::destroy);
+        quickActionTransitions.values()
+            .forEach(Transition::destroy);
         riseTransition.destroy();
 
         super.onGuiClosed();
