@@ -24,7 +24,7 @@ object Dragonfly {
     /**
      * The current Minecraft Mod version
      */
-    const val version: String = "1.0.2.0-alpha"
+    const val version: String = "1.0.2.1-eap"
 
     @JvmStatic
     val gameStateManager: GameStateManager
