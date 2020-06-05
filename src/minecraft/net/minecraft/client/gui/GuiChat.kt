@@ -89,9 +89,9 @@ open class GuiChat : GuiScreen {
             Color(20, 20, 20, 100).rgb
         )
         if (transition.isAtEnd) inputField!!.drawTextBox()
-        val ichatcomponent = mc.ingameGUI.chatGUI.getChatComponent(Mouse.getX(), Mouse.getY())
-        if (ichatcomponent != null && ichatcomponent.chatStyle.chatHoverEvent != null) {
-            handleComponentHover(ichatcomponent, mouseX, mouseY)
+        val iChatComponent = mc.ingameGUI.chatGUI.getChatComponent(Mouse.getX(), Mouse.getY())
+        if (iChatComponent != null && iChatComponent.chatStyle.chatHoverEvent != null) {
+            handleComponentHover(iChatComponent, mouseX, mouseY)
         }
         super.drawScreen(mouseX, mouseY, partialTicks)
     }
@@ -185,9 +185,8 @@ open class GuiChat : GuiScreen {
     @Throws(IOException::class)
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         if (mouseButton == 0) {
-            val ichatcomponent = mc.ingameGUI.chatGUI
-                .getChatComponent(Mouse.getX(), Mouse.getY())
-            if (handleComponentClick(ichatcomponent)) {
+            val iChatComponent = mc.ingameGUI.chatGUI.getChatComponent(Mouse.getX(), Mouse.getY())
+            if (handleComponentClick(iChatComponent)) {
                 return
             }
         }
@@ -232,15 +231,14 @@ open class GuiChat : GuiScreen {
             inputField!!.deleteFromCursor(i - inputField!!.cursorPosition)
         }
         if (foundPlayerNames.size > 1) {
-            val stringbuilder = StringBuilder()
+            val stringBuilder = StringBuilder()
             for (s2 in foundPlayerNames) {
-                if (stringbuilder.isNotEmpty()) {
-                    stringbuilder.append(", ")
+                if (stringBuilder.isNotEmpty()) {
+                    stringBuilder.append(", ")
                 }
-                stringbuilder.append(s2)
+                stringBuilder.append(s2)
             }
-            mc.ingameGUI.chatGUI
-                .printChatMessageWithOptionalDeletion(ChatComponentText(stringbuilder.toString()), 1)
+            mc.ingameGUI.chatGUI.printChatMessageWithOptionalDeletion(ChatComponentText(stringBuilder.toString()), 1)
         }
         inputField!!.writeText(foundPlayerNames[autocompleteIndex++])
     }

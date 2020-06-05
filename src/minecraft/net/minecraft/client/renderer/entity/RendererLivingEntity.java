@@ -1,21 +1,14 @@
 package net.minecraft.client.renderer.entity;
 
 import com.google.common.collect.Lists;
-import java.nio.FloatBuffer;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
@@ -25,11 +18,13 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import optifine.Config;
 import optifine.Reflector;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 import shadersmod.client.Shaders;
+
+import java.nio.FloatBuffer;
+import java.util.List;
 
 public abstract class RendererLivingEntity<T extends EntityLivingBase> extends Render<T>
 {
@@ -76,7 +71,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
         for (f = par2 - par1; f < -180.0F; f += 360.0F)
         {
-            ;
         }
 
         while (f >= 180.0F)
@@ -97,24 +91,28 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
      * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
      * double d2, float f, float f1). But JAD is pre 1.5 so doe
      */
-    public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
-    {
-        if (!Reflector.RenderLivingEvent_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Pre_Constructor, new Object[] {entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z)}))
-        {
+    public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        if (!Reflector.RenderLivingEvent_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(
+                Reflector.RenderLivingEvent_Pre_Constructor,
+                entity,
+                this,
+                Double.valueOf(x),
+                Double.valueOf(y),
+                Double.valueOf(z)
+        )) {
             GlStateManager.pushMatrix();
             GlStateManager.disableCull();
             this.mainModel.swingProgress = this.getSwingProgress(entity, partialTicks);
             this.mainModel.isRiding = entity.isRiding();
 
-            if (Reflector.ForgeEntity_shouldRiderSit.exists())
-            {
-                this.mainModel.isRiding = entity.isRiding() && entity.ridingEntity != null && Reflector.callBoolean(entity.ridingEntity, Reflector.ForgeEntity_shouldRiderSit, new Object[0]);
+            if (Reflector.ForgeEntity_shouldRiderSit.exists()) {
+                this.mainModel.isRiding = entity.isRiding() && entity.ridingEntity != null && Reflector
+                        .callBoolean(entity.ridingEntity, Reflector.ForgeEntity_shouldRiderSit);
             }
 
             this.mainModel.isChild = entity.isChild();
 
-            try
-            {
+            try {
                 float f = this.interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
                 float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
                 float f2 = f1 - f;
@@ -202,7 +200,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
             catch (Exception exception)
             {
-                logger.error((String)"Couldn\'t render entity", (Throwable)exception);
+                logger.error("Couldn't render entity", exception);
             }
 
             GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -211,14 +209,18 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             GlStateManager.enableCull();
             GlStateManager.popMatrix();
 
-            if (!this.renderOutlines)
-            {
+            if (!this.renderOutlines) {
                 super.doRender(entity, x, y, z, entityYaw, partialTicks);
             }
 
-            if (!Reflector.RenderLivingEvent_Post_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Post_Constructor, new Object[] {entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z)}))
-            {
-                ;
+            if (!Reflector.RenderLivingEvent_Post_Constructor.exists() || !Reflector.postForgeBusEvent(
+                    Reflector.RenderLivingEvent_Post_Constructor,
+                    entity,
+                    this,
+                    Double.valueOf(x),
+                    Double.valueOf(y),
+                    Double.valueOf(z)
+            )) {
             }
         }
     }
@@ -380,7 +382,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
 
             this.brightnessBuffer.flip();
-            GL11.glTexEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, (FloatBuffer)this.brightnessBuffer);
+            GL11.glTexEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, this.brightnessBuffer);
             GlStateManager.setActiveTexture(OpenGlHelper.GL_TEXTURE2);
             GlStateManager.enableTexture2D();
             GlStateManager.bindTexture(field_177096_e.getGlTextureId());
@@ -527,30 +529,35 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(T entitylivingbaseIn, float partialTickTime)
-    {
+    protected void preRenderCallback(T entitylivingbaseIn, float partialTickTime) {
     }
 
-    public void renderName(T entity, double x, double y, double z)
-    {
-        if (!Reflector.RenderLivingEvent_Specials_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(Reflector.RenderLivingEvent_Specials_Pre_Constructor, new Object[] {entity, this, Double.valueOf(x), Double.valueOf(y), Double.valueOf(z)}))
-        {
-            if (this.canRenderName(entity))
-            {
-                double d0 = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);
+    public void renderName(T entity, double x, double y, double z) {
+        if (!Reflector.RenderLivingEvent_Specials_Pre_Constructor.exists() || !Reflector.postForgeBusEvent(
+                Reflector.RenderLivingEvent_Specials_Pre_Constructor,
+                entity,
+                this,
+                Double.valueOf(x),
+                Double.valueOf(y),
+                Double.valueOf(z)
+        )) {
+            if (this.canRenderName(entity)) {
+                double distanceSqToEntity = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);
                 float f = entity.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
 
-                if (d0 < (double)(f * f))
-                {
+                if (distanceSqToEntity < (double) (f * f)) {
                     String s = entity.getDisplayName().getFormattedText();
                     float f1 = 0.02666667F;
                     GlStateManager.alphaFunc(516, 0.1F);
 
-                    if (entity.isSneaking())
-                    {
+                    if (entity.isSneaking()) {
                         FontRenderer fontrenderer = this.getFontRendererFromRenderManager();
                         GlStateManager.pushMatrix();
-                        GlStateManager.translate((float)x, (float)y + entity.height + 0.5F - (entity.isChild() ? entity.height / 2.0F : 0.0F), (float)z);
+                        GlStateManager.translate(
+                                (float) x,
+                                (float) y + entity.height + 0.5F - (entity.isChild() ? entity.height / 2.0F : 0.0F),
+                                (float) z
+                        );
                         GL11.glNormal3f(0.0F, 1.0F, 0.0F);
                         GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
                         GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
@@ -565,10 +572,10 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                         Tessellator tessellator = Tessellator.getInstance();
                         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
                         worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-                        worldrenderer.pos((double)(-i - 1), -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        worldrenderer.pos((double)(-i - 1), 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        worldrenderer.pos((double)(i + 1), 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        worldrenderer.pos((double)(i + 1), -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+                        worldrenderer.pos(-i - 1, -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+                        worldrenderer.pos(-i - 1, 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+                        worldrenderer.pos(i + 1, 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+                        worldrenderer.pos(i + 1, -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
                         tessellator.draw();
                         GlStateManager.enableTexture2D();
                         GlStateManager.depthMask(true);
@@ -578,9 +585,16 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                         GlStateManager.popMatrix();
                     }
-                    else
-                    {
-                        this.renderOffsetLivingLabel(entity, x, y - (entity.isChild() ? (double)(entity.height / 2.0F) : 0.0D), z, s, 0.02666667F, d0);
+                    else {
+                        this.renderOffsetLivingLabel(
+                                entity,
+                                x,
+                                y - (entity.isChild() ? (double) (entity.height / 2.0F) : 0.0D),
+                                z,
+                                s,
+                                0.02666667F,
+                                distanceSqToEntity
+                        );
                     }
                 }
             }
@@ -655,7 +669,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
             catch (NoSuchFieldError var4)
             {
-                ;
             }
 
             try
@@ -664,7 +677,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
             catch (NoSuchFieldError var3)
             {
-                ;
             }
 
             try
@@ -673,7 +685,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
             catch (NoSuchFieldError var2)
             {
-                ;
             }
 
             try
@@ -682,7 +693,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
             catch (NoSuchFieldError var1)
             {
-                ;
             }
         }
     }

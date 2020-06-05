@@ -66,19 +66,24 @@ public abstract class Render<T extends Entity>
 
     protected void renderName(T entity, double x, double y, double z)
     {
-        if (this.canRenderName(entity))
-        {
+        if (this.canRenderName(entity)) {
             this.renderLivingLabel(entity, entity.getDisplayName().getFormattedText(), x, y, z, 64);
         }
     }
 
-    protected boolean canRenderName(T entity)
-    {
+    protected boolean canRenderName(T entity) {
         return entity.getAlwaysRenderNameTagForRender() && entity.hasCustomName();
     }
 
-    protected void renderOffsetLivingLabel(T entityIn, double x, double y, double z, String str, float p_177069_9_, double p_177069_10_)
-    {
+    protected void renderOffsetLivingLabel(
+            T entityIn,
+            double x,
+            double y,
+            double z,
+            String str,
+            float p_177069_9_,
+            double distanceSqToEntity
+    ) {
         this.renderLivingLabel(entityIn, str, x, y, z, 64);
     }
 
@@ -87,8 +92,7 @@ public abstract class Render<T extends Entity>
      */
     protected abstract ResourceLocation getEntityTexture(T entity);
 
-    protected boolean bindEntityTexture(T entity)
-    {
+    protected boolean bindEntityTexture(T entity) {
         ResourceLocation resourcelocation = this.getEntityTexture(entity);
 
         if (resourcelocation == null)
@@ -344,16 +348,21 @@ public abstract class Render<T extends Entity>
     {
         double d0 = entityIn.getDistanceSqToEntity(this.renderManager.livingPlayer);
 
-        if (d0 <= (double)(maxDistance * maxDistance))
-        {
+        if (d0 <= (double) (maxDistance * maxDistance)) {
             IFontRenderer fontrenderer = Dragonfly.getFontDesign().getRegular();
             float f = 1.6F;
             float f1 = 0.016666668F * f;
             GlStateManager.pushMatrix();
-            GlStateManager.translate((float)x + 0.0F, (float)y + entityIn.height + 0.5F, (float)z);
+            GlStateManager.translate((float) x + 0.0F, (float) y + entityIn.height + 0.5F, (float) z);
             GL11.glNormal3f(0.0F, 1.0F, 0.0F);
-            GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-            GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+
+            // ICMM: Fixed nametag rendering for thirdPersonView == 2
+            final float playerViewX = Minecraft
+                    .getMinecraft().gameSettings.thirdPersonView != 2 ? this.renderManager.playerViewX : -this.renderManager.playerViewX;
+            final float playerViewY = -this.renderManager.playerViewY;
+
+            GlStateManager.rotate(playerViewY, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(playerViewX, 1.0F, 0.0F, 0.0F);
             GlStateManager.scale(-f1, -f1, f1);
             GlStateManager.disableLighting();
             GlStateManager.depthMask(false);

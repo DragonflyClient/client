@@ -4,13 +4,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.layers.LayerArrow;
-import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
-import net.minecraft.client.renderer.entity.layers.LayerCape;
-import net.minecraft.client.renderer.entity.layers.LayerCustomHead;
-import net.minecraft.client.renderer.entity.layers.LayerDeadmau5Head;
-import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -19,18 +13,17 @@ import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
-{
-    /** this field is used to indicate the 3-pixel wide arms */
-    private boolean smallArms;
+public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
+    /**
+     * this field is used to indicate the 3-pixel wide arms
+     */
+    private final boolean smallArms;
 
-    public RenderPlayer(RenderManager renderManager)
-    {
+    public RenderPlayer(RenderManager renderManager) {
         this(renderManager, false);
     }
 
-    public RenderPlayer(RenderManager renderManager, boolean useSmallArms)
-    {
+    public RenderPlayer(RenderManager renderManager, boolean useSmallArms) {
         super(renderManager, new ModelPlayer(0.0F, useSmallArms), 0.5F);
         this.smallArms = useSmallArms;
         this.addLayer(new LayerBipedArmor(this));
@@ -134,28 +127,39 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer>
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(AbstractClientPlayer entitylivingbaseIn, float partialTickTime)
-    {
+    protected void preRenderCallback(AbstractClientPlayer entitylivingbaseIn, float partialTickTime) {
         float f = 0.9375F;
         GlStateManager.scale(f, f, f);
     }
 
-    protected void renderOffsetLivingLabel(AbstractClientPlayer entityIn, double x, double y, double z, String str, float p_177069_9_, double p_177069_10_)
-    {
-        if (p_177069_10_ < 100.0D)
-        {
+    protected void renderOffsetLivingLabel(
+            AbstractClientPlayer entityIn,
+            double x,
+            double y,
+            double z,
+            String str,
+            float p_177069_9_,
+            double distanceSqToEntity
+    ) {
+        if (distanceSqToEntity < 100.0D) {
             Scoreboard scoreboard = entityIn.getWorldScoreboard();
             ScoreObjective scoreobjective = scoreboard.getObjectiveInDisplaySlot(2);
 
-            if (scoreobjective != null)
-            {
+            if (scoreobjective != null) {
                 Score score = scoreboard.getValueFromObjective(entityIn.getName(), scoreobjective);
-                this.renderLivingLabel(entityIn, score.getScorePoints() + " " + scoreobjective.getDisplayName(), x, y, z, 64);
-                y += (double)((float)this.getFontRendererFromRenderManager().FONT_HEIGHT * 1.15F * p_177069_9_);
+                this.renderLivingLabel(
+                        entityIn,
+                        score.getScorePoints() + " " + scoreobjective.getDisplayName(),
+                        x,
+                        y,
+                        z,
+                        64
+                );
+                y += (float) this.getFontRendererFromRenderManager().FONT_HEIGHT * 1.15F * p_177069_9_;
             }
         }
 
-        super.renderOffsetLivingLabel(entityIn, x, y, z, str, p_177069_9_, p_177069_10_);
+        super.renderOffsetLivingLabel(entityIn, x, y, z, str, p_177069_9_, distanceSqToEntity);
     }
 
     public void renderRightArm(AbstractClientPlayer clientPlayer)
