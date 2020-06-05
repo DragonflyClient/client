@@ -14,17 +14,23 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
-public class GuiChat extends GuiScreen
-{
+public class GuiChat extends GuiScreen {
+    /**
+     * If the gui has not been closed manually by the user, the client caches the content of the field at the time of
+     * closure in this field, so it can be restored on the next open.
+     */
+    private static String messageCache = null;
+
     private static String messageToSend = null;
-    public static DoubleTransition transition = DoubleTransition.builder().start(0).end(22).amountOfSteps(15).reachStart(() ->
-    {
-        Minecraft.getMinecraft().displayGuiScreen(null);
+    public static DoubleTransition transition =
+            DoubleTransition.builder().start(0).end(22).amountOfSteps(15).reachStart(() ->
+            {
+                Minecraft.getMinecraft().displayGuiScreen(null);
 
-        if (messageToSend != null)
-            sendChatMessage(messageToSend);
+                if (messageToSend != null)
+                    sendChatMessage(messageToSend);
 
-        messageToSend = null;
+                messageToSend = null;
     }).build();
 
     private final List<String> foundPlayerNames = Lists.newArrayList();
@@ -49,12 +55,15 @@ public class GuiChat extends GuiScreen
      */
     private String defaultInputFieldText = "";
 
-    public GuiChat ()
-    {
+    /**
+     * Whether the close of the chat gui was manually started by the user and not forced by the client.
+     */
+    private boolean manuallyClosed = false;
+
+    public GuiChat() {
     }
 
-    public GuiChat (String defaultText)
-    {
+    public GuiChat(String defaultText) {
         this.defaultInputFieldText = defaultText;
     }
 
@@ -69,19 +78,25 @@ public class GuiChat extends GuiScreen
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
      * window resizes, the buttonList is cleared beforehand.
      */
-    public void initGui ()
-    {
+    public void initGui () {
         Keyboard.enableRepeatEvents(true);
 
         transition.setForward();
         this.sentHistoryCursor = this.mc.ingameGUI.getChatGUI().getSentMessages().size();
 
-        this.inputField = new GuiTextField(0, Dragonfly.getFontDesign().getRegular(), 5, this.height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth) - 10, 12);
+        this.inputField = new GuiTextField(0, Dragonfly.getFontDesign().getRegular(), 5,
+                this.height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth) - 10, 12
+        );
         this.inputField.setMaxStringLength(100);
         this.inputField.setEnableBackgroundDrawing(false);
         this.inputField.setFocused(true);
         this.inputField.setText(this.defaultInputFieldText);
         this.inputField.setCanLoseFocus(false);
+
+        if (messageCache != null) {
+            this.inputField.setText(messageCache);
+            messageCache = null;
+        }
     }
 
     /**
@@ -106,8 +121,11 @@ public class GuiChat extends GuiScreen
     /**
      * Called when the screen is unloaded. Used to disable keyboard repeat events
      */
-    public void onGuiClosed ()
-    {
+    public void onGuiClosed () {
+        if (!manuallyClosed) {
+            messageCache = this.inputField.getText();
+        }
+
         Keyboard.enableRepeatEvents(false);
         this.mc.ingameGUI.getChatGUI().resetScroll();
 
@@ -137,6 +155,7 @@ public class GuiChat extends GuiScreen
         }
 
         if (keyCode == 1) {
+            manuallyClosed = true;
             transition.setBackward();
         } else if (keyCode != 28 && keyCode != 156) {
             if (keyCode == 200) {

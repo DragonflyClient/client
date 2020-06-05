@@ -12,23 +12,22 @@ import net.inceptioncloud.minecraftmod.options.sections.OptionSectionFactory.Com
  *
  * This object contains all options that affect the scoreboard.
  */
-object OptionsSectionScoreboard
-{
+object OptionsSectionScoreboard {
     /**
      * ## Title
      * Whether the title of the scoreboard should be visible.
      */
     @JvmStatic
     val scoreboardTitle =
-            optionEntryBoolean {
-                name = "Title"
-                description = "Shows the scoreboard title (first line) of the scoreboard. It usually contains " +
-                        "the name of the server or gamemode that you are currently playing."
-                key {
-                    fileKey = "scoreboardTitle"
-                    default = { true }
-                }
+        optionEntryBoolean {
+            name = "Title"
+            description = "Shows the scoreboard title (first line) of the scoreboard. It usually contains " +
+                    "the name of the server or gamemode that you are currently playing."
+            key {
+                fileKey = "scoreboardTitle"
+                default = { true }
             }
+        }
 
     /**
      * ## Background
@@ -36,14 +35,14 @@ object OptionsSectionScoreboard
      */
     @JvmStatic
     val scoreboardBackground =
-            optionEntryBoolean {
-                name = "Background"
-                description = "Renders a transparent black background behind the scoreboard entries and title."
-                key {
-                    fileKey = "scoreboardBackground"
-                    default = { true }
-                }
+        optionEntryBoolean {
+            name = "Background"
+            description = "Renders a transparent black background behind the scoreboard entries and title."
+            key {
+                fileKey = "scoreboardBackground"
+                default = { true }
             }
+        }
 
     /**
      * ## Background
@@ -71,8 +70,7 @@ object OptionsSectionScoreboard
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
-    fun init()
-    {
+    fun init() {
         optionSection {
             title = "Scoreboard"
 
