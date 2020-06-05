@@ -23,7 +23,7 @@ object OptionsSectionChat {
         default = 1
 
         +OptionChoice(0, "Never")
-        +OptionChoice(1, "Only on Force-Close")
+        +OptionChoice(1, "Force-Close")
         +OptionChoice(2, "Always")
 
         key {

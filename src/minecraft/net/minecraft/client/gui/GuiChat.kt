@@ -2,6 +2,7 @@ package net.minecraft.client.gui
 
 import com.google.common.collect.Lists
 import net.inceptioncloud.minecraftmod.Dragonfly.fontDesign
+import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionChat
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition
 import net.minecraft.client.Minecraft
 import net.minecraft.network.play.client.C14PacketTabComplete
@@ -10,6 +11,7 @@ import net.minecraft.util.ChatComponentText
 import net.minecraft.util.MathHelper
 import net.minecraft.util.MovingObjectPosition
 import org.apache.commons.lang3.StringUtils
+import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import java.awt.Color
@@ -58,6 +60,7 @@ open class GuiChat : GuiScreen {
         Keyboard.enableRepeatEvents(true)
         transition.setForward()
         sentHistoryCursor = mc.ingameGUI.chatGUI.sentMessages.size
+
         inputField = GuiTextField(
             0, fontDesign.regular, 5,
             height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth) - 10, 12
@@ -67,6 +70,7 @@ open class GuiChat : GuiScreen {
         inputField!!.isFocused = true
         inputField!!.text = defaultInputFieldText
         inputField!!.setCanLoseFocus(false)
+
         if (messageCache != null) {
             inputField!!.text = messageCache
             messageCache = null
@@ -85,8 +89,7 @@ open class GuiChat : GuiScreen {
             Color(20, 20, 20, 100).rgb
         )
         if (transition.isAtEnd) inputField!!.drawTextBox()
-        val ichatcomponent =
-            mc.ingameGUI.chatGUI.getChatComponent(Mouse.getX(), Mouse.getY())
+        val ichatcomponent = mc.ingameGUI.chatGUI.getChatComponent(Mouse.getX(), Mouse.getY())
         if (ichatcomponent != null && ichatcomponent.chatStyle.chatHoverEvent != null) {
             handleComponentHover(ichatcomponent, mouseX, mouseY)
         }
@@ -97,12 +100,23 @@ open class GuiChat : GuiScreen {
      * Called when the screen is unloaded. Used to disable keyboard repeat events
      */
     override fun onGuiClosed() {
-        if (!manuallyClosed) {
+        if (shouldCacheMessage()) {
+            LogManager.getLogger().debug("Cached chat message before closure.")
             messageCache = inputField!!.text
         }
+
         Keyboard.enableRepeatEvents(false)
         mc.ingameGUI.chatGUI.resetScroll()
+
         super.onGuiClosed()
+    }
+
+    /**
+     * Returns whether the currently entered message should be cached depending on the
+     * [messageRestoreMode][OptionsSectionChat.messageRestoreMode].
+     */
+    private fun shouldCacheMessage() = OptionsSectionChat.messageRestoreMode.key.get().let {
+        it != 0 && ((it == 1 && !manuallyClosed) || it == 2)
     }
 
     /**

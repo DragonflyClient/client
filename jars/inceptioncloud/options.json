@@ -6,7 +6,7 @@
   },
   "enableZoomAnimation": true,
   "scoreboardBackground": false,
-  "scoreboardScores": 2,
+  "scoreboardScores": 0,
   "scoreboardTitle": true,
   "zoomAnimation": true,
   "fontQualityScale": 3.1,
@@ -14,5 +14,6 @@
   "windowedFullscreen": true,
   "zoomFieldOfView": 30,
   "zoomMouseSensitivity": 79,
-  "fontQuality": 2.9508196721311473
+  "fontQuality": 2.0327868852459017,
+  "messageRestoreMode": 1
 }
