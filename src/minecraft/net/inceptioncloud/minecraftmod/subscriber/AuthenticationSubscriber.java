@@ -10,7 +10,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.net.Proxy;
 import java.util.Scanner;
 
@@ -53,8 +55,13 @@ public class AuthenticationSubscriber
             try {
                 auth.logIn();
 
-                Minecraft.getMinecraft().setSession(new Session(auth.getSelectedProfile().getName(), auth.getSelectedProfile().getId().toString(), auth.getAuthenticatedToken(), "mojang"));
-                LogManager.getLogger().error("Logged in with account " + Minecraft.getMinecraft().getSession().getUsername());
+                Minecraft.getMinecraft().setSession(new Session(auth.getSelectedProfile().getName(),
+                        auth.getSelectedProfile().getId().toString(),
+                        auth.getAuthenticatedToken(),
+                        "mojang"
+                ));
+                LogManager.getLogger()
+                        .info("Logged in with account " + Minecraft.getMinecraft().getSession().getUsername());
             } catch (AuthenticationException exception) {
                 LogManager.getLogger().error("Invalid credentials in authentication file!");
             }

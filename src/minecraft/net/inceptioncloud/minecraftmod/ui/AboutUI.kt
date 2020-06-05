@@ -78,7 +78,13 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen()
             largeFont.drawString("part of the Inception Cloud Network", wX + 10F, textY.toFloat(), largeColor, false)
             textY += largeFont.height + 2
 
-            smallFont.drawString("visit http://inceptioncloud.net for more information", wX + 10F, textY.toFloat(), smallColor, false)
+            smallFont.drawString(
+                "visit https://inceptioncloud.net for more information",
+                wX + 10F,
+                textY.toFloat(),
+                smallColor,
+                false
+            )
             textY += smallFont.height + 1
 
             drawIcon("twitter", wX + 20, textY, imageSize)
