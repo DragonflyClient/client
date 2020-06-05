@@ -7,10 +7,7 @@ import net.inceptioncloud.minecraftmod.event.ModEventBus
 import net.inceptioncloud.minecraftmod.event.client.ClientShutdownEvent
 import net.inceptioncloud.minecraftmod.impl.Tickable
 import net.inceptioncloud.minecraftmod.options.Options
-import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionClient
-import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionScoreboard
-import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionUI
-import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionZoom
+import net.inceptioncloud.minecraftmod.options.sections.*
 import net.inceptioncloud.minecraftmod.state.GameStateManager
 import net.inceptioncloud.minecraftmod.transition.Transition
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion
@@ -108,10 +105,13 @@ object Dragonfly {
         splashScreen = ModSplashScreen()
         richPresenceManager = RichPresenceManager()
         gameStateManager = GameStateManager()
+
         OptionsSectionClient.init()
         OptionsSectionUI.init()
         OptionsSectionScoreboard.init()
         OptionsSectionZoom.init()
+        OptionsSectionChat.init()
+
         tickTimer = Timer("Minecraft Mod Tick Timer")
         tickTimer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
