@@ -105,13 +105,6 @@ object Dragonfly {
         splashScreen = ModSplashScreen()
         richPresenceManager = RichPresenceManager()
         gameStateManager = GameStateManager()
-
-        OptionsSectionClient.init()
-        OptionsSectionUI.init()
-        OptionsSectionScoreboard.init()
-        OptionsSectionZoom.init()
-        OptionsSectionChat.init()
-
         tickTimer = Timer("Minecraft Mod Tick Timer")
         tickTimer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
@@ -130,6 +123,13 @@ object Dragonfly {
             val event = ClientShutdownEvent()
             eventBus.post(event)
         }))
+
+        OptionsSectionClient.init()
+        OptionsSectionUI.init()
+        OptionsSectionPlayer.init()
+        OptionsSectionChat.init()
+        OptionsSectionScoreboard.init()
+        OptionsSectionZoom.init()
     }
 
     /**

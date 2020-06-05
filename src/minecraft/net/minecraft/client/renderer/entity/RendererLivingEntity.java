@@ -1,6 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
 import com.google.common.collect.Lists;
+import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -610,17 +611,15 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
         EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
 
         // ICMM - Show own Name:  && entity != entityplayersp
-        if (entity instanceof EntityPlayer)
-        {
+        if (entity instanceof EntityPlayer && (entity != entityplayersp || OptionsSectionPlayer.getRenderOwnName()
+                .getKey().get())) {
             Team team = entity.getTeam();
             Team team1 = entityplayersp.getTeam();
 
-            if (team != null)
-            {
+            if (team != null) {
                 Team.EnumVisible team$enumvisible = team.getNameTagVisibility();
 
-                switch (RendererLivingEntity.RendererLivingEntity$1.field_178679_a[team$enumvisible.ordinal()])
-                {
+                switch (RendererLivingEntity.RendererLivingEntity$1.field_178679_a[team$enumvisible.ordinal()]) {
                     case 2:
                         return false;
 
