@@ -1,291 +1,244 @@
-package net.minecraft.client.gui;
+package net.minecraft.client.gui
 
-import com.google.common.collect.Lists;
-import net.inceptioncloud.minecraftmod.Dragonfly;
-import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.play.client.C14PacketTabComplete;
-import net.minecraft.util.*;
-import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import com.google.common.collect.Lists
+import net.inceptioncloud.minecraftmod.Dragonfly.fontDesign
+import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition
+import net.minecraft.client.Minecraft
+import net.minecraft.network.play.client.C14PacketTabComplete
+import net.minecraft.util.BlockPos
+import net.minecraft.util.ChatComponentText
+import net.minecraft.util.MathHelper
+import net.minecraft.util.MovingObjectPosition
+import org.apache.commons.lang3.StringUtils
+import org.lwjgl.input.Keyboard
+import org.lwjgl.input.Mouse
+import java.awt.Color
+import java.io.IOException
 
-import java.awt.*;
-import java.io.IOException;
-import java.util.List;
+open class GuiChat : GuiScreen {
 
-public class GuiChat extends GuiScreen {
-    /**
-     * If the gui has not been closed manually by the user, the client caches the content of the field at the time of
-     * closure in this field, so it can be restored on the next open.
-     */
-    private static String messageCache = null;
-
-    private static String messageToSend = null;
-    public static DoubleTransition transition =
-            DoubleTransition.builder().start(0).end(22).amountOfSteps(15).reachStart(() ->
-            {
-                Minecraft.getMinecraft().displayGuiScreen(null);
-
-                if (messageToSend != null)
-                    sendChatMessage(messageToSend);
-
-                messageToSend = null;
-    }).build();
-
-    private final List<String> foundPlayerNames = Lists.newArrayList();
+    private val foundPlayerNames: MutableList<String> = Lists.newArrayList()
 
     /**
      * Chat entry field
      */
-    protected GuiTextField inputField;
-    private String historyBuffer = "";
+    @JvmField
+    protected var inputField: GuiTextField? = null
+    private var historyBuffer = ""
 
     /**
      * keeps position of which chat message you will select when you press up, (does not increase for duplicated
      * messages sent immediately after each other)
      */
-    private int sentHistoryCursor = -1;
-    private boolean playerNamesFound;
-    private boolean waitingOnAutocomplete;
-    private int autocompleteIndex;
+    private var sentHistoryCursor = -1
+    private var playerNamesFound = false
+    private var waitingOnAutocomplete = false
+    private var autocompleteIndex = 0
 
     /**
      * is the text that appears when you press the chat key and the input box appears pre-filled
      */
-    private String defaultInputFieldText = "";
+    private var defaultInputFieldText = ""
 
     /**
      * Whether the close of the chat gui was manually started by the user and not forced by the client.
      */
-    private boolean manuallyClosed = false;
+    private var manuallyClosed = false
 
-    public GuiChat() {
-    }
-
-    public GuiChat(String defaultText) {
-        this.defaultInputFieldText = defaultText;
-    }
-
-    public static int getDirection ()
-    {
-//        GuiScreen gui = Minecraft.getMinecraft().currentScreen;
-//        return gui instanceof GuiChat ? ( ( GuiChat ) gui ).transition.getDirection() : 0;
-        return transition.getDirection();
+    constructor()
+    constructor(defaultText: String) {
+        defaultInputFieldText = defaultText
     }
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
      * window resizes, the buttonList is cleared beforehand.
      */
-    public void initGui () {
-        Keyboard.enableRepeatEvents(true);
-
-        transition.setForward();
-        this.sentHistoryCursor = this.mc.ingameGUI.getChatGUI().getSentMessages().size();
-
-        this.inputField = new GuiTextField(0, Dragonfly.getFontDesign().getRegular(), 5,
-                this.height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth) - 10, 12
-        );
-        this.inputField.setMaxStringLength(100);
-        this.inputField.setEnableBackgroundDrawing(false);
-        this.inputField.setFocused(true);
-        this.inputField.setText(this.defaultInputFieldText);
-        this.inputField.setCanLoseFocus(false);
-
+    override fun initGui() {
+        Keyboard.enableRepeatEvents(true)
+        transition.setForward()
+        sentHistoryCursor = mc.ingameGUI.chatGUI.sentMessages.size
+        inputField = GuiTextField(
+            0, fontDesign.regular, 5,
+            height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth) - 10, 12
+        )
+        inputField!!.maxStringLength = 100
+        inputField!!.enableBackgroundDrawing = false
+        inputField!!.isFocused = true
+        inputField!!.text = defaultInputFieldText
+        inputField!!.setCanLoseFocus(false)
         if (messageCache != null) {
-            this.inputField.setText(messageCache);
-            messageCache = null;
+            inputField!!.text = messageCache
+            messageCache = null
         }
     }
 
     /**
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
-    public void drawScreen (int mouseX, int mouseY, float partialTicks)
-    {
-        drawRect(0, this.height - transition.castToInt(), 6 + GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth), this.height, new Color(20, 20, 20, 100).getRGB());
-
-        if (transition.isAtEnd())
-            this.inputField.drawTextBox();
-
-        IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-
-        if (ichatcomponent != null && ichatcomponent.getChatStyle().getChatHoverEvent() != null) {
-            this.handleComponentHover(ichatcomponent, mouseX, mouseY);
+    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        drawRect(
+            0,
+            height - transition.castToInt(),
+            6 + GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth),
+            height,
+            Color(20, 20, 20, 100).rgb
+        )
+        if (transition.isAtEnd) inputField!!.drawTextBox()
+        val ichatcomponent =
+            mc.ingameGUI.chatGUI.getChatComponent(Mouse.getX(), Mouse.getY())
+        if (ichatcomponent != null && ichatcomponent.chatStyle.chatHoverEvent != null) {
+            handleComponentHover(ichatcomponent, mouseX, mouseY)
         }
-
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.drawScreen(mouseX, mouseY, partialTicks)
     }
 
     /**
      * Called when the screen is unloaded. Used to disable keyboard repeat events
      */
-    public void onGuiClosed () {
+    override fun onGuiClosed() {
         if (!manuallyClosed) {
-            messageCache = this.inputField.getText();
+            messageCache = inputField!!.text
         }
-
-        Keyboard.enableRepeatEvents(false);
-        this.mc.ingameGUI.getChatGUI().resetScroll();
-
-        super.onGuiClosed();
+        Keyboard.enableRepeatEvents(false)
+        mc.ingameGUI.chatGUI.resetScroll()
+        super.onGuiClosed()
     }
 
     /**
      * Called from the main game loop to update the screen.
      */
-    public void updateScreen ()
-    {
-        this.inputField.updateCursorCounter();
+    override fun updateScreen() {
+        inputField!!.updateCursorCounter()
     }
 
     /**
      * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
      * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
-    protected void keyTyped (char typedChar, int keyCode) throws IOException
-    {
-        this.waitingOnAutocomplete = false;
-
+    @Throws(IOException::class)
+    override fun keyTyped(typedChar: Char, keyCode: Int) {
+        waitingOnAutocomplete = false
         if (keyCode == 15) {
-            this.autocompletePlayerNames();
+            autocompletePlayerNames()
         } else {
-            this.playerNamesFound = false;
+            playerNamesFound = false
         }
-
         if (keyCode == 1) {
-            manuallyClosed = true;
-            transition.setBackward();
+            manuallyClosed = true
+            transition.setBackward()
         } else if (keyCode != 28 && keyCode != 156) {
-            if (keyCode == 200) {
-                this.getSentHistory(-1);
-            } else if (keyCode == 208) {
-                this.getSentHistory(1);
-            } else if (keyCode == 201) {
-                this.mc.ingameGUI.getChatGUI().scroll(this.mc.ingameGUI.getChatGUI().getLineCount() - 1);
-            } else if (keyCode == 209) {
-                this.mc.ingameGUI.getChatGUI().scroll(-this.mc.ingameGUI.getChatGUI().getLineCount() + 1);
-            } else {
-                this.inputField.textboxKeyTyped(typedChar, keyCode);
+            when (keyCode) {
+                200 -> getSentHistory(-1)
+                208 -> getSentHistory(1)
+                201 -> mc.ingameGUI.chatGUI.scroll(mc.ingameGUI.chatGUI.lineCount - 1)
+                209 -> mc.ingameGUI.chatGUI.scroll(-mc.ingameGUI.chatGUI.lineCount + 1)
+                else -> inputField!!.textboxKeyTyped(typedChar, keyCode)
             }
         } else {
-            String s = this.inputField.getText().trim();
-
-            if (s.length() > 0) {
-                messageToSend = s;
+            val s = inputField!!.text.trim { it <= ' ' }
+            if (s.isNotEmpty()) {
+                messageToSend = s
             }
-
-            transition.setBackward();
+            transition.setBackward()
         }
     }
 
     /**
      * Handles mouse input.
      */
-    public void handleMouseInput () throws IOException
-    {
-        super.handleMouseInput();
-        int i = Mouse.getEventDWheel();
-
+    @Throws(IOException::class)
+    override fun handleMouseInput() {
+        super.handleMouseInput()
+        var i = Mouse.getEventDWheel()
         if (i != 0) {
             if (i > 1) {
-                i = 1;
+                i = 1
             }
-
             if (i < -1) {
-                i = -1;
+                i = -1
             }
-
-            if (!isShiftKeyDown()) {
-                i *= 7;
+            if (!isShiftKeyDown) {
+                i *= 7
             }
-
-            this.mc.ingameGUI.getChatGUI().scroll(i);
+            mc.ingameGUI.chatGUI.scroll(i)
         }
     }
 
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
-    protected void mouseClicked (int mouseX, int mouseY, int mouseButton) throws IOException
-    {
+    @Throws(IOException::class)
+    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         if (mouseButton == 0) {
-            IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-
-            if (this.handleComponentClick(ichatcomponent)) {
-                return;
+            val ichatcomponent = mc.ingameGUI.chatGUI
+                .getChatComponent(Mouse.getX(), Mouse.getY())
+            if (handleComponentClick(ichatcomponent)) {
+                return
             }
         }
-
-        this.inputField.mouseClicked(mouseX, mouseY, mouseButton);
-        super.mouseClicked(mouseX, mouseY, mouseButton);
+        inputField!!.mouseClicked(mouseX, mouseY, mouseButton)
+        super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 
     /**
      * Sets the text of the chat
      */
-    protected void setText (String newChatText, boolean shouldOverwrite)
-    {
+    override fun setText(newChatText: String?, shouldOverwrite: Boolean) {
         if (shouldOverwrite) {
-            this.inputField.setText(newChatText);
+            inputField!!.text = newChatText
         } else {
-            this.inputField.writeText(newChatText);
+            inputField!!.writeText(newChatText)
         }
     }
 
-    public void autocompletePlayerNames ()
-    {
-        if (this.playerNamesFound) {
-            this.inputField.deleteFromCursor(this.inputField.getNthWordFromPosWS(-1, this.inputField.getCursorPosition(), false) - this.inputField.getCursorPosition());
-
-            if (this.autocompleteIndex >= this.foundPlayerNames.size()) {
-                this.autocompleteIndex = 0;
+    private fun autocompletePlayerNames() {
+        if (playerNamesFound) {
+            inputField!!.deleteFromCursor(
+                inputField!!.getNthWordFromPosWS(
+                    -1,
+                    inputField!!.cursorPosition,
+                    false
+                ) - inputField!!.cursorPosition
+            )
+            if (autocompleteIndex >= foundPlayerNames.size) {
+                autocompleteIndex = 0
             }
         } else {
-            int i = this.inputField.getNthWordFromPosWS(-1, this.inputField.getCursorPosition(), false);
-            this.foundPlayerNames.clear();
-            this.autocompleteIndex = 0;
-            String s = this.inputField.getText().substring(i).toLowerCase();
-            String s1 = this.inputField.getText().substring(0, this.inputField.getCursorPosition());
-            this.sendAutocompleteRequest(s1);
-
-            if (this.foundPlayerNames.isEmpty()) {
-                return;
+            val i = inputField!!.getNthWordFromPosWS(-1, inputField!!.cursorPosition, false)
+            foundPlayerNames.clear()
+            autocompleteIndex = 0
+            val s = inputField!!.text.substring(i).toLowerCase()
+            val s1 = inputField!!.text.substring(0, inputField!!.cursorPosition)
+            sendAutocompleteRequest(s1)
+            if (foundPlayerNames.isEmpty()) {
+                return
             }
-
-            this.playerNamesFound = true;
-            this.inputField.deleteFromCursor(i - this.inputField.getCursorPosition());
+            playerNamesFound = true
+            inputField!!.deleteFromCursor(i - inputField!!.cursorPosition)
         }
-
-        if (this.foundPlayerNames.size() > 1) {
-            StringBuilder stringbuilder = new StringBuilder();
-
-            for (String s2 : this.foundPlayerNames) {
-                if (stringbuilder.length() > 0) {
-                    stringbuilder.append(", ");
+        if (foundPlayerNames.size > 1) {
+            val stringbuilder = StringBuilder()
+            for (s2 in foundPlayerNames) {
+                if (stringbuilder.isNotEmpty()) {
+                    stringbuilder.append(", ")
                 }
-
-                stringbuilder.append(s2);
+                stringbuilder.append(s2)
             }
-
-            this.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(new ChatComponentText(stringbuilder.toString()), 1);
+            mc.ingameGUI.chatGUI
+                .printChatMessageWithOptionalDeletion(ChatComponentText(stringbuilder.toString()), 1)
         }
-
-        this.inputField.writeText(this.foundPlayerNames.get(this.autocompleteIndex++));
+        inputField!!.writeText(foundPlayerNames[autocompleteIndex++])
     }
 
-    private void sendAutocompleteRequest (String p_146405_1_)
-    {
-        if (p_146405_1_.length() >= 1) {
-            BlockPos blockpos = null;
-
-            if (this.mc.objectMouseOver != null && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-                blockpos = this.mc.objectMouseOver.getBlockPos();
+    private fun sendAutocompleteRequest(p_146405_1_: String) {
+        if (p_146405_1_.isNotEmpty()) {
+            var blockpos: BlockPos? = null
+            if (mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+                blockpos = mc.objectMouseOver.blockPos
             }
-
-            this.mc.thePlayer.sendQueue.addToSendQueue(new C14PacketTabComplete(p_146405_1_, blockpos));
-            this.waitingOnAutocomplete = true;
+            mc.thePlayer.sendQueue.addToSendQueue(C14PacketTabComplete(p_146405_1_, blockpos))
+            waitingOnAutocomplete = true
         }
     }
 
@@ -293,48 +246,48 @@ public class GuiChat extends GuiScreen {
      * input is relative and is applied directly to the sentHistoryCursor so -1 is the previous message, 1 is the next
      * message from the current cursor position
      */
-    public void getSentHistory (int msgPos)
-    {
-        int i = this.sentHistoryCursor + msgPos;
-        int j = this.mc.ingameGUI.getChatGUI().getSentMessages().size();
-        i = MathHelper.clamp_int(i, 0, j);
-
-        if (i != this.sentHistoryCursor) {
+    private fun getSentHistory(msgPos: Int) {
+        var i = sentHistoryCursor + msgPos
+        val j = mc.ingameGUI.chatGUI.sentMessages.size
+        i = MathHelper.clamp_int(i, 0, j)
+        if (i != sentHistoryCursor) {
             if (i == j) {
-                this.sentHistoryCursor = j;
-                this.inputField.setText(this.historyBuffer);
+                sentHistoryCursor = j
+                inputField!!.text = historyBuffer
             } else {
-                if (this.sentHistoryCursor == j) {
-                    this.historyBuffer = this.inputField.getText();
+                if (sentHistoryCursor == j) {
+                    historyBuffer = inputField!!.text
                 }
-
-                this.inputField.setText(this.mc.ingameGUI.getChatGUI().getSentMessages().get(i));
-                this.sentHistoryCursor = i;
+                inputField!!.text = mc.ingameGUI.chatGUI.sentMessages[i]
+                sentHistoryCursor = i
             }
         }
     }
 
-    public void onAutocompleteResponse (String[] input)
-    {
-        if (this.waitingOnAutocomplete) {
-            this.playerNamesFound = false;
-            this.foundPlayerNames.clear();
-
-            for (String s : input) {
-                if (s.length() > 0) {
-                    this.foundPlayerNames.add(s);
+    fun onAutocompleteResponse(input: Array<String>) {
+        if (waitingOnAutocomplete) {
+            playerNamesFound = false
+            foundPlayerNames.clear()
+            for (s in input) {
+                if (s.isNotEmpty()) {
+                    foundPlayerNames.add(s)
                 }
             }
-
-            String s1 = this.inputField.getText().substring(this.inputField.getNthWordFromPosWS(-1, this.inputField.getCursorPosition(), false));
-            String s2 = StringUtils.getCommonPrefix(input);
-
-            if (s2.length() > 0 && !s1.equalsIgnoreCase(s2)) {
-                this.inputField.deleteFromCursor(this.inputField.getNthWordFromPosWS(-1, this.inputField.getCursorPosition(), false) - this.inputField.getCursorPosition());
-                this.inputField.writeText(s2);
-            } else if (this.foundPlayerNames.size() > 0) {
-                this.playerNamesFound = true;
-                this.autocompletePlayerNames();
+            val s1 = inputField!!.text
+                .substring(inputField!!.getNthWordFromPosWS(-1, inputField!!.cursorPosition, false))
+            val s2 = StringUtils.getCommonPrefix(*input)
+            if (s2.isNotEmpty() && !s1.equals(s2, ignoreCase = true)) {
+                inputField!!.deleteFromCursor(
+                    inputField!!.getNthWordFromPosWS(
+                        -1,
+                        inputField!!.cursorPosition,
+                        false
+                    ) - inputField!!.cursorPosition
+                )
+                inputField!!.writeText(s2)
+            } else if (foundPlayerNames.size > 0) {
+                playerNamesFound = true
+                autocompletePlayerNames()
             }
         }
     }
@@ -342,8 +295,26 @@ public class GuiChat extends GuiScreen {
     /**
      * Returns true if this GUI should pause the game when it is displayed in single-player
      */
-    public boolean doesGuiPauseGame ()
-    {
-        return false;
+    override fun doesGuiPauseGame(): Boolean {
+        return false
+    }
+
+    companion object {
+
+        /**
+         * If the gui has not been closed manually by the user, the client caches the content of the field at the time of
+         * closure in this field, so it can be restored on the next open.
+         */
+        private var messageCache: String? = null
+        private var messageToSend: String? = null
+        var transition: DoubleTransition = DoubleTransition.builder().start(0.0).end(22.0).amountOfSteps(15).reachStart {
+            Minecraft.getMinecraft().displayGuiScreen(null)
+            if (messageToSend != null) sendChatMessage(messageToSend)
+            messageToSend = null
+        }.build()
+
+        @JvmStatic
+        val direction: Int
+            get() = transition.direction
     }
 }
