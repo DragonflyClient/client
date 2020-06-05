@@ -1,7 +1,7 @@
 {
   "lastServer": {
     "serverName": "Rewinside",
-    "serverIP": "rewinside.tv",
+    "serverIP": "rewinside.tv:25565",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -15,5 +15,6 @@
   "zoomFieldOfView": 30,
   "zoomMouseSensitivity": 79,
   "fontQuality": 2.0327868852459017,
-  "messageRestoreMode": 1
+  "messageRestoreMode": 1,
+  "renderOwnName": true
 }
