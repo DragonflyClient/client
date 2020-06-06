@@ -5,6 +5,7 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.CloudColor
+import net.inceptioncloud.minecraftmod.engine.EngineTestUI
 import net.inceptioncloud.minecraftmod.engine.internal.MouseData
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetBuffer
@@ -135,16 +136,25 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      */
     @Throws(IOException::class)
     protected open fun keyTyped(typedChar: Char, keyCode: Int) {
+
         if (keyCode == 1) {
             mc.displayGuiScreen(null)
             if (mc.currentScreen == null) {
                 mc.setIngameFocus()
             }
-        } else if (keyCode == Keyboard.KEY_F5 && Dragonfly.isDebugMode) {
-            buttonList.clear()
-            buffer.clear()
-            onGuiClosed()
-            initGui()
+        } else if (keyCode == Keyboard.KEY_PERIOD && isCtrlKeyDown && isShiftKeyDown) {
+            Dragonfly.isDebugMode = !Dragonfly.isDebugMode
+        } else if (Dragonfly.isDebugMode) {
+            // ICMM: Debug Mode Hotkeys
+            when (keyCode) {
+                Keyboard.KEY_F5 -> {
+                    buttonList.clear()
+                    buffer.clear()
+                    onGuiClosed()
+                    initGui()
+                }
+                Keyboard.KEY_F7 -> mc.displayGuiScreen(EngineTestUI())
+            }
         }
     }
 
@@ -545,10 +555,6 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             val eventCharacter = Keyboard.getEventCharacter()
             val eventKey = Keyboard.getEventKey()
             keyTyped(eventCharacter, eventKey)
-
-            if (eventKey == Keyboard.KEY_PERIOD && isCtrlKeyDown && isShiftKeyDown) {
-                Dragonfly.isDebugMode = !Dragonfly.isDebugMode
-            }
         }
 
         mc.dispatchKeypresses()
