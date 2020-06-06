@@ -23,7 +23,7 @@ class FloatAnimationOut(duration: Int, distance: Double = 40.0, easing: ((Double
 
     override fun finish()
     {
-        widget.visible = false
+        widget.isVisible = false
         super.finish()
     }
 }

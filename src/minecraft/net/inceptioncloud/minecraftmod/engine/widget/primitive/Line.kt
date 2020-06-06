@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11.*
 class Line(
     @property:Interpolate override var x: Double = 0.0,
     @property:Interpolate override var y: Double = 0.0,
-    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
 
     @property:Interpolate var endX: Double = 10.0,
     @property:Interpolate var endY: Double = 10.0,
@@ -21,7 +21,7 @@ class Line(
 ) : Widget<Line>(), IPosition, IColor, IDimension {
 
     override fun render() {
-        widgetColor.glBindColor()
+        color.glBindColor()
         glLineWidth(lineWidth.toFloat())
 
         glBegin(GL_LINES)
@@ -32,7 +32,7 @@ class Line(
         glEnd()
     }
 
-    override fun clone() = Line(x, y, widgetColor.clone(), endX, endY, lineWidth)
+    override fun clone() = Line(x, y, color.clone(), endX, endY, lineWidth)
 
     override fun newInstance() = Line()
 

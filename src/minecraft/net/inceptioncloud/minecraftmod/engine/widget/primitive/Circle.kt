@@ -27,7 +27,7 @@ import kotlin.properties.Delegates
  * @param y Y position of the circle. Can be aligned.
  * @param size Width and Height of the circle.
  * @param lineWidth Width of the circle's outline.
- * @param widgetColor Color of the circle.
+ * @param color Color of the circle.
  * @param horizontalAlignment Function to align the circle on the x-axis.
  * @param verticalAlignment Function to align the circle on the y-axis.
  */
@@ -36,7 +36,7 @@ open class Circle(
     x: Double = 0.0,
     y: Double = 0.0,
     @property:Interpolate override var size: Double = 50.0,
-    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
     @property:State override var horizontalAlignment: Alignment = Alignment.START,
     @property:State override var verticalAlignment: Alignment = Alignment.START,
 
@@ -48,7 +48,7 @@ open class Circle(
     @property:Interpolate var lineWidth: Float = 2F
 ) : Widget<Circle>(), IPosition, ISize, IColor, IAlign {
     override fun render() {
-        widgetColor.glBindColor()
+        color.glBindColor()
 
         glEnable(GL_LINE_SMOOTH)
         glLineWidth(lineWidth)
@@ -69,7 +69,7 @@ open class Circle(
             x = horizontalAlignment.reverse(x, size),
             y = verticalAlignment.reverse(y, size),
             size = size,
-            widgetColor = widgetColor.clone(),
+            color = color.clone(),
             horizontalAlignment = horizontalAlignment,
             verticalAlignment = verticalAlignment
         )

@@ -16,7 +16,7 @@ import org.lwjgl.input.Keyboard
  * This allows the client to only run the animations for the current screen.
  *
  * A widget can be added to the buffer using [add] and the whole buffer can be cleared with [clear].
- * You cannot directly remove a widget from the buffer, but you can change it's visibility state ([Widget.visible]).
+ * You cannot directly remove a widget from the buffer, but you can change it's visibility state ([Widget.isVisible]).
  */
 class WidgetBuffer
 {
@@ -31,11 +31,11 @@ class WidgetBuffer
     /**
      * Renders all [Widget] objects in the buffer.
      *
-     * This calls the [Widget.drawNative] function on all widgets whose visibility property ([Widget.visible]) evaluates
+     * This calls the [Widget.drawNative] function on all widgets whose visibility property ([Widget.isVisible]) evaluates
      * to true. If it doesn't, the draw function won't be called.
      */
     fun render() = synchronized(this) {
-        content.values.filter { it.visible }.forEach {
+        content.values.filter { it.isVisible }.forEach {
             it.draw()
         }
 
@@ -134,7 +134,7 @@ class WidgetBuffer
 
         content.forEach {
             builder.append("\t${it.key}")
-            if (!it.value.visible)
+            if (!it.value.isVisible)
                 builder.append(" (invisible)")
             builder.append(": ${it.value}\n")
         }

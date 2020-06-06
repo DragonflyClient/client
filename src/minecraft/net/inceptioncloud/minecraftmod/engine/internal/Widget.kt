@@ -24,23 +24,27 @@ import kotlin.reflect.full.memberProperties
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
 abstract class Widget<Child : Widget<Child>> : IDraw {
+
     /**
      * Whether the widget is an internal clone. Can be used to prevent spamming the console.
      */
     var isInternalClone = false
 
     /**
-     * Whether the widget is currently visible.
-     *
-     * If this flag is set to false, the [drawNative] method won't be called by the
-     * parent [WidgetBuffer] that contains the widget.
+     * Whether this widget is part of an assembled widget.
      */
-    var visible = true
+    var isAssembled = false
+
+    /**
+     * Whether the widget is currently visible. If this flag is set to false, the [drawNative] method
+     * won't be called by the parent [WidgetBuffer] that contains the widget.
+     */
+    var isVisible = true
 
     /**
      * Whether the widget is currently hovered by the mouse.
      */
-    var hovered = false
+    var isHovered = false
 
     /**
      * A stacking list with all animations that are currently being applied to the widget.

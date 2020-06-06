@@ -23,7 +23,7 @@ import kotlin.properties.Delegates
  * @param y Y position of the rectangle. Can be aligned.
  * @param width Width (horizontal size) of the rectangle.
  * @param height Height (vertical size) of the rectangle.
- * @param widgetColor Color of the rectangle.
+ * @param color Color of the rectangle.
  * @param horizontalAlignment Function to align the rectangle on the x-axis.
  * @param verticalAlignment Function to align the rectangle on the y-axis.
  * @param arc the size of the corner arc, specifies how rounded the corners are
@@ -33,7 +33,7 @@ class RoundedRectangle(
     y: Double = 0.0,
     @property:Interpolate override var width: Double = 50.0,
     @property:Interpolate override var height: Double = 50.0,
-    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
     @property:State override var horizontalAlignment: Alignment = Alignment.START,
     @property:State override var verticalAlignment: Alignment = Alignment.START,
 
@@ -103,7 +103,7 @@ class RoundedRectangle(
 
         // changes the color of all base widgets
         structure.values.forEach {
-            (it as IColor).widgetColor = this@RoundedRectangle.widgetColor
+            (it as IColor).color = this@RoundedRectangle.color
         }
         // sets the width and height of the arcs
         structure
@@ -123,7 +123,7 @@ class RoundedRectangle(
             y = verticalAlignment.reverse(y, height),
             width = width,
             height = height,
-            widgetColor = widgetColor.clone(),
+            color = color.clone(),
             horizontalAlignment = horizontalAlignment,
             verticalAlignment = verticalAlignment,
             arc = arc

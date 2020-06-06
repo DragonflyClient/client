@@ -32,14 +32,14 @@ import kotlin.math.sin
  * @param height Height of the arc. From the center to the outermost point. Vertical radius for an oval.
  * @param start Start angle in degrees from 0 - 360. Must be smaller than the [end] angle.
  * @param end End angle in degrees from 0 - 360. Must be greater than the [start] angle.
- * @param widgetColor Color of the arc.
+ * @param color Color of the arc.
  */
 class Arc(
     @property:Interpolate override var x: Double = 0.0,
     @property:Interpolate override var y: Double = 0.0,
     @property:Interpolate override var width: Double = 50.0,
     @property:Interpolate override var height: Double = 50.0,
-    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
 
     @property:Interpolate var start: Int = 0,
     @property:Interpolate var end: Int = 90
@@ -52,7 +52,7 @@ class Arc(
         val centerY = y + height / 2
         GraphicsEngine.pushScale(1 / factor)
 
-        widgetColor.glBindColor()
+        color.glBindColor()
 
         glDisable(GL_POLYGON_SMOOTH)
         glBegin(GL_POLYGON)
@@ -78,7 +78,7 @@ class Arc(
             y = y,
             width = width,
             height = height,
-            widgetColor = widgetColor.clone(),
+            color = color.clone(),
             start = start,
             end = end
         )

@@ -37,7 +37,7 @@ class TextRenderer(
     @property:Interpolate override var y: Double = 0.0,
     @property:Interpolate override var width: Double = 0.0,
     @property:Interpolate override var height: Double = 0.0,
-    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT
+    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT
 ) : Widget<TextRenderer>(), IPosition, IColor, IDimension {
 
     override fun preRender() {
@@ -60,7 +60,7 @@ class TextRenderer(
         val posY = if (fontRenderer is GlyphFontRenderer) y.toFloat() + 3F else y.toFloat()
 
         height = fontRenderer.height.toDouble()
-        width = fontRenderer.drawString(text, posX, posY, widgetColor.rgb, dropShadow).toDouble() - posX
+        width = fontRenderer.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
     }
 
     override fun stateChanged(new: Widget<*>) {
@@ -96,7 +96,7 @@ class TextRenderer(
     }
 
     override fun clone() = TextRenderer(
-        text, dropShadow, fontRenderer, font, fontWeight, fontSize, x, y, width, height, widgetColor
+        text, dropShadow, fontRenderer, font, fontWeight, fontSize, x, y, width, height, color
     )
 
     override fun newInstance() = TextRenderer()

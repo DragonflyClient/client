@@ -37,7 +37,9 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
     protected var initialized = false
 
     init {
-        structure = assemble()
+        structure = assemble().also {
+            it.values.forEach { widget -> widget.isAssembled = true }
+        }
     }
 
     override fun stateChanged(new: Widget<*>) {
@@ -52,7 +54,7 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
 
         structure.values.forEach { it.render() }
 
-        if (Dragonfly.isDeveloperMode) {
+        if (Dragonfly.isDeveloperMode && !isAssembled) {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                 var index = 0
                 structure.values.forEach { widget ->

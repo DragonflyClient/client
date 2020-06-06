@@ -29,7 +29,7 @@ class FilledCircle(
     verticalAlignment: Alignment = Alignment.START
 ) : Circle(x, y, size, widgetColor, horizontalAlignment, verticalAlignment, 0F) {
     override fun render() {
-        widgetColor.glBindColor()
+        color.glBindColor()
 
         val sections = 50
         val radius = size / 2
@@ -64,7 +64,7 @@ class FilledCircle(
             x = horizontalAlignment.reverse(x, size),
             y = verticalAlignment.reverse(y, size),
             size = size,
-            widgetColor = widgetColor.clone(),
+            widgetColor = color.clone(),
             horizontalAlignment = horizontalAlignment,
             verticalAlignment = verticalAlignment
         )

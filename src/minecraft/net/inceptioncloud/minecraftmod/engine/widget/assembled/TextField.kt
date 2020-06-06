@@ -55,7 +55,7 @@ class TextField(
     y: Double = 0.0,
     @property:Interpolate override var width: Double = 50.0,
     @property:Interpolate override var height: Double = 50.0,
-    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
     @property:State override var horizontalAlignment: Alignment = Alignment.START,
     @property:State override var verticalAlignment: Alignment = Alignment.START
 ) : AssembledWidget<TextField>(), IPosition, IDimension, IColor, IAlign, IOutline {
@@ -85,7 +85,7 @@ class TextField(
             it.fontWeight = fontWeight
             it.x = alignText(textAlignHorizontal, x, width, fontRenderer.getStringWidth(it.text).toDouble())
             it.y = alignText(textAlignVertical, y, height, fontRenderer.height.toDouble())
-            it.widgetColor = widgetColor
+            it.color = color
             it.text = currentText()
         }
 
@@ -94,7 +94,7 @@ class TextField(
             it.y = y
             it.width = width
             it.height = height
-            it.widgetColor = backgroundColor
+            it.color = backgroundColor
             it.outlineColor = outlineColor
             it.outlineStroke = outlineStroke
         }
@@ -125,7 +125,7 @@ class TextField(
         staticText, dynamicText, textAlignHorizontal, textAlignVertical,
         fontRenderer, font, fontWeight, fontSize,
         backgroundColor, padding, outlineStroke, outlineColor,
-        x, y, width, height, widgetColor, horizontalAlignment, verticalAlignment
+        x, y, width, height, color, horizontalAlignment, verticalAlignment
     )
 
     override fun newInstance() = TextField()

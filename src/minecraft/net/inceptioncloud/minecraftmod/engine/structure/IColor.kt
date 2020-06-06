@@ -13,5 +13,5 @@ interface IColor
     /**
      * The color of the object represented by a [WidgetColor] wrapper.
      */
-    var widgetColor: WidgetColor
+    var color: WidgetColor
 }

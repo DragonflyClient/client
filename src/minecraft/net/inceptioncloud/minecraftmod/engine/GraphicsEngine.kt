@@ -23,10 +23,10 @@ object GraphicsEngine {
 
     fun renderDebugOverlay(mapped: Map<String, Widget<*>>) {
         val content = mapped.values
-        val uppermostWidget = mapped.entries.lastOrNull { it.value.hovered }
+        val uppermostWidget = mapped.entries.lastOrNull { it.value.isHovered }
 
         var index = 0
-        content.filter { it.hovered && it != uppermostWidget }
+        content.filter { it.isHovered && it != uppermostWidget }
             .forEach { widget ->
                 val x = (widget as IPosition).x
                 val y = (widget as IPosition).y

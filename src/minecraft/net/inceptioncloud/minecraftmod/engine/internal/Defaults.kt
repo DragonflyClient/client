@@ -131,7 +131,7 @@ object Defaults
                 val y = it.y
                 val (width, height) = getSizeOrDimension(it)
 
-                it.hovered = data.mouseX.toDouble() in x..x + width
+                it.isHovered = data.mouseX.toDouble() in x..x + width
                         && data.mouseY.toDouble() in y..y + height
             }
     }

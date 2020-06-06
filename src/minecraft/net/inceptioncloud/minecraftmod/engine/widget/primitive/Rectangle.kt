@@ -18,7 +18,7 @@ import kotlin.properties.Delegates
  * @param y Y position of the rectangle. Can be aligned.
  * @param width Width (horizontal size) of the rectangle.
  * @param height Height (vertical size) of the rectangle.
- * @param widgetColor Color of the rectangle.
+ * @param color Color of the rectangle.
  * @param outlineStroke Width of the outline of the rectangle. Default value is 0 what makes it have no outline.
  * @param outlineColor Color of the outline. Only needed if an outline is set.
  * @param horizontalAlignment Function to align the rectangle on the x-axis.
@@ -29,7 +29,7 @@ class Rectangle(
     y: Double = 0.0,
     @property:Interpolate override var width: Double = 50.0,
     @property:Interpolate override var height: Double = 50.0,
-    @property:Interpolate override var widgetColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
     @property:Interpolate override var outlineStroke: Double = 0.0,
     @property:Interpolate override var outlineColor: WidgetColor = WidgetColor.DEFAULT,
     @property:State override var horizontalAlignment: Alignment = Alignment.START,
@@ -62,8 +62,8 @@ class Rectangle(
             glEnd()
         }
 
-        if (widgetColor.alpha > 0) {
-            widgetColor.glBindColor()
+        if (color.alpha > 0) {
+            color.glBindColor()
             glBegin(GL_QUADS)
 
             glVertex2d(x + width, y)
@@ -80,7 +80,7 @@ class Rectangle(
         y = verticalAlignment.reverse(y, height),
         width = width,
         height = height,
-        widgetColor = widgetColor.clone(),
+        color = color.clone(),
         outlineStroke = outlineStroke,
         outlineColor = outlineColor.clone(),
         horizontalAlignment = horizontalAlignment,

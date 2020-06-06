@@ -33,7 +33,7 @@ open class FloatAnimationIn(val duration: Int, val distance: Double = 40.0, val 
         base as IColor
         base as IPosition
 
-        scratchpad.widgetColor.alphaDouble = base.widgetColor.alphaDouble * sequence.current
+        scratchpad.color.alphaDouble = base.color.alphaDouble * sequence.current
         scratchpad.y = base.y + distance - (distance * sequence.current)
 
         if (scratchpad is IOutline && base is IOutline)
