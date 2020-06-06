@@ -1,7 +1,5 @@
 package net.inceptioncloud.minecraftmod.options;
 
-import net.inceptioncloud.minecraftmod.Dragonfly;
-
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -60,7 +58,7 @@ public class OptionKey<T>
      */
     public T get ()
     {
-        return Dragonfly.getOptions().getValue(this);
+        return Options.getValue(this);
     }
 
     /**
@@ -68,7 +66,7 @@ public class OptionKey<T>
      */
     public boolean set (T value)
     {
-        return Dragonfly.getOptions().setValue(this, value);
+        return Options.setValue(this, value);
     }
 
     public Class<T> getTypeClass ()

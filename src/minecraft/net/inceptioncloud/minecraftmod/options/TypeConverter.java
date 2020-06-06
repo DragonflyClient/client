@@ -2,7 +2,6 @@ package net.inceptioncloud.minecraftmod.options;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import net.inceptioncloud.minecraftmod.Dragonfly;
 
 /**
  * Used to convert the {@link JsonElement} to the given type.
@@ -14,7 +13,7 @@ public interface TypeConverter<T>
     /**
      * The gson object that can be used to convert an object ot a string.
      */
-    Gson gson = Dragonfly.getOptions().getGson();
+    Gson gson = Options.getGson();
 
     /**
      * The method that is used to convert the input Json-Element to the type.

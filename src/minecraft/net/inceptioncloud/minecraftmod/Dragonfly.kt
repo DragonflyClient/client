@@ -7,7 +7,7 @@ import net.inceptioncloud.minecraftmod.event.ModEventBus
 import net.inceptioncloud.minecraftmod.event.client.ClientShutdownEvent
 import net.inceptioncloud.minecraftmod.impl.Tickable
 import net.inceptioncloud.minecraftmod.options.Options
-import net.inceptioncloud.minecraftmod.options.sections.*
+import net.inceptioncloud.minecraftmod.options.OptionsManager
 import net.inceptioncloud.minecraftmod.state.GameStateManager
 import net.inceptioncloud.minecraftmod.transition.Transition
 import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion
@@ -40,9 +40,6 @@ object Dragonfly {
 
     @JvmStatic
     val splashScreen: ModSplashScreen
-
-    @JvmStatic
-    val options: Options
 
     @JvmStatic
     val logger: Logger = LogManager.getLogger()
@@ -99,8 +96,10 @@ object Dragonfly {
      */
     init {
         Display.setTitle(InceptionCloudVersion.FULL_VERSION + " | Minecraft Mod 1.8.8")
+
         eventBus = ModEventBus()
-        options = Options()
+        OptionsManager.loadOptions()
+
         fontDesign = FontManager()
         splashScreen = ModSplashScreen()
         richPresenceManager = RichPresenceManager()
@@ -123,13 +122,6 @@ object Dragonfly {
             val event = ClientShutdownEvent()
             eventBus.post(event)
         }))
-
-        OptionsSectionClient.init()
-        OptionsSectionUI.init()
-        OptionsSectionPlayer.init()
-        OptionsSectionChat.init()
-        OptionsSectionScoreboard.init()
-        OptionsSectionZoom.init()
     }
 
     /**
@@ -146,7 +138,7 @@ object Dragonfly {
      */
     @JvmStatic
     fun reload() {
-        options.contentSave()
+        Options.contentSave()
         fontDesign.clearCache()
     }
 

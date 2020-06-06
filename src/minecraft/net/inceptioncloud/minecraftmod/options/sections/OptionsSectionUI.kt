@@ -27,7 +27,7 @@ object OptionsSectionUI
         description = "In order to improve the font quality, the glyphs are rendered in a higher resolution and are then " +
                 "scaled down. This option specifies the factor that will be applied on the original resolution."
         minValue = 1.0
-        maxValue = 8.0
+        maxValue = 4.0
         externalApply = { value, optionKey ->
             optionKey.set(value)
             Dragonfly.reload()
@@ -42,7 +42,7 @@ object OptionsSectionUI
         }
         key {
             fileKey = "fontQuality"
-            default = { 2.0 }
+            default = { 1.5 }
         }
     }
 
