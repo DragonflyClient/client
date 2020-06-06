@@ -3,6 +3,7 @@ package net.inceptioncloud.minecraftmod.ui
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.design.color.RGB
+import net.inceptioncloud.minecraftmod.engine.font.FontWeight
 import net.inceptioncloud.minecraftmod.engine.font.GlyphFontRenderer
 import net.inceptioncloud.minecraftmod.options.OptionKey
 import net.inceptioncloud.minecraftmod.options.Options
@@ -16,7 +17,6 @@ import net.inceptioncloud.minecraftmod.ui.components.button.ImageButton
 import net.inceptioncloud.minecraftmod.ui.components.list.UIList
 import net.inceptioncloud.minecraftmod.ui.components.list.UIListFactory.Companion.uiListFactory
 import net.inceptioncloud.minecraftmod.utils.TimeUtils
-import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
@@ -38,8 +38,7 @@ import java.util.*
  *
  * @property previousScreen the screen which this ui was opened from
  */
-class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
-{
+class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
     /**
      * List with all setting elements.
      */
@@ -51,14 +50,13 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
      * Each time the class is initialized, one of two background images will randomly be chosen.
      */
     private val resourceLocation = ResourceLocation(
-            "inceptioncloud/ingame_background_${if (Random().nextBoolean()) 2 else 1}.png"
+        "inceptioncloud/ingame_background_${if (Random().nextBoolean()) 2 else 1}.png"
     )
 
     /**
      * UI Initialization
      */
-    override fun initGui()
-    {
+    override fun initGui() {
         uiList = uiListFactory {
             dimensions {
                 widthIn = (width / 2.2).toInt().coerceAtLeast(250).coerceAtMost(350)
@@ -82,17 +80,24 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
             }
         }
 
-        buttonList.add(BluePaletteButton(0, width / 2 - 40, height - 24,
-                80, 18, "Save and Exit"))
-        buttonList.add(ImageButton(1, width - 14 - 3, height - 14 - 2, 14, 14,
-                ResourceLocation("inceptioncloud/icons/reload.png")))
+        buttonList.add(
+            BluePaletteButton(
+                0, width / 2 - 40, height - 24,
+                80, 18, "Save and Exit"
+            )
+        )
+        buttonList.add(
+            ImageButton(
+                1, width - 14 - 3, height - 14 - 2, 14, 14,
+                ResourceLocation("inceptioncloud/icons/reload.png")
+            )
+        )
     }
 
     /**
      * Default screen drawing function.
      */
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float)
-    {
+    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         drawBackground()
         drawHeader()
         drawFooter()
@@ -108,10 +113,8 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
     /**
      * Draws the background according to the current game state.
      */
-    private fun drawBackground()
-    {
-        if (mc.theWorld == null)
-        {
+    private fun drawBackground() {
+        if (mc.theWorld == null) {
             mc.textureManager.bindTexture(resourceLocation)
 
             var originalWidth = 3840
@@ -126,10 +129,10 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
             val differenceWidth = originalWidth - width
             val differenceHeight = originalHeight - height
 
-            Gui.drawModalRectWithCustomSizedTexture(
-                    -(differenceWidth / 2), -(differenceHeight / 2), 0F, 0F,
-                    originalWidth, originalHeight,
-                    originalWidth.toFloat(), originalHeight.toFloat()
+            drawModalRectWithCustomSizedTexture(
+                -(differenceWidth / 2), -(differenceHeight / 2), 0F, 0F,
+                originalWidth, originalHeight,
+                originalWidth.toFloat(), originalHeight.toFloat()
             )
         }
 
@@ -139,35 +142,36 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
     /**
      * Draws the header with the "Mod Options" title.
      */
-    private fun drawHeader()
-    {
-        val titleString = "Mod Options"
+    private fun drawHeader() {
+        val font = Dragonfly.fontDesign.defaultFont
         val fontSize = 16
+        val titleString = "Mod Options"
         val y = 15 - fontSize / 2 + 2
-        val fontRenderer = Dragonfly.fontDesign
-            .retrieveOrBuild(" Medium", fontSize * 2) as GlyphFontRenderer
-        val stringWidth = fontRenderer.getStringWidth(titleString)
+        val fontRenderer: GlyphFontRenderer? =
+            font.fontRendererAsync { size = fontSize * 2; fontWeight = FontWeight.MEDIUM }
+        val stringWidth = fontRenderer?.getStringWidth(titleString)
 
         drawRect(0, 0, width, 30, BluePalette.FOREGROUND.rgb)
-        fontRenderer.drawStringWithCustomShadow(titleString, width / 2 - stringWidth / 2, y, BluePalette.PRIMARY.rgb,
-                Color(0, 0, 0, 40).rgb, 0.9F)
+        fontRenderer?.drawStringWithCustomShadow(
+            titleString, width / 2 - stringWidth!! / 2, y,
+            BluePalette.PRIMARY.rgb, Color(0, 0, 0, 40).rgb, 0.9F
+        )
     }
 
     /**
      * Draws the footer that contains the version info and a save-and-exit button.
      */
-    private fun drawFooter()
-    {
-        Gui.drawRect(0, height - 18, width, height, BluePalette.FOREGROUND.rgb)
-        Dragonfly.fontDesign.retrieveOrBuild("", 15)
-            .drawString("v${Dragonfly.version}", 5, height - 10, Color(0, 0, 0, 50).rgb)
+    private fun drawFooter() {
+        drawRect(0, height - 18, width, height, BluePalette.FOREGROUND.rgb)
+
+        Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 15 }
+            ?.drawString("v${Dragonfly.version}", 5, height - 10, Color(0, 0, 0, 50).rgb)
     }
 
     /**
      * Passes the mouse input on to the list.
      */
-    override fun handleMouseInput()
-    {
+    override fun handleMouseInput() {
         uiList.handleMouseInput()
         super.handleMouseInput()
     }
@@ -177,17 +181,14 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
      *
      * In this GUI, the only available button is the "Save & Exit Button" which shows up the previous gui screen.
      */
-    override fun actionPerformed(button: GuiButton?)
-    {
-        if (button?.id == 0)
-        {
+    override fun actionPerformed(button: GuiButton?) {
+        if (button?.id == 0) {
             uiList.entries.filter { it is ExternalApplier<*> }
                 .map { it as ExternalApplier<*> }
                 .forEach { it.applyExternally() }
 
             mc.displayGuiScreen(previousScreen)
-        } else if (button?.id == 1)
-        {
+        } else if (button?.id == 1) {
             TimeUtils.requireDelay("ingame-reload-button", 1000L) { Dragonfly.reload() }
         }
     }
@@ -195,8 +196,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
     /**
      * Notifies the [uiList] when the mouse is pressed.
      */
-    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int)
-    {
+    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         uiList.mousePressed(mouseX, mouseY, mouseButton)
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
@@ -204,8 +204,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
     /**
      * Notifies the [uiList] when the mouse is dragged.
      */
-    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long)
-    {
+    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
         uiList.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
     }
@@ -213,8 +212,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
     /**
      * Notifies the [uiList] when the mouse is released.
      */
-    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int)
-    {
+    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
         uiList.mouseReleased(mouseX, mouseY, state)
         super.mouseReleased(mouseX, mouseY, state)
     }
@@ -224,8 +222,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen()
      * This is the equivalent of KeyListener.keyTyped(KeyEvent e).
      * Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
-    override fun keyTyped(typedChar: Char, keyCode: Int)
-    {
+    override fun keyTyped(typedChar: Char, keyCode: Int) {
         uiList.keyTyped(typedChar, keyCode)
         super.keyTyped(typedChar, keyCode)
     }

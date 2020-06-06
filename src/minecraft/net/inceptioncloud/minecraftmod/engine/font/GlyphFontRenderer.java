@@ -179,11 +179,10 @@ public class GlyphFontRenderer implements IFontRenderer {
                         true
                 );
         regularPage.generateGlyphPage(chars);
-        regularPage.setupTexture();
+
 
         GlyphPage realRegular = new GlyphPage(makeFont(fontName, Font.PLAIN, size, letterSpacing), true, true);
         realRegular.generateGlyphPage(chars);
-        realRegular.setupTexture();
 
         GlyphPage boldPage = regularPage;
         GlyphPage italicPage = regularPage;
@@ -199,11 +198,9 @@ public class GlyphFontRenderer implements IFontRenderer {
                     true
             );
             boldPage.generateGlyphPage(chars);
-            boldPage.setupTexture();
 
             unscaledBold = new GlyphPage(makeFont(fontName, Font.BOLD, size, letterSpacing), true, true);
             unscaledBold.generateGlyphPage(chars);
-            unscaledBold.setupTexture();
         }
 
         if (italic) {
@@ -213,11 +210,9 @@ public class GlyphFontRenderer implements IFontRenderer {
                             true
                     );
             italicPage.generateGlyphPage(chars);
-            italicPage.setupTexture();
 
             unscaledItalic = new GlyphPage(makeFont(fontName, Font.ITALIC, size, letterSpacing), true, true);
             unscaledItalic.generateGlyphPage(chars);
-            unscaledItalic.setupTexture();
         }
 
         if (boldItalic) {
@@ -227,12 +222,10 @@ public class GlyphFontRenderer implements IFontRenderer {
                     letterSpacing
             ), true, true);
             boldItalicPage.generateGlyphPage(chars);
-            boldItalicPage.setupTexture();
 
             unscaledBoldItalic =
                     new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing), true, true);
             unscaledBoldItalic.generateGlyphPage(chars);
-            unscaledBoldItalic.setupTexture();
         }
 
         return new GlyphFontRenderer(
@@ -809,8 +802,8 @@ public class GlyphFontRenderer implements IFontRenderer {
     @Override
     public String toString() {
         return "GlyphFontRenderer{" +
-                "family=" + pageRegular.font.getFamily() +
-                ", size=" + pageRegular.font.getSize() +
+                "family=" + pageRegular.getFont().getFamily() +
+                ", size=" + pageRegular.getFont().getSize() +
                 '}';
     }
 }

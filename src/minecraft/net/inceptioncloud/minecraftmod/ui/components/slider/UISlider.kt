@@ -122,13 +122,30 @@ class UISlider(var x: Int, var y: Int, var width: Int,
 
         val f = 2.0
         GlStateManager.scale(1 / f, 1 / f, 1 / f)
-        RenderUtils.drawRoundRect((x * f).toInt(), (y * f - 1).toInt(), (width * f).toInt(), 2, 0, BluePalette.FOREGROUND)
-        RenderUtils.drawFilledCircle(((x + (width * sliderPosition)) * f).toInt(), (y * f).toInt(), 4F, BluePalette.PRIMARY_LIGHT)
+        RenderUtils.drawRoundRect(
+            (x * f).toInt(),
+            (y * f - 1).toInt(),
+            (width * f).toInt(),
+            2,
+            0,
+            BluePalette.FOREGROUND
+        )
+        RenderUtils.drawFilledCircle(
+            ((x + (width * sliderPosition)) * f).toInt(),
+            (y * f).toInt(),
+            4F,
+            BluePalette.PRIMARY_LIGHT
+        )
 
-        val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("", 34)
-        val stringWidth = fontRenderer.getStringWidth(displayString)
+        val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 34 }
+        val stringWidth = fontRenderer?.getStringWidth(displayString)
 
-        fontRenderer.drawString(displayString, ((x - 5) * f - stringWidth).toInt(), ((y - 3.5) * f).toInt(), BluePalette.PRIMARY_LIGHT.rgb)
+        fontRenderer?.drawString(
+            displayString,
+            ((x - 5) * f - stringWidth!!).toInt(),
+            ((y - 3.5) * f).toInt(),
+            BluePalette.PRIMARY_LIGHT.rgb
+        )
 
         GlStateManager.scale(f, f, f)
     }

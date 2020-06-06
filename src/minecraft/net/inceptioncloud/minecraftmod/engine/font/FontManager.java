@@ -16,6 +16,21 @@ public class FontManager {
     private final Map<FontRendererInfo, GlyphFontRenderer> cache = new HashMap<>();
 
     /**
+     * The default {@link WidgetFont} instance that is used by the graphics engine.
+     */
+    private final WidgetFont defaultFont = new WidgetFont(
+            getFontFamily(), getFontFamily() + " Light", getFontFamily(),
+            getFontFamily() + " Medium", -0.035
+    );
+
+    /**
+     * Getter Method for {@link #defaultFont}
+     */
+    public WidgetFont getDefaultFont() {
+        return defaultFont;
+    }
+
+    /**
      * Applies a certain letter spacing to the font.
      */
     public static Font applyLetterSpacing(Font font, double spacing) {
@@ -28,7 +43,7 @@ public class FontManager {
      * Build a new Custom Font Renderer or use an already created one.
      *
      * @param name The font name
-     * @param type The font type (bold, plain, ..)
+     * @param type The font type (bold, plain, ...)
      * @param size The font size
      * @return The Font Renderer
      */
@@ -38,7 +53,8 @@ public class FontManager {
         if (cache.containsKey(info))
             return cache.get(info);
 
-        final GlyphFontRenderer fontRenderer = GlyphFontRenderer.create(info.name, info.size, info.letterSpacing, true, true, true);
+        final GlyphFontRenderer fontRenderer =
+                GlyphFontRenderer.create(info.name, info.size, info.letterSpacing, true, true, true);
         cache.put(info, fontRenderer);
 
         return fontRenderer;
@@ -59,13 +75,13 @@ public class FontManager {
      * @see #retrieveOrBuild(String, int, int, double) Original Method
      */
     public IFontRenderer retrieveOrBuild(String extra, int size) {
-        return retrieveOrBuild(getFont() + extra, Font.BOLD, size);
+        return retrieveOrBuild(getFontFamily() + extra, Font.BOLD, size);
     }
 
     /**
      * @return Currently used Font
      */
-    public String getFont() {
+    public String getFontFamily() {
         return "Rubik";
     }
 
@@ -73,6 +89,7 @@ public class FontManager {
      * Clears the Font Renderer cache.
      */
     public void clearCache() {
+        this.defaultFont.clearCache();
         this.cache.clear();
     }
 

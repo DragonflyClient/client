@@ -80,8 +80,7 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
             {
                 Mouse.setGrabbed(true)
             }
-        } else if (triggerHoverMoment != 0L)
-        {
+        } else if (triggerHoverMoment != 0L) {
             triggerHoverMoment = 0
             Mouse.setGrabbed(false)
         }
@@ -90,16 +89,17 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
         drawRect(x, y, x + 1, y + height, RGB.of(FOREGROUND).alpha(transitionHoverHint.get().toFloat() / 2).rgb())
         drawRect(x, y, x + (width * transitionDescription.get()).toInt(), y + height, BACKGROUND.rgb)
 
-        val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("", 12)
-        val lines = fontRenderer.listFormattedStringToWidth(description, width * 2)
+        val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 12 }
+        val lines = fontRenderer?.listFormattedStringToWidth(description, width * 2) ?: listOf()
         val centerY = y + height / 2 - 1
-        var fontY = centerY - (lines.size * fontRenderer.height / 2)
+        var fontY = if (fontRenderer != null) centerY - (lines.size * fontRenderer.height / 2) else 0
 
-        for (string in lines)
-        {
-            val stringWidth = fontRenderer.getStringWidth(string)
-            fontRenderer.drawString(string, x + 5 - ((stringWidth + 10) * (1 - transitionDescription.get())).toInt(),
-                    fontY + (fontRenderer.height / 2), FOREGROUND.rgb)
+        for (string in lines) {
+            val stringWidth = fontRenderer!!.getStringWidth(string)
+            fontRenderer.drawString(
+                string, x + 5 - ((stringWidth + 10) * (1 - transitionDescription.get())).toInt(),
+                fontY + (fontRenderer.height / 2), FOREGROUND.rgb
+            )
 
             fontY += fontRenderer.height
         }

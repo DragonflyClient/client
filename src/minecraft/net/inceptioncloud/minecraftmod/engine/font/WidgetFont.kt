@@ -1,20 +1,24 @@
 package net.inceptioncloud.minecraftmod.engine.font
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.apache.logging.log4j.LogManager
+
 /**
  * Represents any font that is loaded and can be rendered in the UI by
  * creating a font renderer.
  *
- * @param name the name of the font (family)
+ * @param familyName the name of the font (family)
  * @param light name of the light-weight version
  * @param regular name of the regular-weight version
  * @param medium name of the medium-weight version
  * @param letterSpacing optional modification to the letter spacing
  */
 class WidgetFont @JvmOverloads constructor(
-    val name: String,
-    light: String = name,
-    regular: String = name,
-    medium: String = name,
+    val familyName: String,
+    light: String = familyName,
+    regular: String = familyName,
+    medium: String = familyName,
     private val letterSpacing: Double = 0.0
 ) {
     /**
@@ -32,11 +36,24 @@ class WidgetFont @JvmOverloads constructor(
     private val cachedFontRenderer = mutableMapOf<FontRendererBuilder, GlyphFontRenderer>()
 
     /**
-     * Builds a new font renderer with preferences set by the [building] block.
+     * A cache with all running async productions and already built font renderers.
      */
-    fun fontRenderer(building: (FontRendererBuilder.() -> Unit)? = null): GlyphFontRenderer {
+    private val asyncBuilding = mutableMapOf<FontRendererBuilder, GlyphFontRenderer?>()
+
+    /**
+     * Clears both caches when changing the font quality.
+     */
+    fun clearCache() {
+        cachedFontRenderer.clear()
+        asyncBuilding.clear()
+    }
+
+    /**
+     * Builds a new font renderer with preferences set by the [preferences] block.
+     */
+    fun fontRenderer(preferences: (FontRendererBuilder.() -> Unit)? = null): GlyphFontRenderer {
         val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
-        building?.invoke(builder)
+        preferences?.invoke(builder)
 
         return if (cachedFontRenderer.containsKey(builder)) {
             cachedFontRenderer[builder]!!
@@ -52,7 +69,40 @@ class WidgetFont @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Orders the asynchronous creation of a font renderer based on this font with the [preferences].
+     * While the renderer is in production, this function will return null. After the production, this function
+     * will return a cached font renderer according to the [preferences].
+     */
+    fun fontRendererAsync(
+        preferences: (FontRendererBuilder.() -> Unit)? = null
+    ): GlyphFontRenderer? {
+        val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
+        preferences?.invoke(builder)
+
+        // if a cached version is available
+        if (asyncBuilding.containsKey(builder)) {
+            return asyncBuilding[builder]
+        }
+
+        // store 'null' to indicate that a build is running
+        asyncBuilding[builder] = null
+
+        // build the font renderer in a new coroutine
+        GlobalScope.launch {
+            LogManager.getLogger().debug(
+                "${Thread.currentThread().name} is building font renderer " +
+                        "for ${this@WidgetFont.familyName} with $builder"
+            )
+
+            val fontRenderer = fontRenderer(preferences)
+            asyncBuilding[builder] = fontRenderer
+        }
+
+        return null
+    }
+
     override fun toString(): String {
-        return "WidgetFont(name='$name', letterSpacing=$letterSpacing, fontWeights=$fontWeights)"
+        return "WidgetFont(name='$familyName', letterSpacing=$letterSpacing, fontWeights=$fontWeights)"
     }
 }
