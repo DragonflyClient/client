@@ -47,12 +47,17 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
         updateStructure()
     }
 
+    override fun update() {
+        structure.values.forEach { it.update() }
+        super.update()
+    }
+
     override fun render() {
         if (!initialized) {
             updateStructure()
         }
 
-        structure.values.forEach { it.render() }
+        structure.values.filter { it.isVisible }.forEach { it.draw() }
 
         if (Dragonfly.isDeveloperMode && !isAssembled) {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
@@ -63,10 +68,7 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
                     val (width, height) = Defaults.getSizeOrDimension(widget)
 
                     Gui.drawRect(
-                        x,
-                        y,
-                        x + width,
-                        y + height,
+                        x, y, x + width, y + height,
                         WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb
                     )
 

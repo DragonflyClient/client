@@ -99,54 +99,68 @@ public class GuiTextField extends Gui
     {
         if (this.getVisible()) {
             if (this.getEnableBackgroundDrawing()) {
-                drawRect(this.xPosition - 1, this.yPosition - 1, this.xPosition + this.width + 1, this.yPosition + this.height + 1, -6250336);
-                drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, -16777216);
+                drawRect(
+                        this.xPosition - 1,
+                        this.yPosition - 1,
+                        this.xPosition + this.width + 1,
+                        this.yPosition + this.height + 1,
+                        -6250336
+                );
+                drawRect(
+                        this.xPosition,
+                        this.yPosition,
+                        this.xPosition + this.width,
+                        this.yPosition + this.height,
+                        -16777216
+                );
             }
 
             int color = this.isEnabled ? this.enabledColor : this.disabledColor;
             int cursorPos = this.cursorPosition - this.lineScrollOffset;
             int k = this.selectionEnd - this.lineScrollOffset;
-            String s = this.fontRendererInstance.trimStringToWidth(this.text.substring(this.lineScrollOffset), this.getWidth());
-            boolean flag = cursorPos >= 0 && cursorPos <= s.length();
-            boolean flag1 = this.isFocused && this.cursorCounter / 6 % 2 == 0 && flag;
-            int l = this.enableBackgroundDrawing ? this.xPosition + 4 : this.xPosition;
-            int i1 = this.enableBackgroundDrawing ? this.yPosition + (this.height - 8) / 2 : this.yPosition;
-            int j1 = l;
+            String s = this.fontRendererInstance
+                    .trimStringToWidth(this.text.substring(this.lineScrollOffset), this.getWidth());
+            boolean cursorInBounds = cursorPos >= 0 && cursorPos <= s.length();
+            boolean cursorVisible = this.isFocused && this.cursorCounter / 6 % 2 == 0 && cursorInBounds;
+            int x = this.enableBackgroundDrawing ? this.xPosition + 4 : this.xPosition;
+            int y = this.enableBackgroundDrawing ? this.yPosition + (this.height - 8) / 2 : this.yPosition;
+            int x1 = x;
 
             if (k > s.length()) {
                 k = s.length();
             }
 
             if (s.length() > 0) {
-                String s1 = flag ? s.substring(0, cursorPos) : s;
-                j1 = this.fontRendererInstance.drawStringWithShadow(s1, (float) l, (float) i1, color);
+                String s1 = cursorInBounds ? s.substring(0, cursorPos) : s;
+                x1 = this.fontRendererInstance.drawStringWithShadow(s1, (float) x, (float) y, color);
             }
 
             boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
-            int cursorX = j1;
+            int cursorX = x1;
 
-            if (!flag) {
-                cursorX = cursorPos > 0 ? l + this.width : l;
+            if (!cursorInBounds) {
+                cursorX = cursorPos > 0 ? x + this.width : x;
             } else if (flag2) {
-                cursorX = j1 - 1;
-                --j1;
+                cursorX = x1 - 1;
+                --x1;
             }
 
-            if (s.length() > 0 && flag && cursorPos < s.length()) {
-                j1 = this.fontRendererInstance.drawStringWithShadow(s.substring(cursorPos), (float) j1, (float) i1, color);
+            if (s.length() > 0 && cursorInBounds && cursorPos < s.length()) {
+                x1 = this.fontRendererInstance
+                        .drawStringWithShadow(s.substring(cursorPos), (float) x1, (float) y, color);
             }
 
-            if (flag1) {
+            if (cursorVisible) {
                 if (flag2) {
-                    Gui.drawRect(cursorX, i1 - 1, cursorX + 1, i1 + 1 + this.fontRendererInstance.getHeight(), -3092272);
+                    Gui.drawRect(cursorX, y - 1, cursorX + 1, y + 1 + this.fontRendererInstance.getHeight(), -3092272);
                 } else {
-                    this.fontRendererInstance.drawStringWithShadow("_", (float) cursorX, (float) i1, color);
+                    this.fontRendererInstance.drawStringWithShadow("_", (float) cursorX, (float) y, color);
                 }
             }
 
             if (k != cursorPos) {
-                int l1 = l + this.fontRendererInstance.getStringWidth(s.substring(0, k));
-                this.drawCursorVertical(cursorX, i1 - 1, l1 - 1, i1 + 1 + this.fontRendererInstance.getHeight());
+                int l1 = x + this.fontRendererInstance.getStringWidth(s.substring(0, k));
+                this.drawCursorVertical(cursorX, y - 1, l1 - 1, y + 1 + this.fontRendererInstance.getHeight());
             }
         }
     }

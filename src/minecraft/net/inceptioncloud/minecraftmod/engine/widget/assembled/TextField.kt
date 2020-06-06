@@ -45,7 +45,7 @@ class TextField(
     @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
     @property:Interpolate var fontSize: Double = 19.0,
 
-    @property:Interpolate var backgroundColor: WidgetColor = WidgetColor.DEFAULT,
+    @property:Interpolate var backgroundColor: WidgetColor = WidgetColor(0, 0, 0, 0),
     @property:Interpolate var padding: Double = 0.0,
 
     @property:Interpolate override var outlineStroke: Double = 0.0,
@@ -78,6 +78,13 @@ class TextField(
     )
 
     override fun updateStructure() {
+        if (font != null) {
+            fontRenderer = font?.fontRenderer {
+                fontWeight = this@TextField.fontWeight
+                size = fontSize.toInt()
+            } ?: fontRenderer
+        }
+
         (structure["text"] as TextRenderer).also {
             it.fontRenderer = fontRenderer
             it.font = font

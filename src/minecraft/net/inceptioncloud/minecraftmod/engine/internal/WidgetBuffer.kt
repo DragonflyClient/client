@@ -18,8 +18,7 @@ import org.lwjgl.input.Keyboard
  * A widget can be added to the buffer using [add] and the whole buffer can be cleared with [clear].
  * You cannot directly remove a widget from the buffer, but you can change it's visibility state ([Widget.isVisible]).
  */
-class WidgetBuffer
-{
+class WidgetBuffer {
     /**
      * A mutable map that contains all widgets of the buffer.
      *
@@ -84,8 +83,7 @@ class WidgetBuffer
      * Calls the [Widget.update] function on every widget regardless of the visibility state.
      */
     fun update() = synchronized(this) {
-        if (GraphicsEngine.getMouseX() != mouseX && GraphicsEngine.getMouseY() != mouseY)
-        {
+        if (GraphicsEngine.getMouseX() != mouseX && GraphicsEngine.getMouseY() != mouseY) {
             mouseX = GraphicsEngine.getMouseX()
             mouseY = GraphicsEngine.getMouseY()
             handleMouseMove(MouseData(mouseX, mouseY))
@@ -106,30 +104,33 @@ class WidgetBuffer
     /**
      * Called when a mouse button is pressed.
      */
-    fun handleMousePress(data: MouseData)
-    {
+    fun handleMousePress(data: MouseData) {
         content.values.forEach { it.handleMousePress(data) }
     }
 
     /**
      * Called when a mouse button is released.
      */
-    fun handleMouseRelease(data: MouseData)
-    {
+    fun handleMouseRelease(data: MouseData) {
         content.values.forEach { it.handleMouseRelease(data) }
     }
 
     /**
      * Called when the mouse is moved while a button is holt down.
      */
-    fun handleMouseDrag(data: MouseData)
-    {
+    fun handleMouseDrag(data: MouseData) {
         content.values.forEach { it.handleMouseDrag(data) }
+    }
+
+    /**
+     * Called when a key on the keyboard is typed.
+     */
+    fun handleKeyTyped(char: Char, keyCode: Int) {
+        content.values.forEach { it.handleKeyTyped(char, keyCode) }
     }
     //</editor-fold>
 
-    override fun toString(): String
-    {
+    override fun toString(): String {
         val builder = StringBuilder("WidgetBuffer(${content.size})\n{\n")
 
         content.forEach {

@@ -137,6 +137,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     @Throws(IOException::class)
     protected open fun keyTyped(typedChar: Char, keyCode: Int) {
 
+        buffer.handleKeyTyped(typedChar, keyCode)
+
         if (keyCode == 1) {
             mc.displayGuiScreen(null)
             if (mc.currentScreen == null) {

@@ -269,6 +269,13 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
         /* can be implemented by a subclass */
     }
 
+    /**
+     * Notifies the widget when a key on the keyboard is typed.
+     */
+    open fun handleKeyTyped(char: Char, keyCode: Int) {
+        /* can be implemented by a subclass */
+    }
+
     // This function is only implemented to deprecate it in this context.
     @Deprecated
         (
