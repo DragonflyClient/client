@@ -24,8 +24,7 @@ class DeveloperModeSubscriber {
         )
     }
 
-    private fun renderDebugInfo(title: String, content: String, screenWidth: Int, y: Int)
-    {
+    private fun renderDebugInfo(title: String, content: String, screenWidth: Int, y: Int) {
         val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 14)
         val height = fontRenderer.height
         val framesTitleWidth = fontRenderer.getStringWidth(title)

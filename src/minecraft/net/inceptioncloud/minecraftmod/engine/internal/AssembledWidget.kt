@@ -6,13 +6,22 @@ import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import net.minecraft.client.gui.Gui
 import org.lwjgl.input.Keyboard
 
+/**
+ * The colors that are used to separate the individual structure widgets when
+ * the developer mode is enabled.
+ */
 private val structureColors = arrayOf(
     0x1abc9c, 0x2ecc71, 0x3498db, 0x9b59b6, 0xf1c40f, 0xe67e22, 0xe74c3c
 )
 
+/**
+ * ## Assembled Widget
+ *
+ * An assembled widget is a widget that is based on the base of multiple other primitive or assembled
+ * widgets. It has the same features but has more potential when it comes to designing complex UIs.
+ */
 @Suppress("LeakingThis")
-abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
-{
+abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>() {
     /**
      * Contains the base structure which the widget is assembled with.
      * The key is the identifier of the widget.
@@ -27,19 +36,16 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
      */
     protected var initialized = false
 
-    init
-    {
+    init {
         structure = assemble()
     }
 
-    override fun stateChanged(new: Widget<*>)
-    {
+    override fun stateChanged(new: Widget<*>) {
         structure.values.forEach { it.stateChanged(new) }
         updateStructure()
     }
 
-    override fun render()
-    {
+    override fun render() {
         if (!initialized) {
             updateStructure()
         }
@@ -49,26 +55,24 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
         if (Dragonfly.isDeveloperMode) {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                 var index = 0
-                structure.values
-                    .forEach { widget ->
-                        val x = (widget as IPosition).x
-                        val y = (widget as IPosition).y
-                        val (width, height) = Defaults.getSizeOrDimension(widget)
+                structure.values.forEach { widget ->
+                    val x = (widget as IPosition).x
+                    val y = (widget as IPosition).y
+                    val (width, height) = Defaults.getSizeOrDimension(widget)
 
-                        Gui.drawRect(
-                            x,
-                            y,
-                            x + width,
-                            y + height,
-                            WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb
-                        )
+                    Gui.drawRect(
+                        x,
+                        y,
+                        x + width,
+                        y + height,
+                        WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb
+                    )
 
-                        index++
-                    }
+                    index++
+                }
             }
 
-            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
-            {
+            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
                 GraphicsEngine.renderDebugOverlay(structure)
             }
         }
