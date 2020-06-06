@@ -57,11 +57,11 @@ object Dragonfly {
     var lastTPS = 0
 
     /**
-     * Whether the debug mode is currently enabled.
+     * Whether the developer mode is currently enabled.
      * It provides several features for developers or users to find, identify and fix bugs.
      */
     @JvmStatic
-    var isDebugMode = false
+    var isDeveloperMode = false
 
     /**
      * The [Timer] that performs the mod ticks.

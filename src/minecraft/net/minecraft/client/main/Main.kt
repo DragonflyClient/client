@@ -23,7 +23,7 @@ object Main {
         optionParser.accepts("demo")
         optionParser.accepts("fullscreen")
         optionParser.accepts("checkGlErrors")
-        optionParser.accepts("drgn-debug")
+        optionParser.accepts("drgn-developer")
 
         val specServer: OptionSpec<String> = optionParser.accepts("server").withRequiredArg()
         val specPort: OptionSpec<Int> =
@@ -74,7 +74,7 @@ object Main {
         }
         val s1 = optionset.valueOf(specProxyUser)
         val s2 = optionset.valueOf(specProxyPass)
-        val isDrgnDebug = optionset.has("drgn-debug")
+        val isDrgnDebug = optionset.has("drgn-developer")
         if (proxy != Proxy.NO_PROXY && isNullOrEmpty(s1) && isNullOrEmpty(s2)) {
             Authenticator.setDefault(object : Authenticator() {
                 override fun getPasswordAuthentication(): PasswordAuthentication {

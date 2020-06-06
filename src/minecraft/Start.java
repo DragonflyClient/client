@@ -6,7 +6,10 @@ public class Start
 {
     public static void main (String[] args)
     {
-        Main.main(concat(new String[]{"--version", "mcp", "--accessToken", "0", "--assetsDir", "assets", "--assetIndex", "1.8", "--userProperties", "{}", "--drgn-debug"}, args));
+        Main.main(concat(
+                new String[]{"--version", "mcp", "--accessToken", "0", "--assetsDir", "assets", "--assetIndex", "1.8", "--userProperties", "{}", "--drgn-developer"},
+                args
+        ));
     }
 
     public static <T> T[] concat (T[] first, T[] second)

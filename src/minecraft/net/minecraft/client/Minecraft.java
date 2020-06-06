@@ -498,7 +498,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         // EVENTBUS - Post the ClientStartupEvent when the Minecraft Client starts
         ClientStartupEvent clientStartupEvent = new ClientStartupEvent();
         Dragonfly.getEventBus().post(clientStartupEvent);
-        Dragonfly.setDebugMode(initialGameConfig.gameInfo.isDrgnDebug);
+        Dragonfly.setDeveloperMode(initialGameConfig.gameInfo.isDrgnDebug);
 
         this.setWindowIcon();
         this.setInitialDisplayMode();

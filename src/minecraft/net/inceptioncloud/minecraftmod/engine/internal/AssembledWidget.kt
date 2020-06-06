@@ -46,7 +46,7 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
 
         structure.values.forEach { it.render() }
 
-        if (Dragonfly.isDebugMode) {
+        if (Dragonfly.isDeveloperMode) {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                 var index = 0
                 structure.values

@@ -15,10 +15,10 @@ public class DefaultSubscribers
     public static void register (ModEventBus modEventBus)
     {
         modEventBus
-            .registerAnd(new AuthenticationSubscriber())
-            .registerAnd(new FileSaveSubscriber())
-            .registerAnd(new TickSubscriber())
-            .registerAnd(new LastServerSaveSubscriber())
-            .register(new DebugModeSubscriber());
+                .registerAnd(new AuthenticationSubscriber())
+                .registerAnd(new FileSaveSubscriber())
+                .registerAnd(new TickSubscriber())
+                .registerAnd(new LastServerSaveSubscriber())
+                .register(new DeveloperModeSubscriber());
     }
 }

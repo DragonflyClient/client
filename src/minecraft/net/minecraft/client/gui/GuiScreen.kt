@@ -143,9 +143,9 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                 mc.setIngameFocus()
             }
         } else if (keyCode == Keyboard.KEY_PERIOD && isCtrlKeyDown && isShiftKeyDown) {
-            Dragonfly.isDebugMode = !Dragonfly.isDebugMode
-        } else if (Dragonfly.isDebugMode) {
-            // ICMM: Debug Mode Hotkeys
+            Dragonfly.isDeveloperMode = !Dragonfly.isDeveloperMode
+        } else if (Dragonfly.isDeveloperMode) {
+            // ICMM: Developer Mode Hotkeys
             when (keyCode) {
                 Keyboard.KEY_F5 -> {
                     buttonList.clear()

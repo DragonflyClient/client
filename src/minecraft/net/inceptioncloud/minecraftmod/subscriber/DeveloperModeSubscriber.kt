@@ -8,17 +8,20 @@ import net.minecraft.client.gui.Gui
 import java.awt.Color
 import java.awt.Font
 
-class DebugModeSubscriber
-{
+class DeveloperModeSubscriber {
     @Subscribe
-    fun postRender(event: PostRenderEvent)
-    {
-        if (!Dragonfly.isDebugMode)
+    fun postRender(event: PostRenderEvent) {
+        if (!Dragonfly.isDeveloperMode)
             return
 
         renderDebugInfo("FPS: ", Minecraft.getDebugFPS().toString(), event.scaledWidth, 2)
-        renderDebugInfo("TPS: ", Dragonfly.lastTPS.toString(), event.scaledWidth, 12)
-        renderDebugInfo("GUI: ", Minecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "null", event.scaledWidth, 22)
+        renderDebugInfo("TPS: ", Dragonfly.lastTPS.toString(), event.scaledWidth, 10)
+        renderDebugInfo(
+            "GUI: ",
+            Minecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "null",
+            event.scaledWidth,
+            18
+        )
     }
 
     private fun renderDebugInfo(title: String, content: String, screenWidth: Int, y: Int)
