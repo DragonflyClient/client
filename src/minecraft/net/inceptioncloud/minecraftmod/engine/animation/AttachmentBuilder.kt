@@ -69,8 +69,7 @@ class AttachmentBuilder<Child : Widget<Child>>(
 
         if (start) {
             animation.start()
-            LogManager.getLogger()
-                .info("Started animation ${animation::class.simpleName} on ${widget::class.simpleName}")
+            LogManager.getLogger().debug("Started animation ${animation::class.simpleName}")
         }
 
         widget.animationStack.add(animation)

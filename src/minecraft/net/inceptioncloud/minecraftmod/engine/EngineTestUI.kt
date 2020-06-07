@@ -26,7 +26,8 @@ class EngineTestUI : GuiScreen() {
             width = 100.0,
             height = 20.0,
             font = Dragonfly.fontDesign.defaultFont,
-            fontSize = 20.0
+            fontSize = 20.0,
+            color = Color.BLACK.widget
         ) id "test-field"
     }
 

@@ -38,7 +38,7 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
 
     init {
         structure = assemble().also {
-            it.values.forEach { widget -> widget.isAssembled = true }
+            it.values.forEach { widget -> widget.isInAssembled = true }
         }
     }
 
@@ -60,26 +60,24 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
 
         structure.values.filter { it.isVisible }.forEach { it.draw() }
 
-        if (Dragonfly.isDeveloperMode && !isAssembled) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                var index = 0
-                structure.values.forEach { widget ->
-                    val x = (widget as IPosition).x
-                    val y = (widget as IPosition).y
-                    val (width, height) = Defaults.getSizeOrDimension(widget)
+        if (Dragonfly.isDeveloperMode && !isInAssembled && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+            var index = 0
+            structure.values.forEach { widget ->
+                val x = (widget as IPosition).x
+                val y = (widget as IPosition).y
+                val (width, height) = Defaults.getSizeOrDimension(widget)
 
-                    Gui.drawRect(
-                        x, y, x + width, y + height,
-                        WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb
-                    )
+                Gui.drawRect(
+                    x, y, x + width, y + height,
+                    WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb
+                )
 
-                    index++
-                }
+                index++
             }
+        }
 
-            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
-                GraphicsEngine.renderDebugOverlay(structure)
-            }
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !this.isInAssembled) {
+            GraphicsEngine.renderDebugOverlay(structure)
         }
     }
 

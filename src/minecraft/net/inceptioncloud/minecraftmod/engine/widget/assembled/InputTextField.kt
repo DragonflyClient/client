@@ -1,14 +1,18 @@
 package net.inceptioncloud.minecraftmod.engine.widget.assembled
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation
+import net.inceptioncloud.minecraftmod.engine.animation.alter.ScaleAnimation
 import net.inceptioncloud.minecraftmod.engine.font.FontWeight
 import net.inceptioncloud.minecraftmod.engine.font.WidgetFont
 import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.sequence.easing.EaseCubic
+import net.inceptioncloud.minecraftmod.engine.sequence.types.DoubleSequence
 import net.inceptioncloud.minecraftmod.engine.structure.IAlign
 import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
@@ -66,6 +70,15 @@ class InputTextField(
         val (alignedX, alignedY) = align(x, y, width, height)
         this.x = alignedX
         this.y = alignedY
+
+        GlobalScope.launch {
+            DoubleSequence(fontSize, fontSize / 1.8, 20).also {
+                for (i in 0..20) {
+                    it.next()
+                    font.fontRenderer { size = it.current.toInt(); fontWeight = this@InputTextField.fontWeight }
+                }
+            }
+        }
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -78,7 +91,6 @@ class InputTextField(
     )
 
     override fun updateStructure() {
-        println("Updating structure")
         val box = (structure["box-round"] as RoundedRectangle).also {
             it.x = x
             it.y = y
@@ -113,11 +125,11 @@ class InputTextField(
         (structure["label"] as TextField).also {
             it.staticText = label
             it.font = font
-            it.fontSize = if (isLabelRaised) fontSize / 1.8 else fontSize
+            it.fontSize = fontSize
             it.fontWeight = fontWeight
-            it.color = if (isFocused) color else DEFAULT_TEXT_COLOR
+            it.color = DEFAULT_TEXT_COLOR
             it.width = width
-            it.height = if (isLabelRaised) height / 2.5 else height
+            it.height = height
             it.x = x
             it.y = y
             it.padding = padding
@@ -134,7 +146,7 @@ class InputTextField(
 
         (structure["bottom-line-overlay"] as Rectangle).also {
             it.color = color
-            it.width = if (isFocused) bottomLine.width else 0.0
+            it.width = 0.0
             it.height = bottomLine.height
             it.x = bottomLine.x
             it.y = bottomLine.y
@@ -149,49 +161,23 @@ class InputTextField(
         val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
             ?: error("Structure should contain bottom line overlay!")
 
-        if (isLabelRaised) {
-            println("Raising label")
-            label.attachAnimation(
-                MorphAnimation(
-                    label.clone().also {
-                        it.fontSize = fontSize / 1.8
-                        it.height = height / 2.5
-                        it.color = if (isFocused) color else DEFAULT_TEXT_COLOR
-                    }, duration = 20
-                )
-            ) { start() }
-        } else {
-            println("Lowering label")
-            label.attachAnimation(
-                MorphAnimation(
-                    label.clone().also {
-                        it.fontSize = fontSize
-                        it.height = height
-                        it.color = DEFAULT_TEXT_COLOR
-                    }, duration = 20
-                )
-            ) { start() }
-        }
+        label.attachAnimation(
+            MorphAnimation(label.clone().also {
+                it.fontSize = if (isLabelRaised) fontSize / 1.8 else fontSize
+                it.height = if (isLabelRaised) height / 2.5 else height
+                it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
+            }, 20)
+        ) { start() }
 
-        if (focused) {
-            println("Gained focus")
-            lineOverlay.attachAnimation(
-                MorphAnimation(
-                    lineOverlay.clone().also {
-                        it.width = width
-                    }, duration = 60, easing = EaseCubic.IN_OUT
-                )
-            ) { start() }
-        } else {
-            println("Lost focus")
-            lineOverlay.attachAnimation(
-                MorphAnimation(
-                    lineOverlay.clone().also {
-                        it.width = 0.0
-                    }, duration = 60, easing = EaseCubic.IN_OUT
-                )
-            ) { start() }
-        }
+        label.attachAnimation(
+            ScaleAnimation(if (isLabelRaised) 0.5 else 1.0, if (isLabelRaised) 0.5 else 1.0, 20)
+        ) { start() }
+
+        lineOverlay.attachAnimation(
+            MorphAnimation(lineOverlay.clone().also {
+                it.width = if (focused) width else 0.0
+            }, 60, EaseCubic.IN_OUT)
+        ) { start() }
     }
 
     override fun handleKeyTyped(char: Char, keyCode: Int) {

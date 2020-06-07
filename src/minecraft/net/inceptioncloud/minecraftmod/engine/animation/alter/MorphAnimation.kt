@@ -41,9 +41,9 @@ class MorphAnimation(
         var endHookApplied = false
 
         return if (super.initAnimation(parent)) {
-
             parent::class.memberProperties
                 .filter { it.hasAnnotation<Interpolate>() && it is KMutableProperty<*> }
+                .filter { it.getter.call(parent) != it.getter.call(destination) }
                 .forEach {
                     val initialValue = it.getter.call(parent)
                     val destinationValue = destination::class.getPropertyByName(it.name).getter.call(destination)

@@ -50,7 +50,7 @@ class Arc(
         val factor = 5.0
         val centerX = x + width / 2
         val centerY = y + height / 2
-        GraphicsEngine.pushScale(1 / factor)
+        GraphicsEngine.pushScale(1 / factor to 1 / factor)
 
         color.glBindColor()
 

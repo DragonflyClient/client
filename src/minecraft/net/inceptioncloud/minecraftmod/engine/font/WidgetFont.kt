@@ -90,9 +90,8 @@ class WidgetFont @JvmOverloads constructor(
 
         // build the font renderer in a new coroutine
         GlobalScope.launch {
-            LogManager.getLogger().debug(
-                "${Thread.currentThread().name} is building font renderer " +
-                        "for ${this@WidgetFont.familyName} with $builder"
+            LogManager.getLogger().info(
+                "${Thread.currentThread().name} is building font renderer for ${this@WidgetFont.familyName} with $builder"
             )
 
             val fontRenderer = fontRenderer(preferences)

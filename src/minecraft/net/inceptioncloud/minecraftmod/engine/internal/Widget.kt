@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.internal
 
+import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.animation.AttachmentBuilder
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
@@ -33,7 +34,12 @@ abstract class Widget<W : Widget<W>> : IDraw {
     /**
      * Whether this widget is part of an assembled widget.
      */
-    var isAssembled = false
+    var isInAssembled = false
+
+    /**
+     * Whether the widget is currently hovered by the mouse.
+     */
+    var isHovered = false
 
     /**
      * Whether the widget is currently visible. If this flag is set to false, the [drawNative] method
@@ -42,9 +48,16 @@ abstract class Widget<W : Widget<W>> : IDraw {
     var isVisible = true
 
     /**
-     * Whether the widget is currently hovered by the mouse.
+     * The factor with which the widget is scaled when drawing.
      */
-    var isHovered = false
+    @Interpolate
+    var scaleFactorX: Double = 1.0
+
+    /**
+     * The factor with which the widget is scaled when drawing.
+     */
+    @Interpolate
+    var scaleFactorY: Double = 1.0
 
     /**
      * A stacking list with all animations that are currently being applied to the widget.
@@ -125,11 +138,15 @@ abstract class Widget<W : Widget<W>> : IDraw {
      */
     @Suppress("DEPRECATION")
     fun draw() {
+        GraphicsEngine.pushScale(scaleFactorX to scaleFactorY)
+
         if (scratchpad != null) {
             scratchpad?.drawNative()
         } else {
             drawNative()
         }
+
+        GraphicsEngine.popScale()
     }
 
     /**
@@ -277,8 +294,7 @@ abstract class Widget<W : Widget<W>> : IDraw {
     }
 
     // This function is only implemented to deprecate it in this context.
-    @Deprecated
-        (
+    @Deprecated(
         "This function won't render animations!",
         ReplaceWith("draw()", "net.inceptioncloud.minecraftmod.engine.internal.Widget"),
         DeprecationLevel.WARNING

@@ -14,7 +14,8 @@ import java.awt.Color
 import java.util.*
 
 object GraphicsEngine {
-    private val scaleStack: Stack<Double> = Stack()
+
+    private val scaleStack: Stack<Pair<Double, Double>> = Stack()
 
     private val debugColors = arrayOf(0x27ae60, 0xf39c12, 0x2980b9)
 
@@ -32,7 +33,7 @@ object GraphicsEngine {
                 val y = (widget as IPosition).y
                 val (width, height) = Defaults.getSizeOrDimension(widget)
 
-                Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 100).rgb)
+                Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 20).rgb)
                 RectangleRenderer.renderOutline(
                     x, y, x + width, y + height,
                     Color(debugColors[index % (debugColors.size)]), 0.7
@@ -45,7 +46,7 @@ object GraphicsEngine {
             val y = (uppermostWidget.value as IPosition).y
             val (width, height) = Defaults.getSizeOrDimension(uppermostWidget.value)
 
-            Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 100).rgb)
+            Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 30).rgb)
             RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 0.8)
 
             val titleRenderer = Dragonfly.fontDesign.retrieveOrBuild(" Medium", 12)
@@ -84,15 +85,15 @@ object GraphicsEngine {
     }
 
     @JvmStatic
-    fun pushScale(factor: Double) {
+    fun pushScale(factor: Pair<Double, Double>) {
         scaleStack.push(factor)
-        GlStateManager.scale(factor, factor, factor)
+        GlStateManager.scale(factor.first, factor.second, 1.0)
     }
 
     @JvmStatic
     fun popScale() {
-        val factor = 1 / scaleStack.pop()
-        GlStateManager.scale(factor, factor, factor)
+        val factor = scaleStack.pop()
+        GlStateManager.scale(1 / factor.first, 1 / factor.second, 1.0)
     }
 
     fun getMouseX(): Int {
