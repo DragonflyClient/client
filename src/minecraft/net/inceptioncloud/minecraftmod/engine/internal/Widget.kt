@@ -15,15 +15,15 @@ import kotlin.reflect.full.memberProperties
  * and can receive a color. This interface provides specific methods that every 2D-object has to implement
  * in order to make drawing easier.
  *
- * Every class that implements this interface must specify its type with the type parameter `Child`
+ * Every class that implements this interface must specify its type with the type parameter `W`
  * in the interface. This allows it to return it's instance without forcing the user to use casts.
  *
  * @see IDraw
  *
- * @property Child the type of the implementing class
+ * @property W the type of the implementing class
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-abstract class Widget<Child : Widget<Child>> : IDraw {
+abstract class Widget<W : Widget<W>> : IDraw {
 
     /**
      * Whether the widget is an internal clone. Can be used to prevent spamming the console.
@@ -74,16 +74,16 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      * object will then be compared. If the dynamic update changed the state of the widget, [stateChanged]
      * will be called.
      */
-    private var updateDynamic: (Child.() -> Unit)? = null
+    private var updateDynamic: (W.() -> Unit)? = null
 
     /**
      * Sets the function to dynamically update the widget.
      *
      * @see updateDynamic
      */
-    open fun dynamic(updateFunction: Child.() -> Unit): Child {
+    open fun dynamic(updateFunction: W.() -> Unit): W {
         this.updateDynamic = updateFunction
-        return this as Child
+        return this as W
     }
 
     /**
@@ -95,7 +95,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
         val before = clone()
 
         if (updateDynamic != null) {
-            updateDynamic?.invoke(this as Child)
+            updateDynamic?.invoke(this as W)
         }
 
         if (!animationStack.isNullOrEmpty()) {
@@ -104,8 +104,8 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
             animationStack.forEach { it.tick() }
             animationStack.forEach { it.applyToShape(scratchpad = scratchpad!!, base = this) }
 
-            if (!isStateEqual(scratchpad as Child)) {
-                stateChanged(scratchpad as Child)
+            if (!isStateEqual(scratchpad as W)) {
+                stateChanged(scratchpad as W)
             }
         } else scratchpad = null
 
@@ -138,11 +138,11 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      * This animation can override all other animations that have been added to the stack before, but will
      * be overwritten by following animations.
      */
-    fun attachAnimation(animation: Animation, preferences: (AttachmentBuilder<Child>.() -> Unit)? = { }): Child {
+    fun attachAnimation(animation: Animation, preferences: (AttachmentBuilder<W>.() -> Unit)? = { }): W {
         val attachmentBuilder = AttachmentBuilder(animation, this)
         preferences?.invoke(attachmentBuilder)
         attachmentBuilder.attach()
-        return this as Child
+        return this as W
     }
 
     /**
@@ -150,9 +150,9 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      *
      * This method will remove the given animation from the stack, regardless of its position.
      */
-    fun detachAnimation(animation: Animation): Child {
+    fun detachAnimation(animation: Animation): W {
         animationStack.remove(animation)
-        return this as Child
+        return this as W
     }
 
     /**
@@ -184,9 +184,9 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      *
      * @param clone the clone which the base widget should be compared to
      */
-    fun isStateEqual(clone: Child) = this::class.memberProperties
+    fun isStateEqual(clone: W) = this::class.memberProperties
         .filter { it.hasAnnotation<Interpolate>() || it.hasAnnotation<State>() }
-        .any { it.getter.call(this) != it.getter.call(clone) }
+        .none { it.getter.call(this) != it.getter.call(clone) }
 
     /**
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.
@@ -201,7 +201,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      *
      * @return an identical copy of the object that the function was called on
      */
-    abstract fun clone(): Child
+    abstract fun clone(): W
 
     /**
      * Clones the graphics object and adds a padding.
@@ -213,7 +213,7 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      * @see cloneWithMargin
      * @return a congruent copy of the object with the given padding to the original object
      */
-    open fun cloneWithPadding(amount: Double): Child = Defaults.cloneWithPadding(this as Child, amount)
+    open fun cloneWithPadding(amount: Double): W = Defaults.cloneWithPadding(this as W, amount)
 
     /**
      * Clones the graphics object and adds a margin.
@@ -225,12 +225,12 @@ abstract class Widget<Child : Widget<Child>> : IDraw {
      * @see cloneWithPadding
      * @return a congruent copy of the object with the given margin to the original object
      */
-    open fun cloneWithMargin(amount: Double): Child = Defaults.cloneWithMargin(this as Child, amount)
+    open fun cloneWithMargin(amount: Double): W = Defaults.cloneWithMargin(this as W, amount)
 
     /**
-     * Used to create a new instance of the subclass as [Child] is the type of the subclass.
+     * Used to create a new instance of the subclass as [W] is the type of the subclass.
      */
-    abstract fun newInstance(): Child
+    abstract fun newInstance(): W
 
     /**
      * Generates an info string for the widget that is used for debugging.

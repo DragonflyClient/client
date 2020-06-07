@@ -65,11 +65,12 @@ class AttachmentBuilder<Child : Widget<Child>>(
         if (!animation.initAnimation(widget)) {
             LogManager.getRootLogger().warn("The animation ${animation::class.simpleName} could not be attached!")
             return
-        } else LogManager.getLogger().debug("Attached animation ${animation::class.simpleName}")
+        }
 
         if (start) {
             animation.start()
-            LogManager.getLogger().debug("Started animation ${animation::class.simpleName}")
+            LogManager.getLogger()
+                .info("Started animation ${animation::class.simpleName} on ${widget::class.simpleName}")
         }
 
         widget.animationStack.add(animation)

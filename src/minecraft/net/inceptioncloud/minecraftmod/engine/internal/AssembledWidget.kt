@@ -55,6 +55,7 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
     override fun render() {
         if (!initialized) {
             updateStructure()
+            initialized = true
         }
 
         structure.values.filter { it.isVisible }.forEach { it.draw() }

@@ -78,6 +78,7 @@ class InputTextField(
     )
 
     override fun updateStructure() {
+        println("Updating structure")
         val box = (structure["box-round"] as RoundedRectangle).also {
             it.x = x
             it.y = y
@@ -138,7 +139,6 @@ class InputTextField(
             it.x = bottomLine.x
             it.y = bottomLine.y
         }
-
     }
 
     /**
@@ -150,6 +150,7 @@ class InputTextField(
             ?: error("Structure should contain bottom line overlay!")
 
         if (isLabelRaised) {
+            println("Raising label")
             label.attachAnimation(
                 MorphAnimation(
                     label.clone().also {
@@ -160,6 +161,7 @@ class InputTextField(
                 )
             ) { start() }
         } else {
+            println("Lowering label")
             label.attachAnimation(
                 MorphAnimation(
                     label.clone().also {
@@ -172,6 +174,7 @@ class InputTextField(
         }
 
         if (focused) {
+            println("Gained focus")
             lineOverlay.attachAnimation(
                 MorphAnimation(
                     lineOverlay.clone().also {
@@ -180,6 +183,7 @@ class InputTextField(
                 )
             ) { start() }
         } else {
+            println("Lost focus")
             lineOverlay.attachAnimation(
                 MorphAnimation(
                     lineOverlay.clone().also {
