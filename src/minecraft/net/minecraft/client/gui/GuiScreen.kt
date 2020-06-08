@@ -730,23 +730,23 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             get() = Keyboard.isKeyDown(56) || Keyboard.isKeyDown(184)
 
         @JvmStatic
-        fun isKeyComboCtrlX(p_175277_0_: Int): Boolean {
-            return p_175277_0_ == 45 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
+        fun isKeyComboCtrlX(code: Int): Boolean {
+            return code == 45 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
 
         @JvmStatic
-        fun isKeyComboCtrlV(p_175279_0_: Int): Boolean {
-            return p_175279_0_ == 47 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
+        fun isKeyComboCtrlV(code: Int): Boolean {
+            return code == 47 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
 
         @JvmStatic
-        fun isKeyComboCtrlC(p_175280_0_: Int): Boolean {
-            return p_175280_0_ == 46 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
+        fun isKeyComboCtrlC(code: Int): Boolean {
+            return code == 46 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
 
         @JvmStatic
-        fun isKeyComboCtrlA(p_175278_0_: Int): Boolean {
-            return p_175278_0_ == 30 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
+        fun isKeyComboCtrlA(code: Int): Boolean {
+            return code == 30 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
     }
 }

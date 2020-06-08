@@ -17,7 +17,13 @@ import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import net.inceptioncloud.minecraftmod.engine.widget.primitive.Rectangle
+import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.GuiScreen.Companion.isCtrlKeyDown
+import net.minecraft.client.gui.GuiScreen.Companion.isShiftKeyDown
+import net.minecraft.util.ChatAllowedCharacters
+import org.lwjgl.input.Keyboard.*
 import java.awt.Color
+import kotlin.math.abs
 import kotlin.properties.Delegates
 
 val DEFAULT_TEXT_COLOR = WidgetColor(0xababab)
@@ -26,11 +32,12 @@ class InputTextField(
     @property:State var font: WidgetFont = Dragonfly.fontDesign.defaultFont,
     @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
     @property:Interpolate var fontSize: Double = 18.0,
-
     @property:Interpolate var padding: Double = 2.0,
 
     @property:State var label: String = "Input Label",
     @property:State var inputText: String = "",
+    @property:State var isEnabled: Boolean = false,
+    @property:State var maxStringLength: Int = 200,
 
     x: Double = 0.0,
     y: Double = 0.0,
@@ -60,8 +67,15 @@ class InputTextField(
             focusedStateChanged(value)
         }
 
+    /**
+     * Whether the text label is raised due to present input text or focus state.
+     */
     private val isLabelRaised: Boolean
         get() = isFocused || inputText.isNotEmpty()
+
+    private var selectionEnd: Int = 0
+    private var cursorPosition: Int = 0
+    private var lineScrollOffset: Int = 0
 
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
@@ -83,6 +97,7 @@ class InputTextField(
         "box-sharp" to Rectangle(),
         "label" to TextField(),
         "input-text" to TextField(),
+        "cursor" to Rectangle(),
         "bottom-line" to Rectangle(),
         "bottom-line-overlay" to Rectangle()
     )
@@ -173,28 +188,236 @@ class InputTextField(
         ) { start() }
     }
 
-    override fun handleKeyTyped(char: Char, keyCode: Int) {
-        if (isFocused) {
-            inputText += char
+    private fun getFontRenderer() = font.fontRenderer { size = fontSize.toInt(); fontWeight = this@InputTextField.fontWeight }
 
-//            (structure["input-text"] as TextField).also {
-//                it.staticText = inputText
-//                it.stateChanged(it)
-//            }
+    override fun handleKeyTyped(char: Char, keyCode: Int) {
+        if (!isFocused)
+            return
+
+        when {
+            GuiScreen.isKeyComboCtrlA(keyCode) -> {
+                setCursorPositionEnd()
+                setSelectionPos(0)
+            }
+            GuiScreen.isKeyComboCtrlC(keyCode) -> {
+                GuiScreen.clipboardString = getSelectedText()
+            }
+            GuiScreen.isKeyComboCtrlV(keyCode) -> GuiScreen.clipboardString?.let { writeText(it) }
+            else -> when (keyCode) {
+                KEY_BACK -> if (isCtrlKeyDown) {
+                    deleteWords(-1)
+                } else {
+                    deleteFromCursor(-1)
+                }
+                KEY_HOME -> if (isShiftKeyDown) {
+                    setSelectionPos(0)
+                } else {
+                    setCursorPosition(0)
+                }
+                KEY_LEFT, KEY_RIGHT -> {
+                    val offset = if (keyCode == KEY_LEFT) -1 else 1
+                    if (isShiftKeyDown) {
+                        if (isCtrlKeyDown) {
+                            setSelectionPos(getNthWordFromPos(offset, selectionEnd))
+                        } else {
+                            setSelectionPos(selectionEnd + offset)
+                        }
+                    } else if (isCtrlKeyDown) {
+                        setCursorPosition(getNthWordFromCursor(offset))
+                    } else {
+                        moveCursorBy(offset)
+                    }
+                }
+                KEY_DELETE -> if (isCtrlKeyDown) {
+                    deleteWords(1)
+                } else {
+                    deleteFromCursor(1)
+                }
+                else -> if (ChatAllowedCharacters.isAllowedCharacter(char)) {
+                    writeText(char.toString())
+                }
+            }
         }
 
-        super.handleKeyTyped(char, keyCode)
+        if (isFocused) {
+            inputText += char
+        }
     }
 
     override fun handleMousePress(data: MouseData) {
         isFocused = isHovered
-
-        super.handleMousePress(data)
     }
 
     override fun clone() = InputTextField(
-        font, fontWeight, fontSize, padding, label, inputText, x, y, width, height, color, horizontalAlignment, verticalAlignment
+        font,
+        fontWeight,
+        fontSize,
+        padding,
+        label,
+        inputText,
+        isEnabled,
+        maxStringLength,
+        x,
+        y,
+        width,
+        height,
+        color,
+        horizontalAlignment,
+        verticalAlignment
     )
 
     override fun newInstance() = InputTextField()
+
+    /* == Input Text Field Utility */
+
+    private fun getSelectedText(): String? {
+        val i = cursorPosition.coerceAtMost(selectionEnd)
+        val j = cursorPosition.coerceAtLeast(selectionEnd)
+        return inputText.substring(i, j)
+    }
+
+    private fun setCursorPosition(index: Int) {
+        cursorPosition = index.coerceIn(0..inputText.length)
+        setSelectionPos(cursorPosition)
+    }
+
+    private fun setCursorPositionEnd() = setCursorPosition(inputText.length)
+
+    private fun moveCursorBy(amount: Int) = setCursorPosition(selectionEnd + amount)
+
+    private fun writeText(text: String, force: Boolean = false) {
+        if (!isEnabled && !force)
+            return
+
+        var result = ""
+        val allowedCharacters = ChatAllowedCharacters.filterAllowedCharacters(text)
+
+        val i = cursorPosition.coerceAtMost(selectionEnd)
+        val j = cursorPosition.coerceAtLeast(selectionEnd)
+        val k: Int = maxStringLength - text.length - (i - j)
+        val l: Int
+
+        if (text.isNotEmpty()) {
+            result += text.substring(0, i)
+        }
+
+        if (k < allowedCharacters.length) {
+            result += allowedCharacters.substring(0, k)
+            l = k
+        } else {
+            result += allowedCharacters
+            l = allowedCharacters.length
+        }
+
+        if (text.isNotEmpty() && j < text.length) {
+            result += text.substring(j)
+        }
+
+        inputText = result
+        moveCursorBy(i - selectionEnd + l)
+    }
+
+    private fun deleteWords(amount: Int, force: Boolean = false) {
+        if (!isEnabled && !force)
+            return
+
+        if (inputText.isNotEmpty()) {
+            if (selectionEnd != cursorPosition) {
+                writeText("")
+            } else {
+                deleteFromCursor(getNthWordFromCursor(amount) - cursorPosition)
+            }
+        }
+    }
+
+    private fun deleteFromCursor(amount: Int, force: Boolean = false) {
+        if (!isEnabled && !force)
+            return
+
+        if (inputText.isNotEmpty()) {
+            if (selectionEnd != cursorPosition) {
+                writeText("")
+            } else {
+                val toLeft: Boolean = amount < 0
+                val end = if (toLeft) cursorPosition + amount else cursorPosition
+                val start = if (toLeft) cursorPosition else cursorPosition + amount
+                var result = ""
+                if (end >= 0) {
+                    result = inputText.substring(0, end)
+                }
+                if (start < inputText.length) {
+                    result += inputText.substring(start)
+                }
+                inputText = result
+                if (toLeft) {
+                    moveCursorBy(amount)
+                }
+            }
+        }
+    }
+
+    private fun setSelectionPos(pos: Int) {
+        val i: Int = inputText.length
+        val fontRenderer = getFontRenderer()
+        var position = pos
+
+        if (position > i) {
+            position = i
+        }
+
+        if (position < 0) {
+            position = 0
+        }
+
+        selectionEnd = position
+
+        if (this.lineScrollOffset > i) {
+            this.lineScrollOffset = i
+        }
+        val j: Int = width.toInt()
+        val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), j)
+        val k: Int = s.length + lineScrollOffset
+        if (position == lineScrollOffset) {
+            lineScrollOffset -= fontRenderer.trimStringToWidth(inputText, j, true).length
+        }
+        if (position > k) {
+            lineScrollOffset += position - k
+        } else if (position <= lineScrollOffset) {
+            lineScrollOffset -= lineScrollOffset - position
+        }
+        lineScrollOffset = lineScrollOffset.coerceIn(0..i)
+    }
+
+    private fun getNthWordFromPos(n: Int, pos: Int): Int = getNthWordFromPosWS(n, pos, true)
+
+    private fun getNthWordFromPosWS(n: Int, pos: Int, skipWs: Boolean): Int {
+        var i = pos
+        val flag = n < 0
+        val j = abs(n)
+
+        for (k in 0 until j) {
+            if (!flag) {
+                val l: Int = inputText.length
+                i = inputText.indexOf(32.toChar(), i)
+                if (i == -1) {
+                    i = l
+                } else {
+                    while (skipWs && i < l && inputText[i].toInt() == 32) {
+                        ++i
+                    }
+                }
+            } else {
+                while (skipWs && i > 0 && inputText[i - 1].toInt() == 32) {
+                    --i
+                }
+                while (i > 0 && inputText[i - 1].toInt() != 32) {
+                    --i
+                }
+            }
+        }
+
+        return i
+    }
+
+    private fun getNthWordFromCursor(n: Int): Int = getNthWordFromPos(n, cursorPosition)
 }
