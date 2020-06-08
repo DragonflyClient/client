@@ -4,6 +4,7 @@ import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import net.minecraft.client.gui.Gui
+import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 
 /**
@@ -22,11 +23,12 @@ private val structureColors = arrayOf(
  */
 @Suppress("LeakingThis")
 abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>() {
+
     /**
      * Contains the base structure which the widget is assembled with.
      * The key is the identifier of the widget.
      */
-    protected val structure: Map<String, Widget<*>>
+    val structure: Map<String, Widget<*>>
 
     /**
      * Whether the assembled widget has been initialized by calling the first structure update.
@@ -43,8 +45,15 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
     }
 
     override fun stateChanged(new: Widget<*>) {
-        structure.values.forEach { it.stateChanged(new) }
-        updateStructure()
+        if (new is AssembledWidget) {
+            structure.forEach {
+                it.value.stateChanged(
+                    new.structure[it.key] ?: error("Widget with new state doesn't have structural widget with id '${it.key}'")
+                )
+            }
+
+            updateStructure()
+        } else LogManager.getLogger().warn("State changed by not-assembled widget")
     }
 
     override fun update() {

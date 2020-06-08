@@ -6,6 +6,7 @@ import net.inceptioncloud.minecraftmod.engine.animation.AttachmentBuilder
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.structure.IDraw
+import net.inceptioncloud.minecraftmod.engine.widget.assembled.InputTextField
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
@@ -203,11 +204,17 @@ abstract class Widget<W : Widget<W>> : IDraw {
      */
     fun isStateEqual(clone: W) = this::class.memberProperties
         .filter { it.hasAnnotation<Interpolate>() || it.hasAnnotation<State>() }
-        .none { it.getter.call(this) != it.getter.call(clone) }
+        .filter { it.getter.call(this) != it.getter.call(clone) }.let {
+            if (this@Widget is InputTextField) {
+                it.forEach { prop -> println("${prop.name} has changed from ${prop.getter.call(this)} to ${prop.getter.call(clone)}") }
+            }
+
+            it.isEmpty()
+        }
 
     /**
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.
-     * This is called when [isStateEqual] evaluates to true.
+     * This is called when [isStateEqual] evaluates to false.
      */
     open fun stateChanged(new: Widget<*>) {
         /* can be implemented by a subclass */

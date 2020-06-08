@@ -5,7 +5,6 @@ import kotlinx.coroutines.launch
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
 import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation
-import net.inceptioncloud.minecraftmod.engine.animation.alter.ScaleAnimation
 import net.inceptioncloud.minecraftmod.engine.font.FontWeight
 import net.inceptioncloud.minecraftmod.engine.font.WidgetFont
 import net.inceptioncloud.minecraftmod.engine.internal.*
@@ -31,6 +30,7 @@ class InputTextField(
     @property:Interpolate var padding: Double = 2.0,
 
     @property:State var label: String = "Input Label",
+    @property:State var inputText: String = "",
 
     x: Double = 0.0,
     y: Double = 0.0,
@@ -62,9 +62,6 @@ class InputTextField(
 
     private val isLabelRaised: Boolean
         get() = isFocused || inputText.isNotEmpty()
-
-    @State
-    var inputText: String = ""
 
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
@@ -109,11 +106,11 @@ class InputTextField(
         }
 
         (structure["input-text"] as TextField).also {
-            it.staticText = inputText
+            it.dynamicText = { inputText }
             it.font = font
             it.fontSize = fontSize
             it.fontWeight = fontWeight
-            it.color = WidgetColor(Color.BLACK.brighter())
+            it.color = WidgetColor(Color.BLACK)
             it.width = width
             it.height = height
             it.x = x
@@ -169,10 +166,6 @@ class InputTextField(
             }, 20)
         ) { start() }
 
-        label.attachAnimation(
-            ScaleAnimation(if (isLabelRaised) 0.5 else 1.0, if (isLabelRaised) 0.5 else 1.0, 20)
-        ) { start() }
-
         lineOverlay.attachAnimation(
             MorphAnimation(lineOverlay.clone().also {
                 it.width = if (focused) width else 0.0
@@ -183,6 +176,11 @@ class InputTextField(
     override fun handleKeyTyped(char: Char, keyCode: Int) {
         if (isFocused) {
             inputText += char
+
+//            (structure["input-text"] as TextField).also {
+//                it.staticText = inputText
+//                it.stateChanged(it)
+//            }
         }
 
         super.handleKeyTyped(char, keyCode)
@@ -195,7 +193,7 @@ class InputTextField(
     }
 
     override fun clone() = InputTextField(
-        font, fontWeight, fontSize, padding, label, x, y, width, height, color, horizontalAlignment, verticalAlignment
+        font, fontWeight, fontSize, padding, label, inputText, x, y, width, height, color, horizontalAlignment, verticalAlignment
     )
 
     override fun newInstance() = InputTextField()

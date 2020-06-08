@@ -107,6 +107,15 @@ class TextField(
         }
     }
 
+    override fun update() {
+        // update instantly when using dynamic text
+        if (dynamicText != null) {
+            (structure["text"] as TextRenderer).text = currentText()
+        }
+
+        super.update()
+    }
+
     /**
      * Returns the current text of the field. This is the [dynamicText] or the [staticText], if no
      * [dynamicText] is set.
