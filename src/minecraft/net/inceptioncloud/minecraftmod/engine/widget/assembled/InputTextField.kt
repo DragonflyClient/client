@@ -17,6 +17,7 @@ import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import net.inceptioncloud.minecraftmod.engine.widget.primitive.Rectangle
+import net.inceptioncloud.minecraftmod.engine.widget.primitive.TextRenderer
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiScreen.Companion.isCtrlKeyDown
 import net.minecraft.client.gui.GuiScreen.Companion.isShiftKeyDown
@@ -36,7 +37,7 @@ class InputTextField(
 
     @property:State var label: String = "Input Label",
     @property:State var inputText: String = "",
-    @property:State var isEnabled: Boolean = false,
+    @property:State var isEnabled: Boolean = true,
     @property:State var maxStringLength: Int = 200,
 
     x: Double = 0.0,
@@ -92,14 +93,43 @@ class InputTextField(
         }
     }
 
+    /**
+     * Called whenever the [isFocused] property changes.
+     */
+    private fun focusedStateChanged(focused: Boolean) {
+        val label = structure["label"] as? TextField ?: error("Structure should contain label!")
+        val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
+            ?: error("Structure should contain bottom line overlay!")
+
+        label.attachAnimation(
+            MorphAnimation(label.clone().also {
+                it.fontSize = if (isLabelRaised) fontSize / 1.8 else fontSize
+                it.height = if (isLabelRaised) height / 2.5 else height
+                it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
+            }, 20)
+        ) { start() }
+
+        lineOverlay.attachAnimation(
+            MorphAnimation(lineOverlay.clone().also {
+                it.width = if (focused) width else 0.0
+            }, 60, EaseCubic.IN_OUT)
+        ) { start() }
+    }
+
+    /**
+     * Builds a font renderer based on the [font], [fontSize] and [fontWeight].
+     */
+    private fun getFontRenderer() =
+        (structure["input-text"] as TextField).fontRenderer //font.fontRenderer { size = fontSize.toInt(); fontWeight = this@InputTextField.fontWeight }
+
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "box-round" to RoundedRectangle(),
         "box-sharp" to Rectangle(),
-        "label" to TextField(),
-        "input-text" to TextField(),
-        "cursor" to Rectangle(),
         "bottom-line" to Rectangle(),
-        "bottom-line-overlay" to Rectangle()
+        "bottom-line-overlay" to Rectangle(),
+        "label" to TextField(),
+        "input-text" to TextField().also { (it.structure["text"] as TextRenderer).showBounds = true },
+        "cursor" to Rectangle()
     )
 
     override fun updateStructure() {
@@ -120,8 +150,8 @@ class InputTextField(
             it.color = box.color
         }
 
-        (structure["input-text"] as TextField).also {
-            it.dynamicText = { inputText }
+        val inputText = (structure["input-text"] as TextField).also {
+            it.staticText = ""
             it.font = font
             it.fontSize = fontSize
             it.fontWeight = fontWeight
@@ -163,32 +193,52 @@ class InputTextField(
             it.x = bottomLine.x
             it.y = bottomLine.y
         }
+
+        (structure["cursor"] as Rectangle).also {
+            it.height = inputText.fontRenderer.height.toDouble()
+            it.width = 0.6
+            it.color = color
+            it.y = y + height - it.height - bottomLine.height - 1
+        }
     }
 
-    /**
-     * Called whenever the [isFocused] property changes.
-     */
-    private fun focusedStateChanged(focused: Boolean) {
-        val label = structure["label"] as? TextField ?: error("Structure should contain label!")
-        val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
-            ?: error("Structure should contain bottom line overlay!")
+    override fun render() {
+        val fontRenderer = getFontRenderer()
+        val cursorPos = cursorPosition - lineScrollOffset
+        val visibleText = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), width.toInt())
+        val cursorInBounds = cursorPos >= 0 && cursorPos <= visibleText.length
+        val cursorVisible = isFocused && (System.currentTimeMillis() / 500) % 2 == 0L
+        var x1 = x
 
-        label.attachAnimation(
-            MorphAnimation(label.clone().also {
-                it.fontSize = if (isLabelRaised) fontSize / 1.8 else fontSize
-                it.height = if (isLabelRaised) height / 2.5 else height
-                it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
-            }, 20)
-        ) { start() }
+        if (visibleText.isNotEmpty()) {
+            val string = if (cursorInBounds) visibleText.substring(0, cursorPos) else visibleText
+            val stringWidth = fontRenderer.getStringWidth(string)
+            x1 = x + stringWidth
+        }
 
-        lineOverlay.attachAnimation(
-            MorphAnimation(lineOverlay.clone().also {
-                it.width = if (focused) width else 0.0
-            }, 60, EaseCubic.IN_OUT)
-        ) { start() }
+        val cursorNotAtEnd = cursorPosition < inputText.length || inputText.length >= maxStringLength
+        var cursorX = x1 + padding
+
+        if (!cursorInBounds) {
+            cursorX = if (cursorPos > 0) x + width else x
+        } else if (cursorNotAtEnd) {
+            --x1
+        }
+
+        (structure["cursor"] as Rectangle).also {
+            it.x = cursorX
+            it.isVisible = cursorVisible
+        }
+
+        (structure["input-text"] as TextField).also {
+            if (it.staticText != visibleText) {
+                it.staticText = visibleText
+                it.updateStructure()
+            }
+        }
+
+        super.render()
     }
-
-    private fun getFontRenderer() = font.fontRenderer { size = fontSize.toInt(); fontWeight = this@InputTextField.fontWeight }
 
     override fun handleKeyTyped(char: Char, keyCode: Int) {
         if (!isFocused)
@@ -203,6 +253,7 @@ class InputTextField(
                 GuiScreen.clipboardString = getSelectedText()
             }
             GuiScreen.isKeyComboCtrlV(keyCode) -> GuiScreen.clipboardString?.let { writeText(it) }
+            GuiScreen.isKeyComboCtrlX(keyCode) -> GuiScreen.clipboardString = getSelectedText()?.also { writeText("") }
             else -> when (keyCode) {
                 KEY_BACK -> if (isCtrlKeyDown) {
                     deleteWords(-1)
@@ -213,6 +264,11 @@ class InputTextField(
                     setSelectionPos(0)
                 } else {
                     setCursorPosition(0)
+                }
+                KEY_END -> if (isShiftKeyDown) {
+                    setSelectionPos(inputText.length)
+                } else {
+                    setCursorPositionEnd()
                 }
                 KEY_LEFT, KEY_RIGHT -> {
                     val offset = if (keyCode == KEY_LEFT) -1 else 1
@@ -238,14 +294,17 @@ class InputTextField(
                 }
             }
         }
-
-        if (isFocused) {
-            inputText += char
-        }
     }
 
     override fun handleMousePress(data: MouseData) {
         isFocused = isHovered
+
+        if (isFocused && data.button == 0) {
+            val fontRenderer = getFontRenderer()
+            val i: Int = (data.mouseX - x - 4).toInt() // TODO -4: can be removed
+            val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), width.toInt())
+            setCursorPosition(fontRenderer.trimStringToWidth(s, i).length + lineScrollOffset)
+        }
     }
 
     override fun clone() = InputTextField(
@@ -285,20 +344,20 @@ class InputTextField(
 
     private fun moveCursorBy(amount: Int) = setCursorPosition(selectionEnd + amount)
 
-    private fun writeText(text: String, force: Boolean = false) {
+    private fun writeText(newText: String, force: Boolean = false) {
         if (!isEnabled && !force)
             return
 
         var result = ""
-        val allowedCharacters = ChatAllowedCharacters.filterAllowedCharacters(text)
+        val allowedCharacters = ChatAllowedCharacters.filterAllowedCharacters(newText)
 
         val i = cursorPosition.coerceAtMost(selectionEnd)
         val j = cursorPosition.coerceAtLeast(selectionEnd)
-        val k: Int = maxStringLength - text.length - (i - j)
+        val k: Int = maxStringLength - newText.length - (i - j)
         val l: Int
 
-        if (text.isNotEmpty()) {
-            result += text.substring(0, i)
+        if (inputText.isNotEmpty()) {
+            result += inputText.substring(0, i)
         }
 
         if (k < allowedCharacters.length) {
@@ -309,8 +368,8 @@ class InputTextField(
             l = allowedCharacters.length
         }
 
-        if (text.isNotEmpty() && j < text.length) {
-            result += text.substring(j)
+        if (inputText.isNotEmpty() && j < inputText.length) {
+            result += inputText.substring(j)
         }
 
         inputText = result

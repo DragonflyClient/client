@@ -13,6 +13,8 @@ import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
+import net.minecraft.client.gui.Gui
+import java.awt.Color
 
 /**
  * ## Text Renderer Widget
@@ -32,6 +34,8 @@ class TextRenderer(
     @property:State var font: WidgetFont? = null,
     @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
     @property:Interpolate var fontSize: Double = 19.0,
+
+    @property:State var showBounds: Boolean = false,
 
     @property:Interpolate override var x: Double = 0.0,
     @property:Interpolate override var y: Double = 0.0,
@@ -61,6 +65,10 @@ class TextRenderer(
 
         height = fontRenderer.height.toDouble()
         width = fontRenderer.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
+
+        if (showBounds) {
+            Gui.drawRect(posX.toInt(), posY.toInt(), (posX + width).toInt(), (posY + height).toInt(), Color(0, 0, 0, 50).rgb)
+        }
     }
 
     override fun stateChanged(new: Widget<*>) {
@@ -96,7 +104,7 @@ class TextRenderer(
     }
 
     override fun clone() = TextRenderer(
-        text, dropShadow, fontRenderer, font, fontWeight, fontSize, x, y, width, height, color
+        text, dropShadow, fontRenderer, font, fontWeight, fontSize, showBounds, x, y, width, height, color
     )
 
     override fun newInstance() = TextRenderer()

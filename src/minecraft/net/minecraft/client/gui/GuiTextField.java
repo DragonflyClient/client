@@ -118,20 +118,20 @@ public class GuiTextField extends Gui
             int color = this.isEnabled ? this.enabledColor : this.disabledColor;
             int cursorPos = this.cursorPosition - this.lineScrollOffset;
             int k = this.selectionEnd - this.lineScrollOffset;
-            String s = this.fontRendererInstance
+            String visibleText = this.fontRendererInstance
                     .trimStringToWidth(this.text.substring(this.lineScrollOffset), this.getWidth());
-            boolean cursorInBounds = cursorPos >= 0 && cursorPos <= s.length();
+            boolean cursorInBounds = cursorPos >= 0 && cursorPos <= visibleText.length();
             boolean cursorVisible = this.isFocused && this.cursorCounter / 6 % 2 == 0 && cursorInBounds;
             int x = this.enableBackgroundDrawing ? this.xPosition + 4 : this.xPosition;
             int y = this.enableBackgroundDrawing ? this.yPosition + (this.height - 8) / 2 : this.yPosition;
             int x1 = x;
 
-            if (k > s.length()) {
-                k = s.length();
+            if (k > visibleText.length()) {
+                k = visibleText.length();
             }
 
-            if (s.length() > 0) {
-                String s1 = cursorInBounds ? s.substring(0, cursorPos) : s;
+            if (visibleText.length() > 0) {
+                String s1 = cursorInBounds ? visibleText.substring(0, cursorPos) : visibleText;
                 x1 = this.fontRendererInstance.drawStringWithShadow(s1, (float) x, (float) y, color);
             }
 
@@ -145,9 +145,8 @@ public class GuiTextField extends Gui
                 --x1;
             }
 
-            if (s.length() > 0 && cursorInBounds && cursorPos < s.length()) {
-                x1 = this.fontRendererInstance
-                        .drawStringWithShadow(s.substring(cursorPos), (float) x1, (float) y, color);
+            if (visibleText.length() > 0 && cursorInBounds && cursorPos < visibleText.length()) {
+                x1 = this.fontRendererInstance.drawStringWithShadow(visibleText.substring(cursorPos), (float) x1, (float) y, color);
             }
 
             if (cursorVisible) {
@@ -159,7 +158,7 @@ public class GuiTextField extends Gui
             }
 
             if (k != cursorPos) {
-                int l1 = x + this.fontRendererInstance.getStringWidth(s.substring(0, k));
+                int l1 = x + this.fontRendererInstance.getStringWidth(visibleText.substring(0, k));
                 this.drawCursorVertical(cursorX, y - 1, l1 - 1, y + 1 + this.fontRendererInstance.getHeight());
             }
         }
@@ -220,33 +219,32 @@ public class GuiTextField extends Gui
     /**
      * replaces selected text, or inserts text at the position on the cursor
      */
-    public void writeText (String text)
-    {
-        String s = "";
-        String s1 = ChatAllowedCharacters.filterAllowedCharacters(text);
+    public void writeText (String text) {
+        String result = "";
+        String allowedCharacters = ChatAllowedCharacters.filterAllowedCharacters(text);
         int i = Math.min(this.cursorPosition, this.selectionEnd);
         int j = Math.max(this.cursorPosition, this.selectionEnd);
         int k = this.maxStringLength - this.text.length() - (i - j);
         int l;
 
         if (this.text.length() > 0) {
-            s = s + this.text.substring(0, i);
+            result = result + this.text.substring(0, i);
         }
 
-        if (k < s1.length()) {
-            s = s + s1.substring(0, k);
+        if (k < allowedCharacters.length()) {
+            result = result + allowedCharacters.substring(0, k);
             l = k;
         } else {
-            s = s + s1;
-            l = s1.length();
+            result = result + allowedCharacters;
+            l = allowedCharacters.length();
         }
 
         if (this.text.length() > 0 && j < this.text.length()) {
-            s = s + this.text.substring(j);
+            result = result + this.text.substring(j);
         }
 
-        if (this.validator.test(s)) {
-            this.text = s;
+        if (this.validator.test(result)) {
+            this.text = result;
             this.moveCursorBy(i - this.selectionEnd + l);
 
             if (this.guiResponder != null) {
@@ -501,16 +499,15 @@ public class GuiTextField extends Gui
     /**
      * Args: x, y, buttonClicked
      */
-    public void mouseClicked (int p_146192_1_, int p_146192_2_, int p_146192_3_)
-    {
-        boolean flag = p_146192_1_ >= this.xPosition && p_146192_1_ < this.xPosition + this.width && p_146192_2_ >= this.yPosition && p_146192_2_ < this.yPosition + this.height;
+    public void mouseClicked(int x, int y, int button) {
+        boolean flag = x >= this.xPosition && x < this.xPosition + this.width && y >= this.yPosition && y < this.yPosition + this.height;
 
         if (this.canLoseFocus) {
             this.setFocused(flag);
         }
 
-        if (this.isFocused && flag && p_146192_3_ == 0) {
-            int i = p_146192_1_ - this.xPosition;
+        if (this.isFocused && flag && button == 0) {
+            int i = x - this.xPosition;
 
             if (this.enableBackgroundDrawing) {
                 i -= 4;
@@ -524,26 +521,25 @@ public class GuiTextField extends Gui
     /**
      * draws the vertical line cursor in the textbox
      */
-    private void drawCursorVertical (int p_146188_1_, int p_146188_2_, int p_146188_3_, int p_146188_4_)
-    {
-        if (p_146188_1_ < p_146188_3_) {
-            int i = p_146188_1_;
-            p_146188_1_ = p_146188_3_;
-            p_146188_3_ = i;
+    private void drawCursorVertical(int left, int top, int right, int bottom) {
+        if (left < right) {
+            int i = left;
+            left = right;
+            right = i;
         }
 
-        if (p_146188_2_ < p_146188_4_) {
-            int j = p_146188_2_;
-            p_146188_2_ = p_146188_4_;
-            p_146188_4_ = j;
+        if (top < bottom) {
+            int j = top;
+            top = bottom;
+            bottom = j;
         }
 
-        if (p_146188_3_ > this.xPosition + this.width) {
-            p_146188_3_ = this.xPosition + this.width;
+        if (right > this.xPosition + this.width) {
+            right = this.xPosition + this.width;
         }
 
-        if (p_146188_1_ > this.xPosition + this.width) {
-            p_146188_1_ = this.xPosition + this.width;
+        if (left > this.xPosition + this.width) {
+            left = this.xPosition + this.width;
         }
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -553,10 +549,10 @@ public class GuiTextField extends Gui
         GlStateManager.enableColorLogic();
         GlStateManager.colorLogicOp(5387);
         worldrenderer.begin(7, DefaultVertexFormats.POSITION);
-        worldrenderer.pos(p_146188_1_, p_146188_4_, 0.0D).endVertex();
-        worldrenderer.pos(p_146188_3_, p_146188_4_, 0.0D).endVertex();
-        worldrenderer.pos(p_146188_3_, p_146188_2_, 0.0D).endVertex();
-        worldrenderer.pos(p_146188_1_, p_146188_2_, 0.0D).endVertex();
+        worldrenderer.pos(left, bottom, 0.0D).endVertex();
+        worldrenderer.pos(right, bottom, 0.0D).endVertex();
+        worldrenderer.pos(right, top, 0.0D).endVertex();
+        worldrenderer.pos(left, top, 0.0D).endVertex();
         tessellator.draw();
         GlStateManager.disableColorLogic();
         GlStateManager.enableTexture2D();

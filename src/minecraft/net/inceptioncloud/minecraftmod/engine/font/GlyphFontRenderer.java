@@ -244,7 +244,8 @@ public class GlyphFontRenderer implements IFontRenderer {
      * Quick Method to access {@link OptionsSectionUI#getFontQuality()}
      */
     public static double getFontQualityScale() {
-        return OptionsSectionUI.getFontQuality().getKey().get();
+        final double quality = OptionsSectionUI.getFontQuality().getKey().get();
+        return Math.round(quality * 10.0) / 10.0;
     }
 
     private static Font makeFont(String name, int style, int size, double letterSpacing) {
@@ -345,7 +346,7 @@ public class GlyphFontRenderer implements IFontRenderer {
             return 0;
         }
 
-        int width = 0;
+        float width = 0;
         int size = text.length();
 
         boolean flag = false;
@@ -356,18 +357,7 @@ public class GlyphFontRenderer implements IFontRenderer {
             if (charAt == '§') {
                 flag = true;
             } else if (flag && charAt >= '0' && charAt <= 'r') {
-                int colorIndex = "0123456789abcdefklmnor".indexOf(charAt);
-                if (colorIndex < 16) {
-                    boldStyle = false;
-                    italicStyle = false;
-                } else if (colorIndex == 17) {
-                    boldStyle = true;
-                } else if (colorIndex == 20) {
-                    italicStyle = true;
-                } else if (colorIndex == 21) {
-                    boldStyle = false;
-                    italicStyle = false;
-                }
+                updateStyle(charAt);
 //                index++;
                 flag = false;
             } else {
@@ -377,12 +367,26 @@ public class GlyphFontRenderer implements IFontRenderer {
             }
         }
 
-        return width / (2);
+        return (int) (width / (2.0F));
+    }
+
+    private void updateStyle(char charAt) {
+        int colorIndex = "0123456789abcdefklmnor".indexOf(charAt);
+        if (colorIndex < 16) {
+            boldStyle = false;
+            italicStyle = false;
+        } else if (colorIndex == 17) {
+            boldStyle = true;
+        } else if (colorIndex == 20) {
+            italicStyle = true;
+        } else if (colorIndex == 21) {
+            boldStyle = false;
+            italicStyle = false;
+        }
     }
 
     /**
      * @param c The character
-     *
      * @return {@link #getCharWidthFloat(char)} rounded to an integer value.
      */
     @Override
@@ -550,6 +554,9 @@ public class GlyphFontRenderer implements IFontRenderer {
 
                 float f = glyphPage.drawChar(currentChar, posX, posY);
 
+                if (text.equals("Hello!?."))
+                    System.out.println(getFontQualityScale());
+
                 if (f != -1) {
                     finishDraw(f, glyphPage, currentRed, currentGreen, currentBlue);
                 } else {
@@ -558,8 +565,7 @@ public class GlyphFontRenderer implements IFontRenderer {
 
                     glScaled(factor, factor, factor);
 
-                    fontRenderer.setPosX((posX / factor) + 1).setPosY((posY / factor) + 2)
-                            .renderUnicodeChar(currentChar, false);
+                    fontRenderer.setPosX((posX / factor) + 1).setPosY((posY / factor) + 2).renderUnicodeChar(currentChar, false);
                     this.posX += fontRenderer.getCharWidthFloat(currentChar) * factor;
 
                     glScaled(1 / factor, 1 / factor, 1 / factor);
@@ -668,18 +674,7 @@ public class GlyphFontRenderer implements IFontRenderer {
             if (character == '§')
                 colorCodeActivated = true;
             else if (colorCodeActivated && character >= '0' && character <= 'r') {
-                int colorIndex = "0123456789abcdefklmnor".indexOf(character);
-                if (colorIndex < 16) {
-                    boldStyle = false;
-                    italicStyle = false;
-                } else if (colorIndex == 17) {
-                    boldStyle = true;
-                } else if (colorIndex == 20) {
-                    italicStyle = true;
-                } else if (colorIndex == 21) {
-                    boldStyle = false;
-                    italicStyle = false;
-                }
+                updateStyle(character);
                 i++;
                 colorCodeActivated = false;
             } else if (colorCodeActivated) {
