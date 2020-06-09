@@ -157,7 +157,7 @@ class InputTextField(
             it.fontWeight = fontWeight
             it.color = WidgetColor(Color.BLACK)
             it.width = width
-            it.height = height
+            it.height = height - 2
             it.x = x
             it.y = y + 2
             it.padding = padding
@@ -205,7 +205,8 @@ class InputTextField(
     override fun render() {
         val fontRenderer = getFontRenderer()
         val cursorPos = cursorPosition - lineScrollOffset
-        val visibleText = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), width.toInt())
+        val maxStringSize = (width - padding * 2).toInt()
+        val visibleText = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringSize)
         val cursorInBounds = cursorPos >= 0 && cursorPos <= visibleText.length
         val cursorVisible = isFocused && (System.currentTimeMillis() / 500) % 2 == 0L
         var x1 = x
@@ -301,7 +302,7 @@ class InputTextField(
 
         if (isFocused && data.button == 0) {
             val fontRenderer = getFontRenderer()
-            val i: Int = (data.mouseX - x - 4).toInt() // TODO -4: can be removed
+            val i: Int = (data.mouseX - x - 4).toInt() // TODO: -4 can be removed
             val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), width.toInt())
             setCursorPosition(fontRenderer.trimStringToWidth(s, i).length + lineScrollOffset)
         }
@@ -433,7 +434,7 @@ class InputTextField(
         if (this.lineScrollOffset > i) {
             this.lineScrollOffset = i
         }
-        val j: Int = width.toInt()
+        val j: Int = (width - padding * 2).toInt()
         val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), j)
         val k: Int = s.length + lineScrollOffset
         if (position == lineScrollOffset) {

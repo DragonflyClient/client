@@ -367,7 +367,7 @@ public class GlyphFontRenderer implements IFontRenderer {
             }
         }
 
-        return (int) (width / (2.0F));
+        return (int) width;
     }
 
     private void updateStyle(char charAt) {
@@ -417,7 +417,7 @@ public class GlyphFontRenderer implements IFontRenderer {
             return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch) * 2;
         }
 
-        return unscaledPageRegular.getWidth(ch) - 8;
+        return (float) ((pageRegular.getWidth(ch) - 8) / (2.0F * getFontQualityScale()));
     }
 
     /**
@@ -554,9 +554,6 @@ public class GlyphFontRenderer implements IFontRenderer {
 
                 float f = glyphPage.drawChar(currentChar, posX, posY);
 
-                if (text.equals("Hello!?."))
-                    System.out.println(getFontQualityScale());
-
                 if (f != -1) {
                     finishDraw(f, glyphPage, currentRed, currentGreen, currentBlue);
                 } else {
@@ -668,6 +665,8 @@ public class GlyphFontRenderer implements IFontRenderer {
         int startIndex = reverse ? text.length() - 1 : 0;
         int step = reverse ? -1 : 1;
 
+        float actualWidth = 0.0F;
+
         for (int i = startIndex; i >= 0 && i < text.length(); i += step) {
             char character = text.charAt(i);
 
@@ -682,7 +681,8 @@ public class GlyphFontRenderer implements IFontRenderer {
                 character = text.charAt(i);
             }
 
-            if (text.length() > i + 1 && getStringWidth(text.substring(0, i + 1)) >= maxWidth)
+            actualWidth += getCharWidthFloat(character);
+            if (actualWidth >= maxWidth)
                 break;
 
             if (reverse)
