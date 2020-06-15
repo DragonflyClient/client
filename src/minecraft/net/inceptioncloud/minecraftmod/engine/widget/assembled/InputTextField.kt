@@ -211,16 +211,12 @@ class InputTextField(
     override fun render() {
         val fontRenderer = getFontRenderer()
         val cursorPos = cursorPosition - lineScrollOffset
-        var k = selectionEnd - lineScrollOffset
         val maxStringSize = (width - padding * 2).toInt()
         val visibleText = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringSize)
+        val end = (selectionEnd - lineScrollOffset).coerceAtMost(visibleText.length)
         val cursorInBounds = cursorPos >= 0 && cursorPos <= visibleText.length
         val cursorVisible = isFocused && (System.currentTimeMillis() / 500) % 2 == 0L
         var x1 = x
-
-        if (k > visibleText.length) {
-            k = visibleText.length
-        }
 
         if (visibleText.isNotEmpty()) {
             val string = if (cursorInBounds) visibleText.substring(0, cursorPos) else visibleText
@@ -230,6 +226,11 @@ class InputTextField(
 
         val cursorNotAtEnd = cursorPosition < inputText.length || inputText.length >= maxStringLength
         var cursorX = x1 + padding
+        val selectionWidth: Double = fontRenderer.getStringWidth(
+            visibleText.substring(
+                cursorPos.coerceAtMost(end), end.coerceAtLeast(cursorPos)
+            )
+        ).toDouble()
 
         if (!cursorInBounds) {
             cursorX = if (cursorPos > 0) x + width else x
@@ -237,7 +238,7 @@ class InputTextField(
             --x1
         }
 
-        cursorX++
+        cursorX += 0.5
 
         val cursor = (structure["cursor"] as Rectangle).also {
             it.x = cursorX
@@ -251,18 +252,16 @@ class InputTextField(
             }
         }
 
-        val d: Double = x + fontRenderer.getStringWidth(visibleText.substring(0, k))
         (structure["selection"] as Rectangle).also {
-            it.width = d - 1 - cursorX
+            it.width = selectionWidth
             it.height = cursor.height
+            it.x = if (selectionEnd < cursorPos) cursorX - it.width else cursorX
             it.y = cursor.y
-            it.x = cursorX
             it.color = color.clone().apply { alphaDouble = 0.5 }
-            it.isVisible = k != cursorPos
+            it.isVisible = end != cursorPos
         }
 
         super.render()
-//        this.drawCursorVertical(cursorX, y - 1, l1 - 1, y + 1 + this.fontRendererInstance.getHeight())
     }
 
     override fun handleKeyTyped(char: Char, keyCode: Int) {
@@ -296,7 +295,7 @@ class InputTextField(
                     setCursorPositionEnd()
                 }
                 KEY_LEFT, KEY_RIGHT -> {
-                    val offset = if (keyCode == KEY_LEFT) -1 else 1
+                    val offset = if (keyCode == KEY_LEFT) -1 else +1
                     if (isShiftKeyDown) {
                         if (isCtrlKeyDown) {
                             setSelectionPos(getNthWordFromPos(offset, selectionEnd))
@@ -306,6 +305,7 @@ class InputTextField(
                     } else if (isCtrlKeyDown) {
                         setCursorPosition(getNthWordFromCursor(offset))
                     } else {
+                        selectionEnd = cursorPosition
                         moveCursorBy(offset)
                     }
                 }

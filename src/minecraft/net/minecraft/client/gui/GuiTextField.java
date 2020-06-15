@@ -148,7 +148,7 @@ public class GuiTextField extends Gui
             }
 
             if (visibleText.length() > 0 && cursorInBounds && cursorPos < visibleText.length()) {
-                x1 = this.fontRendererInstance.drawStringWithShadow(visibleText.substring(cursorPos), (float) x1, (float) y, color);
+                this.fontRendererInstance.drawStringWithShadow(visibleText.substring(cursorPos), (float) x1, (float) y, color);
             }
 
             if (cursorVisible) {
@@ -669,19 +669,18 @@ public class GuiTextField extends Gui
     /**
      * Sets the position of the selection anchor (i.e. position the selection was started at)
      */
-    public void setSelectionPos (int p_146199_1_)
-    {
+    public void setSelectionPos(int pos) {
         int i = this.text.length();
 
-        if (p_146199_1_ > i) {
-            p_146199_1_ = i;
+        if (pos > i) {
+            pos = i;
         }
 
-        if (p_146199_1_ < 0) {
-            p_146199_1_ = 0;
+        if (pos < 0) {
+            pos = 0;
         }
 
-        this.selectionEnd = p_146199_1_;
+        this.selectionEnd = pos;
 
         if (this.fontRendererInstance != null) {
             if (this.lineScrollOffset > i) {
@@ -692,14 +691,14 @@ public class GuiTextField extends Gui
             String s = this.fontRendererInstance.trimStringToWidth(this.text.substring(this.lineScrollOffset), j);
             int k = s.length() + this.lineScrollOffset;
 
-            if (p_146199_1_ == this.lineScrollOffset) {
+            if (pos == this.lineScrollOffset) {
                 this.lineScrollOffset -= this.fontRendererInstance.trimStringToWidth(this.text, j, true).length();
             }
 
-            if (p_146199_1_ > k) {
-                this.lineScrollOffset += p_146199_1_ - k;
-            } else if (p_146199_1_ <= this.lineScrollOffset) {
-                this.lineScrollOffset -= this.lineScrollOffset - p_146199_1_;
+            if (pos > k) {
+                this.lineScrollOffset += pos - k;
+            } else if (pos <= this.lineScrollOffset) {
+                this.lineScrollOffset -= this.lineScrollOffset - pos;
             }
 
             this.lineScrollOffset = MathHelper.clamp_int(this.lineScrollOffset, 0, i);
