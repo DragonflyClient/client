@@ -38,8 +38,6 @@ class MorphAnimation(
     private val propertySequences: MutableMap<KMutableProperty<*>, Sequence<*>> = mutableMapOf()
 
     override fun initAnimation(parent: Widget<*>): Boolean {
-        var endHookApplied = false
-
         return if (super.initAnimation(parent)) {
             parent::class.memberProperties
                 .filter { it.hasAnnotation<Interpolate>() && it is KMutableProperty<*> }
@@ -47,13 +45,8 @@ class MorphAnimation(
                 .forEach {
                     val initialValue = it.getter.call(parent)
                     val destinationValue = destination::class.getPropertyByName(it.name).getter.call(destination)
-                    var sequence = Sequence.generateSequence(initialValue, destinationValue, duration)
+                    val sequence = Sequence.generateSequence(initialValue, destinationValue, duration)
                         .withEasing(easing)
-
-                    if (!endHookApplied) {
-                        sequence = sequence.withEndHook { finish() }
-                        endHookApplied = true
-                    }
 
                     propertySequences[it as KMutableProperty<*>] = sequence
                 }
@@ -66,6 +59,10 @@ class MorphAnimation(
         for ((property, sequence) in propertySequences) {
             property.setter.call(base, sequence.current)
             property.setter.call(scratchpad, sequence.current)
+        }
+
+        if (propertySequences.values.any { it.isAtEnd }) {
+            finish()
         }
     }
 

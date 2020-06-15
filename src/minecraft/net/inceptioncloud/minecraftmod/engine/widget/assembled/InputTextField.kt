@@ -4,6 +4,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette
+import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.minecraftmod.engine.font.FontWeight
 import net.inceptioncloud.minecraftmod.engine.font.WidgetFont
@@ -68,21 +69,25 @@ class InputTextField(
             focusedStateChanged(value)
         }
 
+    /** The currently entered input text. */
     @Info
     var inputText: String = ""
 
-    /**
-     * Whether the text label is raised due to present input text or focus state.
-     */
+    /** Whether the text label is raised due to present input text or focus state. */
     private val isLabelRaised: Boolean
         get() = isFocused || inputText.isNotEmpty()
 
-    @Info
+    /** The position of the cursor as well as the start of the text selection*/
+    private var cursorPosition: Int = 0
+
+    /** The end of the text selection */
     private var selectionEnd: Int = 0
 
-    @Info
-    private var cursorPosition: Int = 0
+    /** Horizontal scroll offset. */
     private var lineScrollOffset: Int = 0
+
+    /** The time in milliseconds the cursor has moved lately */
+    private var timeCursorMoved = 0L
 
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
@@ -215,7 +220,8 @@ class InputTextField(
         val visibleText = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringSize)
         val end = (selectionEnd - lineScrollOffset).coerceAtMost(visibleText.length)
         val cursorInBounds = cursorPos >= 0 && cursorPos <= visibleText.length
-        val cursorVisible = isFocused && (System.currentTimeMillis() / 500) % 2 == 0L
+        val cursorVisible = isFocused && ((System.currentTimeMillis() / 500) % 2 == 0L
+                || System.currentTimeMillis() - timeCursorMoved < 500)
         var x1 = x
 
         if (visibleText.isNotEmpty()) {
@@ -240,9 +246,23 @@ class InputTextField(
 
         cursorX += 0.5
 
-        val cursor = (structure["cursor"] as Rectangle).also {
-            it.x = cursorX
-            it.isVisible = cursorVisible
+        val cursor = (structure["cursor"] as Rectangle)
+        val destinationCursorX = (cursor.findAnimation(MorphAnimation::class.java)?.destination as? Rectangle)?.x
+        cursor.isVisible = cursorVisible
+
+        if (cursor.x != cursorX && destinationCursorX != cursorX) {
+            timeCursorMoved = System.currentTimeMillis()
+            cursor.findAnimation(MorphAnimation::class.java)?.let { cursor.detachAnimation(it) }
+            cursor.attachAnimation(
+                MorphAnimation(
+                    cursor.clone().apply { x = cursorX }, duration = (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20)
+                )
+            ) {
+                start()
+                post { animation: Animation, widget: Widget<*> ->
+                    widget.detachAnimation(animation)
+                }
+            }
         }
 
         (structure["input-text"] as TextField).also {
@@ -492,3 +512,5 @@ class InputTextField(
 
     private fun getNthWordFromCursor(n: Int): Int = getNthWordFromPos(n, cursorPosition)
 }
+
+private fun Double.diff(other: Double): Double = this.coerceAtLeast(other) - other.coerceAtMost(this)

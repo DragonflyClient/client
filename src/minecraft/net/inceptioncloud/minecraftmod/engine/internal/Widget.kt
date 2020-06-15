@@ -117,8 +117,8 @@ abstract class Widget<W : Widget<W>> : IDraw {
         if (!animationStack.isNullOrEmpty()) {
             scratchpad = clone().apply { isInternalClone = true }
             animationStack.removeAll { it.finished }
-            animationStack.forEach { it.tick() }
-            animationStack.forEach { it.applyToShape(scratchpad = scratchpad!!, base = this) }
+            animationStack.toTypedArray().forEach { it.tick() }
+            animationStack.toTypedArray().forEach { it.applyToShape(scratchpad = scratchpad!!, base = this) }
 
             if (!isStateEqual(scratchpad as W)) {
                 stateChanged(scratchpad as W)
@@ -192,8 +192,8 @@ abstract class Widget<W : Widget<W>> : IDraw {
      * @param class the class of the animation
      * @return the animation or null if no one was found
      */
-    fun <T : Animation> findAnimation(`class`: Class<T>): Animation? {
-        return animationStack.firstOrNull { it.javaClass == `class` }
+    fun <T : Animation> findAnimation(`class`: Class<T>): T? {
+        return animationStack.firstOrNull { it.javaClass == `class` } as T?
     }
 
     /**

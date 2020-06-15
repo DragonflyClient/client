@@ -53,7 +53,10 @@ object GraphicsEngine {
             val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("", 10)
             val title = "${uppermostWidget.value::class.simpleName} #${widget.key}"
             val info = uppermostWidget.value.toInfo().toMutableList()
-                .apply { add("scratchpad = ${uppermostWidget.value.scratchpad != null}") }
+                .apply {
+                    add("scratchpad = ${uppermostWidget.value.scratchpad != null}")
+                    add("animations = ${uppermostWidget.value.animationStack.size}")
+                }
             val infoHeight = 2 + titleRenderer.height + (fontRenderer.height + 0.5) * info.size
             val infoWidth = 2 + (titleRenderer.getStringWidth(title))
                 .coerceAtLeast(info.map { fontRenderer.getStringWidth(it.replaceFirst("--state", "")) }.max()!!)
