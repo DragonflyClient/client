@@ -118,8 +118,10 @@ public class GuiTextField extends Gui
             int color = this.isEnabled ? this.enabledColor : this.disabledColor;
             int cursorPos = this.cursorPosition - this.lineScrollOffset;
             int k = this.selectionEnd - this.lineScrollOffset;
-            String visibleText = this.fontRendererInstance
-                    .trimStringToWidth(this.text.substring(this.lineScrollOffset), this.getWidth());
+            String visibleText = this.fontRendererInstance.trimStringToWidth(
+                    this.text.substring(this.lineScrollOffset),
+                    this.getWidth()
+            );
             boolean cursorInBounds = cursorPos >= 0 && cursorPos <= visibleText.length();
             boolean cursorVisible = this.isFocused && this.cursorCounter / 6 % 2 == 0 && cursorInBounds;
             int x = this.enableBackgroundDrawing ? this.xPosition + 4 : this.xPosition;
@@ -135,12 +137,12 @@ public class GuiTextField extends Gui
                 x1 = this.fontRendererInstance.drawStringWithShadow(s1, (float) x, (float) y, color);
             }
 
-            boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
+            boolean cursorNotAtEnd = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
             int cursorX = x1;
 
             if (!cursorInBounds) {
                 cursorX = cursorPos > 0 ? x + this.width : x;
-            } else if (flag2) {
+            } else if (cursorNotAtEnd) {
                 cursorX = x1 - 1;
                 --x1;
             }
@@ -150,7 +152,7 @@ public class GuiTextField extends Gui
             }
 
             if (cursorVisible) {
-                if (flag2) {
+                if (cursorNotAtEnd) {
                     Gui.drawRect(cursorX, y - 1, cursorX + 1, y + 1 + this.fontRendererInstance.getHeight(), -3092272);
                 } else {
                     this.fontRendererInstance.drawStringWithShadow("_", (float) cursorX, (float) y, color);

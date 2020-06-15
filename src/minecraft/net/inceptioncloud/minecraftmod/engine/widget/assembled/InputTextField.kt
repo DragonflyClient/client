@@ -17,7 +17,6 @@ import net.inceptioncloud.minecraftmod.engine.structure.IColor
 import net.inceptioncloud.minecraftmod.engine.structure.IDimension
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import net.inceptioncloud.minecraftmod.engine.widget.primitive.Rectangle
-import net.inceptioncloud.minecraftmod.engine.widget.primitive.TextRenderer
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiScreen.Companion.isCtrlKeyDown
 import net.minecraft.client.gui.GuiScreen.Companion.isShiftKeyDown
@@ -36,7 +35,6 @@ class InputTextField(
     @property:Interpolate var padding: Double = 2.0,
 
     @property:State var label: String = "Input Label",
-    @property:State var inputText: String = "",
     @property:State var isEnabled: Boolean = true,
     @property:State var maxStringLength: Int = 200,
 
@@ -67,6 +65,8 @@ class InputTextField(
             field = value
             focusedStateChanged(value)
         }
+
+    var inputText: String = ""
 
     /**
      * Whether the text label is raised due to present input text or focus state.
@@ -119,8 +119,7 @@ class InputTextField(
     /**
      * Builds a font renderer based on the [font], [fontSize] and [fontWeight].
      */
-    private fun getFontRenderer() =
-        (structure["input-text"] as TextField).fontRenderer //font.fontRenderer { size = fontSize.toInt(); fontWeight = this@InputTextField.fontWeight }
+    private fun getFontRenderer() = (structure["input-text"] as TextField).fontRenderer
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "box-round" to RoundedRectangle(),
@@ -128,8 +127,9 @@ class InputTextField(
         "bottom-line" to Rectangle(),
         "bottom-line-overlay" to Rectangle(),
         "label" to TextField(),
-        "input-text" to TextField().also { (it.structure["text"] as TextRenderer).showBounds = true },
-        "cursor" to Rectangle()
+        "input-text" to TextField(),
+        "cursor" to Rectangle(),
+        "selection" to Rectangle()
     )
 
     override fun updateStructure() {
@@ -205,11 +205,16 @@ class InputTextField(
     override fun render() {
         val fontRenderer = getFontRenderer()
         val cursorPos = cursorPosition - lineScrollOffset
+        var k = selectionEnd - lineScrollOffset
         val maxStringSize = (width - padding * 2).toInt()
         val visibleText = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringSize)
         val cursorInBounds = cursorPos >= 0 && cursorPos <= visibleText.length
         val cursorVisible = isFocused && (System.currentTimeMillis() / 500) % 2 == 0L
         var x1 = x
+
+        if (k > visibleText.length) {
+            k = visibleText.length
+        }
 
         if (visibleText.isNotEmpty()) {
             val string = if (cursorInBounds) visibleText.substring(0, cursorPos) else visibleText
@@ -226,19 +231,32 @@ class InputTextField(
             --x1
         }
 
+        cursorX++
+
         (structure["cursor"] as Rectangle).also {
             it.x = cursorX
             it.isVisible = cursorVisible
         }
 
-        (structure["input-text"] as TextField).also {
+        val inputText = (structure["input-text"] as TextField).also {
             if (it.staticText != visibleText) {
                 it.staticText = visibleText
                 it.updateStructure()
             }
         }
 
+        val d: Double = x + fontRenderer.getStringWidth(visibleText.substring(0, k))
+        (structure["selection"] as Rectangle).also {
+            it.width = d - 1 - cursorX
+            it.height = inputText.fontRenderer.height.toDouble()
+            it.y = y + height - it.height - (structure["bottom-line"] as Rectangle).height - 1
+            it.x = cursorX
+            it.color = color.clone().apply { alphaDouble = 0.5 }
+            it.isVisible = k != cursorPos
+        }
+
         super.render()
+//        this.drawCursorVertical(cursorX, y - 1, l1 - 1, y + 1 + this.fontRendererInstance.getHeight())
     }
 
     override fun handleKeyTyped(char: Char, keyCode: Int) {
@@ -302,28 +320,15 @@ class InputTextField(
 
         if (isFocused && data.button == 0) {
             val fontRenderer = getFontRenderer()
-            val i: Int = (data.mouseX - x - 4).toInt() // TODO: -4 can be removed
-            val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), width.toInt())
+            val i: Int = (data.mouseX - x - padding).toInt() // TODO: -4 can be removed
+            val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), (width - padding * 2).toInt())
             setCursorPosition(fontRenderer.trimStringToWidth(s, i).length + lineScrollOffset)
         }
     }
 
     override fun clone() = InputTextField(
-        font,
-        fontWeight,
-        fontSize,
-        padding,
-        label,
-        inputText,
-        isEnabled,
-        maxStringLength,
-        x,
-        y,
-        width,
-        height,
-        color,
-        horizontalAlignment,
-        verticalAlignment
+        font, fontWeight, fontSize, padding, label, isEnabled, maxStringLength,
+        x, y, width, height, color, horizontalAlignment, verticalAlignment
     )
 
     override fun newInstance() = InputTextField()
@@ -354,7 +359,7 @@ class InputTextField(
 
         val i = cursorPosition.coerceAtMost(selectionEnd)
         val j = cursorPosition.coerceAtLeast(selectionEnd)
-        val k: Int = maxStringLength - newText.length - (i - j)
+        val k: Int = maxStringLength - inputText.length - (i - j)
         val l: Int
 
         if (inputText.isNotEmpty()) {
@@ -434,11 +439,11 @@ class InputTextField(
         if (this.lineScrollOffset > i) {
             this.lineScrollOffset = i
         }
-        val j: Int = (width - padding * 2).toInt()
-        val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), j)
+        val maxStringWidth: Int = (width - padding * 2).toInt()
+        val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringWidth)
         val k: Int = s.length + lineScrollOffset
         if (position == lineScrollOffset) {
-            lineScrollOffset -= fontRenderer.trimStringToWidth(inputText, j, true).length
+            lineScrollOffset -= fontRenderer.trimStringToWidth(inputText, maxStringWidth, true).length
         }
         if (position > k) {
             lineScrollOffset += position - k

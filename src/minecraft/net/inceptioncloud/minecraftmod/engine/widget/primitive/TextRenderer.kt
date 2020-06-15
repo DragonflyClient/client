@@ -63,6 +63,7 @@ class TextRenderer(
         val posX = x.toFloat()
         val posY = if (fontRenderer is GlyphFontRenderer) y.toFloat() + 3F else y.toFloat()
 
+        color.glBindColor()
         height = fontRenderer.height.toDouble()
         width = fontRenderer.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
 
