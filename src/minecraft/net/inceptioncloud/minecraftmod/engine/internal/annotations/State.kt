@@ -1,16 +1,14 @@
-package net.inceptioncloud.minecraftmod.engine.internal.annotations;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+package net.inceptioncloud.minecraftmod.engine.internal.annotations
 
 /**
  * Marks all member properties of a widget represent the state of the widget.
- * <p>
+ *
+ *
  * They are used to compare the state of two widgets while member properties without
  * this annotation are seen as utility and skipped during the process.
- * <p>
- * This annotation is only required for properties that are not annotated with {@link Interpolate}.
+ *
+ *
+ * This annotation is only required for properties that are not annotated with [Interpolate].
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface State {
-}
+@Retention(AnnotationRetention.RUNTIME)
+annotation class State 

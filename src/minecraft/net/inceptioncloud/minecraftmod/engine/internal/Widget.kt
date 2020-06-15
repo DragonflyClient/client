@@ -261,6 +261,7 @@ abstract class Widget<W : Widget<W>> : IDraw {
      */
     open fun toInfo(): List<String> = this::class.memberProperties
         .filter { it.hasAnnotation<State>() || it.hasAnnotation<Interpolate>() }
+        .sortedBy { if (it.hasAnnotation<State>()) -1 else 1 }
         .joinToString("\n") {
             (if (it.hasAnnotation<State>()) "--state" else "") + "${it.name} = ${it.getter.call(this)}"
         }.split("\n")
