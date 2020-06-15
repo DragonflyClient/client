@@ -3,12 +3,14 @@ package net.inceptioncloud.minecraftmod.engine.internal
 import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.animation.AttachmentBuilder
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.Info
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.structure.IDraw
 import net.inceptioncloud.minecraftmod.engine.widget.assembled.InputTextField
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * ## Widget
@@ -260,9 +262,10 @@ abstract class Widget<W : Widget<W>> : IDraw {
      * Generates an info string for the widget that is used for debugging.
      */
     open fun toInfo(): List<String> = this::class.memberProperties
-        .filter { it.hasAnnotation<State>() || it.hasAnnotation<Interpolate>() }
-        .sortedBy { if (it.hasAnnotation<State>()) -1 else 1 }
+        .filter { it.hasAnnotation<State>() || it.hasAnnotation<Interpolate>() || it.hasAnnotation<Info>() }
+        .sortedByDescending { if (it.hasAnnotation<State>()) 3 else if (it.hasAnnotation<Interpolate>()) 2 else 1 }
         .joinToString("\n") {
+            it.isAccessible = true
             (if (it.hasAnnotation<State>()) "--state" else "") + "${it.name} = ${it.getter.call(this)}"
         }.split("\n")
 

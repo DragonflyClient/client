@@ -8,6 +8,7 @@ import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.minecraftmod.engine.font.FontWeight
 import net.inceptioncloud.minecraftmod.engine.font.WidgetFont
 import net.inceptioncloud.minecraftmod.engine.internal.*
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.Info
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.sequence.easing.EaseCubic
@@ -57,6 +58,7 @@ class InputTextField(
      * Whether the text field is currently focused. If it is, typed keys will be passed on to the input field
      * and a cursor will be active. When this property changes, the [focusedStateChanged] function will be called.
      */
+    @Info
     private var isFocused = false
         set(value) {
             if (field == value)
@@ -66,6 +68,7 @@ class InputTextField(
             focusedStateChanged(value)
         }
 
+    @Info
     var inputText: String = ""
 
     /**
@@ -74,7 +77,10 @@ class InputTextField(
     private val isLabelRaised: Boolean
         get() = isFocused || inputText.isNotEmpty()
 
+    @Info
     private var selectionEnd: Int = 0
+
+    @Info
     private var cursorPosition: Int = 0
     private var lineScrollOffset: Int = 0
 
@@ -233,12 +239,12 @@ class InputTextField(
 
         cursorX++
 
-        (structure["cursor"] as Rectangle).also {
+        val cursor = (structure["cursor"] as Rectangle).also {
             it.x = cursorX
             it.isVisible = cursorVisible
         }
 
-        val inputText = (structure["input-text"] as TextField).also {
+        (structure["input-text"] as TextField).also {
             if (it.staticText != visibleText) {
                 it.staticText = visibleText
                 it.updateStructure()
@@ -248,8 +254,8 @@ class InputTextField(
         val d: Double = x + fontRenderer.getStringWidth(visibleText.substring(0, k))
         (structure["selection"] as Rectangle).also {
             it.width = d - 1 - cursorX
-            it.height = inputText.fontRenderer.height.toDouble()
-            it.y = y + height - it.height - (structure["bottom-line"] as Rectangle).height - 1
+            it.height = cursor.height
+            it.y = cursor.y
             it.x = cursorX
             it.color = color.clone().apply { alphaDouble = 0.5 }
             it.isVisible = k != cursorPos
