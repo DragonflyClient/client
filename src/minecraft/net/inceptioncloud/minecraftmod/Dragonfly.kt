@@ -24,7 +24,7 @@ object Dragonfly {
     /**
      * The current Minecraft Mod version
      */
-    const val version: String = "1.0.2.2-eap"
+    const val version: String = "1.0.2.3-eap"
 
     @JvmStatic
     val gameStateManager: GameStateManager
@@ -111,7 +111,7 @@ object Dragonfly {
                     tick()
                     recordTick()
                 } catch (exception: Exception) {
-                    LogManager.getLogger().error("Inception Cloud Mod Tick failed!")
+                    LogManager.getLogger().error("Dragonfly tick failed!")
                     exception.printStackTrace()
                 }
             }
@@ -129,7 +129,7 @@ object Dragonfly {
      */
     @JvmStatic
     fun shutdownInstance() {
-        LogManager.getLogger().info("Shutting down InceptionCloud Minecraft Mod Instance...")
+        LogManager.getLogger().info("Shutting down Dragonfly instance...")
         tickTimer.cancel()
     }
 
