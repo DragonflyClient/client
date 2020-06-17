@@ -154,6 +154,7 @@ open class GuiChat : GuiScreen {
             if (s.isNotEmpty()) {
                 messageToSend = s
             }
+            manuallyClosed = true
             transition.setBackward()
         }
     }
@@ -321,8 +322,10 @@ open class GuiChat : GuiScreen {
         private var messageToSend: String? = null
         var transition: DoubleTransition = DoubleTransition.builder().start(0.0).end(22.0).amountOfSteps(15).reachStart {
             Minecraft.getMinecraft().displayGuiScreen(null)
-            if (messageToSend != null) sendChatMessage(messageToSend)
-            messageToSend = null
+            if (messageToSend != null) {
+                sendChatMessage(messageToSend)
+                messageToSend = null
+            }
         }.build()
 
         @JvmStatic
