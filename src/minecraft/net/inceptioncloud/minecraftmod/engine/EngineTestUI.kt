@@ -18,7 +18,7 @@ class EngineTestUI : GuiScreen() {
             y = 100.0,
             width = 200.0,
             label = "Hotkey Message",
-            maxStringLength = 30
+            maxStringLength = 300
         ) id "text-input"
     }
 

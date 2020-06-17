@@ -232,9 +232,10 @@ class InputTextField(
 
         val cursorNotAtEnd = cursorPosition < inputText.length || inputText.length >= maxStringLength
         var cursorX = x1 + padding
+        val closedRange = 0..visibleText.length
         val selectionWidth: Double = fontRenderer.getStringWidth(
             visibleText.substring(
-                cursorPos.coerceAtMost(end), end.coerceAtLeast(cursorPos)
+                cursorPos.coerceAtMost(end).coerceIn(closedRange), end.coerceAtLeast(cursorPos).coerceIn(closedRange)
             )
         ).toDouble()
 
@@ -275,7 +276,7 @@ class InputTextField(
         (structure["selection"] as Rectangle).also {
             it.width = selectionWidth
             it.height = cursor.height
-            it.x = if (selectionEnd < cursorPos) cursorX - it.width else cursorX
+            it.x = if (selectionEnd < cursorPos + lineScrollOffset) cursorX - it.width else cursorX
             it.y = cursor.y
             it.color = color.clone().apply { alphaDouble = 0.5 }
             it.isVisible = end != cursorPos
