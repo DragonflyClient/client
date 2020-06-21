@@ -59,12 +59,13 @@ open class Circle(
 
     override fun clone(): Circle {
         return Circle(
-            x = horizontalAlignment.reverse(x, size),
-            y = verticalAlignment.reverse(y, size),
-            size = size,
-            color = color.clone(),
-            horizontalAlignment = horizontalAlignment,
-            verticalAlignment = verticalAlignment
+            horizontalAlignment.reverse(x, size),
+            verticalAlignment.reverse(y, size),
+            size,
+            color.clone(),
+            horizontalAlignment,
+            verticalAlignment,
+            lineWidth
         )
     }
 

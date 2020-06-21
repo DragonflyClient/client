@@ -4,7 +4,7 @@ import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation.Com
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
 import net.inceptioncloud.minecraftmod.engine.sequence.easing.EaseBack
 import net.inceptioncloud.minecraftmod.engine.widgets.assembled.InputTextField
-import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Circle
+import net.inceptioncloud.minecraftmod.engine.widgets.primitive.FilledCircle
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
 import java.awt.Color
@@ -24,7 +24,7 @@ class EngineTestUI : GuiScreen() {
             maxStringLength = 300
         ) id "text-input"
 
-        +Circle(
+        +FilledCircle(
             x = 30.0,
             y = 30.0,
             size = 20.0,
@@ -33,7 +33,7 @@ class EngineTestUI : GuiScreen() {
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        getWidget<Circle>("circle")?.morph(easing = EaseBack.IN_OUT) {
+        getWidget<FilledCircle>("circle")?.morph(easing = EaseBack.IN_OUT) {
             x = 15.0
             y = 15.0
             size = 50.0
