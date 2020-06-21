@@ -156,9 +156,9 @@ abstract class Widget<W : Widget<W>> : IDraw {
      * This animation can override all other animations that have been added to the stack before, but will
      * be overwritten by following animations.
      */
-    fun attachAnimation(animation: Animation, preferences: (AttachmentBuilder<W>.() -> Unit)? = { }): W {
+    fun attachAnimation(animation: Animation, preferences: (AttachmentBuilder<W>.() -> Unit) = { }): W {
         val attachmentBuilder = AttachmentBuilder(animation, this)
-        preferences?.invoke(attachmentBuilder)
+        preferences(attachmentBuilder)
         attachmentBuilder.attach()
         return this as W
     }

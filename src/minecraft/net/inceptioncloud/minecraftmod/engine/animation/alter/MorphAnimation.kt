@@ -4,9 +4,7 @@ import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.sequence.Sequence
-import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KProperty
+import kotlin.reflect.*
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
@@ -74,4 +72,22 @@ class MorphAnimation(
     }
 
     override fun isApplicable(widget: Widget<*>) = widget::class == destination::class
+
+    /**
+     * Defines only the [morph] function.
+     */
+    companion object {
+
+        /**
+         * A convenient function for morphing from one widget. This function alters the original widget
+         * instead of accepting a destination widget for the animation.
+         */
+        fun <W : Widget<W>> Widget<W>.morph(
+            duration: Int = 100,
+            easing: ((Double) -> Double)? = null,
+            alter: W.() -> Unit
+        ): Animation {
+            return MorphAnimation(altered(alter), duration, easing).also { attachAnimation(it) }
+        }
+    }
 }

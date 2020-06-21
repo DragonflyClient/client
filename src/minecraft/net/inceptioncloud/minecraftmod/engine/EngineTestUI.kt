@@ -1,7 +1,10 @@
 package net.inceptioncloud.minecraftmod.engine
 
+import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.sequence.easing.EaseBack
 import net.inceptioncloud.minecraftmod.engine.widgets.assembled.InputTextField
+import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Circle
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
 import java.awt.Color
@@ -20,6 +23,24 @@ class EngineTestUI : GuiScreen() {
             label = "Hotkey Message",
             maxStringLength = 300
         ) id "text-input"
+
+        +Circle(
+            x = 30.0,
+            y = 30.0,
+            size = 20.0,
+            color = Color.BLUE.widget
+        ) id "circle"
+    }
+
+    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
+        getWidget<Circle>("circle")?.morph(easing = EaseBack.IN_OUT) {
+            x = 15.0
+            y = 15.0
+            size = 50.0
+            color = Color.RED.widget
+        }?.start()
+
+        super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {

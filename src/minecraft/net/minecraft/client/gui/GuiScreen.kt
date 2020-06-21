@@ -6,32 +6,22 @@ import com.google.common.collect.Sets
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.CloudColor
 import net.inceptioncloud.minecraftmod.engine.EngineTestUI
-import net.inceptioncloud.minecraftmod.engine.internal.MouseData
-import net.inceptioncloud.minecraftmod.engine.internal.Widget
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetBuffer
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetIdBuilder
+import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton
 import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.stream.GuiTwitchUserMode
-import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.client.renderer.RenderHelper
-import net.minecraft.client.renderer.Tessellator
+import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.entity.RenderItem
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.entity.EntityList
 import net.minecraft.event.ClickEvent
 import net.minecraft.event.HoverEvent
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.JsonToNBT
-import net.minecraft.nbt.NBTBase
-import net.minecraft.nbt.NBTException
-import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.nbt.*
 import net.minecraft.stats.Achievement
 import net.minecraft.stats.StatList
-import net.minecraft.util.ChatComponentTranslation
-import net.minecraft.util.EnumChatFormatting
-import net.minecraft.util.IChatComponent
+import net.minecraft.util.*
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
@@ -666,6 +656,13 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     operator fun String.unaryMinus(): Widget<*>? {
         return buffer[this]
     }
+
+    /**
+     * Tries to get a widget and additionally cast it to the specified type. This will return
+     * null if the widget was not found or cannot be cast.
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <W : Widget<W>> getWidget(identifier: String): Widget<W>? = buffer[identifier] as? W
 
     companion object {
         private val LOGGER = LogManager.getLogger()
