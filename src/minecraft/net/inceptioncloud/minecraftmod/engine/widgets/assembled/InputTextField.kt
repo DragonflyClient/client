@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget.assembled
+package net.inceptioncloud.minecraftmod.engine.widgets.assembled
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -9,16 +9,11 @@ import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.minecraftmod.engine.font.FontWeight
 import net.inceptioncloud.minecraftmod.engine.font.WidgetFont
 import net.inceptioncloud.minecraftmod.engine.internal.*
-import net.inceptioncloud.minecraftmod.engine.internal.annotations.Info
-import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
-import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.*
 import net.inceptioncloud.minecraftmod.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.minecraftmod.engine.sequence.types.DoubleSequence
-import net.inceptioncloud.minecraftmod.engine.structure.IAlign
-import net.inceptioncloud.minecraftmod.engine.structure.IColor
-import net.inceptioncloud.minecraftmod.engine.structure.IDimension
-import net.inceptioncloud.minecraftmod.engine.structure.IPosition
-import net.inceptioncloud.minecraftmod.engine.widget.primitive.Rectangle
+import net.inceptioncloud.minecraftmod.engine.structure.*
+import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Rectangle
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiScreen.Companion.isCtrlKeyDown
 import net.minecraft.client.gui.GuiScreen.Companion.isShiftKeyDown

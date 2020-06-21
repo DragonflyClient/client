@@ -1,17 +1,11 @@
-package net.inceptioncloud.minecraftmod.engine.widget.assembled
+package net.inceptioncloud.minecraftmod.engine.widgets.assembled
 
-import net.inceptioncloud.minecraftmod.engine.internal.Alignment
-import net.inceptioncloud.minecraftmod.engine.internal.AssembledWidget
-import net.inceptioncloud.minecraftmod.engine.internal.Widget
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
-import net.inceptioncloud.minecraftmod.engine.structure.IAlign
-import net.inceptioncloud.minecraftmod.engine.structure.IColor
-import net.inceptioncloud.minecraftmod.engine.structure.IDimension
-import net.inceptioncloud.minecraftmod.engine.structure.IPosition
-import net.inceptioncloud.minecraftmod.engine.widget.primitive.Arc
-import net.inceptioncloud.minecraftmod.engine.widget.primitive.Rectangle
+import net.inceptioncloud.minecraftmod.engine.structure.*
+import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Arc
+import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Rectangle
 import kotlin.properties.Delegates
 
 /**

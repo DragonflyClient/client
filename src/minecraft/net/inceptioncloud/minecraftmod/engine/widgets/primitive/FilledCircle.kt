@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.engine.widget.primitive
+package net.inceptioncloud.minecraftmod.engine.widgets.primitive
 
 import net.inceptioncloud.minecraftmod.engine.internal.Alignment
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor

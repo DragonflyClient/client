@@ -1,18 +1,11 @@
-package net.inceptioncloud.minecraftmod.engine.widget.primitive
+package net.inceptioncloud.minecraftmod.engine.widgets.primitive
 
 import net.inceptioncloud.minecraftmod.Dragonfly
-import net.inceptioncloud.minecraftmod.engine.font.FontWeight
-import net.inceptioncloud.minecraftmod.engine.font.GlyphFontRenderer
-import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer
-import net.inceptioncloud.minecraftmod.engine.font.WidgetFont
-import net.inceptioncloud.minecraftmod.engine.internal.Defaults
-import net.inceptioncloud.minecraftmod.engine.internal.Widget
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.font.*
+import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
-import net.inceptioncloud.minecraftmod.engine.structure.IColor
-import net.inceptioncloud.minecraftmod.engine.structure.IDimension
-import net.inceptioncloud.minecraftmod.engine.structure.IPosition
+import net.inceptioncloud.minecraftmod.engine.structure.*
 import net.minecraft.client.gui.Gui
 import java.awt.Color
 

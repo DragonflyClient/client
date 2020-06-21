@@ -1,8 +1,6 @@
-package net.inceptioncloud.minecraftmod.engine.widget.primitive
+package net.inceptioncloud.minecraftmod.engine.widgets.primitive
 
-import net.inceptioncloud.minecraftmod.engine.internal.Alignment
-import net.inceptioncloud.minecraftmod.engine.internal.Widget
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.structure.*

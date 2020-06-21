@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.engine
 
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
-import net.inceptioncloud.minecraftmod.engine.widget.assembled.InputTextField
+import net.inceptioncloud.minecraftmod.engine.widgets.assembled.InputTextField
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
 import java.awt.Color

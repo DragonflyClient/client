@@ -1,18 +1,11 @@
-package net.inceptioncloud.minecraftmod.engine.widget.primitive
+package net.inceptioncloud.minecraftmod.engine.widgets.primitive
 
-import net.inceptioncloud.minecraftmod.engine.internal.Alignment
-import net.inceptioncloud.minecraftmod.engine.internal.Widget
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
-import net.inceptioncloud.minecraftmod.engine.structure.IAlign
-import net.inceptioncloud.minecraftmod.engine.structure.IColor
-import net.inceptioncloud.minecraftmod.engine.structure.IPosition
-import net.inceptioncloud.minecraftmod.engine.structure.ISize
+import net.inceptioncloud.minecraftmod.engine.structure.*
 import org.lwjgl.opengl.GL11.*
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 import kotlin.properties.Delegates
 
 /**

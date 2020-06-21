@@ -3,11 +3,9 @@ package net.inceptioncloud.minecraftmod.engine.internal
 import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
 import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.animation.AttachmentBuilder
-import net.inceptioncloud.minecraftmod.engine.internal.annotations.Info
-import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
-import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
+import net.inceptioncloud.minecraftmod.engine.internal.annotations.*
 import net.inceptioncloud.minecraftmod.engine.structure.IDraw
-import net.inceptioncloud.minecraftmod.engine.widget.assembled.InputTextField
+import net.inceptioncloud.minecraftmod.engine.widgets.assembled.InputTextField
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible

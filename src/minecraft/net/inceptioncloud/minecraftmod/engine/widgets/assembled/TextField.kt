@@ -1,18 +1,13 @@
-package net.inceptioncloud.minecraftmod.engine.widget.assembled
+package net.inceptioncloud.minecraftmod.engine.widgets.assembled
 
 import net.inceptioncloud.minecraftmod.Dragonfly
-import net.inceptioncloud.minecraftmod.engine.font.FontWeight
-import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer
-import net.inceptioncloud.minecraftmod.engine.font.WidgetFont
-import net.inceptioncloud.minecraftmod.engine.internal.Alignment
-import net.inceptioncloud.minecraftmod.engine.internal.AssembledWidget
-import net.inceptioncloud.minecraftmod.engine.internal.Widget
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.font.*
+import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.structure.*
-import net.inceptioncloud.minecraftmod.engine.widget.primitive.Rectangle
-import net.inceptioncloud.minecraftmod.engine.widget.primitive.TextRenderer
+import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.minecraftmod.engine.widgets.primitive.TextRenderer
 import kotlin.properties.Delegates
 
 /**
