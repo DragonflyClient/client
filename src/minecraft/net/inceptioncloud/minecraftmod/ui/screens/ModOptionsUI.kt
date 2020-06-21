@@ -1,4 +1,4 @@
-package net.inceptioncloud.minecraftmod.ui
+package net.inceptioncloud.minecraftmod.ui.screens
 
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.BluePalette

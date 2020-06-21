@@ -1,7 +1,7 @@
 package net.inceptioncloud.minecraftmod.ui.mainmenu.options;
 
-import net.inceptioncloud.minecraftmod.ui.ModOptionsUI;
 import net.inceptioncloud.minecraftmod.ui.mainmenu.QuickAction;
+import net.inceptioncloud.minecraftmod.ui.screens.ModOptionsUI;
 
 /**
  * Switches to the Mod Options GUI when clicking on this quick action.

@@ -3,7 +3,7 @@ package net.inceptioncloud.minecraftmod.options.entries.factories
 import net.inceptioncloud.minecraftmod.options.OptionKey
 import net.inceptioncloud.minecraftmod.options.entries.OptionEntryMultipleChoice
 import net.inceptioncloud.minecraftmod.options.entries.util.OptionChoice
-import net.inceptioncloud.minecraftmod.ui.ModOptionsUI
+import net.inceptioncloud.minecraftmod.ui.screens.ModOptionsUI
 
 /**
  * A factory class for the [OptionEntryMultipleChoice].

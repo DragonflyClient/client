@@ -4,7 +4,7 @@ import net.inceptioncloud.minecraftmod.options.entries.OptionEntry
 import net.inceptioncloud.minecraftmod.options.entries.TitleEntry
 import net.inceptioncloud.minecraftmod.options.sections.OptionList.all
 import net.inceptioncloud.minecraftmod.options.sections.OptionSectionFactory.Companion.optionSection
-import net.inceptioncloud.minecraftmod.ui.ModOptionsUI
+import net.inceptioncloud.minecraftmod.ui.screens.ModOptionsUI
 
 /**
  * A static accessible object that keeps all created option sections.

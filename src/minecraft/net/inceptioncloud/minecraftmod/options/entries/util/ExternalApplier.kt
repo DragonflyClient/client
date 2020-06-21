@@ -2,7 +2,7 @@ package net.inceptioncloud.minecraftmod.options.entries.util
 
 import net.inceptioncloud.minecraftmod.options.OptionKey
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition
-import net.inceptioncloud.minecraftmod.ui.ModOptionsUI
+import net.inceptioncloud.minecraftmod.ui.screens.ModOptionsUI
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
