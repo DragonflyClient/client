@@ -252,6 +252,12 @@ abstract class Widget<W : Widget<W>> : IDraw {
     open fun cloneWithMargin(amount: Double): W = Defaults.cloneWithMargin(this as W, amount)
 
     /**
+     * Creates a new clone that can be modified with the [block] and will be returned from
+     * the function. This is a shorthand for `clone().also { ... }`.
+     */
+    fun altered(block: W.() -> Unit): W = clone().also(block)
+
+    /**
      * Used to create a new instance of the subclass as [W] is the type of the subclass.
      */
     abstract fun newInstance(): W
