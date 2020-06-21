@@ -4,10 +4,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import optifine.Config;
 import org.lwjgl.opengl.*;
-import oshi.SystemInfo;
-import oshi.hardware.Processor;
 
-import java.nio.*;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+//import oshi.hardware.Processor;
 
 public class OpenGlHelper
 {
@@ -228,8 +230,8 @@ public class OpenGlHelper
         }
 
         try {
-            Processor[] aprocessor = ( new SystemInfo() ).getHardware().getProcessors();
-            field_183030_aa = String.format("%dx %s", aprocessor.length, aprocessor[0]).replaceAll("\\s+", " ");
+//            Processor[] aprocessor = ( new SystemInfo() ).getHardware().getProcessors();
+//            field_183030_aa = String.format("%dx %s", aprocessor.length, aprocessor[0]).replaceAll("\\s+", " ");
         } catch (Throwable ignored) {
         }
     }

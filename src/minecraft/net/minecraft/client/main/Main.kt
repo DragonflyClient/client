@@ -8,10 +8,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.main.GameConfiguration.*
 import net.minecraft.util.Session
 import java.io.File
-import java.net.Authenticator
-import java.net.InetSocketAddress
-import java.net.PasswordAuthentication
-import java.net.Proxy
+import java.net.*
 
 object Main {
 

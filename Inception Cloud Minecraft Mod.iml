@@ -55,7 +55,6 @@
     <orderEntry type="library" name="librarylwjglopenal-20100824" level="project" />
     <orderEntry type="library" name="lwjgl-2.9.4-nightly-20150209" level="project" />
     <orderEntry type="library" name="authlib-1.5.21" level="project" />
-    <orderEntry type="library" name="oshi-core-1.1" level="project" />
     <orderEntry type="library" name="codecwav-20101023" level="project" />
     <orderEntry type="library" name="1.8.8" level="project" />
     <orderEntry type="library" name="commons-codec-1.9" level="project" />
@@ -65,23 +64,12 @@
     <orderEntry type="library" name="httpcore-4.3.2" level="project" />
     <orderEntry type="library" name="jinput-2.0.5" level="project" />
     <orderEntry type="library" name="jinput-platform-2.0.5-natives-windows" level="project" />
-    <orderEntry type="library" name="jna-3.4.0" level="project" />
     <orderEntry type="library" name="jutils-1.0.0" level="project" />
     <orderEntry type="library" name="log4j-core-2.0-beta9" level="project" />
     <orderEntry type="library" name="lwjgl-platform-2.9.4-nightly-20150209-natives-windows" level="project" />
-    <orderEntry type="library" name="platform-3.4.0" level="project" />
     <orderEntry type="library" name="realms-1.7.39" level="project" />
     <orderEntry type="library" name="twitch-external-platform-4.5-natives-windows-64" level="project" />
     <orderEntry type="library" name="twitch-platform-6.5-natives-windows-64" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/discord-rpc.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -128,5 +116,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7" level="project" />
+    <orderEntry type="library" name="net.java.dev.jna:jna:5.5.0" level="project" />
+    <orderEntry type="library" name="discord-rpc" level="project" />
+    <orderEntry type="library" name="com.github.oshi:oshi-core:5.1.2" level="project" />
   </component>
 </module>

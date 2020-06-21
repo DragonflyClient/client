@@ -198,8 +198,8 @@ object Dragonfly {
      */
     private fun tick() {
         synchronized(this) {
-            transitions.toTypedArray().forEach { obj: Transition -> obj.tick() }
-            tickables.toTypedArray().forEach { obj: Tickable? -> obj!!.modTick() }
+            transitions.toTypedArray().forEach { it.tick() }
+            tickables.toTypedArray().forEach { it!!.modTick() }
             if (Minecraft.getMinecraft().currentScreen != null) Minecraft.getMinecraft().currentScreen.buffer.update()
         }
     }
