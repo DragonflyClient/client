@@ -5,7 +5,6 @@ import net.inceptioncloud.minecraftmod.engine.animation.Animation
 import net.inceptioncloud.minecraftmod.engine.animation.AttachmentBuilder
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.*
 import net.inceptioncloud.minecraftmod.engine.structure.IDraw
-import net.inceptioncloud.minecraftmod.engine.widgets.assembled.InputTextField
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -179,19 +178,15 @@ abstract class Widget<W : Widget<W>> : IDraw {
      * This method will remove all animations with the class from the stack, regardless of their
      * position. It is often easier than providing the animation object that should be removed.
      */
-    fun <T : Animation> detachAnimation(`class`: Class<T>): T {
-        animationStack.removeIf { it.javaClass == `class` }
-        return this as T
+    inline fun <reified T : Animation> detachAnimation(): Boolean {
+        return animationStack.removeIf { it is T }
     }
 
     /**
-     * Tries to find an animation that has the given java class.
-     *
-     * @param class the class of the animation
-     * @return the animation or null if no one was found
+     * Tries to find an animation with the given type.
      */
-    fun <T : Animation> findAnimation(`class`: Class<T>): T? {
-        return animationStack.firstOrNull { it.javaClass == `class` } as T?
+    inline fun <reified T : Animation> findAnimation(): T? {
+        return animationStack.firstOrNull { it is T } as? T
     }
 
     /**
@@ -204,13 +199,7 @@ abstract class Widget<W : Widget<W>> : IDraw {
      */
     fun isStateEqual(clone: W) = this::class.memberProperties
         .filter { it.hasAnnotation<Interpolate>() || it.hasAnnotation<State>() }
-        .filter { it.getter.call(this) != it.getter.call(clone) }.let {
-            if (this@Widget is InputTextField) {
-                it.forEach { prop -> println("${prop.name} has changed from ${prop.getter.call(this)} to ${prop.getter.call(clone)}") }
-            }
-
-            it.isEmpty()
-        }
+        .none { it.getter.call(this) != it.getter.call(clone) }
 
     /**
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.

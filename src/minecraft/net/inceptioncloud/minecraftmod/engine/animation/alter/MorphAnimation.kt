@@ -89,5 +89,27 @@ class MorphAnimation(
         ): Animation {
             return MorphAnimation(altered(alter), duration, easing).also { attachAnimation(it) }
         }
+
+        /**
+         * A convenient function for morphing between multiple states of a widget.
+         */
+        fun <W : Widget<W>> Widget<W>.morphBetween(
+            duration: Int = 100,
+            easing: ((Double) -> Double)? = null,
+            first: W.() -> Unit,
+            second: W.() -> Unit
+        ) {
+            if (findAnimation<MorphAnimation>() != null)
+                return
+
+            val alteredFirst = altered(first)
+            val alteredSecond = altered(second)
+            val destination = if (isStateEqual(alteredSecond)) alteredFirst else alteredSecond
+
+            attachAnimation(MorphAnimation(destination, duration, easing)) {
+                start()
+                post { _, widget -> widget.detachAnimation<MorphAnimation>() }
+            }
+        }
     }
 }

@@ -102,7 +102,7 @@ abstract class Animation
     protected open fun finish()
     {
         finished = true
-        postActions.forEach { it.invoke(this, widget) }
+        postActions.forEach { println(it); it.invoke(this, widget) }
     }
 
     /**

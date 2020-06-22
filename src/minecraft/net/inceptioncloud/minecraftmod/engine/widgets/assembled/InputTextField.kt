@@ -243,12 +243,12 @@ class InputTextField(
         cursorX += 0.5
 
         val cursor = (structure["cursor"] as Rectangle)
-        val destinationCursorX = (cursor.findAnimation(MorphAnimation::class.java)?.destination as? Rectangle)?.x
+        val destinationCursorX = (cursor.findAnimation<MorphAnimation>()?.destination as? Rectangle)?.x
         cursor.isVisible = cursorVisible
 
         if (cursor.x != cursorX && destinationCursorX != cursorX) {
             timeCursorMoved = System.currentTimeMillis()
-            cursor.findAnimation(MorphAnimation::class.java)?.let { cursor.detachAnimation(it) }
+            cursor.findAnimation<MorphAnimation>()?.let { cursor.detachAnimation(it) }
             cursor.attachAnimation(
                 MorphAnimation(
                     cursor.clone().apply { x = cursorX }, duration = (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20)

@@ -85,10 +85,10 @@ class TextField(
             it.font = font
             it.fontSize = fontSize
             it.fontWeight = fontWeight
+            it.text = currentText()
+            it.color = color
             it.x = alignText(textAlignHorizontal, x, width, fontRenderer.getStringWidth(it.text).toDouble())
             it.y = alignText(textAlignVertical, y, height, fontRenderer.height.toDouble())
-            it.color = color
-            it.text = currentText()
         }
 
         (structure["background"] as Rectangle).also {

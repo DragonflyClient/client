@@ -1,6 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine
 
-import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation.Companion.morphBetween
 import net.inceptioncloud.minecraftmod.engine.sequence.easing.EaseBack
 import net.inceptioncloud.minecraftmod.engine.widgets.assembled.InputTextField
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.FilledCircle
@@ -28,12 +28,17 @@ class EngineTestUI : GuiScreen() {
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        getWidget<FilledCircle>("circle")?.morph(easing = EaseBack.IN_OUT) {
+        getWidget<FilledCircle>("circle")?.morphBetween(easing = EaseBack.IN_OUT, first = {
             x = 15.0
             y = 15.0
             size = 50.0
             color = Color.RED.toWidgetColor()
-        }?.start()
+        }, second = {
+            x = 30.0
+            y = 30.0
+            size = 20.0
+            color = Color.BLUE.toWidgetColor()
+        })
 
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
