@@ -119,5 +119,7 @@
     <orderEntry type="library" name="net.java.dev.jna:jna:5.5.0" level="project" />
     <orderEntry type="library" name="discord-rpc" level="project" />
     <orderEntry type="library" name="com.github.oshi:oshi-core:5.1.2" level="project" />
+    <orderEntry type="library" name="khttp-1.0.0" level="project" />
+    <orderEntry type="library" name="org.json:json:20200518" level="project" />
   </component>
 </module>

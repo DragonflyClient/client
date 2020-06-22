@@ -4,12 +4,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import optifine.Config;
 import org.lwjgl.opengl.*;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-
-//import oshi.hardware.Processor;
 
 public class OpenGlHelper
 {
@@ -76,7 +76,7 @@ public class OpenGlHelper
     private static boolean arbTextureEnvCombine;
     private static boolean openGL14;
     private static String logText = "";
-    private static String field_183030_aa;
+    private static String processor;
     private static boolean arbVbo;
 
     /**
@@ -230,8 +230,8 @@ public class OpenGlHelper
         }
 
         try {
-//            Processor[] aprocessor = ( new SystemInfo() ).getHardware().getProcessors();
-//            field_183030_aa = String.format("%dx %s", aprocessor.length, aprocessor[0]).replaceAll("\\s+", " ");
+            CentralProcessor centralProcessor = (new SystemInfo()).getHardware().getProcessor();
+            processor = centralProcessor.getProcessorIdentifier().getName();
         } catch (Throwable ignored) {
         }
     }
@@ -750,6 +750,6 @@ public class OpenGlHelper
 
     public static String func_183029_j ()
     {
-        return field_183030_aa == null ? "<unknown>" : field_183030_aa;
+        return processor == null ? "<unknown>" : processor;
     }
 }
