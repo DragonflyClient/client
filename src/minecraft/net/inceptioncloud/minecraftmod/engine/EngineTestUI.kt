@@ -1,7 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine
 
 import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
 import net.inceptioncloud.minecraftmod.engine.sequence.easing.EaseBack
 import net.inceptioncloud.minecraftmod.engine.widgets.assembled.InputTextField
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.FilledCircle
@@ -10,10 +9,6 @@ import org.lwjgl.input.Keyboard
 import java.awt.Color
 
 class EngineTestUI : GuiScreen() {
-
-    private val Color.widget: WidgetColor
-        get() = WidgetColor(this)
-
     override fun initGui() {
         Keyboard.enableRepeatEvents(true)
         +InputTextField(
@@ -28,7 +23,7 @@ class EngineTestUI : GuiScreen() {
             x = 30.0,
             y = 30.0,
             size = 20.0,
-            color = Color.BLUE.widget
+            color = Color.BLUE.toWidgetColor()
         ) id "circle"
     }
 
@@ -37,7 +32,7 @@ class EngineTestUI : GuiScreen() {
             x = 15.0
             y = 15.0
             size = 50.0
-            color = Color.RED.widget
+            color = Color.RED.toWidgetColor()
         }?.start()
 
         super.mouseClicked(mouseX, mouseY, mouseButton)

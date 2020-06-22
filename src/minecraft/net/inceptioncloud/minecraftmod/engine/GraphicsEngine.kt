@@ -1,8 +1,7 @@
 package net.inceptioncloud.minecraftmod.engine
 
 import net.inceptioncloud.minecraftmod.Dragonfly
-import net.inceptioncloud.minecraftmod.engine.internal.Defaults
-import net.inceptioncloud.minecraftmod.engine.internal.Widget
+import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import net.inceptioncloud.minecraftmod.ui.renderer.RectangleRenderer
 import net.minecraft.client.Minecraft
@@ -109,3 +108,5 @@ object GraphicsEngine {
         return Minecraft.getMinecraft().currentScreen.height - Mouse.getY() / getScaleFactor()
     }
 }
+
+fun Color.toWidgetColor(): WidgetColor = WidgetColor(this)

@@ -12,6 +12,7 @@ import net.inceptioncloud.minecraftmod.Dragonfly;
 import net.inceptioncloud.minecraftmod.event.client.ClientStartupEvent;
 import net.inceptioncloud.minecraftmod.event.client.GraphicsInitializedEvent;
 import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
+import net.inceptioncloud.minecraftmod.event.gui.StartupGuiEvent;
 import net.inceptioncloud.minecraftmod.event.play.IntegratedServerStartingEvent;
 import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionClient;
 import net.inceptioncloud.minecraftmod.tracking.transitions.TransitionTracker;
@@ -590,11 +591,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
         Dragonfly.getSplashScreen().setActive(false);
 
-        if (this.serverName != null) {
-            this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
-        } else {
-            this.displayGuiScreen(new GuiMainMenu());
-        }
+        final GuiScreen targetStartupGui = this.serverName != null
+                ? new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort)
+                : new GuiMainMenu();
+        final StartupGuiEvent event = new StartupGuiEvent(targetStartupGui);
+        Dragonfly.getEventBus().post(event);
+        this.displayGuiScreen(event.getTarget());
 
         this.renderEngine.deleteTexture(this.mojangLogo);
         this.mojangLogo = null;
