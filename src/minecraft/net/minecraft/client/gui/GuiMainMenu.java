@@ -1,8 +1,6 @@
 package net.minecraft.client.gui;
 
 import net.inceptioncloud.minecraftmod.Dragonfly;
-import net.inceptioncloud.minecraftmod.design.color.GreyToneColor;
-import net.inceptioncloud.minecraftmod.design.color.RGB;
 import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
 import net.inceptioncloud.minecraftmod.transition.Transition;
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
@@ -238,14 +236,14 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         // Buttons
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.buttonList.remove(this.buttonList.stream()
-            .filter(guiButton -> guiButton.id == 5)
-            .findFirst()
-            .orElse(null));
+                .filter(guiButton -> guiButton.id == 5)
+                .findFirst()
+                .orElse(null));
 
         // Fade-In Overlay
-        drawRect(0, 0, width, height, RGB.of(GreyToneColor.DARK_GREY)
-            .alpha((float) fadeInTransition.get())
-            .rgb());
+//        drawRect(0, 0, width, height, RGB.of(GreyToneColor.DARK_GREY)
+//            .alpha((float) fadeInTransition.get())
+//            .rgb());
     }
 
     /**

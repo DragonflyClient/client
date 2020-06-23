@@ -958,7 +958,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.currentScreen = guiScreenIn;
             this.skipRenderWorld = false;
         } else {
-            this.currentScreen = guiScreenIn;
+            this.currentScreen = null;
             this.mcSoundHandler.resumeSounds();
             this.setIngameFocus();
         }

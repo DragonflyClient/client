@@ -114,8 +114,6 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
     open fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        backgroundFill?.let { drawRect(0, 0, width, height, backgroundFill?.rgb ?: 0xFFFFFFFF.toInt()) }
-
         for (guiButton in ArrayList(buttonList)) {
             guiButton.drawButton(mc, mouseX, mouseY)
         }

@@ -3,14 +3,15 @@ package net.inceptioncloud.minecraftmod.engine.animation
 import net.inceptioncloud.minecraftmod.engine.internal.Widget
 import net.inceptioncloud.minecraftmod.transition.Transition
 
+typealias PostAction = (Animation, Widget<*>) -> Unit
+
 /**
  * ## Animation Class
  *
  * This class is the head of every animation. It provides several methods for handling animations
  * and some abstract methods that will be implemented in the child animations.
  */
-abstract class Animation
-{
+abstract class Animation {
     /**
      * Represents if the animation has run through it's lifecycle and is now finished.
      *
@@ -32,7 +33,7 @@ abstract class Animation
      * These functions have the animation as a receiver so the variables can be
      * accessed easily.
      */
-    val postActions = mutableListOf<(Animation, Widget<*>) -> Unit>()
+    val postActions = mutableListOf<PostAction>()
 
     /**
      * The parent of an animation is the widget object to which this animation applies. There can only
@@ -102,7 +103,7 @@ abstract class Animation
     protected open fun finish()
     {
         finished = true
-        postActions.forEach { println(it); it.invoke(this, widget) }
+        postActions.forEach { it.invoke(this, widget) }
     }
 
     /**
@@ -130,3 +131,8 @@ abstract class Animation
      */
     abstract fun tick()
 }
+
+/**
+ * Convenient method for adding a post action to the animation and returning the instance.
+ */
+fun Animation.post(action: PostAction) = this.apply { postActions.add(action) }

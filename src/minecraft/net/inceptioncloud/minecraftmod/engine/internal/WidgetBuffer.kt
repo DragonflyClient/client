@@ -25,7 +25,7 @@ class WidgetBuffer {
      * Each buffer has a unique id which is the key in the map. When adding a new widget to the
      * buffer with an already existing id, the widget will be overwritten.
      */
-    private val content = mutableMapOf<String, Widget<*>>()
+    val content = mutableMapOf<String, Widget<*>>()
 
     /**
      * Renders all [Widget] objects in the buffer.
@@ -34,7 +34,7 @@ class WidgetBuffer {
      * to true. If it doesn't, the draw function won't be called.
      */
     fun render() = synchronized(this) {
-        content.values.filter { it.isVisible }.forEach {
+        content.values.toTypedArray().filter { it.isVisible }.forEach {
             it.draw()
         }
 
@@ -89,7 +89,7 @@ class WidgetBuffer {
             handleMouseMove(MouseData(mouseX, mouseY))
         }
 
-        content.values.forEach { it.update() }
+        content.values.toTypedArray().forEach { it.update() }
     }
 
     //<editor-fold desc="Mouse Events">

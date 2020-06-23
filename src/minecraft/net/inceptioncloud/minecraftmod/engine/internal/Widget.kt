@@ -242,9 +242,9 @@ abstract class Widget<W : Widget<W>> : IDraw {
 
     /**
      * Creates a new clone that can be modified with the [block] and will be returned from
-     * the function. This is a shorthand for `clone().also { ... }`.
+     * the function. This is a shorthand for `clone().apply { ... }`.
      */
-    fun altered(block: W.() -> Unit): W = clone().also(block)
+    fun altered(block: W.() -> Unit): W = clone().apply(block)
 
     /**
      * Used to create a new instance of the subclass as [W] is the type of the subclass.
