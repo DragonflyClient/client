@@ -511,6 +511,13 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     }
 
     /**
+     * Draws the background with the [backgroundFill] color.
+     */
+    protected fun drawBackgroundFill() {
+        backgroundFill?.let { drawRect(0, 0, width, height, backgroundFill?.rgb ?: 0xFFFFFFFF.toInt()) }
+    }
+
+    /**
      * Handles mouse input.
      */
     @Throws(IOException::class)

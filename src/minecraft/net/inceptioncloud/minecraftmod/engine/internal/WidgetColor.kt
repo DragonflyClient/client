@@ -2,6 +2,7 @@ package net.inceptioncloud.minecraftmod.engine.internal
 
 import org.lwjgl.opengl.GL11
 import java.awt.Color
+import kotlin.math.absoluteValue
 
 /**
  * ## Widget Color
@@ -10,10 +11,8 @@ import java.awt.Color
  * security and number types. It keeps the color parameters in range when they are applied and
  * allows changing them without initializing a new color object.
  */
-class WidgetColor
-{
-    companion object
-    {
+class WidgetColor {
+    companion object {
         val DEFAULT = WidgetColor(1F, 1F, 1F, 1F)
     }
 
@@ -22,8 +21,7 @@ class WidgetColor
      *
      * @param awt the color that is used for the base [WidgetColor.base] variable
      */
-    constructor(awt: Color)
-    {
+    constructor(awt: Color) {
         this.base = awt
     }
 
@@ -35,13 +33,12 @@ class WidgetColor
      * @param b the blue value (0 - 255)
      * @param a the alpha value (0 - 255; by default 255)
      */
-    constructor(r: Int, g: Int, b: Int, a: Int = 255)
-    {
+    constructor(r: Int, g: Int, b: Int, a: Int = 255) {
         base = Color(
-                r.coerceAtLeast(0).coerceAtMost(255),
-                g.coerceAtLeast(0).coerceAtMost(255),
-                b.coerceAtLeast(0).coerceAtMost(255),
-                a.coerceAtLeast(0).coerceAtMost(255)
+            r.coerceAtLeast(0).coerceAtMost(255),
+            g.coerceAtLeast(0).coerceAtMost(255),
+            b.coerceAtLeast(0).coerceAtMost(255),
+            a.coerceAtLeast(0).coerceAtMost(255)
         )
     }
 
@@ -53,13 +50,12 @@ class WidgetColor
      * @param b the blue value (0.0F - 1.0F)
      * @param a the alpha value (0.0F - 1.0F; by default 1.0F)
      */
-    constructor(r: Float, g: Float, b: Float, a: Float = 1.0F)
-    {
+    constructor(r: Float, g: Float, b: Float, a: Float = 1.0F) {
         base = Color(
-                r.coerceAtLeast(0F).coerceAtMost(1F),
-                g.coerceAtLeast(0F).coerceAtMost(1F),
-                b.coerceAtLeast(0F).coerceAtMost(1F),
-                a.coerceAtLeast(0F).coerceAtMost(1F)
+            r.coerceAtLeast(0F).coerceAtMost(1F),
+            g.coerceAtLeast(0F).coerceAtMost(1F),
+            b.coerceAtLeast(0F).coerceAtMost(1F),
+            a.coerceAtLeast(0F).coerceAtMost(1F)
         )
     }
 
@@ -71,13 +67,12 @@ class WidgetColor
      * @param b the blue value (0.0 - 1.0)
      * @param a the alpha value (0.0 - 1.0; by default 1.0)
      */
-    constructor(r: Double, g: Double, b: Double, a: Double = 0.0)
-    {
+    constructor(r: Double, g: Double, b: Double, a: Double = 0.0) {
         base = Color(
-                r.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat(),
-                g.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat(),
-                b.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat(),
-                a.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat()
+            r.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat(),
+            g.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat(),
+            b.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat(),
+            a.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat()
         )
     }
 
@@ -86,25 +81,42 @@ class WidgetColor
      *
      * @param hex the hexadecimal value in integer format (eg. `0xFE0A6C`)
      */
-    constructor(hex: Int)
-    {
+    constructor(hex: Int) {
         base = Color(hex)
     }
 
     /**
      * Binds the values of the color object to the current OpenGL context.
      */
-    fun glBindColor()
-    {
+    fun glBindColor() {
 //        GlStateManager.color(redFloat, greenFloat, blueFloat, alphaFloat)
         GL11.glColor4d(redDouble, greenDouble, blueDouble, alphaDouble)
     }
 
     /**
+     * Returns the [red] value as the first destructuring value.
+     */
+    operator fun component1(): Int = red
+
+    /**
+     * Returns the [green] value as the second destructuring value.
+     */
+    operator fun component2(): Int = green
+
+    /**
+     * Returns the [blue] value as the third destructuring value.
+     */
+    operator fun component3(): Int = blue
+
+    /**
+     * Returns the [alpha] value as the second destructuring value.
+     */
+    operator fun component4(): Int = alpha
+
+    /**
      * Compares two object and checks whether they are the same.
      */
-    override fun equals(other: Any?): Boolean
-    {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
@@ -118,24 +130,39 @@ class WidgetColor
     /**
      * Generates the hash-code for the color object.
      */
-    override fun hashCode(): Int
-    {
+    override fun hashCode(): Int {
         return base.hashCode()
     }
 
-    override fun toString(): String
-    {
+    override fun toString(): String {
         return "WidgetColor($red, $green, $blue, $alpha)"
     }
 
     /**
      * Returns an exact copy of this color object.
      */
-    fun clone(): WidgetColor
-    {
+    fun clone(): WidgetColor {
         return WidgetColor(red, green, blue, alpha)
     }
 
+    /**
+     * Selects the color with the highest contrast related to this color.
+     */
+    fun selectHighestContrast(vararg colors: WidgetColor): WidgetColor {
+        require(colors.isNotEmpty()) { "There must be at least one possible color!" }
+        return colors.maxBy { getContrastValue(it) }!!
+    }
+
+    /**
+     * Calculates the contrast value between this and the [other] color.
+     */
+    fun getContrastValue(other: WidgetColor): Int = (red - other.red).absoluteValue +
+            (green - other.green).absoluteValue +
+            (blue - other.blue).absoluteValue
+
+    /**
+     * The RGB value specified by the [base] color.
+     */
     val rgb: Int
         get() = base.rgb
 
@@ -154,8 +181,7 @@ class WidgetColor
      */
     var red
         get() = base.red
-        set(value)
-        {
+        set(value) {
             base = Color(value.coerceAtLeast(0).coerceAtMost(255), green, blue, alpha)
         }
 
@@ -166,8 +192,7 @@ class WidgetColor
      */
     var green
         get() = base.green
-        set(value)
-        {
+        set(value) {
             base = Color(red, value.coerceAtLeast(0).coerceAtMost(255), blue, alpha)
         }
 
@@ -178,8 +203,7 @@ class WidgetColor
      */
     var blue
         get() = base.blue
-        set(value)
-        {
+        set(value) {
             base = Color(red, green, value.coerceAtLeast(0).coerceAtMost(255), alpha)
         }
 
@@ -190,57 +214,8 @@ class WidgetColor
      */
     var alpha
         get() = base.alpha
-        set(value)
-        {
+        set(value) {
             base = Color(red, green, blue, value.coerceAtLeast(0).coerceAtMost(255))
-        }
-
-    /**
-     * Getter & Setter for the **red** base value in **float format**.
-     *
-     * Performs range checking before setting the value. (0.0F - 1.0F)
-     */
-    var redFloat
-        get() = base.red / 255.0F
-        set(value)
-        {
-            base = Color((value.coerceAtLeast(0F).coerceAtMost(1F) * 255).toInt(), green, blue, alpha)
-        }
-
-    /**
-     * Getter & Setter for the **green** base value in **float format**.
-     *
-     * Performs range checking before setting the value. (0.0F - 1.0F)
-     */
-    var greenFloat
-        get() = base.green / 255.0F
-        set(value)
-        {
-            base = Color(red, (value.coerceAtLeast(0F).coerceAtMost(1F) * 255).toInt(), blue, alpha)
-        }
-
-    /**
-     * Getter & Setter for the **blue** base value in **float format**.
-     *
-     * Performs range checking before setting the value. (0.0F - 1.0F)
-     */
-    var blueFloat
-        get() = base.blue / 255.0F
-        set(value)
-        {
-            base = Color(red, green, (value.coerceAtLeast(0F).coerceAtMost(1F) * 255).toInt(), alpha)
-        }
-
-    /**
-     * Getter & Setter for the **alpha** base value in **float format**.
-     *
-     * Performs range checking before setting the value. (0.0F - 1.0F)
-     */
-    var alphaFloat
-        get() = base.alpha / 255.0F
-        set(value)
-        {
-            base = Color(red, green, blue, (value.coerceAtLeast(0F).coerceAtMost(1F) * 255).toInt())
         }
 
     /**
@@ -250,8 +225,7 @@ class WidgetColor
      */
     var redDouble
         get() = base.red / 255.0
-        set(value)
-        {
+        set(value) {
             base = Color((value.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat() * 255).toInt(), green, blue, alpha)
         }
 
@@ -262,8 +236,7 @@ class WidgetColor
      */
     var greenDouble
         get() = base.green / 255.0
-        set(value)
-        {
+        set(value) {
             base = Color(red, (value.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat() * 255).toInt(), blue, alpha)
         }
 
@@ -274,8 +247,7 @@ class WidgetColor
      */
     var blueDouble
         get() = base.blue / 255.0
-        set(value)
-        {
+        set(value) {
             base = Color(red, green, (value.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat() * 255).toInt(), alpha)
         }
 
@@ -286,8 +258,7 @@ class WidgetColor
      */
     var alphaDouble
         get() = base.alpha / 255.0
-        set(value)
-        {
+        set(value) {
             base = Color(red, green, blue, (value.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat() * 255).toInt())
         }
 }

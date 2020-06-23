@@ -32,7 +32,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
     init {
         thread(start = true) {
-            Thread.sleep(5000)
+//            Thread.sleep(5000)
 
             result = KeyController.attachKey(key)
             println(result)
@@ -42,12 +42,14 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                 morph(duration = 50, easing = EaseQuad.IN_OUT) {
                     x = width / 2 - size / 2
                 }.post { _, widget ->
+                    println("A")
                     (widget as Widget<FilledCircle>).morph(duration = 130, easing = EaseCubic.IN_OUT) {
                         color = if (result!!.success) WidgetColor(0x34c464) else WidgetColor(0xff6663)
                         size = sqrt(width.toDouble().pow(2.0) + height.toDouble().pow(2.0))
                         x = width / 2 - size / 2
                         y = height / 2 - size / 2
                     }.post { _, _ ->
+                        println("B")
                         val overlay = Rectangle(
                             x = 0.0,
                             y = 0.0,
@@ -69,6 +71,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                         buffer.content.filter { !it.key.startsWith("rectangle-overlay") }.forEach { it.value.isVisible = false }
 
                         GlobalScope.launch {
+                            println("C")
                             delay(2500)
                             overlay.morph(duration = 150, easing = EaseCubic.IN_OUT) {
                                 x = this@AttachingKeyUI.width.toDouble() + 5.0
@@ -76,6 +79,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                             overlayBorder.morph(duration = 180, easing = EaseCubic.IN_OUT) {
                                 x = this@AttachingKeyUI.width.toDouble()
                             }.post { _, _ ->
+                                println("Switching screen")
                                 Minecraft.getMinecraft().currentScreen = guiMainMenu
                             }.start()
                         }
@@ -127,8 +131,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        backgroundFill
-            ?.let { drawRect(0, 0, width, height, backgroundFill?.rgb ?: 0xFFFFFFFF.toInt()) }
+        drawBackgroundFill()
 
         if (result == null) {
             getWidget<FilledCircle>("loading-circle-1")?.morphBetween(

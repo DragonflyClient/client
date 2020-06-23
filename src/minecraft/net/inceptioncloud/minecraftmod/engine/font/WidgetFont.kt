@@ -102,6 +102,6 @@ class WidgetFont @JvmOverloads constructor(
     }
 
     override fun toString(): String {
-        return "WidgetFont(name='$familyName', letterSpacing=$letterSpacing, fontWeights=$fontWeights)"
+        return "WidgetFont(name='$familyName')"
     }
 }
