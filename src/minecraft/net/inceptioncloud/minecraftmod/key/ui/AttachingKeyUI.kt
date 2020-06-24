@@ -32,7 +32,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
     init {
         thread(start = true) {
-//            Thread.sleep(5000)
+            Thread.sleep(5000)
 
             result = KeyController.attachKey(key)
             println(result)
