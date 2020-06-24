@@ -21,6 +21,11 @@ import net.minecraft.client.gui.*
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+/**
+ * The screen that performs the request to attach the given [key] to the current machine.
+ * It will feed the user with smooth animations while calling the [KeyController.attachKey]
+ * request in the background.
+ */
 @Suppress("UNCHECKED_CAST")
 class AttachingKeyUI(val key: String) : GuiScreen() {
 
