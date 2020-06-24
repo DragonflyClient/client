@@ -1,6 +1,7 @@
 package net.minecraft.client.gui
 
 import net.inceptioncloud.minecraftmod.Dragonfly.fontDesign
+import net.inceptioncloud.minecraftmod.engine.font.FontWeight
 import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer
 import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition
 import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition
@@ -107,17 +108,6 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
             .fadeOut(20)
             .autoTransformator(ForwardBackward { navbarHovered })
             .build()
-        updateSize()
-        addButtons()
-        synchronized(threadLock) {
-            val field92023S = fontRendererObj!!.getStringWidth(openGLWarning1)
-            val field92024R = fontRendererObj!!.getStringWidth(openGLWarning2)
-            val k = max(field92023S, field92024R)
-            field92022T = (width - k) / 2
-            field92021U = buttonList[0].yPosition - 24
-            field92020V = field92022T + k
-            field92019W = field92021U + 24
-        }
         mc.isConnectedToRealms = false
     }
 
@@ -128,6 +118,20 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         if (drawTime == -1L) drawTime = System.currentTimeMillis()
         this.drawGradientBackground()
         val finalFontRenderer = updateSize()
+
+        if (finalFontRenderer != null && buttonList.isEmpty()) {
+            addButtons()
+            synchronized(threadLock) {
+                val field92023S = fontRendererObj!!.getStringWidth(openGLWarning1)
+                val field92024R = fontRendererObj!!.getStringWidth(openGLWarning2)
+                val k = max(field92023S, field92024R)
+                field92022T = (width - k) / 2
+                field92021U = buttonList[0].yPosition - 24
+                field92020V = field92022T + k
+                field92019W = field92021U + 24
+            }
+        }
+
         navbarHovered = mouseY >= height - navbarHeight && mouseY <= height
         buttonList.stream()
             .filter { guiButton: GuiButton -> guiButton.id < 10 }
@@ -159,32 +163,28 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
 
         // Title
         var percent = imageSize / 280.0
-        var fontRenderer = fontDesign
-            .retrieveOrBuild(" Medium", (25 + percent * 60).toInt())
-        fontRenderer.drawCenteredString(InceptionCloudVersion.FULL_VERSION, width / 2, height / 8 + imageSize + 10, 0xFFFFFF, true)
+        var fontRenderer = fontDesign.defaultFont.fontRendererAsync {
+            fontWeight = FontWeight.MEDIUM
+            size = (25 + percent * 60).toInt()
+        }
+        fontRenderer?.drawCenteredString(InceptionCloudVersion.FULL_VERSION, width / 2, height / 8 + imageSize + 10, 0xFFFFFF, true)
 
         // Subtitle
-        val previousHeight = fontRenderer.height
+        val previousHeight = fontRenderer?.height ?: 0
         percent = imageSize / 280.0
-        fontRenderer = fontDesign
-            .retrieveOrBuild("", (15 + percent * 40).toInt())
-        fontRenderer.drawCenteredString("Minecraft Mod 1.8.8", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true)
+        fontRenderer = fontDesign.defaultFont.fontRendererAsync { size = (15 + percent * 40).toInt() }
+        fontRenderer?.drawCenteredString("Minecraft Mod 1.8.8", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true)
 
         // About
-        fontRenderer = fontDesign.regular
-        fontRenderer.drawString(aboutString, 5f, 5f, Color.WHITE.rgb, true)
+        fontRenderer = fontDesign.defaultFont.fontRendererAsync()
+        fontRenderer?.drawString(aboutString, 5f, 5f, Color.WHITE.rgb, true)
 
         // Bottom Bar
         drawRect(0, height - navbarHeight, width, height, Color(0, 0, 0, 100).rgb)
 
         // Buttons
         super.drawScreen(mouseX, mouseY, partialTicks)
-        buttonList.remove(
-            buttonList.stream()
-                .filter { guiButton: GuiButton -> guiButton.id == 5 }
-                .findFirst()
-                .orElse(null)
-        )
+        buttonList.remove(buttonList.firstOrNull { guiButton: GuiButton -> guiButton.id == 5 })
 
         // Fade-In Overlay
 //        drawRect(0, 0, width, height, RGB.of(GreyToneColor.DARK_GREY)
@@ -195,16 +195,18 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
     /**
      * Changes the font and button size when the window size is updated (by rescaling or toggling fullscreen).
      */
-    private fun updateSize(): IFontRenderer {
+    private fun updateSize(): IFontRenderer? {
         val percent = min(height / 540.0, 1.0)
         val buttonFontSize = (18 + percent * 15).toInt()
-        val fontRenderer = fontDesign.retrieveOrBuild("", buttonFontSize)
-        buttonWidth = (80 + percent * 30).toInt()
-        buttonHeight = fontRenderer.height
-        buttonSpace = 10
-        buttonY = height - navbarHeight + buttonHeight / 2
-        quickActionLeft = (width / 2 - buttonSpace * 1.5 - buttonWidth * 2 + 10).toInt()
-        quickActionRight = (width / 2 + buttonSpace * 1.5 + buttonWidth * 2 - 10).toInt()
+        val fontRenderer = fontDesign.defaultFont.fontRendererAsync { size = buttonFontSize }
+        if (fontRenderer != null) {
+            buttonWidth = (80 + percent * 30).toInt()
+            buttonHeight = fontRenderer.height
+            buttonSpace = 10
+            buttonY = height - navbarHeight + buttonHeight / 2
+            quickActionLeft = (width / 2 - buttonSpace * 1.5 - buttonWidth * 2 + 10).toInt()
+            quickActionRight = (width / 2 + buttonSpace * 1.5 + buttonWidth * 2 - 10).toInt()
+        }
         return fontRenderer
     }
 
@@ -261,7 +263,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val fontRenderer = updateSize()
         var left = true
         for (quickAction in availableActions) {
-            val stringWidth = fontRenderer.getStringWidth(quickAction.display)
+            val stringWidth = fontRenderer?.getStringWidth(quickAction.display) ?: 0
             val xPosition = if (left) quickActionLeft + 50 else quickActionRight - stringWidth - 50
             val buttonId = quickAction.ownButtonId
             buttonList.add(TransparentButton(buttonId, xPosition, height, stringWidth, 20, quickAction.display).setOpacity(0.5f))
@@ -282,8 +284,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val actions: List<QuickAction> = availableActions
             .filter { action: QuickAction? -> action!!.headButtonId == selectedButton }
             .toList()
-        return (quickActionButtonId == actions[0].ownButtonId
-                || quickActionButtonId == actions[1].ownButtonId)
+        return (quickActionButtonId == actions[0].ownButtonId || quickActionButtonId == actions[1].ownButtonId)
     }
 
     /**

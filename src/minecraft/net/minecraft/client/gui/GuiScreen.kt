@@ -650,16 +650,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * An operator function that allows adding widgets to the buffer. After providing the widget,
      * an id for it must be specified with the infix function [WidgetIdBuilder.id].
      */
-    operator fun Widget<*>.unaryPlus(): WidgetIdBuilder {
-        return WidgetIdBuilder(buffer, widget = this)
-    }
-
-    /**
-     * An operator function that allows adding widgets to the buffer. After providing the id,
-     * a widget for it must be specified with the infix function [WidgetIdBuilder.widget].
-     */
-    operator fun String.unaryPlus(): WidgetIdBuilder {
-        return WidgetIdBuilder(buffer, id = this)
+    operator fun <W : Widget<W>> W.unaryPlus(): WidgetIdBuilder<W> {
+        return WidgetIdBuilder<W>(buffer, widget = this)
     }
 
     operator fun String.unaryMinus(): Widget<*>? {
@@ -671,7 +663,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * null if the widget was not found or cannot be cast.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <W : Widget<W>> getWidget(identifier: String): Widget<W>? = buffer[identifier] as? W
+    fun <W : Widget<W>> getWidget(identifier: String): W? = buffer[identifier] as? W
 
     companion object {
         private val LOGGER = LogManager.getLogger()

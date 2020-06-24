@@ -103,7 +103,8 @@ public class TransparentButton extends GuiButton
      */
     public void setFontRenderer (final IFontRenderer fontRenderer)
     {
-        this.fontRenderer = fontRenderer;
+        if (fontRenderer != null)
+            this.fontRenderer = fontRenderer;
     }
 
     /**

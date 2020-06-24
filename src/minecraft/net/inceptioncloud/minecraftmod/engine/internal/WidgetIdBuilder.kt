@@ -11,33 +11,26 @@ import net.minecraft.client.gui.GuiScreen
  *
  * @property buffer the buffer that the widget is added to
  * @property widget the widget that, if given, is mapped to the id
- * @property id the id that, if given, is mapped to the widget
  */
-class WidgetIdBuilder(val buffer: WidgetBuffer, var widget: Widget<*>? = null, var id: String? = null)
-{
+class WidgetIdBuilder<W : Widget<W>>(val buffer: WidgetBuffer, var widget: W) {
+    /**
+     * The id to identify the widget in the [buffer].
+     */
+    var id: String? = null
+
     /**
      * Provide an id for the widget.
      */
-    infix fun id(id: String)
-    {
+    infix fun id(id: String): W {
         this.id = id
         build()
-    }
-
-    /**
-     * Provide a widget for the id.
-     */
-    infix fun widget(widget: Widget<*>)
-    {
-        this.widget = widget
-        build()
+        return widget
     }
 
     /**
      * Build the pair.
      */
-    fun build()
-    {
-        buffer.add(id!! to widget!!)
+    private fun build() {
+        buffer.add(id!! to widget)
     }
 }

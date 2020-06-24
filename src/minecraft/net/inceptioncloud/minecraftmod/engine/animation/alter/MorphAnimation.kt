@@ -86,8 +86,13 @@ class MorphAnimation(
             duration: Int = 100,
             easing: ((Double) -> Double)? = null,
             alter: W.() -> Unit
-        ): Animation {
-            return MorphAnimation(altered(alter), duration, easing).also { attachAnimation(it) }
+        ): Animation? {
+            val altered = altered(alter)
+
+            if (isStateEqual(altered))
+                return null
+
+            return MorphAnimation(altered, duration, easing).also { attachAnimation(it) }
         }
 
         /**
