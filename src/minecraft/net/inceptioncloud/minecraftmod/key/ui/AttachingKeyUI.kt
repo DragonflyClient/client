@@ -3,6 +3,7 @@ package net.inceptioncloud.minecraftmod.key.ui
 import kotlinx.coroutines.*
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.DragonflyPalette
+import net.inceptioncloud.minecraftmod.engine.GraphicsEngine.runAfter
 import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation.Companion.morphBetween
@@ -17,7 +18,6 @@ import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.minecraftmod.key.KeyController
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
-import kotlin.concurrent.thread
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -26,29 +26,38 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
     override var backgroundFill: WidgetColor? = DragonflyPalette.BACKGROUND
 
+    /**
+     * The result of the attaching process performed by [KeyController.attachKey].
+     */
     private var result: KeyController.Result? = null
 
+    /**
+     * An instance of the [GuiMainMenu] prepared to provide a smooth transition between this UI
+     * and the [GuiMainMenu] in case the [result] said that the attaching was a success.
+     */
     private var guiMainMenu: GuiMainMenu? = null
 
-    private var shouldBuildMainMenu = false
-
     init {
-        thread(start = false) {
-            Thread.sleep(2_000)
-
+        GlobalScope.launch {
+            delay(3_000)
             result = KeyController.attachKey(key)
 
+            // move the first loading circle to the center
             getWidget<FilledCircle>("loading-circle-1")?.run {
                 detachAnimation<MorphAnimation>()
                 morph(duration = 50, easing = EaseQuad.IN_OUT) {
+                    size = 15.0
                     x = width / 2 - size / 2
+                    y = height / 2 + 5 - size / 2.0
                 }?.post { _, widget ->
+                    // let it grow until it covers the whole screen
                     (widget as Widget<FilledCircle>).morph(duration = 130, easing = EaseCubic.IN_OUT) {
                         color = if (result!!.success) WidgetColor(0x34c464) else WidgetColor(0xff6663)
                         size = sqrt(width.toDouble().pow(2.0) + height.toDouble().pow(2.0))
                         x = width / 2 - size / 2
                         y = height / 2 - size / 2
                     }?.post { _, _ ->
+                        // create the overlay and the overlay border when the screen is coverd
                         val overlay = Rectangle(
                             x = 0.0,
                             y = 0.0,
@@ -64,13 +73,13 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                             color = DragonflyPalette.BACKGROUND
                         )
 
+                        // add the overlay and remove everything else (but the user won't notice)
                         +overlayBorder id "rectangle-overlay-border"
                         +overlay id "rectangle-overlay"
-                        shouldBuildMainMenu = true
                         buffer.content.filter { !it.key.startsWith("rectangle-overlay") }.forEach { it.value.isVisible = false }
 
-                        GlobalScope.launch {
-                            delay(1000)
+                        // move the overlay away and switch to the target gui screen
+                        runAfter(1000) {
                             overlay.morph(duration = 150, easing = EaseCubic.IN_OUT) {
                                 x = this@AttachingKeyUI.width.toDouble() + 5.0
                             }?.start()
@@ -82,10 +91,13 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                 }?.start()
             }
 
+            // morph the second loading circle to the center and hide it
             getWidget<FilledCircle>("loading-circle-2")?.run {
                 detachAnimation<MorphAnimation>()
                 morph(duration = 50, easing = EaseQuad.IN_OUT) {
+                    size = 15.0
                     x = width / 2 - size / 2
+                    y = height / 2 + 5 - size / 2.0
                 }?.post { _, widget -> widget.isVisible = false }?.start()
             }
         }
@@ -93,7 +105,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
     override fun initGui() {
         val header = TextField(
-            x = width / 2 - 100.0,
+            x = width / 2 - 125.0,
             y = height / 2 - 30.0,
             width = 250.0,
             height = 20.0,
@@ -117,7 +129,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
         +FilledCircle(
             x = width / 2 - 15.0,
-            y = height / 2.0,
+            y = height / 2.0 + 5.0 - 3.5,
             size = 7.0,
             color = DragonflyPalette.ACCENT_NORMAL
         ).apply {
@@ -130,9 +142,9 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
         } id "loading-circle-1"
 
         +FilledCircle(
-            x = width / 2 + 8.0,
-            y = height / 2.0,
             size = 7.0,
+            x = width / 2 + 8.0,
+            y = height / 2.0 + 5.0 - 3.5,
             color = DragonflyPalette.ACCENT_NORMAL
         ).apply { isVisible = result == null } id "loading-circle-2"
     }
@@ -146,12 +158,19 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                 val scaledHeight = scaledResolution.scaledHeight
                 setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
             }
-            guiMainMenu?.drawScreen(mouseX, mouseY, partialTicks)
-        }
 
-//        getWidget<RoundedRectangle>("header-background")?.morph(duration = 1000, easing = EaseCubic.IN_OUT) {
-//            width = getWidget<TextField>("header")!!.width + 6
-//        }?.start()
+            guiMainMenu?.drawScreen(mouseX, mouseY, partialTicks)
+
+            // since this block is called on the first draw, we use it to animate the header background
+            runAfter(2000) {
+                getWidget<RoundedRectangle>("header-background")?.morph(duration = 200, easing = EaseCubic.IN_OUT) {
+                    width = getWidget<TextField>("header")!!.width + 6
+                }?.start()
+                getWidget<TextField>("header")?.morph(duration = 200, easing = EaseCubic.IN_OUT) {
+                    color = DragonflyPalette.BACKGROUND
+                }?.start()
+            }
+        }
 
         drawBackgroundFill()
 

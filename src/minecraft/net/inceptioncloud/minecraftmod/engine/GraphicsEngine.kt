@@ -1,5 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine
 
+import kotlinx.coroutines.*
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.engine.font.GlyphFontRenderer
 import net.inceptioncloud.minecraftmod.engine.internal.*
@@ -154,7 +155,7 @@ object GraphicsEngine {
     }
 
     /**
-     * Reads the color of a specific pixel from the current frame buffer at the [x],[y] position and
+     * Reads the color of a specific pixel from the current frame buffer at the [xIn],[yIn] position and
      * returns it as a [WidgetColor].
      */
     @JvmStatic
@@ -168,6 +169,10 @@ object GraphicsEngine {
         return WidgetColor(buffer.get(0), buffer.get(1), buffer.get(2), buffer.get(3))
     }
 
+    /**
+     * Reads the average pixel color of the specified area. Note that if the area is large, this will
+     * have a HUGE impact on the performance, so think about what you're doing!
+     */
     @JvmStatic
     fun readAveragePixelColor(xIn: Int, yIn: Int, widthIn: Int, heightIn: Int): WidgetColor {
         val sf = getScaleFactor()
@@ -185,6 +190,18 @@ object GraphicsEngine {
         val alpha = (3 until 4 * width * height step 4).map { buffer.get(it) }.average()
 
         return WidgetColor(red, green, blue, alpha)
+    }
+
+    /**
+     * Runs the specified [block] after a delay of [millis] in a new coroutine launched in
+     * the [GlobalScope].
+     */
+    @JvmStatic
+    fun runAfter(millis: Long, block: () -> Unit) {
+        GlobalScope.launch {
+            delay(millis)
+            block()
+        }
     }
 }
 

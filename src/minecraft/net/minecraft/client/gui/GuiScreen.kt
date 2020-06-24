@@ -5,8 +5,8 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.CloudColor
-import net.inceptioncloud.minecraftmod.engine.EngineTestUI
 import net.inceptioncloud.minecraftmod.engine.internal.*
+import net.inceptioncloud.minecraftmod.key.ui.AttachingKeyUI
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton
 import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
@@ -147,7 +147,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                     onGuiClosed()
                     initGui()
                 }
-                Keyboard.KEY_F7 -> mc.displayGuiScreen(EngineTestUI())
+                Keyboard.KEY_F7 -> mc.displayGuiScreen(AttachingKeyUI("L9AJOT-XI25G0F9-QWJB3W5K-94JQD1"))
             }
         }
     }

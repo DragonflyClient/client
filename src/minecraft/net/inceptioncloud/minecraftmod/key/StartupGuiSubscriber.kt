@@ -10,6 +10,6 @@ import net.inceptioncloud.minecraftmod.key.ui.AttachingKeyUI
 object StartupGuiSubscriber {
     @Subscribe
     fun onStartupGui(event: StartupGuiEvent) {
-        event.target = AttachingKeyUI("L9AJOT-XI25G0F9-QWJB3W5K-94JQD1")
+//        event.target = AttachingKeyUI("L9AJOT-XI25G0F9-QWJB3W5K-94JQD1")
     }
 }
