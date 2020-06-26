@@ -5,10 +5,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture
 import org.apache.commons.lang3.builder.EqualsBuilder
 import org.apache.commons.lang3.builder.HashCodeBuilder
 import org.lwjgl.opengl.GL11
-import java.awt.Color
-import java.awt.Font
-import java.awt.Graphics2D
-import java.awt.RenderingHints
+import java.awt.*
 import java.awt.font.FontRenderContext
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
@@ -21,7 +18,6 @@ class GlyphPage(
     private val isAntiAliasingEnabled: Boolean,
     private val isFractionalMetricsEnabled: Boolean
 ) {
-
     @JvmField
     var glyphCharacterMap = HashMap<Char, Glyph>()
     private var imgSize = 0

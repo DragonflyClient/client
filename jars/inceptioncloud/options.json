@@ -1,11 +1,11 @@
 {
   "lastServer": {
-    "serverName": "royalpixels.de",
-    "serverIP": "royalpixels.de",
+    "serverName": "Rewinside",
+    "serverIP": "rewinside.tv",
     "lan": false
   },
   "enableZoomAnimation": true,
-  "scoreboardBackground": false,
+  "scoreboardBackground": true,
   "scoreboardScores": 0,
   "scoreboardTitle": true,
   "zoomAnimation": true,

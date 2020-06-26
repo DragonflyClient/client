@@ -4,10 +4,7 @@ import com.google.gson.*
 import net.inceptioncloud.minecraftmod.Dragonfly.eventBus
 import org.apache.commons.lang3.Validate
 import org.apache.logging.log4j.LogManager
-import java.io.File
-import java.io.FileReader
-import java.io.FileWriter
-import java.io.IOException
+import java.io.*
 
 /**
  * This class manages the reading and writing of the options to the specific file.
@@ -37,8 +34,7 @@ object Options {
     fun contentUpdate() {
         try {
             LogManager.getLogger().info("Loading Settings...")
-            jsonObject =
-                if (!OPTIONS_FILE.exists()) JsonObject() else JsonParser().parse(FileReader(OPTIONS_FILE)).asJsonObject
+            jsonObject = if (!OPTIONS_FILE.exists()) JsonObject() else JsonParser().parse(FileReader(OPTIONS_FILE)).asJsonObject
             LogManager.getLogger().info(jsonObject)
         } catch (e: IOException) {
             e.printStackTrace()

@@ -22,7 +22,7 @@ private val structureColors = arrayOf(
  * widgets. It has the same features but has more potential when it comes to designing complex UIs.
  */
 @Suppress("LeakingThis")
-abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>() {
+abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
 
     /**
      * Contains the base structure which the widget is assembled with.
@@ -91,6 +91,19 @@ abstract class AssembledWidget<Child : AssembledWidget<Child>> : Widget<Child>()
     }
 
     override fun handleMouseMove(data: MouseData) = Defaults.handleMouseMove(structure.values, data)
+
+    /**
+     * Tries to get a widget and additionally cast it to the specified type. This will return
+     * null if the widget was not found or cannot be cast.
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <W : Widget<W>> getWidget(identifier: String): W? = structure[identifier] as? W
+
+    /**
+     * Updates the widget found by the [identifier] (via [getWidget]) and applies the given
+     * [block] to it.
+     */
+    fun <W : Widget<W>> updateWidget(identifier: String, block: W.() -> Unit): W? = getWidget<W>(identifier)?.apply(block)
 
     /**
      * Assembles the widget by initializing the base widgets.

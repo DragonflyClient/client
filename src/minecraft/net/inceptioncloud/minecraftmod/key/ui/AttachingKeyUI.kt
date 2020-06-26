@@ -62,7 +62,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                         x = width / 2 - size / 2
                         y = height / 2 - size / 2
                     }?.post { _, _ ->
-                        // create the overlay and the overlay border when the screen is coverd
+                        // create the overlay and the overlay border when the screen is covered
                         val overlay = Rectangle(
                             x = 0.0,
                             y = 0.0,
