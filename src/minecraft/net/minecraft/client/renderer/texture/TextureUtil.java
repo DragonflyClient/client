@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 public class TextureUtil
@@ -193,7 +194,7 @@ public class TextureUtil
                     0,
                     GL12.GL_BGRA,
                     GL12.GL_UNSIGNED_INT_8_8_8_8_REV,
-                    null
+                    (ByteBuffer) null
             );
         }
     }

@@ -131,8 +131,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
 
             drawModalRectWithCustomSizedTexture(
                 -(differenceWidth / 2), -(differenceHeight / 2), 0F, 0F,
-                originalWidth, originalHeight,
-                originalWidth.toFloat(), originalHeight.toFloat()
+                originalWidth, originalHeight, originalWidth.toFloat(), originalHeight.toFloat()
             )
         }
 

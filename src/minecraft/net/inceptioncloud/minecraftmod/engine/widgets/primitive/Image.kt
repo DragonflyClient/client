@@ -1,5 +1,7 @@
 package net.inceptioncloud.minecraftmod.engine.widgets.primitive
 
+import net.inceptioncloud.minecraftmod.engine.GraphicsEngine.popScale
+import net.inceptioncloud.minecraftmod.engine.GraphicsEngine.pushScale
 import net.inceptioncloud.minecraftmod.engine.animation.alter.MorphAnimation.Companion.morphBetween
 import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.Info
@@ -39,6 +41,8 @@ class Image(
     @property:Interpolate override var width: Double = -1.0,
     @property:Interpolate override var height: Double = -1.0,
     @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
+
+    @property:Interpolate var scale: Double = 1.0,
 
     image: BufferedImage? = null,
     @property:Info var dynamicTexture: DynamicTexture? = null,
@@ -89,14 +93,20 @@ class Image(
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO)
 
             color.glBindColor()
-            drawModalRectWithCustomSizedTexture(x.toInt(), y.toInt(), 0f, 0f, width.toInt(), height.toInt(), width.toFloat(), height.toFloat())
+
+            pushScale(scale to scale)
+            drawModalRectWithCustomSizedTexture(
+                (x / scale).toInt(), (y / scale).toInt(), 0f, 0f,
+                (width / scale).toInt(), (height / scale).toInt(), (width / scale).toFloat(), (height / scale).toFloat()
+            )
+            popScale()
 
             glDepthMask(true)
             glDisable(GL_BLEND)
             glEnable(GL_DEPTH_TEST)
         } else {
             // draw the placeholder
-            getWidget<RoundedRectangle>("placeholder")?.apply {
+            getWidget<RoundedRectangle>("placeholder")?.run {
                 isVisible = true
                 morphBetween(
                     duration = 200,
@@ -124,7 +134,7 @@ class Image(
     }
 
     override fun clone(): Image = Image(
-        x, y, width, height, color, image, dynamicTexture, resourceLocation
+        x, y, width, height, color, scale, image, dynamicTexture, resourceLocation
     )
 
     override fun newInstance(): Image = Image()
