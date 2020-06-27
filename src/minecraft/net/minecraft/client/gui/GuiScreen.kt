@@ -7,7 +7,6 @@ import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.CloudColor
 import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.widgets.assembled.ResponsiveImage
-import net.inceptioncloud.minecraftmod.key.ui.AttachingKeyUI
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton
 import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
@@ -37,6 +36,7 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.util.*
 import java.util.function.Consumer
+import javax.swing.JOptionPane
 
 abstract class GuiScreen : Gui(), GuiYesNoCallback {
     /**
@@ -161,7 +161,16 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                     onGuiClosed()
                     setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
                 }
-                Keyboard.KEY_F7 -> mc.displayGuiScreen(AttachingKeyUI("L9AJOT-XI25G0F9-QWJB3W5K-94JQD1"))
+                Keyboard.KEY_F7 -> {
+                    val input = JOptionPane.showInputDialog("Enter the full qualified name of the GUI.")
+                    try {
+                        val clazz = Class.forName(input)
+                        val gui = clazz.newInstance() as GuiScreen
+                        mc.displayGuiScreen(gui)
+                    } catch (e: ClassNotFoundException) {
+                        e.printStackTrace()
+                    }
+                }
             }
         }
     }

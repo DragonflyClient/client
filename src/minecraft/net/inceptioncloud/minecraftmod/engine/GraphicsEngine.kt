@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.BufferUtils
+import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -64,6 +65,11 @@ object GraphicsEngine {
             }
 
         uppermostWidget?.let { widget ->
+            if (widget.value is AssembledWidget<*> && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+                renderDebugOverlay((widget.value as AssembledWidget<*>).structure.mapKeys { widget.key + "/" + it.key })
+                return@let
+            }
+
             val x = (uppermostWidget.value as IPosition).x
             val y = (uppermostWidget.value as IPosition).y
             val (width, height) = Defaults.getSizeOrDimension(uppermostWidget.value)

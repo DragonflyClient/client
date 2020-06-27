@@ -3,7 +3,6 @@ package net.inceptioncloud.minecraftmod.engine.internal
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
 import net.inceptioncloud.minecraftmod.engine.structure.IDraw
-import org.lwjgl.input.Keyboard
 
 /**
  * ## Widget Buffer
@@ -38,8 +37,8 @@ class WidgetBuffer {
             it.draw()
         }
 
-        if (Dragonfly.isDeveloperMode && !Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
-            GraphicsEngine.renderDebugOverlay(content)
+        if (Dragonfly.isDeveloperMode) {
+            GraphicsEngine.renderDebugOverlay(content.filter { it.key != "background" }) // don't show debug overlay for background!
         }
     }
 

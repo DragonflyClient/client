@@ -1,7 +1,6 @@
 package net.inceptioncloud.minecraftmod.engine.internal
 
 import net.inceptioncloud.minecraftmod.Dragonfly
-import net.inceptioncloud.minecraftmod.engine.GraphicsEngine
 import net.inceptioncloud.minecraftmod.engine.structure.IPosition
 import net.minecraft.client.gui.Gui
 import org.apache.logging.log4j.LogManager
@@ -84,10 +83,6 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
 
                     index++
                 }
-            }
-
-            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
-                GraphicsEngine.renderDebugOverlay(structure)
             }
         }
     }
