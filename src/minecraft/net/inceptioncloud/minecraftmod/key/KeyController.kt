@@ -2,7 +2,6 @@ package net.inceptioncloud.minecraftmod.key
 
 import com.google.gson.Gson
 import khttp.responses.Response
-import java.net.URL
 
 /**
  * Controls the attaching and validating of the keys via http requests to the
@@ -26,11 +25,6 @@ object KeyController {
         response.toResult()
     } catch (e: Exception) {
         Result(false, e.message!!)
-    }
-
-    @JvmStatic
-    fun main(args: Array<String>) {
-        println(URL("https://cdn.icnet.dev/dragonfly/eap-version").readText())
     }
 
     /**

@@ -1,8 +1,7 @@
 package net.inceptioncloud.minecraftmod.key.ui
 
-import net.inceptioncloud.minecraftmod.design.color.DragonflyPalette
+import net.inceptioncloud.minecraftmod.engine.internal.SizedImage
 import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
-import net.inceptioncloud.minecraftmod.engine.widgets.assembled.ResponsiveImage
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Image
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
@@ -12,18 +11,11 @@ import net.minecraft.util.ResourceLocation
  */
 class EnterKeyUI(val message: String? = null) : GuiScreen() {
 
-    override var backgroundFill: WidgetColor? = DragonflyPalette.BACKGROUND
+    override var backgroundFill: WidgetColor? = WidgetColor(100, 100, 100, 255)
+
+    override var backgroundImage: SizedImage? = SizedImage("inceptioncloud/ingame_background_2.png", 3840.0, 2160.0)
 
     override fun initGui() {
-        +ResponsiveImage(
-            x = 0.0,
-            y = 0.0,
-            width = width.toDouble(),
-            height = height.toDouble(),
-            originalWidth = 1600.0,
-            originalHeight = 900.0,
-            resourceLocation = ResourceLocation("inceptioncloud/key_background.png")
-        ) id "background"
         +Image(
             x = 100.0,
             y = 100.0,
@@ -33,8 +25,4 @@ class EnterKeyUI(val message: String? = null) : GuiScreen() {
         ) id "image"
     }
 
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.drawBackgroundFill()
-        super.drawScreen(mouseX, mouseY, partialTicks)
-    }
 }

@@ -6,6 +6,7 @@ import com.google.common.collect.Sets
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.CloudColor
 import net.inceptioncloud.minecraftmod.engine.internal.*
+import net.inceptioncloud.minecraftmod.engine.widgets.assembled.ResponsiveImage
 import net.inceptioncloud.minecraftmod.key.ui.AttachingKeyUI
 import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton
 import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
@@ -92,7 +93,15 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     @JvmField
     var buffer = WidgetBuffer()
 
+    /**
+     * The color that is used in the [drawBackgroundFill] function to color the background.
+     */
     open var backgroundFill: WidgetColor? = null
+
+    /**
+     * The image that is added as a [ResponsiveImage] in the [setWorldAndResolution] function.
+     */
+    open var backgroundImage: SizedImage? = null
 
     /**
      * Draws a gradient background with the default colors.
@@ -142,10 +151,14 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             // ICMM: Developer Mode Hotkeys
             when (keyCode) {
                 Keyboard.KEY_F5 -> {
+                    val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
+                    val scaledWidth = scaledResolution.scaledWidth
+                    val scaledHeight = scaledResolution.scaledHeight
+
                     buttonList.clear()
                     buffer.clear()
                     onGuiClosed()
-                    initGui()
+                    setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
                 }
                 Keyboard.KEY_F7 -> mc.displayGuiScreen(AttachingKeyUI("L9AJOT-XI25G0F9-QWJB3W5K-94JQD1"))
             }
@@ -433,6 +446,18 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         scaleFactor = ScaledResolution(mc).scaleFactor
         buttonList.clear()
 
+        backgroundImage?.let {
+            +ResponsiveImage(
+                x = 0.0,
+                y = 0.0,
+                width = width.toDouble(),
+                height = height.toDouble(),
+                originalWidth = it.width,
+                originalHeight = it.height,
+                resourceLocation = ResourceLocation(it.resourceLocation),
+                color = backgroundFill ?: WidgetColor.DEFAULT
+            ) id "background"
+        }
         initGui()
     }
 

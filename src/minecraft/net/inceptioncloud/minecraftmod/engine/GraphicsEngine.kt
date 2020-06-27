@@ -104,6 +104,8 @@ object GraphicsEngine {
                 fontRenderer.drawString(string, infoTextX.toInt(), infoTextY.toInt(), contrastColor.rgb)
                 infoTextY += fontRenderer.height + 0.5
             }
+
+            GlStateManager.color(1F, 1F, 1F, 1F)
         }
     }
 
