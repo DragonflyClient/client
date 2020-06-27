@@ -5,6 +5,7 @@ import net.inceptioncloud.minecraftmod.engine.internal.annotations.Interpolate
 import net.inceptioncloud.minecraftmod.engine.internal.annotations.State
 import net.inceptioncloud.minecraftmod.engine.structure.*
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Image
+import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
 
 class ResponsiveImage(
@@ -46,9 +47,15 @@ class ResponsiveImage(
         }
     }
 
-    override fun preRender() {}
+    override fun preRender() {
+        GlStateManager.enableBlend()
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
+        GlStateManager.color(1F, 1F, 1F, 1F)
+    }
 
-    override fun postRender() {}
+    override fun postRender() {
+        GlStateManager.disableBlend()
+    }
 
     override fun clone(): ResponsiveImage = ResponsiveImage(
         x, y, width, height, color, originalWidth, originalHeight, resourceLocation

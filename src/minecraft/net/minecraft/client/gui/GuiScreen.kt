@@ -133,7 +133,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     }
 
     /**
-     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
+     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of KeyListener.keyTyped(KeyEvent e).
+     * Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
     @Throws(IOException::class)
     protected open fun keyTyped(typedChar: Char, keyCode: Int) {

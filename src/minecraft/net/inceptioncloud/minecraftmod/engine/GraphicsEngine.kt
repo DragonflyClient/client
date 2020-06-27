@@ -68,7 +68,6 @@ object GraphicsEngine {
             val y = (uppermostWidget.value as IPosition).y
             val (width, height) = Defaults.getSizeOrDimension(uppermostWidget.value)
 
-            Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 30).rgb)
             RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 0.8)
 
             val titleRenderer = Dragonfly.fontDesign.retrieveOrBuild(" Medium", 12)

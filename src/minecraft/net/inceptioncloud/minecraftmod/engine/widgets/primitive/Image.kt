@@ -77,9 +77,15 @@ class Image(
         }
     }
 
-    override fun preRender() {}
+    override fun preRender() {
+        GlStateManager.enableBlend()
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
+        GlStateManager.color(1F, 1F, 1F, 1F)
+    }
 
-    override fun postRender() {}
+    override fun postRender() {
+        GlStateManager.disableBlend()
+    }
 
     override fun render() {
         val bound = bindTexture()
