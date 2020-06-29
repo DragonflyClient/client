@@ -4,9 +4,9 @@ import kotlinx.coroutines.*
 import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.design.color.DragonflyPalette
 import net.inceptioncloud.minecraftmod.engine.font.FontWeight
-import net.inceptioncloud.minecraftmod.engine.internal.SizedImage
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetColor
+import net.inceptioncloud.minecraftmod.engine.internal.*
 import net.inceptioncloud.minecraftmod.engine.widgets.assembled.InputTextField
+import net.inceptioncloud.minecraftmod.engine.widgets.assembled.TextField
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Image
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.TextRenderer
 import net.inceptioncloud.minecraftmod.ui.components.button.ImageButton
@@ -53,6 +53,16 @@ class EnterKeyUI(val message: String? = null) : GuiScreen() {
             maxStringLength = 32
         ) id "key-input"
 
+        +TextField(
+            x = width / 2.0 - 50.0,
+            y = height / 2.0 - 100.0,
+            width = 100.0,
+            height = 100.0,
+            textAlignHorizontal = Alignment.CENTER,
+            textAlignVertical = Alignment.CENTER,
+            staticText = "Lorem ipsum dolor sit Consectetur a erat nam at lectus. Montes nascetur ridiculus mus mauris vitae  netus et. Dui nunc mattis enim ut."
+        ) id "test"
+
         buttonList.add(
             ImageButton(
                 buttonId = 1,
@@ -67,8 +77,8 @@ class EnterKeyUI(val message: String? = null) : GuiScreen() {
 
     override fun actionPerformed(button: GuiButton?) {
         if (button?.id == 1) {
-            GlobalScope.launch {
-                getWidget<InputTextField>("key-input")?.run {
+            getWidget<InputTextField>("key-input")?.run {
+                GlobalScope.launch {
                     delay(10)
                     isFocused = true
                     delay(30)

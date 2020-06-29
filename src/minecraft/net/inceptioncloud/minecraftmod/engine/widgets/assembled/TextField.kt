@@ -68,11 +68,11 @@ class TextField(
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "background" to Rectangle(),
-        "text" to TextRenderer()
+        "background" to Rectangle()
     )
 
     override fun updateStructure() {
+        reassemble()
         if (font != null) {
             fontRenderer = font?.fontRenderer {
                 fontWeight = this@TextField.fontWeight
@@ -80,15 +80,24 @@ class TextField(
             } ?: fontRenderer
         }
 
-        (structure["text"] as TextRenderer).also {
-            it.fontRenderer = fontRenderer
-            it.font = font
-            it.fontSize = fontSize
-            it.fontWeight = fontWeight
-            it.text = currentText()
-            it.color = color
-            it.x = alignText(textAlignHorizontal, x, width, fontRenderer.getStringWidth(it.text).toDouble())
-            it.y = alignText(textAlignVertical, y, height, fontRenderer.height.toDouble())
+        val lines = fontRenderer.listFormattedStringToWidth(currentText(), width.toInt())
+        val size = lines.size * fontRenderer.height
+        for ((index, line) in lines.withIndex()) {
+            val widget = structure["line-$index"] ?: TextRenderer().also { structure["line-$index"] = it }
+            (widget as TextRenderer).also {
+                it.fontRenderer = fontRenderer
+                it.font = font
+                it.fontSize = fontSize
+                it.fontWeight = fontWeight
+                it.text = line
+                it.color = color
+                it.x = alignText(textAlignHorizontal, x, width, fontRenderer.getStringWidth(it.text).toDouble())
+                it.y = when (textAlignVertical) {
+                    Alignment.START -> y + index * fontRenderer.height
+                    Alignment.CENTER -> y + (height - size) / 2 + index * fontRenderer.height
+                    Alignment.END -> y + height - size + index * fontRenderer.height
+                }
+            }
         }
 
         (structure["background"] as Rectangle).also {

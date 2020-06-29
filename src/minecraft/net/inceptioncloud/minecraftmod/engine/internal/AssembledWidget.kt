@@ -27,7 +27,7 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
      * Contains the base structure which the widget is assembled with.
      * The key is the identifier of the widget.
      */
-    val structure: Map<String, Widget<*>>
+    lateinit var structure: MutableMap<String, Widget<*>>
 
     /**
      * Whether the assembled widget has been initialized by calling the first structure update.
@@ -38,9 +38,7 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
     protected var initialized = false
 
     init {
-        structure = assemble().also {
-            it.values.forEach { widget -> widget.isInAssembled = true }
-        }
+        reassemble()
     }
 
     override fun stateChanged(new: Widget<*>) {
@@ -88,6 +86,15 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
     }
 
     override fun handleMouseMove(data: MouseData) = Defaults.handleMouseMove(structure.values, data)
+
+    /**
+     * Assembles the widget and saves it in the [structure] variable.
+     */
+    fun reassemble() {
+        structure = assemble().toMutableMap().also {
+            it.values.forEach { widget -> widget.isInAssembled = true }
+        }
+    }
 
     /**
      * Tries to get a widget and additionally cast it to the specified type. This will return
