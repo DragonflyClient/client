@@ -14,14 +14,14 @@ import net.minecraft.util.ResourceLocation
  * @property resourceLocation the location of the image resource that is displayed on the button
  */
 class ImageButton(
-        buttonId: Int,
-        x: Int,
-        y: Int,
-        width: Int = 20,
-        height: Int = 20,
-        private val resourceLocation: ResourceLocation
-) : GuiButton(buttonId, x, y, width, height, "")
-{
+    buttonId: Int,
+    x: Int,
+    y: Int,
+    width: Int = 20,
+    height: Int = 20,
+    private val resourceLocation: ResourceLocation
+) : GuiButton(buttonId, x, y, width, height, "") {
+
     /**
      * The transition that moves the image a little bit up when hovering it.
      * This creates a smooth rise effect as the second layer with 20% opacity in black stays at the current position.
@@ -35,10 +35,8 @@ class ImageButton(
     /**
      * Draws this button on the screen.
      */
-    override fun drawButton(mc: Minecraft, mouseX: Int, mouseY: Int)
-    {
-        if (visible)
-        {
+    override fun drawButton(mc: Minecraft, mouseX: Int, mouseY: Int) {
+        if (visible) {
             val left = xPosition
             val top = yPosition
             val right = xPosition + width
@@ -54,14 +52,18 @@ class ImageButton(
             GlStateManager.color(0F, 0F, 0F, .2F)
 
             mc.textureManager.bindTexture(resourceLocation)
-            Gui.drawModalRectWithCustomSizedTexture((left * f).toInt(), (top * f).toInt(), 0F, 0F,
-                    (width * f).toInt(), (height * f).toInt(), width * f, height * f)
+            Gui.drawModalRectWithCustomSizedTexture(
+                (left * f).toInt(), (top * f).toInt(), 0F, 0F,
+                (width * f).toInt(), (height * f).toInt(), width * f, height * f
+            )
 
             GlStateManager.color(1F, 1F, 1F, 1F)
 
             mc.textureManager.bindTexture(resourceLocation)
-            Gui.drawModalRectWithCustomSizedTexture((left * f).toInt(), (top * f - (2 * transitionHover.get())).toInt(),
-                    0F, 0F, (width * f).toInt(), (height * f).toInt(), width * f, height * f)
+            Gui.drawModalRectWithCustomSizedTexture(
+                (left * f).toInt(), (top * f - (2 * transitionHover.get())).toInt(),
+                0F, 0F, (width * f).toInt(), (height * f).toInt(), width * f, height * f
+            )
 
             GlStateManager.scale(f, f, f)
             GlStateManager.disableBlend()
@@ -72,8 +74,7 @@ class ImageButton(
     /**
      * Destroys the Button by removing all transitions.
      */
-    override fun destroy()
-    {
+    override fun destroy() {
         transitionHover.destroy()
     }
 }

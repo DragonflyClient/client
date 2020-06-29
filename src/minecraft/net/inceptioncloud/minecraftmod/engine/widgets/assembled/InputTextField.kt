@@ -55,7 +55,7 @@ class InputTextField(
      * and a cursor will be active. When this property changes, the [focusedStateChanged] function will be called.
      */
     @Info
-    private var isFocused = false
+    var isFocused = false
         set(value) {
             if (field == value)
                 return
@@ -188,7 +188,7 @@ class InputTextField(
             it.width = width
             it.height = 1.0
             it.x = x
-            it.y = x + height - it.height
+            it.y = y + height - it.height
             it.color = DEFAULT_TEXT_COLOR
         }
 
@@ -372,7 +372,7 @@ class InputTextField(
 
     private fun moveCursorBy(amount: Int) = setCursorPosition(selectionEnd + amount)
 
-    private fun writeText(newText: String, force: Boolean = false) {
+    fun writeText(newText: String, force: Boolean = false) {
         if (!isEnabled && !force)
             return
 
@@ -417,7 +417,7 @@ class InputTextField(
         }
     }
 
-    private fun deleteFromCursor(amount: Int, force: Boolean = false) {
+    fun deleteFromCursor(amount: Int, force: Boolean = false) {
         if (!isEnabled && !force)
             return
 
