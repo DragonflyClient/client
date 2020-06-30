@@ -26,10 +26,10 @@ class EnterKeyUI(val message: String? = null) : GuiScreen() {
 
     override fun initGui() {
         Keyboard.enableRepeatEvents(true)
-        val headerFontRenderer = Dragonfly.fontDesign.defaultFont.fontRenderer { size = 30; fontWeight = FontWeight.MEDIUM }
+        val headerFR = Dragonfly.fontDesign.defaultFont.fontRenderer { size = 30; fontWeight = FontWeight.MEDIUM }
 
         val keyImage = +Image(
-            x = width / 2 - headerFontRenderer.getStringWidth("Activate Dragonfly") / 2 - 15.0,
+            x = width / 2 - headerFR.getStringWidth("Activate Dragonfly") / 2 - 15.0,
             y = 10.0,
             width = 20.0,
             height = 20.0,
@@ -39,29 +39,31 @@ class EnterKeyUI(val message: String? = null) : GuiScreen() {
         +TextRenderer(
             x = keyImage.x + 30.0,
             y = 10.0,
-            fontRenderer = headerFontRenderer,
+            fontRenderer = headerFR,
             text = "Activate Dragonfly"
         ) id "header"
 
+        val description = +TextField(
+            x = width / 2.0 - (width / 4).coerceAtMost(140).toDouble(),
+            y = height / 2.0 - 85.0,
+            width = (width / 2).coerceAtMost(280).toDouble(),
+            height = 120.0,
+            textAlignHorizontal = Alignment.CENTER,
+            textAlignVertical = Alignment.CENTER,
+            staticText = "Please enter your Dragonfly key or press the button next to the input field to paste it from your clipboard.\n\n" +
+                    "Note that by redeeming your key, it is attached to your machine and cannot be used on any other device.\n\n" +
+                    "If you don't already have a key, consider applying for our alpha program on our website."
+        ) id "description"
+
         val keyInput = +InputTextField(
             x = width / 2.0 - 110.0,
-            y = height / 2.0 - 10.0,
+            y = description.y + description.height + 10.0,
             color = DragonflyPalette.ACCENT_NORMAL,
             width = 200.0,
             height = 20.0,
             label = "32-digit key with hyphens",
             maxStringLength = 32
         ) id "key-input"
-
-        +TextField(
-            x = width / 2.0 - 50.0,
-            y = height / 2.0 - 100.0,
-            width = 100.0,
-            height = 100.0,
-            textAlignHorizontal = Alignment.CENTER,
-            textAlignVertical = Alignment.CENTER,
-            staticText = "Lorem ipsum dolor sit Consectetur a erat nam at lectus. Montes nascetur ridiculus mus mauris vitae  netus et. Dui nunc mattis enim ut."
-        ) id "test"
 
         buttonList.add(
             ImageButton(
