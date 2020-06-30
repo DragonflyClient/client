@@ -1,6 +1,6 @@
 package net.minecraft.client.gui.achievement;
 
-import net.inceptioncloud.minecraftmod.Dragonfly;
+import net.inceptioncloud.dragonfly.Dragonfly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;

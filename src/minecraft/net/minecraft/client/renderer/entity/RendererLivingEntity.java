@@ -1,7 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
 import com.google.common.collect.Lists;
-import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionPlayer;
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;

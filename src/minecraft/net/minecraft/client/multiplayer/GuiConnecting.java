@@ -1,9 +1,11 @@
 package net.minecraft.client.multiplayer;
 
-import net.inceptioncloud.minecraftmod.Dragonfly;
-import net.inceptioncloud.minecraftmod.event.play.ServerConnectingEvent;
+import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.event.play.ServerConnectingEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiDisconnected;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.network.NetHandlerLoginClient;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.EnumConnectionState;

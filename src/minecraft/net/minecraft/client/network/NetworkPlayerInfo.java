@@ -2,8 +2,8 @@ package net.minecraft.client.network;
 
 import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
-import net.inceptioncloud.minecraftmod.ui.playerlist.indicators.Indicator;
-import net.inceptioncloud.minecraftmod.ui.playerlist.indicators.IndicatorKt;
+import net.inceptioncloud.dragonfly.ui.playerlist.indicators.Indicator;
+import net.inceptioncloud.dragonfly.ui.playerlist.indicators.IndicatorKt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;

@@ -1,12 +1,12 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
-import net.inceptioncloud.minecraftmod.Dragonfly;
-import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer;
-import net.inceptioncloud.minecraftmod.impl.Tickable;
-import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
-import net.inceptioncloud.minecraftmod.transition.number.SmoothDoubleTransition;
-import net.inceptioncloud.minecraftmod.version.InceptionCloudVersion;
+import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.impl.Tickable;
+import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
+import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
+import net.inceptioncloud.dragonfly.version.InceptionCloudVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
