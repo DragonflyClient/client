@@ -26,7 +26,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
 
     override var backgroundFill: WidgetColor? = WidgetColor(30, 30, 30, 255)
 
-    override var backgroundImage: SizedImage? = SizedImage("inceptioncloud/ingame_background_2.png", 3840.0, 2160.0)
+    override var backgroundImage: SizedImage? = SizedImage("dragonfly/assets/ingame_background_2.png", 3840.0, 2160.0)
 
     override var canManuallyClose: Boolean = false
 
@@ -49,7 +49,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             y = 10.0,
             width = 20.0,
             height = 20.0,
-            resourceLocation = ResourceLocation("inceptioncloud/icons/key.png")
+            resourceLocation = ResourceLocation("dragonflyres/icons/key.png")
         ) id "key-image"
 
         +TextRenderer(
@@ -99,7 +99,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
                 y = (keyInput.y + 3).toInt(),
                 width = 14,
                 height = 14,
-                resourceLocation = ResourceLocation("inceptioncloud/icons/copy.png")
+                resourceLocation = ResourceLocation("dragonflyres/icons/copy.png")
             ))
 
             add(DragonflyPaletteButton(

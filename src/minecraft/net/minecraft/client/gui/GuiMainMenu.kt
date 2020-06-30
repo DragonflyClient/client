@@ -1,5 +1,6 @@
 package net.minecraft.client.gui
 
+import net.inceptioncloud.minecraftmod.Dragonfly
 import net.inceptioncloud.minecraftmod.Dragonfly.fontDesign
 import net.inceptioncloud.minecraftmod.engine.font.FontWeight
 import net.inceptioncloud.minecraftmod.engine.font.IFontRenderer
@@ -157,7 +158,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
 
         // Logo
         val imageSize = (height / 3).coerceAtMost(300)
-        val image = ResourceLocation("inceptioncloud/sqr_outline.png")
+        val image = ResourceLocation("dragonflyres/sqr_outline.png")
         RenderUtils.drawImage(image, width / 2 - imageSize / 2 + 2, height / 8 + 2, imageSize, imageSize, 0f, 0f, 0f, 0.4f)
         RenderUtils.drawImage(image, width / 2 - imageSize / 2, height / 8, imageSize, imageSize)
 
@@ -173,7 +174,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val previousHeight = fontRenderer?.height ?: 0
         percent = imageSize / 280.0
         fontRenderer = fontDesign.defaultFont.fontRendererAsync { size = (15 + percent * 40).toInt() }
-        fontRenderer?.drawCenteredString("Minecraft Mod 1.8.8", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true)
+        fontRenderer?.drawCenteredString("Dragonfly ${Dragonfly.version}", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true)
 
         // About
         fontRenderer = fontDesign.defaultFont.fontRendererAsync()

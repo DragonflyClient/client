@@ -1,18 +1,12 @@
 package net.inceptioncloud.minecraftmod.tracking.transitions
 
-import org.jfree.chart.ChartFactory
-import org.jfree.chart.ChartPanel
-import org.jfree.chart.JFreeChart
+import org.jfree.chart.*
 import org.jfree.chart.block.BlockBorder
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.title.TextTitle
-import org.jfree.data.xy.XYDataset
-import org.jfree.data.xy.XYSeries
-import org.jfree.data.xy.XYSeriesCollection
-import java.awt.BasicStroke
-import java.awt.Color
-import java.awt.Font
+import org.jfree.data.xy.*
+import java.awt.*
 import java.io.File
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
@@ -87,7 +81,7 @@ object TransitionTracker
 
         frame.isResizable = false
         frame.title = "Transition Tracker"
-        frame.iconImage = ImageIO.read(File("inceptioncloud/img/__icon_32x.png"))
+        frame.iconImage = ImageIO.read(File("dragonfly/assets/img/__icon_32x.png"))
     }
 
     fun toggle ()

@@ -1,6 +1,8 @@
 package net.inceptioncloud.minecraftmod.event;
 
-import com.google.common.eventbus.*;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.SubscriberExceptionContext;
+import com.google.common.eventbus.SubscriberExceptionHandler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +23,7 @@ public class ModSubscriberExceptionHandler implements SubscriberExceptionHandler
      */
     public ModSubscriberExceptionHandler ()
     {
-        logger = Logger.getLogger("Minecraft Mod Event Bus");
+        logger = Logger.getLogger("Dragonfly Event Bus");
     }
 
     @Override

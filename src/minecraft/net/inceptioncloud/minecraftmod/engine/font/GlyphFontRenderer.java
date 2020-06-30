@@ -163,7 +163,7 @@ public class GlyphFontRenderer implements IFontRenderer {
                 // Load the graphics environment
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 ge.registerFont(Font
-                        .createFont(Font.TRUETYPE_FONT, new File("inceptioncloud/fonts/" + fontName + ".ttf")));
+                        .createFont(Font.TRUETYPE_FONT, new File("dragonfly/assets/fonts/" + fontName + ".ttf")));
                 LogManager.getLogger().debug("Importing font {}...", fontName);
                 LOADED_FONTS.add(fontName);
             } catch (FontFormatException | IOException e) {

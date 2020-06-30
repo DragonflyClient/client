@@ -18,11 +18,11 @@ import org.lwjgl.opengl.Display
 import java.util.*
 
 /**
- * The main class of the Inception Cloud Minecraft Mod.
+ * The main class of the Inception Cloud Dragonfly Modification.
  */
 object Dragonfly {
     /**
-     * The current Minecraft Mod version
+     * The current Dragonfly version
      */
     const val version: String = "1.0.2.3-eap"
 
@@ -89,13 +89,12 @@ object Dragonfly {
     private var firstTick: Long = 0
 
     /**
-     * Minecraft Mod Constructor.
-     *
+     * Dragonfly Initializer Block
      *
      * Called when loading the Minecraft client.
      */
     init {
-        Display.setTitle(InceptionCloudVersion.FULL_VERSION + " | Minecraft Mod 1.8.8")
+        Display.setTitle("${InceptionCloudVersion.FULL_VERSION} | Dragonfly $version for MC-1.8.8")
 
         eventBus = ModEventBus()
         OptionsManager.loadOptions()
@@ -104,7 +103,7 @@ object Dragonfly {
         splashScreen = ModSplashScreen()
         richPresenceManager = RichPresenceManager()
         gameStateManager = GameStateManager()
-        tickTimer = Timer("Minecraft Mod Tick Timer")
+        tickTimer = Timer("Dragonfly Tick Timer")
         tickTimer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 try {
@@ -125,7 +124,7 @@ object Dragonfly {
     }
 
     /**
-     * Used to shut down the current InceptionCloud Minecraft Mod Instance.
+     * Used to shut down the current Dragonfly Instance.
      */
     @JvmStatic
     fun shutdownInstance() {
@@ -134,7 +133,7 @@ object Dragonfly {
     }
 
     /**
-     * Reloads the Minecraft Mod.
+     * Reloads Dragonfly.
      */
     @JvmStatic
     fun reload() {

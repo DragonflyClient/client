@@ -683,10 +683,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             InputStream inputstream1 = null;
 
             try {
-                inputstream = new FileInputStream(new File("inceptioncloud/img/icon_16x.png"));
-                inputstream1 = new FileInputStream(new File("inceptioncloud/img/icon_32x.png"));
+                inputstream = new FileInputStream(new File("dragonfly/assets/img/icon_16x.png"));
+                inputstream1 = new FileInputStream(new File("dragonfly/assets/img/icon_32x.png"));
 
-                Display.setIcon(new ByteBuffer[] { this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1) });
+                Display.setIcon(new ByteBuffer[]{this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1)});
             } catch (IOException ioexception) {
                 logger.error("Couldn't set icon", ioexception);
             } finally {

@@ -92,7 +92,7 @@ public class ModSplashScreen
                     .newInstance(Dragonfly.getFontDesign().getFontFamily() + " Light", 65, Font.PLAIN);
 
         if (logo == null)
-            logo = new ResourceLocation("inceptioncloud/splash.png");
+            logo = new ResourceLocation("dragonflyres/splash.png");
 
         ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
         int factor = resolution.getScaleFactor();
@@ -138,7 +138,7 @@ public class ModSplashScreen
         Gui.drawModalRectWithCustomSizedTexture(resolution.getScaledWidth() / 2 - 35, 20, 0, 0, 70, 70, 70, 70);
 
         titleFR.drawCenteredString("InceptionCloud", resolution.getScaledWidth() / 2, 100, Color.WHITE.getRGB(), false);
-        defaultFR.drawCenteredString("Minecraft Mod", resolution.getScaledWidth() / 2, 126, new Color(255, 255, 255, 170).getRGB(), false);
+        defaultFR.drawCenteredString("Dragonfly", resolution.getScaledWidth() / 2, 126, new Color(255, 255, 255, 170).getRGB(), false);
         actionFR.drawCenteredString(action, resolution.getScaledWidth() / 2 - 15, 210, new Color(255, 255, 255, 100).getRGB(), false);
 
         final int rectWidth = 250, rectHeight = 20;

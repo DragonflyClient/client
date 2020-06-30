@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
 
 /**
- * A modern UI that displays information about the Minecraft Mod.
+ * A modern UI that displays information about Dragonfly.
  *
  * The screen contains a window that is split into 4 sections, the title, information about the network,
  * developer (me :D) and credits to other sources like icons and fonts.
@@ -32,7 +32,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
                 height - 5 - iconSize,
                 iconSize,
                 iconSize,
-                ResourceLocation("inceptioncloud/icons/about/back.png")
+                ResourceLocation("dragonflyres/icons/about/back.png")
             )
         )
     }
@@ -83,7 +83,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
             var textY = wY + header + 10
 
             //region Title
-            titleFont.drawCenteredString("Inception Cloud Minecraft Mod", wX + wWidth / 2, textY, largeColor, false)
+            titleFont.drawCenteredString("Inception Cloud Dragonfly", wX + wWidth / 2, textY, largeColor, false)
             textY += titleFont.height + 2
             smallFont.drawCenteredString(Dragonfly.version, wX + wWidth / 2, textY, smallColor, false)
             textY += smallFont.height + 12
@@ -161,10 +161,10 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
     }
 
     /**
-     * A quick method that draws a icon from the "inceptioncloud/icon/about/" folder into the gui.
+     * A quick method that draws a icon from the "dragonfly/assets/icon/about/" folder into the gui.
      */
     private fun drawIcon(name: String, x: Int, y: Int, size: Int) {
-        mc.textureManager.bindTexture(ResourceLocation("inceptioncloud/icons/about/$name.png"))
+        mc.textureManager.bindTexture(ResourceLocation("dragonflyres/icons/about/$name.png"))
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F)
         drawModalRectWithCustomSizedTexture(x, y, 0F, 0F, size, size, size.toFloat(), size.toFloat())
     }

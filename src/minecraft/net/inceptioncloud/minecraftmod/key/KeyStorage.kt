@@ -10,7 +10,7 @@ object KeyStorage {
     /**
      * The file in which the key is stored
      * */
-    private val keyFile = File("inceptioncloud/alpha.key")
+    private val keyFile = File("dragonfly/alpha.key")
 
     /**
      * Returns whether a valid key is stored in the [keyFile] by checking if the result

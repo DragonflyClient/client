@@ -14,7 +14,7 @@ object Options {
     /**
      * The file in which the options are saved.
      */
-    private val OPTIONS_FILE = File("inceptioncloud/options.json")
+    private val OPTIONS_FILE = File("dragonfly/options.json")
 
     /**
      * The Gson instance that allows the (de-)serialization of objects.

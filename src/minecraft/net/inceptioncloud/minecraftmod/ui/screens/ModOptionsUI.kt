@@ -50,7 +50,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
      * Each time the class is initialized, one of two background images will randomly be chosen.
      */
     private val resourceLocation = ResourceLocation(
-        "inceptioncloud/ingame_background_${if (Random().nextBoolean()) 2 else 1}.png"
+        "dragonfly/assets/ingame_background_${if (Random().nextBoolean()) 2 else 1}.png"
     )
 
     /**
@@ -89,7 +89,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         buttonList.add(
             ImageButton(
                 1, width - 14 - 3, height - 14 - 2, 14, 14,
-                ResourceLocation("inceptioncloud/icons/reload.png")
+                ResourceLocation("dragonflyres/icons/reload.png")
             )
         )
     }
