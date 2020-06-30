@@ -25,6 +25,15 @@ import kotlin.properties.Delegates
 
 val DEFAULT_TEXT_COLOR = WidgetColor(0xababab)
 
+/**
+ * A simple text field that the user can write to. Supports common operations like copying, pasting,
+ * cutting and selecting with shift + arrow key.
+ *
+ * @param label a short text that describes what the user should write into the field
+ * @param isEnabled if the field is enabled, the user can write text to it
+ * @param maxStringLength the maximum amount of characters that fit into the field
+ * @param color the color that is used for the cursor and other highlighted parts of the field
+ */
 class InputTextField(
     @property:State var font: WidgetFont = Dragonfly.fontDesign.defaultFont,
     @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
