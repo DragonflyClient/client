@@ -45,7 +45,7 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
         if (new is AssembledWidget) {
             structure.forEach {
                 it.value.stateChanged(
-                    new.structure[it.key] ?: error("Widget with new state doesn't have structural widget with id '${it.key}'")
+                    new.structure[it.key] ?: it.value
                 )
             }
 

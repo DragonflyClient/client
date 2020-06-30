@@ -29,7 +29,9 @@ import kotlin.math.sqrt
 @Suppress("UNCHECKED_CAST")
 class AttachingKeyUI(val key: String) : GuiScreen() {
 
-    override var backgroundFill: WidgetColor? = DragonflyPalette.BACKGROUND
+    override var backgroundFill: WidgetColor? = WidgetColor(30, 30, 30, 255)
+
+    override var backgroundImage: SizedImage? = SizedImage("inceptioncloud/ingame_background_2.png", 3840.0, 2160.0)
 
     /**
      * The result of the attaching process performed by [KeyController.attachKey].
@@ -42,6 +44,10 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
      */
     private var guiMainMenu: GuiMainMenu? = null
 
+    /**
+     * An instance of the [EnterKeyUI] that is previewed and switched to if the [result] shows that
+     * the attaching process was no [success][KeyController.Result.success].
+     */
     private var enterKeyUI: EnterKeyUI? = null
 
     init {
