@@ -11,6 +11,6 @@ import net.inceptioncloud.minecraftmod.key.ui.EnterKeyUI
 object StartupGuiSubscriber {
     @Subscribe
     fun onStartupGui(event: StartupGuiEvent) {
-        event.target = EnterKeyUI()
+        event.target = EnterKeyUI("The entered key is wrong!")
     }
 }

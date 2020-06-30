@@ -23,7 +23,12 @@ object KeyStorage {
      * the key is corrupted (= doesn't match the regex), this function will return null.
      */
     fun getStoredKey(): String? = keyFile.takeIf { it.exists() }
-        ?.readText()?.takeIf { it.matches(Regex("[0-9A-Z]{6}-[0-9A-Z]{8}-[0-9A-Z]{8}-[0-9A-Z]{6}")) }
+        ?.readText()?.takeIf { isRegexMatching(it) }
+
+    /**
+     * Checks if the [input] String matches the key regex.
+     */
+    fun isRegexMatching(input: String) = input.matches(Regex("[0-9A-Z]{6}-[0-9A-Z]{8}-[0-9A-Z]{8}-[0-9A-Z]{6}"))
 
     /**
      * Stores the [key] in the [keyFile] by simply setting the content of the file to the

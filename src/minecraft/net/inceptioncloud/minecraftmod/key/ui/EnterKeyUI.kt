@@ -9,6 +9,8 @@ import net.inceptioncloud.minecraftmod.engine.widgets.assembled.InputTextField
 import net.inceptioncloud.minecraftmod.engine.widgets.assembled.TextField
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Image
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.TextRenderer
+import net.inceptioncloud.minecraftmod.key.KeyStorage
+import net.inceptioncloud.minecraftmod.ui.components.button.DragonflyPaletteButton
 import net.inceptioncloud.minecraftmod.ui.components.button.ImageButton
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
@@ -44,10 +46,10 @@ class EnterKeyUI(val message: String? = null) : GuiScreen() {
         ) id "header"
 
         val description = +TextField(
-            x = width / 2.0 - (width / 4).coerceAtMost(140).toDouble(),
-            y = height / 2.0 - 85.0,
-            width = (width / 2).coerceAtMost(280).toDouble(),
-            height = 120.0,
+            x = width / 2.0 - (width * 0.3).toInt().coerceAtMost(150).toDouble(),
+            y = height * 0.15,
+            width = (width * 0.6).toInt().coerceAtMost(300).toDouble(),
+            height = 90.0,
             textAlignHorizontal = Alignment.CENTER,
             textAlignVertical = Alignment.CENTER,
             staticText = "Please enter your Dragonfly key or press the button next to the input field to paste it from your clipboard.\n\n" +
@@ -55,9 +57,20 @@ class EnterKeyUI(val message: String? = null) : GuiScreen() {
                     "If you don't already have a key, consider applying for our alpha program on our website."
         ) id "description"
 
+        +TextField(
+            x = description.x,
+            y = description.y + description.height + 10,
+            width = description.width,
+            height = 18.0,
+            textAlignHorizontal = Alignment.CENTER,
+            textAlignVertical = Alignment.END,
+            staticText = message ?: "",
+            color = DragonflyPalette.ACCENT_NORMAL
+        ).apply { isVisible = message != null } id "message"
+
         val keyInput = +InputTextField(
             x = width / 2.0 - 110.0,
-            y = description.y + description.height + 10.0,
+            y = description.y + description.height + 35.0,
             color = DragonflyPalette.ACCENT_NORMAL,
             width = 200.0,
             height = 20.0,
@@ -65,37 +78,71 @@ class EnterKeyUI(val message: String? = null) : GuiScreen() {
             maxStringLength = 32
         ) id "key-input"
 
-        buttonList.add(
-            ImageButton(
+        with(buttonList) {
+            add(ImageButton(
                 buttonId = 1,
                 x = (keyInput.x + 206).toInt(),
                 y = (keyInput.y + 3).toInt(),
                 width = 14,
                 height = 14,
                 resourceLocation = ResourceLocation("inceptioncloud/icons/copy.png")
-            )
-        )
+            ))
+
+            add(DragonflyPaletteButton(
+                buttonId = 2,
+                x = width / 2 - 50,
+                y = height - 30,
+                widthIn = 100,
+                heightIn = 20,
+                buttonText = "Redeem key"
+            ))
+        }
     }
 
     override fun actionPerformed(button: GuiButton?) {
-        if (button?.id == 1) {
-            getWidget<InputTextField>("key-input")?.run {
-                GlobalScope.launch {
-                    delay(10)
-                    isFocused = true
-                    delay(30)
+        when (button?.id) {
+            1 -> pasteFromClipboard()
+            2 -> redeemKey()
+        }
+    }
 
-                    repeat(inputText.length) {
-                        deleteFromCursor(-1, true)
-                        delay(3)
-                    }
+    /**
+     * Pastes the current clipboard content into the `key-input` [InputTextField].
+     */
+    private fun pasteFromClipboard() {
+        getWidget<InputTextField>("key-input")?.run {
+            GlobalScope.launch {
+                delay(10)
+                isFocused = true
+                delay(30)
 
-                    clipboardString?.chars()?.let {
-                        for (char in it) {
-                            writeText(char.toChar().toString(), true)
-                            delay(5)
-                        }
+                repeat(inputText.length) {
+                    deleteFromCursor(-1, true)
+                    delay(3)
+                }
+
+                clipboardString?.chars()?.let {
+                    for (char in it) {
+                        writeText(char.toChar().toString(), true)
+                        delay(5)
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Redeems the currently entered key from the `key-input` [InputTextField].
+     */
+    private fun redeemKey() {
+        getWidget<InputTextField>("key-input")?.run {
+            if (inputText.isNotEmpty() && KeyStorage.isRegexMatching(inputText)) {
+                mc.displayGuiScreen(AttachingKeyUI(inputText))
+            } else {
+                this@EnterKeyUI.getWidget<TextField>("message")?.apply {
+                    isVisible = true
+                    staticText = "The key you entered does not match the Dragonfly key format."
+                    stateChanged(this)
                 }
             }
         }
