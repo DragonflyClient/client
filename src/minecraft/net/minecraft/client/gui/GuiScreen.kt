@@ -39,6 +39,7 @@ import java.util.function.Consumer
 import javax.swing.JOptionPane
 
 abstract class GuiScreen : Gui(), GuiYesNoCallback {
+
     /**
      * The width of the screen object.
      */
@@ -104,6 +105,11 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     open var backgroundImage: SizedImage? = null
 
     /**
+     * Whether the screen can be manually closed using the ESC key.
+     */
+    open var canManuallyClose: Boolean = true
+
+    /**
      * Draws a gradient background with the default colors.
      */
     fun drawGradientBackground() {
@@ -141,7 +147,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
 
         buffer.handleKeyTyped(typedChar, keyCode)
 
-        if (keyCode == 1) {
+        if (keyCode == 1 && canManuallyClose) {
             mc.displayGuiScreen(null)
             if (mc.currentScreen == null) {
                 mc.setIngameFocus()

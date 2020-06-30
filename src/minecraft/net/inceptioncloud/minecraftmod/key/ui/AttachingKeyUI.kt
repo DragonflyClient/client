@@ -16,8 +16,10 @@ import net.inceptioncloud.minecraftmod.engine.widgets.assembled.TextField
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.FilledCircle
 import net.inceptioncloud.minecraftmod.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.minecraftmod.key.KeyController
+import net.inceptioncloud.minecraftmod.key.KeyStorage
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
+import org.apache.logging.log4j.LogManager
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -32,6 +34,8 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
     override var backgroundFill: WidgetColor? = WidgetColor(30, 30, 30, 255)
 
     override var backgroundImage: SizedImage? = SizedImage("inceptioncloud/ingame_background_2.png", 3840.0, 2160.0)
+
+    override var canManuallyClose: Boolean = false
 
     /**
      * The result of the attaching process performed by [KeyController.attachKey].
@@ -51,11 +55,16 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
     private var enterKeyUI: EnterKeyUI? = null
 
     init {
+        LogManager.getLogger().info("Attaching key '$key'...")
         GlobalScope.launch {
             delay(3_000)
             result = KeyController.attachKey(key)
 
-            if (result?.success != true) {
+            if (result?.success == true) {
+                KeyStorage.storeKey(key)
+                LogManager.getLogger().info("Attaching successful! Key attached and stored.")
+            } else {
+                LogManager.getLogger().info("Attaching failed: ${result?.message}")
                 enterKeyUI?.message = result?.message
             }
 

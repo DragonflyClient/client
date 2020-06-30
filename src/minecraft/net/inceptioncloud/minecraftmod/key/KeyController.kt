@@ -2,6 +2,7 @@ package net.inceptioncloud.minecraftmod.key
 
 import com.google.gson.Gson
 import khttp.responses.Response
+import org.apache.logging.log4j.LogManager
 
 /**
  * Controls the attaching and validating of the keys via http requests to the
@@ -13,7 +14,7 @@ object KeyController {
      * Sends a request asking to attach the given [key] to the current machine.
      */
     fun attachKey(key: String): Result = try {
-        val response = khttp.get(
+        val response = khttp.post(
             url = "https://api.inceptioncloud.net/keys/attach",
             json = mapOf(
                 "key" to key,
@@ -33,7 +34,7 @@ object KeyController {
     fun validateStoredKey(): Result {
         try {
             val key = KeyStorage.getStoredKey() ?: return Result(false, "No key stored on local machine!")
-            val response = khttp.get(
+            val response = khttp.post(
                 url = "https://api.inceptioncloud.net/keys/validate",
                 json = mapOf(
                     "key" to key,
@@ -54,6 +55,10 @@ object KeyController {
     private fun Response.toResult(): Result = if (statusCode == 200) {
         Gson().fromJson(text, Result::class.java)
     } else {
+        LogManager.getLogger().error("Could not convert response to result!\n" +
+                "Response: $this\n" +
+                "URL: $url\n" +
+                "Text: $text")
         Result(false, "Request not successful!")
     }
 

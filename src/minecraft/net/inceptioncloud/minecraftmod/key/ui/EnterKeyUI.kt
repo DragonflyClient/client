@@ -28,6 +28,8 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
 
     override var backgroundImage: SizedImage? = SizedImage("inceptioncloud/ingame_background_2.png", 3840.0, 2160.0)
 
+    override var canManuallyClose: Boolean = false
+
     var message: String? = message
         set(value) {
             getWidget<TextField>("message")?.apply {
@@ -66,7 +68,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             textAlignVertical = Alignment.CENTER,
             staticText = "Please enter your Dragonfly key or press the button next to the input field to paste it from your clipboard.\n\n" +
                     "Note that by redeeming your key, it is attached to your machine and cannot be used on any other device.\n\n" +
-                    "If you don't already have a key, consider applying for our alpha program on our website."
+                    "If you don't already have a key, consider applying for our alpha program on our Discord server."
         ) id "description"
 
         +TextField(
