@@ -19,12 +19,24 @@ import org.lwjgl.input.Keyboard
 
 /**
  * The user interface that forces the user to enter a key to unlock the Dragonfly Client.
+ *
+ * @param message an optional message that is transmitted from the [AttachingKeyUI]
  */
-class EnterKeyUI(val message: String? = null) : GuiScreen() {
+class EnterKeyUI(message: String? = null) : GuiScreen() {
 
     override var backgroundFill: WidgetColor? = WidgetColor(30, 30, 30, 255)
 
     override var backgroundImage: SizedImage? = SizedImage("inceptioncloud/ingame_background_2.png", 3840.0, 2160.0)
+
+    var message: String? = message
+        set(value) {
+            getWidget<TextField>("message")?.apply {
+                isVisible = value != null
+                staticText = value ?: ""
+                stateChanged(this)
+            }
+            field = value
+        }
 
     override fun initGui() {
         Keyboard.enableRepeatEvents(true)

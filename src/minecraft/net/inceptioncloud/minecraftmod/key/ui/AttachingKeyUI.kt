@@ -42,10 +42,16 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
      */
     private var guiMainMenu: GuiMainMenu? = null
 
+    private var enterKeyUI: EnterKeyUI? = null
+
     init {
         GlobalScope.launch {
             delay(3_000)
             result = KeyController.attachKey(key)
+
+            if (result?.success != true) {
+                enterKeyUI?.message = result?.message
+            }
 
             // move the first loading circle to the center
             getWidget<FilledCircle>("loading-circle-1")?.run {
@@ -90,7 +96,9 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                             }?.start()
                             overlayBorder.morph(duration = 180, easing = EaseCubic.IN_OUT) {
                                 x = this@AttachingKeyUI.width.toDouble()
-                            }?.post { _, _ -> Minecraft.getMinecraft().currentScreen = guiMainMenu }?.start()
+                            }?.post { _, _ ->
+                                Minecraft.getMinecraft().currentScreen = if (result?.success == true) guiMainMenu else enterKeyUI
+                            }?.start()
                         }
                     }?.start()
                 }?.start()
@@ -162,18 +170,28 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                 val scaledWidth = scaledResolution.scaledWidth
                 val scaledHeight = scaledResolution.scaledHeight
                 setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
+                drawScreen(mouseX, mouseY, partialTicks)
             }
 
-            guiMainMenu?.drawScreen(mouseX, mouseY, partialTicks)
 
             // since this block is called on the first draw, we use it to animate the header background
             runAfter(2000) {
                 getWidget<RoundedRectangle>("header-background")?.morph(duration = 200, easing = EaseCubic.IN_OUT) {
-                    width = getWidget<TextField>("header")!!.width + 6
+                    width = this@AttachingKeyUI.getWidget<TextField>("header")!!.width + 6
                 }?.start()
                 getWidget<TextField>("header")?.morph(duration = 200, easing = EaseCubic.IN_OUT) {
                     color = DragonflyPalette.BACKGROUND
                 }?.start()
+            }
+        }
+
+        if (enterKeyUI == null) {
+            enterKeyUI = EnterKeyUI().apply {
+                val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
+                val scaledWidth = scaledResolution.scaledWidth
+                val scaledHeight = scaledResolution.scaledHeight
+                setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
+                drawScreen(mouseX, mouseY, partialTicks)
             }
         }
 
@@ -193,9 +211,14 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                 first = { x = width / 2 + 15.0 - size },
                 second = { x = width / 2 - 15.0 }
             )
-        } else if (result?.success == true && getWidget<FilledCircle>("loading-circle-1")?.isVisible == false) {
-            // draw the main menu background to provide a smooth transition
-            guiMainMenu?.drawScreen(mouseX, mouseY, partialTicks)
+        } else if (getWidget<FilledCircle>("loading-circle-1")?.isVisible == false) {
+            if (result?.success == true) {
+                // draw the main menu background to provide a smooth transition
+                guiMainMenu?.drawScreen(mouseX, mouseY, partialTicks)
+            } else {
+                // draw the enter key ui background to provide a smooth transition
+                enterKeyUI?.drawScreen(mouseX, mouseY, partialTicks) ?: println("not drawing")
+            }
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks)
