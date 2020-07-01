@@ -24,7 +24,7 @@ object Dragonfly {
     /**
      * The current Dragonfly version
      */
-    const val version: String = "1.0.2.3-eap"
+    const val version: String = "1.0.3.0-alpha"
 
     @JvmStatic
     val gameStateManager: GameStateManager
