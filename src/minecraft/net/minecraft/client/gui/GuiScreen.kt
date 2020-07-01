@@ -3,34 +3,25 @@ package net.minecraft.client.gui
 import com.google.common.base.Splitter
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
-import net.inceptioncloud.minecraftmod.Dragonfly
-import net.inceptioncloud.minecraftmod.design.color.CloudColor
-import net.inceptioncloud.minecraftmod.engine.internal.MouseData
-import net.inceptioncloud.minecraftmod.engine.internal.Widget
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetBuffer
-import net.inceptioncloud.minecraftmod.engine.internal.WidgetIdBuilder
-import net.inceptioncloud.minecraftmod.ui.components.button.ConfirmationButton
-import net.inceptioncloud.minecraftmod.ui.renderer.RenderUtils
+import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
+import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton
+import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.stream.GuiTwitchUserMode
-import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.client.renderer.RenderHelper
-import net.minecraft.client.renderer.Tessellator
+import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.entity.RenderItem
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.entity.EntityList
 import net.minecraft.event.ClickEvent
 import net.minecraft.event.HoverEvent
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.JsonToNBT
-import net.minecraft.nbt.NBTBase
-import net.minecraft.nbt.NBTException
-import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.nbt.*
 import net.minecraft.stats.Achievement
 import net.minecraft.stats.StatList
-import net.minecraft.util.ChatComponentTranslation
-import net.minecraft.util.EnumChatFormatting
-import net.minecraft.util.IChatComponent
+import net.minecraft.util.*
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
@@ -45,8 +36,10 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.util.*
 import java.util.function.Consumer
+import javax.swing.JOptionPane
 
 abstract class GuiScreen : Gui(), GuiYesNoCallback {
+
     /**
      * The width of the screen object.
      */
@@ -102,11 +95,26 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     var buffer = WidgetBuffer()
 
     /**
+     * The color that is used in the [drawBackgroundFill] function to color the background.
+     */
+    open var backgroundFill: WidgetColor? = null
+
+    /**
+     * The image that is added as a [ResponsiveImage] in the [setWorldAndResolution] function.
+     */
+    open var backgroundImage: SizedImage? = null
+
+    /**
+     * Whether the screen can be manually closed using the ESC key.
+     */
+    open var canManuallyClose: Boolean = true
+
+    /**
      * Draws a gradient background with the default colors.
      */
     fun drawGradientBackground() {
-        val startColor = CloudColor.DESIRE.rgb
-        val endColor = CloudColor.ROYAL.rgb
+        val startColor = DragonflyPalette.ACCENT_BRIGHT.rgb
+        val endColor = DragonflyPalette.ACCENT_DARK.rgb
         drawGradientBackground(startColor, endColor)
     }
 
@@ -121,30 +129,55 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
     open fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        buffer.render()
         for (guiButton in ArrayList(buttonList)) {
             guiButton.drawButton(mc, mouseX, mouseY)
         }
         for (guiLabel in ArrayList(labelList)) {
             guiLabel.drawLabel(mc, mouseX, mouseY)
         }
-        buffer.render()
     }
 
     /**
-     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
+     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of KeyListener.keyTyped(KeyEvent e).
+     * Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
     @Throws(IOException::class)
     protected open fun keyTyped(typedChar: Char, keyCode: Int) {
-        if (keyCode == 1) {
+
+        buffer.handleKeyTyped(typedChar, keyCode)
+
+        if (keyCode == 1 && canManuallyClose) {
             mc.displayGuiScreen(null)
             if (mc.currentScreen == null) {
                 mc.setIngameFocus()
             }
-        } else if (keyCode == Keyboard.KEY_F5 && Dragonfly.isDebugMode) {
-            buttonList.clear()
-            buffer.clear()
-            onGuiClosed()
-            initGui()
+        } else if (keyCode == Keyboard.KEY_PERIOD && isCtrlKeyDown && isShiftKeyDown) {
+            Dragonfly.isDeveloperMode = !Dragonfly.isDeveloperMode
+        } else if (Dragonfly.isDeveloperMode) {
+            // ICMM: Developer Mode Hotkeys
+            when (keyCode) {
+                Keyboard.KEY_F5 -> {
+                    val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
+                    val scaledWidth = scaledResolution.scaledWidth
+                    val scaledHeight = scaledResolution.scaledHeight
+
+                    buttonList.clear()
+                    buffer.clear()
+                    onGuiClosed()
+                    setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
+                }
+                Keyboard.KEY_F7 -> {
+                    val input = JOptionPane.showInputDialog("Enter the full qualified name of the GUI.")
+                    try {
+                        val clazz = Class.forName(input)
+                        val gui = clazz.newInstance() as GuiScreen
+                        mc.displayGuiScreen(gui)
+                    } catch (e: ClassNotFoundException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
         }
     }
 
@@ -429,6 +462,18 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         scaleFactor = ScaledResolution(mc).scaleFactor
         buttonList.clear()
 
+        backgroundImage?.let {
+            +ResponsiveImage(
+                x = 0.0,
+                y = 0.0,
+                width = width.toDouble(),
+                height = height.toDouble(),
+                originalWidth = it.width,
+                originalHeight = it.height,
+                resourceLocation = ResourceLocation(it.resourceLocation),
+                color = backgroundFill ?: WidgetColor.DEFAULT
+            ) id "background"
+        }
         initGui()
     }
 
@@ -507,6 +552,13 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     }
 
     /**
+     * Draws the background with the [backgroundFill] color.
+     */
+    protected fun drawBackgroundFill() {
+        backgroundFill?.let { drawRect(0, 0, width, height, backgroundFill?.rgb ?: 0xFFFFFFFF.toInt()) }
+    }
+
+    /**
      * Handles mouse input.
      */
     @Throws(IOException::class)
@@ -545,10 +597,6 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             val eventCharacter = Keyboard.getEventCharacter()
             val eventKey = Keyboard.getEventKey()
             keyTyped(eventCharacter, eventKey)
-
-            if (eventKey == Keyboard.KEY_PERIOD && isCtrlKeyDown && isShiftKeyDown) {
-                Dragonfly.isDebugMode = !Dragonfly.isDebugMode
-            }
         }
 
         mc.dispatchKeypresses()
@@ -643,21 +691,20 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * An operator function that allows adding widgets to the buffer. After providing the widget,
      * an id for it must be specified with the infix function [WidgetIdBuilder.id].
      */
-    operator fun Widget<*>.unaryPlus(): WidgetIdBuilder {
-        return WidgetIdBuilder(buffer, widget = this)
-    }
-
-    /**
-     * An operator function that allows adding widgets to the buffer. After providing the id,
-     * a widget for it must be specified with the infix function [WidgetIdBuilder.widget].
-     */
-    operator fun String.unaryPlus(): WidgetIdBuilder {
-        return WidgetIdBuilder(buffer, id = this)
+    operator fun <W : Widget<W>> W.unaryPlus(): WidgetIdBuilder<W> {
+        return WidgetIdBuilder<W>(buffer, widget = this)
     }
 
     operator fun String.unaryMinus(): Widget<*>? {
         return buffer[this]
     }
+
+    /**
+     * Tries to get a widget and additionally cast it to the specified type. This will return
+     * null if the widget was not found or cannot be cast.
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <W : Widget<W>> getWidget(identifier: String): W? = buffer[identifier] as? W
 
     companion object {
         private val LOGGER = LogManager.getLogger()
@@ -722,23 +769,23 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             get() = Keyboard.isKeyDown(56) || Keyboard.isKeyDown(184)
 
         @JvmStatic
-        fun isKeyComboCtrlX(p_175277_0_: Int): Boolean {
-            return p_175277_0_ == 45 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
+        fun isKeyComboCtrlX(code: Int): Boolean {
+            return code == 45 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
 
         @JvmStatic
-        fun isKeyComboCtrlV(p_175279_0_: Int): Boolean {
-            return p_175279_0_ == 47 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
+        fun isKeyComboCtrlV(code: Int): Boolean {
+            return code == 47 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
 
         @JvmStatic
-        fun isKeyComboCtrlC(p_175280_0_: Int): Boolean {
-            return p_175280_0_ == 46 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
+        fun isKeyComboCtrlC(code: Int): Boolean {
+            return code == 46 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
 
         @JvmStatic
-        fun isKeyComboCtrlA(p_175278_0_: Int): Boolean {
-            return p_175278_0_ == 30 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
+        fun isKeyComboCtrlA(code: Int): Boolean {
+            return code == 30 && isCtrlKeyDown && !isShiftKeyDown && !isAltKeyDown
         }
     }
 }

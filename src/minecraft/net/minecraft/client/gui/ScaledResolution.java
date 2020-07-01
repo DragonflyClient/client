@@ -1,6 +1,5 @@
 package net.minecraft.client.gui;
 
-import net.inceptioncloud.minecraftmod.utils.RuntimeUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 

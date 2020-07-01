@@ -8,13 +8,14 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import net.inceptioncloud.minecraftmod.Dragonfly;
-import net.inceptioncloud.minecraftmod.event.client.ClientStartupEvent;
-import net.inceptioncloud.minecraftmod.event.client.GraphicsInitializedEvent;
-import net.inceptioncloud.minecraftmod.event.gui.GuiScreenDisplayEvent;
-import net.inceptioncloud.minecraftmod.event.play.IntegratedServerStartingEvent;
-import net.inceptioncloud.minecraftmod.options.sections.OptionsSectionClient;
-import net.inceptioncloud.minecraftmod.tracking.transitions.TransitionTracker;
+import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.event.client.ClientStartupEvent;
+import net.inceptioncloud.dragonfly.event.client.GraphicsInitializedEvent;
+import net.inceptioncloud.dragonfly.event.gui.GuiScreenDisplayEvent;
+import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
+import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
+import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -498,7 +499,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         // EVENTBUS - Post the ClientStartupEvent when the Minecraft Client starts
         ClientStartupEvent clientStartupEvent = new ClientStartupEvent();
         Dragonfly.getEventBus().post(clientStartupEvent);
-        Dragonfly.setDebugMode(initialGameConfig.gameInfo.isDrgnDebug);
+        Dragonfly.setDeveloperMode(initialGameConfig.gameInfo.isDrgnDebug);
 
         this.setWindowIcon();
         this.setInitialDisplayMode();
@@ -590,11 +591,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
         Dragonfly.getSplashScreen().setActive(false);
 
-        if (this.serverName != null) {
-            this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
-        } else {
-            this.displayGuiScreen(new GuiMainMenu());
-        }
+        final GuiScreen targetStartupGui = this.serverName != null
+                ? new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort)
+                : new GuiMainMenu();
+        final StartupGuiEvent event = new StartupGuiEvent(targetStartupGui);
+        Dragonfly.getEventBus().post(event);
+        this.displayGuiScreen(event.getTarget());
 
         this.renderEngine.deleteTexture(this.mojangLogo);
         this.mojangLogo = null;
@@ -681,10 +683,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             InputStream inputstream1 = null;
 
             try {
-                inputstream = new FileInputStream(new File("inceptioncloud/img/icon_16x.png"));
-                inputstream1 = new FileInputStream(new File("inceptioncloud/img/icon_32x.png"));
+                inputstream = new FileInputStream(new File("dragonfly/assets/img/icon_16x.png"));
+                inputstream1 = new FileInputStream(new File("dragonfly/assets/img/icon_32x.png"));
 
-                Display.setIcon(new ByteBuffer[] { this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1) });
+                Display.setIcon(new ByteBuffer[]{this.readImageToBuffer(inputstream), this.readImageToBuffer(inputstream1)});
             } catch (IOException ioexception) {
                 logger.error("Couldn't set icon", ioexception);
             } finally {
@@ -956,7 +958,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.currentScreen = guiScreenIn;
             this.skipRenderWorld = false;
         } else {
-            this.currentScreen = guiScreenIn;
+            this.currentScreen = null;
             this.mcSoundHandler.resumeSounds();
             this.setIngameFocus();
         }

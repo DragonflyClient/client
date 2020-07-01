@@ -1,8 +1,8 @@
 package net.minecraft.client.gui;
 
-import net.inceptioncloud.minecraftmod.Dragonfly;
-import net.inceptioncloud.minecraftmod.transition.number.DoubleTransition;
-import net.inceptioncloud.minecraftmod.transition.supplier.ForwardNothing;
+import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
+import net.inceptioncloud.dragonfly.transition.supplier.ForwardNothing;
 import net.minecraft.util.IChatComponent;
 
 public class ChatLine

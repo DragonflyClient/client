@@ -1,11 +1,13 @@
 package net.minecraft.client.network;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.exceptions.*;
+import com.mojang.authlib.exceptions.AuthenticationException;
+import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
+import com.mojang.authlib.exceptions.InvalidCredentialsException;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
-import net.inceptioncloud.minecraftmod.Dragonfly;
-import net.inceptioncloud.minecraftmod.event.play.IntegratedServerLoggedInEvent;
-import net.inceptioncloud.minecraftmod.event.play.ServerLoggedInEvent;
+import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.event.play.IntegratedServerLoggedInEvent;
+import net.inceptioncloud.dragonfly.event.play.ServerLoggedInEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiDisconnected;
 import net.minecraft.client.gui.GuiScreen;
@@ -13,8 +15,13 @@ import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.login.INetHandlerLoginClient;
 import net.minecraft.network.login.client.C01PacketEncryptionResponse;
-import net.minecraft.network.login.server.*;
-import net.minecraft.util.*;
+import net.minecraft.network.login.server.S00PacketDisconnect;
+import net.minecraft.network.login.server.S01PacketEncryptionRequest;
+import net.minecraft.network.login.server.S02PacketLoginSuccess;
+import net.minecraft.network.login.server.S03PacketEnableCompression;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.CryptManager;
+import net.minecraft.util.IChatComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

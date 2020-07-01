@@ -1,6 +1,6 @@
 package net.minecraft.client.resources.model;
 
-import net.inceptioncloud.minecraftmod.Dragonfly;
+import net.inceptioncloud.dragonfly.Dragonfly;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.IResourceManager;

@@ -1,6 +1,6 @@
 package net.minecraft.util;
 
-import net.inceptioncloud.minecraftmod.Dragonfly;
+import net.inceptioncloud.dragonfly.Dragonfly;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 

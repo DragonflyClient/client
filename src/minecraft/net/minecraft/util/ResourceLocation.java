@@ -75,8 +75,8 @@ public class ResourceLocation
             return false;
         } else {
             ResourceLocation resourcelocation = (ResourceLocation) other;
-            return this.resourceDomain.equals(resourcelocation.resourceDomain) && this.resourcePath
-                    .equals(resourcelocation.resourcePath);
+            return this.resourceDomain.equals(resourcelocation.resourceDomain)
+                    && this.resourcePath.equals(resourcelocation.resourcePath);
         }
     }
 

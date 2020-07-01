@@ -1,11 +1,5 @@
 package net.minecraft.client.renderer.texture;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.IntBuffer;
-import javax.imageio.ImageIO;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,14 +8,21 @@ import net.minecraft.util.ResourceLocation;
 import optifine.Config;
 import optifine.Mipmaps;
 import optifine.Reflector;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL14;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 public class TextureUtil
 {
@@ -107,14 +108,13 @@ public class TextureUtil
         return Mipmaps.alphaBlend(p_147943_0_, p_147943_1_, p_147943_2_, p_147943_3_);
     }
 
-    private static int blendColorComponent(int p_147944_0_, int p_147944_1_, int p_147944_2_, int p_147944_3_, int p_147944_4_)
-    {
-        float f = (float)Math.pow((double)((float)(p_147944_0_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
-        float f1 = (float)Math.pow((double)((float)(p_147944_1_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
-        float f2 = (float)Math.pow((double)((float)(p_147944_2_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
-        float f3 = (float)Math.pow((double)((float)(p_147944_3_ >> p_147944_4_ & 255) / 255.0F), 2.2D);
-        float f4 = (float)Math.pow((double)(f + f1 + f2 + f3) * 0.25D, 0.45454545454545453D);
-        return (int)((double)f4 * 255.0D);
+    private static int blendColorComponent(int p_147944_0_, int p_147944_1_, int p_147944_2_, int p_147944_3_, int p_147944_4_) {
+        float f = (float) Math.pow((float) (p_147944_0_ >> p_147944_4_ & 255) / 255.0F, 2.2D);
+        float f1 = (float) Math.pow((float) (p_147944_1_ >> p_147944_4_ & 255) / 255.0F, 2.2D);
+        float f2 = (float) Math.pow((float) (p_147944_2_ >> p_147944_4_ & 255) / 255.0F, 2.2D);
+        float f3 = (float) Math.pow((float) (p_147944_3_ >> p_147944_4_ & 255) / 255.0F, 2.2D);
+        float f4 = (float) Math.pow((double) (f + f1 + f2 + f3) * 0.25D, 0.45454545454545453D);
+        return (int) ((double) f4 * 255.0D);
     }
 
     public static void uploadTextureMipmap(int[][] p_147955_0_, int p_147955_1_, int p_147955_2_, int p_147955_3_, int p_147955_4_, boolean p_147955_5_, boolean p_147955_6_)
@@ -133,13 +133,21 @@ public class TextureUtil
         setTextureClamped(p_147947_7_);
         int j;
 
-        for (int k = 0; k < p_147947_2_ * p_147947_3_; k += p_147947_2_ * j)
-        {
+        for (int k = 0; k < p_147947_2_ * p_147947_3_; k += p_147947_2_ * j) {
             int l = k / p_147947_2_;
             j = Math.min(i, p_147947_3_ - l);
             int i1 = p_147947_2_ * j;
             copyToBufferPos(p_147947_1_, k, i1);
-            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, p_147947_0_, p_147947_4_, p_147947_5_ + l, p_147947_2_, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)dataBuffer);
+            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D,
+                    p_147947_0_,
+                    p_147947_4_,
+                    p_147947_5_ + l,
+                    p_147947_2_,
+                    j,
+                    GL12.GL_BGRA,
+                    GL12.GL_UNSIGNED_INT_8_8_8_8_REV,
+                    dataBuffer
+            );
         }
     }
 
@@ -177,9 +185,17 @@ public class TextureUtil
             GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0.0F);
         }
 
-        for (int i = 0; i <= p_180600_1_; ++i)
-        {
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, i, GL11.GL_RGBA, p_180600_2_ >> i, p_180600_3_ >> i, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)((IntBuffer)null));
+        for (int i = 0; i <= p_180600_1_; ++i) {
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D,
+                    i,
+                    GL11.GL_RGBA,
+                    p_180600_2_ >> i,
+                    p_180600_3_ >> i,
+                    0,
+                    GL12.GL_BGRA,
+                    GL12.GL_UNSIGNED_INT_8_8_8_8_REV,
+                    (ByteBuffer) null
+            );
         }
     }
 
@@ -199,14 +215,15 @@ public class TextureUtil
         setTextureBlurred(p_110993_3_);
         setTextureClamped(p_110993_4_);
 
-        for (int l = 0; l < i * j; l += i * k)
-        {
+        for (int l = 0; l < i * j; l += i * k) {
             int i1 = l / i;
             int j1 = Math.min(k, j - i1);
             int k1 = i * j1;
             p_110993_0_.getRGB(0, i1, i, j1, aint, 0, i);
             copyToBuffer(aint, k1);
-            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, p_110993_1_, p_110993_2_ + i1, i, j1, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)dataBuffer);
+            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, p_110993_1_, p_110993_2_ + i1, i, j1, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV,
+                    dataBuffer
+            );
         }
     }
 
@@ -263,9 +280,8 @@ public class TextureUtil
         dataBuffer.position(0).limit(p_110994_2_);
     }
 
-    static void bindTexture(int p_94277_0_)
-    {
-        GlStateManager.bindTexture(p_94277_0_);
+    static void bindTexture(int glTextureId) {
+        GlStateManager.bindTexture(glTextureId);
     }
 
     public static int[] readImageData(IResourceManager resourceManager, ResourceLocation imageLocation) throws IOException
@@ -347,19 +363,18 @@ public class TextureUtil
             int l = j * k;
             IntBuffer intbuffer = BufferUtils.createIntBuffer(l);
             int[] aint = new int[l];
-            GL11.glGetTexImage(GL11.GL_TEXTURE_2D, i, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)intbuffer);
+            GL11.glGetTexImage(GL11.GL_TEXTURE_2D, i, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
             intbuffer.get(aint);
             BufferedImage bufferedimage = new BufferedImage(j, k, 2);
             bufferedimage.setRGB(0, 0, j, k, aint, 0, j);
 
-            try
-            {
-                ImageIO.write(bufferedimage, "png", (File)file1);
-                logger.debug("Exported png to: {}", new Object[] {file1.getAbsolutePath()});
+            try {
+                ImageIO.write(bufferedimage, "png", file1);
+                logger.debug("Exported png to: {}", file1.getAbsolutePath());
             }
             catch (Exception exception)
             {
-                logger.debug((String)"Unable to write: ", (Throwable)exception);
+                logger.debug("Unable to write: ", exception);
             }
         }
     }
