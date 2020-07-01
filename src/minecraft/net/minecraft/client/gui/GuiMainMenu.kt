@@ -158,7 +158,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
 
         // Logo
         val imageSize = (height / 3).coerceAtMost(300)
-        val image = ResourceLocation("dragonflyres/sqr_outline.png")
+        val image = ResourceLocation("dragonflyres/logos/white_outline.png")
         RenderUtils.drawImage(image, width / 2 - imageSize / 2 + 2, height / 8 + 2, imageSize, imageSize, 0f, 0f, 0f, 0.4f)
         RenderUtils.drawImage(image, width / 2 - imageSize / 2, height / 8, imageSize, imageSize)
 

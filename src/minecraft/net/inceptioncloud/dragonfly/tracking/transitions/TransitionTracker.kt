@@ -81,7 +81,7 @@ object TransitionTracker
 
         frame.isResizable = false
         frame.title = "Transition Tracker"
-        frame.iconImage = ImageIO.read(File("dragonfly/assets/img/__icon_32x.png"))
+        frame.iconImage = ImageIO.read(File("dragonfly/assets/img/icon_32x.png"))
     }
 
     fun toggle ()

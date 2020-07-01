@@ -4,7 +4,7 @@ import com.google.common.base.Splitter
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.design.color.CloudColor
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
 import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton
@@ -113,8 +113,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * Draws a gradient background with the default colors.
      */
     fun drawGradientBackground() {
-        val startColor = CloudColor.DESIRE.rgb
-        val endColor = CloudColor.ROYAL.rgb
+        val startColor = DragonflyPalette.ACCENT_BRIGHT.rgb
+        val endColor = DragonflyPalette.ACCENT_DARK.rgb
         drawGradientBackground(startColor, endColor)
     }
 

@@ -26,7 +26,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
 
     override var backgroundFill: WidgetColor? = WidgetColor(30, 30, 30, 255)
 
-    override var backgroundImage: SizedImage? = SizedImage("dragonfly/assets/ingame_background_2.png", 3840.0, 2160.0)
+    override var backgroundImage: SizedImage? = SizedImage("dragonflyres/ingame_background_2.png", 3840.0, 2160.0)
 
     override var canManuallyClose: Boolean = false
 

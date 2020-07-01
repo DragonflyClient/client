@@ -50,7 +50,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
      * Each time the class is initialized, one of two background images will randomly be chosen.
      */
     private val resourceLocation = ResourceLocation(
-        "dragonfly/assets/ingame_background_${if (Random().nextBoolean()) 2 else 1}.png"
+        "dragonflyres/ingame_background_${if (Random().nextBoolean()) 2 else 1}.png"
     )
 
     /**

@@ -92,7 +92,7 @@ public class ModSplashScreen
                     .newInstance(Dragonfly.getFontDesign().getFontFamily() + " Light", 65, Font.PLAIN);
 
         if (logo == null)
-            logo = new ResourceLocation("dragonflyres/splash.png");
+            logo = new ResourceLocation("dragonflyres/logos/splash.png");
 
         ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
         int factor = resolution.getScaleFactor();
