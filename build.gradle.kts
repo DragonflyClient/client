@@ -26,7 +26,12 @@ java {
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
+        kotlinOptions.freeCompilerArgs += listOf(
+            "-Xopt-in=kotlin.ExperimentalStdlibApi",
+            "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+            "-Xopt-in=kotlinx.coroutines.ObsoleteCoroutinesApi",
+            "-Xuse-experimental=kotlin.Experimental"
+        )
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
