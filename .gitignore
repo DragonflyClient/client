@@ -1,8 +1,13 @@
-# Project exclude paths
+# Files
+gradlew
+
+# Directories
 /out/
 /gradle/
 /.idea/
 /.gradle/
+
+# Runtime
 /runtime/resourcepacks
 /runtime/saves
 /runtime/shaderpacks
