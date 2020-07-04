@@ -2,6 +2,7 @@
 /out/
 /gradle/
 /.idea/
+/.gradle/
 /runtime/resourcepacks
 /runtime/saves
 /runtime/shaderpacks
