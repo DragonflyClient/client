@@ -1,0 +1,20 @@
+{
+  "lastServer": {
+    "serverName": "Inception Cloud :^)",
+    "serverIP": "inceptioncloud.net",
+    "lan": false
+  },
+  "enableZoomAnimation": true,
+  "scoreboardBackground": true,
+  "scoreboardScores": 0,
+  "scoreboardTitle": true,
+  "zoomAnimation": true,
+  "fontQualityScale": 3.1,
+  "borderlessWindow": true,
+  "windowedFullscreen": true,
+  "zoomFieldOfView": 30,
+  "zoomMouseSensitivity": 79,
+  "fontQuality": 2.0,
+  "messageRestoreMode": 1,
+  "renderOwnName": true
+}
