@@ -1,5 +1,6 @@
 # Files
 gradlew
+gradlew.bat
 
 # Directories
 /out/
@@ -19,5 +20,4 @@ gradlew
 /runtime/usercache.json
 /runtime/servers.dat
 /runtime/transition-tracker
-/runtime/assets/objects
 /runtime/assets/skins
