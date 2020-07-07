@@ -96,7 +96,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                             y = 0.0,
                             width = width.toDouble(),
                             height = height.toDouble(),
-                            color = DragonflyPalette.BACKGROUND
+                            color = DragonflyPalette.background
                         )
 
                         // add the overlay and remove everything else (but the user won't notice)
@@ -140,7 +140,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             staticText = "Attaching key to current device...",
             font = Dragonfly.fontDesign.defaultFont,
             fontSize = 30.0,
-            color = DragonflyPalette.FOREGROUND,
+            color = DragonflyPalette.foreground,
             textAlignVertical = Alignment.START,
             textAlignHorizontal = Alignment.CENTER
         )
@@ -150,7 +150,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             y = header.y - 3,
             width = 0.0,
             height = header.height + 6,
-            color = DragonflyPalette.ACCENT_BRIGHT,
+            color = DragonflyPalette.accentBright,
             arc = 3.0
         ) id "header-background"
         +header id "header"
@@ -159,7 +159,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             x = width / 2 - 15.0,
             y = height / 2.0 + 5.0 - 3.5,
             size = 7.0,
-            color = DragonflyPalette.ACCENT_NORMAL
+            color = DragonflyPalette.accentNormal
         ).apply {
             if (result != null) {
                 size = sqrt(width.toDouble().pow(2.0) + height.toDouble().pow(2.0))
@@ -173,7 +173,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             size = 7.0,
             x = width / 2 + 8.0,
             y = height / 2.0 + 5.0 - 3.5,
-            color = DragonflyPalette.ACCENT_NORMAL
+            color = DragonflyPalette.accentNormal
         ).apply { isVisible = result == null } id "loading-circle-2"
     }
 
@@ -195,7 +195,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                     width = this@AttachingKeyUI.getWidget<TextField>("header")!!.width + 6
                 }?.start()
                 getWidget<TextField>("header")?.morph(duration = 200, easing = EaseCubic.IN_OUT) {
-                    color = DragonflyPalette.BACKGROUND
+                    color = DragonflyPalette.background
                 }?.start()
             }
         }

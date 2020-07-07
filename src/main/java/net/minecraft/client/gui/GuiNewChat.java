@@ -2,11 +2,13 @@ package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
 import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette;
 import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.internal.WidgetColor;
 import net.inceptioncloud.dragonfly.impl.Tickable;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
-import net.inceptioncloud.dragonfly.version.InceptionCloudVersion;
+import net.inceptioncloud.dragonfly.versioning.DragonflyVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -219,35 +221,35 @@ public class GuiNewChat extends Gui implements Tickable
                     GlStateManager.enableBlend();
                     GlStateManager.enableAlpha();
 
-                    String s1 = InceptionCloudVersion.TITLE_1;
-                    String s2 = InceptionCloudVersion.TITLE_2 + " §f" + InceptionCloudVersion.VERSION;
-                    String s3 = InceptionCloudVersion.IDENTIFIER;
-                    String whole = s1 + s2 + " " + s3;
-                    String date = "§7" + new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
+                    String s1 = "Dragonfly ";
+                    String s2 = "§7" + DragonflyVersion.getString();
+                    String whole = s1 + s2;
+                    String date = new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
 
                     final int alphaValue = Math.min(10 + ( int ) ( titleText.get() * 245 ), 255);
-                    Color color1 = new Color(235, 59, 90, alphaValue);
-                    Color color2 = new Color(165, 94, 234, alphaValue);
-                    Color color3 = new Color(69, 170, 242, alphaValue);
-                    Color alpha = new Color(255, 255, 255, alphaValue);
+                    final Color alpha = new Color(255, 255, 255, alphaValue);
+
+                    final WidgetColor color1 = DragonflyPalette.getAccentNormal().clone();
+                    final WidgetColor color2 = DragonflyPalette.getForeground().clone();
+                    color1.setAlpha(alphaValue);
+                    color2.setAlpha(alphaValue);
 
                     int base = -fontRenderer.getStringWidth(whole);
                     int addition = fontRenderer.getStringWidth(whole) + getBorderAmount() - 2;
                     int textX = base + ( int ) ( addition * titleText.get() );
 
                     // If the title box is wide enough to display the cloud name
-                    if (l + 2 >= fontRenderer.getStringWidth(s1 + s2 + " " + s3)) {
-                        fontRenderer.drawString(s1, textX, ( int ) ( -height - border - 10 ), color1.getRGB(), true);
-                        fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), ( int ) ( -height - border - 10 ), color2.getRGB(), true);
-                        fontRenderer.drawString(s3, textX + fontRenderer.getStringWidth(s1 + s2 + " "), ( int ) ( -height - border - 10 ), color3.getRGB(), true);
+                    if (l + 2 >= fontRenderer.getStringWidth(whole)) {
+                        fontRenderer.drawString(s1, textX, ( int ) ( -height - border - 10 ), color1.getRgb(), true);
+                        fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), ( int ) ( -height - border - 10 ), alpha.getRGB(), true);
                     }
 
                     // If the title box is wide enough to display the time
-                    if (l + 2 >= fontRenderer.getStringWidth(s1 + s2 + " " + s3 + "     " + date)) {
+                    if (l + 2 >= fontRenderer.getStringWidth(whole + "     " + date)) {
                         base = -fontRenderer.getStringWidth("00:00:00");
                         addition = l + 4 - getBorderAmount();
                         textX = base + ( int ) ( addition * titleText.get() );
-                        fontRenderer.drawString(date, textX, ( int ) ( -height - border - 10 ), alpha.getRGB(), true);
+                        fontRenderer.drawString(date, textX, ( int ) ( -height - border - 10 ), color2.getRgb(), true);
                     }
                 }
 

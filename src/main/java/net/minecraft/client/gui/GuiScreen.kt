@@ -113,8 +113,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * Draws a gradient background with the default colors.
      */
     fun drawGradientBackground() {
-        val startColor = DragonflyPalette.ACCENT_BRIGHT.rgb
-        val endColor = DragonflyPalette.ACCENT_DARK.rgb
+        val startColor = DragonflyPalette.accentBright.rgb
+        val endColor = DragonflyPalette.accentDark.rgb
         drawGradientBackground(startColor, endColor)
     }
 

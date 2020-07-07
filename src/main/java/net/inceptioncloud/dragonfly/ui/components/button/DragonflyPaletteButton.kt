@@ -1,9 +1,9 @@
 package net.inceptioncloud.dragonfly.ui.components.button
 
 import net.inceptioncloud.dragonfly.Dragonfly.fontDesign
-import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.ACCENT_BRIGHT
-import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.ACCENT_NORMAL
-import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.FOREGROUND
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentBright
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.foreground
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.transition.color.ColorTransitionBuilder
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward
@@ -20,14 +20,14 @@ class DragonflyPaletteButton : GuiButton {
      * Transition changes the fill color when hovering.
      */
     private var fillColor = ColorTransitionBuilder()
-        .start(ACCENT_BRIGHT.base).end(FOREGROUND.base)
+        .start(accentBright.base).end(foreground.base)
         .amountOfSteps(30).autoTransformator(ForwardBackward { hovered }).build()
 
     /**
      * Transition changes the text color when hovering.
      */
     private var textColor = ColorTransitionBuilder()
-        .start(FOREGROUND.base).end(ACCENT_NORMAL.base)
+        .start(foreground.base).end(accentNormal.base)
         .amountOfSteps(30).autoTransformator(ForwardBackward { hovered }).build()
 
     /**
@@ -69,7 +69,7 @@ class DragonflyPaletteButton : GuiButton {
             val bottom = yPosition + height - border
             hovered = mouseX >= left && mouseY >= top && mouseX < right && mouseY < bottom
             mouseDragged(mc, mouseX, mouseY)
-            Gui.drawRect(left - border, top - border, right + border, bottom + border, ACCENT_NORMAL.rgb)
+            Gui.drawRect(left - border, top - border, right + border, bottom + border, accentNormal.rgb)
             Gui.drawRect(left, top, right, bottom, fillColor.get().rgb)
             val stringWith = fontrenderer?.getStringWidth(displayString) ?: 0 + 4
             fontrenderer?.drawStringWithCustomShadow(

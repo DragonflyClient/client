@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly.discord;
 
 import net.arikia.dev.drpc.DiscordRichPresence;
-import net.inceptioncloud.dragonfly.version.InceptionCloudVersion;
+import net.inceptioncloud.dragonfly.versioning.DragonflyVersion;
 
 /**
  * The superclass of any game status that is displayed in the Discord Rich Presence.
@@ -36,7 +36,7 @@ public class RichPresenceAdapter
     /**
      * The hover text displayed when hovering the big image.
      */
-    private String bigImageText = InceptionCloudVersion.FULL_VERSION;
+    private String bigImageText = "Dragonfly " + DragonflyVersion.getString();
 
     /**
      * The asset key for the small image.

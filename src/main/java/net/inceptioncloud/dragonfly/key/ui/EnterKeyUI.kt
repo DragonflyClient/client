@@ -79,13 +79,13 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             textAlignHorizontal = Alignment.CENTER,
             textAlignVertical = Alignment.END,
             staticText = message ?: "",
-            color = DragonflyPalette.ACCENT_NORMAL
+            color = DragonflyPalette.accentNormal
         ).apply { isVisible = message != null } id "message"
 
         val keyInput = +InputTextField(
             x = width / 2.0 - 110.0,
             y = description.y + description.height + 35.0,
-            color = DragonflyPalette.ACCENT_NORMAL,
+            color = DragonflyPalette.accentNormal,
             width = 200.0,
             height = 20.0,
             label = "32-digit key with hyphens",
