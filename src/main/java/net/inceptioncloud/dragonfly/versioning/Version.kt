@@ -18,6 +18,6 @@ data class Version(
      * Converts the version to a string using the default scheme.
      */
     override fun toString(): String {
-        return "$major.$minor.$patch.$build"
+        return "v$major.$minor.$patch.$build"
     }
 }

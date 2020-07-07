@@ -165,7 +165,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         drawRect(0, height - 18, width, height, BluePalette.FOREGROUND.rgb)
 
         Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 15 }
-            ?.drawString("v${DragonflyVersion.string}", 5, height - 10, Color(0, 0, 0, 50).rgb)
+            ?.drawString(DragonflyVersion.string, 5, height - 10, Color(0, 0, 0, 50).rgb)
     }
 
     /**
