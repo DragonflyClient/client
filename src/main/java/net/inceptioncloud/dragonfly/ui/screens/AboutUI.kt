@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.design.color.BluePalette
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.ui.components.button.ImageButton
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
+import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.GlStateManager
@@ -85,7 +86,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
             //region Title
             titleFont.drawCenteredString("Inception Cloud Dragonfly", wX + wWidth / 2, textY, largeColor, false)
             textY += titleFont.height + 2
-            smallFont.drawCenteredString(Dragonfly.version, wX + wWidth / 2, textY, smallColor, false)
+            smallFont.drawCenteredString(DragonflyVersion.string, wX + wWidth / 2, textY, smallColor, false)
             textY += smallFont.height + 12
             //endregion
 

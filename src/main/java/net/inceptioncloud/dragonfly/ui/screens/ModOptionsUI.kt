@@ -17,6 +17,7 @@ import net.inceptioncloud.dragonfly.ui.components.button.ImageButton
 import net.inceptioncloud.dragonfly.ui.components.list.UIList
 import net.inceptioncloud.dragonfly.ui.components.list.UIListFactory.Companion.uiListFactory
 import net.inceptioncloud.dragonfly.utils.TimeUtils
+import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
@@ -164,7 +165,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         drawRect(0, height - 18, width, height, BluePalette.FOREGROUND.rgb)
 
         Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 15 }
-            ?.drawString("v${Dragonfly.version}", 5, height - 10, Color(0, 0, 0, 50).rgb)
+            ?.drawString("v${DragonflyVersion.string}", 5, height - 10, Color(0, 0, 0, 50).rgb)
     }
 
     /**

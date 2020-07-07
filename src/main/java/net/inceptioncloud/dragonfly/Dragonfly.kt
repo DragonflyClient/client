@@ -11,20 +11,18 @@ import net.inceptioncloud.dragonfly.options.OptionsManager
 import net.inceptioncloud.dragonfly.state.GameStateManager
 import net.inceptioncloud.dragonfly.transition.Transition
 import net.inceptioncloud.dragonfly.version.InceptionCloudVersion
+import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.lwjgl.opengl.Display
 import java.util.*
+import java.util.logging.LogManager
 
 /**
  * The main class of the Inception Cloud Dragonfly Modification.
  */
 object Dragonfly {
-    /**
-     * The current Dragonfly version
-     */
-    const val version: String = "1.0.3.0-alpha"
 
     @JvmStatic
     val gameStateManager: GameStateManager
@@ -94,7 +92,7 @@ object Dragonfly {
      * Called when loading the Minecraft client.
      */
     init {
-        Display.setTitle("${InceptionCloudVersion.FULL_VERSION} | Dragonfly $version for MC-1.8.8")
+        Display.setTitle("${InceptionCloudVersion.FULL_VERSION} | Dragonfly ${DragonflyVersion.string} for MC-1.8.8")
 
         eventBus = ModEventBus()
         OptionsManager.loadOptions()

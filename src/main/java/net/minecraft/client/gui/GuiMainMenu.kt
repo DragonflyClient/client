@@ -20,6 +20,7 @@ import net.inceptioncloud.dragonfly.ui.mainmenu.singleplayer.LastMapAction
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
 import net.inceptioncloud.dragonfly.ui.screens.AboutUI
 import net.inceptioncloud.dragonfly.version.InceptionCloudVersion
+import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.util.EnumChatFormatting
@@ -31,6 +32,7 @@ import java.io.IOException
 import java.net.URI
 import java.util.*
 import java.util.function.Consumer
+import java.util.logging.LogManager
 import kotlin.math.max
 import kotlin.math.min
 
@@ -174,7 +176,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val previousHeight = fontRenderer?.height ?: 0
         percent = imageSize / 280.0
         fontRenderer = fontDesign.defaultFont.fontRendererAsync { size = (15 + percent * 40).toInt() }
-        fontRenderer?.drawCenteredString("Dragonfly ${Dragonfly.version}", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true)
+        fontRenderer?.drawCenteredString("Dragonfly ${DragonflyVersion.string}", width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true)
 
         // About
         fontRenderer = fontDesign.defaultFont.fontRendererAsync()

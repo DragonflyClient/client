@@ -31,6 +31,12 @@ object DragonflyVersion {
     }
 
     /**
+     * The string representation of the [localVersion].
+     */
+    @JvmStatic
+    val string = localVersion.toString()
+
+    /**
      * Compares the local version to the remote version based on the [channel][getChannel].
      *
      * While the [UpdateChannel.STABLE] only compares the major, minor and build parts of the

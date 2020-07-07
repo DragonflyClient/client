@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.version.InceptionCloudVersion;
+import net.inceptioncloud.dragonfly.versioning.DragonflyVersion;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -96,7 +97,7 @@ public class GuiOverlayDebug extends Gui
 
         if (this.isReducedDebug())
         {
-            return Lists.newArrayList(InceptionCloudVersion.FULL_VERSION + " Dragonfly " + Dragonfly.version + " for MC-1.8.8",
+            return Lists.newArrayList(InceptionCloudVersion.FULL_VERSION + " Dragonfly " + DragonflyVersion.getString() + " for MC-1.8.8",
                     this.mc.debug,
                     Dragonfly.getLastTPS() + " mod tps (ideally 200)",
                     this.mc.renderGlobal.getDebugInfoRenders(),
@@ -131,7 +132,7 @@ public class GuiOverlayDebug extends Gui
                     s = "Towards positive X";
             }
 
-            ArrayList<String> arraylist = Lists.newArrayList(InceptionCloudVersion.FULL_VERSION + " Dragonfly " + Dragonfly.version + " for MC-1.8.8",
+            ArrayList<String> arraylist = Lists.newArrayList(InceptionCloudVersion.FULL_VERSION + " Dragonfly " + DragonflyVersion.getString() + " for MC-1.8.8",
                     this.mc.debug,
                     Dragonfly.getLastTPS() + " mod tps (ideally 200)",
                     this.mc.renderGlobal.getDebugInfoRenders(),
