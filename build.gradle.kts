@@ -1,6 +1,7 @@
 plugins {
     application
     java
+    idea
     kotlin("jvm") version "1.3.72"
 }
 
