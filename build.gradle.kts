@@ -13,6 +13,8 @@ repositories {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13")
+
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(fileTree("libraries"))
@@ -67,6 +69,9 @@ tasks {
     run.configure {
         main = "Start"
         workingDir("runtime/")
+    }
+    test {
+        useJUnit()
     }
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"

@@ -21,20 +21,14 @@ object DragonflyVersion {
      * content delivery network for Dragonfly.
      */
     val remoteVersion: Version by lazy {
-        val string = getRemoteVersionString()
-        val split = string.split(".")
-        var index = 0
-
-        fun next() = split[index.also { index++ }].toInt()
-
-        Version(next(), next(), next(), next())
+        Version.of(getRemoteVersionString()) ?: throw IllegalStateException("Remote version string is not valid!")
     }
 
     /**
      * The string representation of the [localVersion].
      */
     @JvmStatic
-    val string = localVersion.toString()
+    val string = "v$localVersion"
 
     /**
      * Compares the local version to the remote version based on the [channel][getChannel].
@@ -42,29 +36,29 @@ object DragonflyVersion {
      * While the [UpdateChannel.STABLE] only compares the major, minor and build parts of the
      * version, the [UpdateChannel.EARLY_ACCESS_PROGRAM] also uses the patch part for comparison.
      */
-    fun compareVersions(): Int? {
+    fun compareVersions(first: Version = localVersion, second: Version = remoteVersion): Int? {
         return when (getChannel() ?: throw IllegalStateException(
             "No update channel set in installation_properties.json!"
         )) {
-            UpdateChannel.STABLE -> compareVersionsStable()
-            UpdateChannel.EARLY_ACCESS_PROGRAM -> compareVersionsEap()
+            UpdateChannel.STABLE -> compareVersionsStable(first, second)
+            UpdateChannel.EARLY_ACCESS_PROGRAM -> compareVersionsEap(first, second)
         }
     }
 
     /**
      * Compares the local to the remote version dropping the patch part of the version.
      */
-    private fun compareVersionsStable(): Int = compareVersionParts(
-        localVersion.toVersionParts().toMutableList().apply { removeAt(2) },
-        remoteVersion.toVersionParts().toMutableList().apply { removeAt(2) }
+    private fun compareVersionsStable(first: Version, second: Version): Int = compareVersionParts(
+        first.toVersionParts().toMutableList().apply { removeAt(2) },
+        second.toVersionParts().toMutableList().apply { removeAt(2) }
     )
 
     /**
      * Compares the local to the remote version.
      */
-    private fun compareVersionsEap(): Int = compareVersionParts(
-        localVersion.toVersionParts(),
-        remoteVersion.toVersionParts()
+    private fun compareVersionsEap(first: Version, second: Version): Int = compareVersionParts(
+        first.toVersionParts(),
+        second.toVersionParts()
     )
 
     /**
@@ -88,7 +82,7 @@ object DragonflyVersion {
             }
         }
 
-        return 1
+        return 0
     }
 
     /**
