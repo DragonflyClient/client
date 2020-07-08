@@ -496,6 +496,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.displayHeight = this.gameSettings.overrideHeight;
         }
 
+        Dragonfly.init();
+
         // EVENTBUS - Post the ClientStartupEvent when the Minecraft Client starts
         ClientStartupEvent clientStartupEvent = new ClientStartupEvent();
         Dragonfly.getEventBus().post(clientStartupEvent);

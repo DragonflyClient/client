@@ -4,6 +4,8 @@ import com.google.gson.GsonBuilder
 import com.mojang.authlib.properties.PropertyMap
 import joptsimple.OptionParser
 import joptsimple.OptionSpec
+import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.event.client.ApplicationStartEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.main.GameConfiguration.*
 import net.minecraft.util.Session
@@ -14,6 +16,13 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        val event = ApplicationStartEvent()
+        Dragonfly.eventBus.post(event)
+
+        if (event.isCancelled) {
+            return
+        }
+
         System.setProperty("java.net.preferIPv4Stack", "true")
         val optionParser = OptionParser()
         optionParser.allowsUnrecognizedOptions()

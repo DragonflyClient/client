@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly
 
+import net.inceptioncloud.dragonfly.design.DesignSubscribers
 import net.inceptioncloud.dragonfly.design.splash.ModSplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
 import net.inceptioncloud.dragonfly.engine.font.FontManager
@@ -9,6 +10,7 @@ import net.inceptioncloud.dragonfly.impl.Tickable
 import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.OptionsManager
 import net.inceptioncloud.dragonfly.state.GameStateManager
+import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers
 import net.inceptioncloud.dragonfly.transition.Transition
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.Minecraft
@@ -23,19 +25,23 @@ import java.util.*
 object Dragonfly {
 
     @JvmStatic
-    val gameStateManager: GameStateManager
+    lateinit var gameStateManager: GameStateManager
+        private set
 
     @JvmStatic
-    val richPresenceManager: RichPresenceManager
+    lateinit var richPresenceManager: RichPresenceManager
+        private set
 
     @JvmStatic
-    val eventBus: ModEventBus
+    lateinit var fontDesign: FontManager
+        private set
 
     @JvmStatic
-    val fontDesign: FontManager
+    lateinit var splashScreen: ModSplashScreen
+        private set
 
     @JvmStatic
-    val splashScreen: ModSplashScreen
+    val eventBus: ModEventBus = ModEventBus()
 
     @JvmStatic
     val logger: Logger = LogManager.getLogger()
@@ -62,7 +68,7 @@ object Dragonfly {
     /**
      * The [Timer] that performs the mod ticks.
      */
-    private val tickTimer: Timer
+    private lateinit var tickTimer: Timer
 
     /**
      * All classes that implement the tickable interface.
@@ -89,11 +95,13 @@ object Dragonfly {
      *
      * Called when loading the Minecraft client.
      */
-    init {
+    @JvmStatic
+    fun init() {
         Display.setTitle("Dragonfly ${DragonflyVersion.string} for Minecraft 1.8.8")
 
-        eventBus = ModEventBus()
         OptionsManager.loadOptions()
+        DefaultSubscribers.register(eventBus)
+        DesignSubscribers.register(eventBus)
 
         fontDesign = FontManager()
         splashScreen = ModSplashScreen()

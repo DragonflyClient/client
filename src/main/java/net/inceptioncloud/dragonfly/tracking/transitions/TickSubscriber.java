@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.tracking.transitions;
 
 import com.google.common.eventbus.Subscribe;
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.event.mod.ModTickEvent;
+import net.inceptioncloud.dragonfly.event.client.ClientTickEvent;
 import net.inceptioncloud.dragonfly.transition.Transition;
 import net.inceptioncloud.dragonfly.utils.TimeUtils;
 
@@ -23,7 +23,7 @@ public class TickSubscriber
     private final long startUp = System.currentTimeMillis();
 
     @Subscribe
-    public void modTick (ModTickEvent event)
+    public void modTick (ClientTickEvent event)
     {
         TimeUtils.requireDelay("transition-tracking", 5000, () ->
         {

@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A custom subcriber exception handler for the {@link EventBus}.
+ * A custom subscriber exception handler for the {@link EventBus}.
  */
 public class ModSubscriberExceptionHandler implements SubscriberExceptionHandler
 {

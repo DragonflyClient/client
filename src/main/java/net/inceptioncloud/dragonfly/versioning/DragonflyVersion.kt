@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.versioning
 
 import com.google.gson.JsonParser
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.lang.IllegalStateException
 import java.net.URL
@@ -20,9 +21,7 @@ object DragonflyVersion {
      * The version that is specified as the latest one, fetched lazily from the Inception Cloud
      * content delivery network for Dragonfly.
      */
-    val remoteVersion: Version by lazy {
-        Version.of(getRemoteVersionString()) ?: throw IllegalStateException("Remote version string is not valid!")
-    }
+    val remoteVersion: Version? by lazy { getRemoteVersionString()?.let { Version.of(it) } }
 
     /**
      * The string representation of the [localVersion].
@@ -31,12 +30,12 @@ object DragonflyVersion {
     val string = "v$localVersion"
 
     /**
-     * Compares the local version to the remote version based on the [channel][getChannel].
+     * Compares the [first] version to the [second] version based on the [channel][getChannel].
      *
      * While the [UpdateChannel.STABLE] only compares the major, minor and build parts of the
      * version, the [UpdateChannel.EARLY_ACCESS_PROGRAM] also uses the patch part for comparison.
      */
-    fun compareVersions(first: Version = localVersion, second: Version = remoteVersion): Int? {
+    fun compareVersions(first: Version, second: Version): Int? {
         return when (getChannel() ?: throw IllegalStateException(
             "No update channel set in installation_properties.json!"
         )) {
@@ -101,7 +100,13 @@ object DragonflyVersion {
      * Fetches the remote version from the Inception Cloud content delivery network and returns
      * the string value.
      */
-    private fun getRemoteVersionString(): String {
-        return URL("https://cdn.icnet.dev/dragonfly/version").readText()
+    private fun getRemoteVersionString(): String? {
+        return try {
+            URL("https://cdn.icnet.dev/dragonfly/version").readText()
+        } catch (e: Exception) {
+            LogManager.getLogger().warn("Could not fetch remote version!")
+            e.printStackTrace()
+            null
+        }
     }
 }

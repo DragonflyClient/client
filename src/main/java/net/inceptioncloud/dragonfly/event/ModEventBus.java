@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 import net.inceptioncloud.dragonfly.design.DesignSubscribers;
 import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers;
+import net.inceptioncloud.dragonfly.versioning.updater.ApplicationStartSubscriber;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -19,8 +20,7 @@ public class ModEventBus extends EventBus
     {
         super(new ModSubscriberExceptionHandler());
 
-        DefaultSubscribers.register(this);
-        DesignSubscribers.register(this);
+        register(new ApplicationStartSubscriber());
     }
 
     /**
