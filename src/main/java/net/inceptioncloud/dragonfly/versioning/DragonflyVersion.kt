@@ -30,6 +30,11 @@ object DragonflyVersion {
     val string = "v$localVersion"
 
     /**
+     * The location of the Dragonfly local storage in the appdata directory.
+     */
+    private val localStorage = System.getenv("appdata") + "\\Dragonfly"
+
+    /**
      * Compares the [first] version to the [second] version based on the [channel][getChannel].
      *
      * While the [UpdateChannel.STABLE] only compares the major, minor and build parts of the
@@ -89,7 +94,8 @@ object DragonflyVersion {
      * null, if the file doesn't exist or if the identifier is invalid.
      */
     fun getChannel(): UpdateChannel? {
-        val properties = File("dragonfly/installation_properties.json")
+        val properties = File("${localStorage}\\installation_properties.json")
+        println(properties)
         return properties.takeIf { it.exists() }?.reader()?.use {
             val json = JsonParser().parse(it)?.asJsonObject
             json?.get("channel")?.asString?.let { channel -> UpdateChannel.getByIdentifier(channel) }

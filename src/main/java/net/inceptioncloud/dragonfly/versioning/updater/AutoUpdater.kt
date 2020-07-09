@@ -32,13 +32,6 @@ object AutoUpdater {
 
     fun update() {
         LogManager.getLogger().info("Launching auto-updater and terminating Dragonfly...")
-
-        val process = Runtime.getRuntime().exec("java -jar dragonfly/Dragonfly-Updater.jar")
-        val input = process.inputStream
-
-        input.reader().use {
-            val choice = readLine()
-            println("Result of auto updater: $choice")
-        }
+        Runtime.getRuntime().exec("java -jar dragonfly/Dragonfly-Updater.jar")
     }
 }

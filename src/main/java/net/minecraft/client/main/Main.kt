@@ -10,6 +10,8 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.main.GameConfiguration.*
 import net.minecraft.util.Session
 import java.io.File
+import java.lang.management.ManagementFactory
+import java.lang.management.RuntimeMXBean
 import java.net.*
 
 object Main {
@@ -22,6 +24,13 @@ object Main {
         if (event.isCancelled) {
             return
         }
+
+        val runtimeMxBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
+        val arguments: List<String> = runtimeMxBean.inputArguments
+
+        println("----- ARGUMENTS -----")
+        arguments.forEach { println(it) }
+        println("----- ARGUMENTS -----")
 
         System.setProperty("java.net.preferIPv4Stack", "true")
         val optionParser = OptionParser()
