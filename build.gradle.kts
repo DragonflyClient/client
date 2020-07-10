@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.jcraft:jsch:0.1.55")
+    }
+}
+
 plugins {
     application
     java
@@ -6,7 +15,9 @@ plugins {
 }
 
 group = "net.inceptioncloud"
-version = "1.0.3.0-alpha"
+version = "1.0.0.1"
+
+val outputName = "${project.name}-fat-${project.version}.jar"
 
 repositories {
     mavenCentral()
@@ -70,6 +81,7 @@ sourceSets {
     }
 }
 
+// custom tasks
 tasks {
     register<Jar>("fatJar") {
         baseName = "${project.name}-fat"
@@ -83,13 +95,52 @@ tasks {
         with(jar.get() as CopySpec)
     }
 
+    register("release") {
+        dependsOn("fatJar")
+        doFirst {
+            println("Please enter the version of the release: ")
+
+            val releaseVersion = readLine() ?: ""
+            val versionFile = File("src\\main\\java\\net\\inceptioncloud\\dragonfly\\versioning\\DragonflyVersion.kt")
+
+            if (releaseVersion != version) {
+                println("The build script version isn't identical to the release version! ($version / $releaseVersion)")
+                return@doFirst
+            }
+
+            if (!versionFile.readText().contains("Version(${releaseVersion.replace(".", ", ")})")) {
+                println("The client version isn't identical to the release version!")
+                return@doFirst
+            }
+
+            val remoteHost = "45.85.219.34"
+            val username = "root"
+            val password = File("buildscript/sftp_password").readText()
+            val cdn = "/var/www/cdn/dragonfly/$version"
+
+            val jsch = com.jcraft.jsch.JSch()
+                .apply { setKnownHosts("buildscript/known_hosts") }
+            val jschSession: com.jcraft.jsch.Session = jsch.getSession(username, remoteHost)
+                .apply {
+                    setPassword(password)
+                    connect()
+                }
+
+            val channel = jschSession.openChannel("sftp") as com.jcraft.jsch.ChannelSftp
+            channel.connect()
+            channel.mkdir(cdn)
+            channel.put("/build/libs/$outputName", "$cdn/Dragonfly-1.8.8.jar")
+            channel.put("/resources/Dragonfly-1.8.8.json", "$cdn/Dragonfly-1.8.8.json")
+            channel.exit()
+        }
+    }
+
     register("copy") {
         dependsOn("copyJar", "copyJson")
     }
 
     register<Copy>("copyJar") {
         dependsOn("fatJar")
-        val outputName = "${project.name}-fat-${project.version}.jar"
 
         from("build/libs/")
         include(outputName)
@@ -103,11 +154,14 @@ tasks {
         include("Dragonfly-1.8.8.json")
         into("C:\\Users\\user\\AppData\\Roaming\\.minecraft\\versions\\Dragonfly-1.8.8\\")
     }
+}
 
+// tasks configurations
+tasks {
     build.configure {
         dependsOn("fatJar")
     }
-    
+
     run.configure {
         main = "Start"
         workingDir("runtime/")
