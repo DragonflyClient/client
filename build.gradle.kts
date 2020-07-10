@@ -76,6 +76,9 @@ sourceSets {
         java {
             srcDirs("src/main/resources")
         }
+        resources {
+            srcDirs("resources/")
+        }
     }
 }
 
