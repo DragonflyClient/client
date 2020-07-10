@@ -63,7 +63,10 @@ val fatJar = task("fatJar", type = Jar::class) {
     manifest {
         attributes["Main-Class"] = "net.minecraft.client.main.Main"
     }
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    from(configurations.runtimeClasspath.get()
+        .filter { !it.absolutePath.contains("libraries-minecraft") }
+        .map { if (it.isDirectory) it else zipTree(it) }
+    )
     with(tasks.jar.get() as CopySpec)
 }
 
