@@ -48,7 +48,15 @@ object AutoUpdater {
             programArguments.add("--requireInstaller")
         }
 
-        LogManager.getLogger().info("Launching auto-updater and terminating Dragonfly...")
-        Runtime.getRuntime().exec("java -jar $updater ${programArguments.joinToString(" ")}")
+        val command = "java -jar $updater ${programArguments.joinToString(" ")}"
+        LogManager.getLogger().info("Launching auto-updater with command $command")
+
+        val process = Runtime.getRuntime().exec(command)
+
+        process.inputStream.reader().useLines {
+            it.forEach { line -> LogManager.getLogger().info("Updater: $line") }
+        }
+
+        LogManager.getLogger().info("Updater finished with exit code " + process.waitFor())
     }
 }

@@ -54,7 +54,8 @@ application {
         "-XX:+UseCodeCacheFlushing",
         "-XX:SoftRefLRUPolicyMSPerMB=20000",
         "-XX:ParallelGCThreads=10",
-        "-XX:+UnlockCommercialFeatures"
+        "-XX:+UnlockCommercialFeatures",
+        "-Dlog4j.configurationFile=assets\\log_configs\\client-1.7.xml"
     )
 }
 

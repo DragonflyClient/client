@@ -103,7 +103,6 @@ object DragonflyVersion {
      */
     fun getChannel(): UpdateChannel? {
         val properties = File("${localStorage}\\installation_properties.json")
-        println(properties)
         return properties.takeIf { it.exists() }?.reader()?.use {
             val json = JsonParser().parse(it)?.asJsonObject
             json?.get("channel")?.asString?.let { channel -> UpdateChannel.getByIdentifier(channel) }

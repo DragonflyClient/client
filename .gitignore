@@ -21,3 +21,4 @@ gradlew.bat
 /runtime/servers.dat
 /runtime/transition-tracker
 /runtime/assets/skins
+/runtime/logs
