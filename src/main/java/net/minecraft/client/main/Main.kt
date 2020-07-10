@@ -28,10 +28,6 @@ object Main {
         val runtimeMxBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
         val arguments: List<String> = runtimeMxBean.inputArguments
 
-        println("----- ARGUMENTS -----")
-        arguments.forEach { println(it) }
-        println("----- ARGUMENTS -----")
-
         System.setProperty("java.net.preferIPv4Stack", "true")
         val optionParser = OptionParser()
         optionParser.allowsUnrecognizedOptions()

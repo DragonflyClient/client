@@ -16,6 +16,7 @@ dependencies {
     testImplementation("junit:junit:4.13")
 
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
 
     implementation(fileTree("libraries"))
     implementation(fileTree("libraries-minecraft"))
@@ -55,6 +56,21 @@ application {
         "-XX:ParallelGCThreads=10",
         "-XX:+UnlockCommercialFeatures"
     )
+}
+
+val fatJar = task("fatJar", type = Jar::class) {
+    baseName = "${project.name}-fat"
+    manifest {
+        attributes["Main-Class"] = "net.minecraft.client.main.Main"
+    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    with(tasks.jar.get() as CopySpec)
+}
+
+tasks {
+    "build" {
+        dependsOn(fatJar)
+    }
 }
 
 sourceSets {

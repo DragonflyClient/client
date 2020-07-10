@@ -16,6 +16,7 @@ import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.input.Keyboard
+import javax.xml.bind.JAXBElement
 
 /**
  * The user interface that forces the user to enter a key to unlock the Dragonfly Client.
