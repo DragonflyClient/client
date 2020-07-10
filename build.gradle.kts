@@ -77,7 +77,7 @@ tasks {
             attributes["Main-Class"] = "net.minecraft.client.main.Main"
         }
         from(configurations.runtimeClasspath.get()
-            .filter { !it.absolutePath.contains("libraries-minecraft") }
+            .filter { !it.absolutePath.contains("libraries-minecraft") || it.absolutePath.contains("netty-all") }
             .map { if (it.isDirectory) it else zipTree(it) }
         )
         with(jar.get() as CopySpec)
