@@ -1,10 +1,17 @@
 package net.inceptioncloud.dragonfly.versioning.updater
 
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
+import net.inceptioncloud.dragonfly.versioning.DragonflyVersion.versionStatus
 import org.apache.logging.log4j.LogManager
 
+/**
+ * A bridge to the Dragonfly auto updater.
+ */
 object AutoUpdater {
 
+    /**
+     * Checks whether an update for Dragonfly is available is available.
+     */
     fun isUpdateAvailable(): Boolean {
         val remote = DragonflyVersion.remoteVersion
         val local = DragonflyVersion.localVersion
@@ -14,7 +21,7 @@ object AutoUpdater {
             return false
         }
 
-        return when (DragonflyVersion.compareVersions(local, remote)) {
+        return when (DragonflyVersion.compareVersionsPlain(local, remote)) {
             1 -> {
                 LogManager.getLogger().info("The local version ($local) is ahead of the remote version ($remote)!")
                 false
@@ -30,8 +37,18 @@ object AutoUpdater {
         }
     }
 
+    /**
+     * Launches the updater from the Dragonfly local storage.
+     */
     fun update() {
+        val updater = System.getenv("appdata") + "\\Dragonfly\\Dragonfly-Updater.jar"
+        val programArguments = mutableListOf("--version=${DragonflyVersion.remoteVersion.toString()}")
+
+        if (versionStatus?.requiresInstaller == true) {
+            programArguments.add("--requireInstaller")
+        }
+
         LogManager.getLogger().info("Launching auto-updater and terminating Dragonfly...")
-        Runtime.getRuntime().exec("java -jar dragonfly/Dragonfly-Updater.jar")
+        Runtime.getRuntime().exec("java -jar $updater ${programArguments.joinToString(" ")}")
     }
 }

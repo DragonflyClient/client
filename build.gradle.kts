@@ -67,12 +67,6 @@ val fatJar = task("fatJar", type = Jar::class) {
     with(tasks.jar.get() as CopySpec)
 }
 
-tasks {
-    "build" {
-        dependsOn(fatJar)
-    }
-}
-
 sourceSets {
     main {
         java {
@@ -82,13 +76,19 @@ sourceSets {
 }
 
 tasks {
+    "build" {
+        dependsOn(fatJar)
+    }
+    
     run.configure {
         main = "Start"
         workingDir("runtime/")
     }
+
     test {
         useJUnit()
     }
+
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.freeCompilerArgs += listOf(
@@ -98,12 +98,15 @@ tasks {
             "-Xuse-experimental=kotlin.Experimental"
         )
     }
+
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+
     compileJava {
         options.encoding = "UTF-8"
     }
+
     compileTestJava {
         options.encoding = "UTF-8"
     }

@@ -1,10 +1,10 @@
 package net.inceptioncloud.dragonfly.versioning
 
+import com.google.gson.Gson
 import com.google.gson.JsonParser
-import org.apache.logging.log4j.LogManager
+import khttp.get
 import java.io.File
 import java.lang.IllegalStateException
-import java.net.URL
 
 /**
  * Stores the local and remote version of Dragonfly and compares them considering the selected
@@ -22,6 +22,14 @@ object DragonflyVersion {
      * content delivery network for Dragonfly.
      */
     val remoteVersion: Version? by lazy { getRemoteVersionString()?.let { Version.of(it) } }
+
+    /**
+     * Retrieves the current version status from the Inception Cloud API Services.
+     */
+    val versionStatus: VersionStatus? by lazy<VersionStatus?> {
+        val result: String = get("https://api.inceptioncloud.net/version?channel=${getChannel()?.identifier ?: "stable"}").text
+        Gson().fromJson(result, VersionStatus::class.java)
+    }
 
     /**
      * The string representation of the [localVersion].
@@ -45,7 +53,7 @@ object DragonflyVersion {
             "No update channel set in installation_properties.json!"
         )) {
             UpdateChannel.STABLE -> compareVersionsStable(first, second)
-            UpdateChannel.EARLY_ACCESS_PROGRAM -> compareVersionsEap(first, second)
+            UpdateChannel.EARLY_ACCESS_PROGRAM -> compareVersionsPlain(first, second)
         }
     }
 
@@ -60,7 +68,7 @@ object DragonflyVersion {
     /**
      * Compares the local to the remote version.
      */
-    private fun compareVersionsEap(first: Version, second: Version): Int = compareVersionParts(
+    fun compareVersionsPlain(first: Version, second: Version): Int = compareVersionParts(
         first.toVersionParts(),
         second.toVersionParts()
     )
@@ -103,16 +111,7 @@ object DragonflyVersion {
     }
 
     /**
-     * Fetches the remote version from the Inception Cloud content delivery network and returns
-     * the string value.
+     * Returns the version from the [versionStatus].
      */
-    private fun getRemoteVersionString(): String? {
-        return try {
-            URL("https://cdn.icnet.dev/dragonfly/version").readText()
-        } catch (e: Exception) {
-            LogManager.getLogger().warn("Could not fetch remote version!")
-            e.printStackTrace()
-            null
-        }
-    }
+    private fun getRemoteVersionString(): String? = versionStatus?.version
 }
