@@ -59,18 +59,6 @@ application {
     )
 }
 
-val fatJar = task("fatJar", type = Jar::class) {
-    baseName = "${project.name}-fat"
-    manifest {
-        attributes["Main-Class"] = "net.minecraft.client.main.Main"
-    }
-    from(configurations.runtimeClasspath.get()
-        .filter { !it.absolutePath.contains("libraries-minecraft") }
-        .map { if (it.isDirectory) it else zipTree(it) }
-    )
-    with(tasks.jar.get() as CopySpec)
-}
-
 sourceSets {
     main {
         java {
@@ -83,8 +71,41 @@ sourceSets {
 }
 
 tasks {
-    "build" {
-        dependsOn(fatJar)
+    register<Jar>("fatJar") {
+        baseName = "${project.name}-fat"
+        manifest {
+            attributes["Main-Class"] = "net.minecraft.client.main.Main"
+        }
+        from(configurations.runtimeClasspath.get()
+            .filter { !it.absolutePath.contains("libraries-minecraft") }
+            .map { if (it.isDirectory) it else zipTree(it) }
+        )
+        with(jar.get() as CopySpec)
+    }
+
+    register("copy") {
+        dependsOn("copyJar", "copyJson")
+    }
+
+    register<Copy>("copyJar") {
+        dependsOn("fatJar")
+        val outputName = "${project.name}-fat-${project.version}.jar"
+
+        from("build/libs/")
+        include(outputName)
+
+        destinationDir = file("C:\\Users\\user\\AppData\\Roaming\\.minecraft\\versions\\Dragonfly-1.8.8")
+        rename(outputName, "Dragonfly-1.8.8.jar")
+    }
+
+    register<Copy>("copyJson") {
+        from("resources/")
+        include("Dragonfly-1.8.8.json")
+        into("C:\\Users\\user\\AppData\\Roaming\\.minecraft\\versions\\Dragonfly-1.8.8\\")
+    }
+
+    build.configure {
+        dependsOn("fatJar")
     }
     
     run.configure {
