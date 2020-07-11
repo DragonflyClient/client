@@ -7,7 +7,6 @@ gradlew.bat
 /gradle/
 /.idea/
 /.gradle/
-/buildscript/
 
 # Runtime
 /runtime/resourcepacks
