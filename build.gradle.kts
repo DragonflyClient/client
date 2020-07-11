@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "net.inceptioncloud"
-version = "1.0.0.1"
+version = "1.0.0.2"
 
 val outputName = "${project.name}-fat-${project.version}.jar"
 
@@ -104,13 +104,9 @@ tasks {
             val versionFile = File("src\\main\\java\\net\\inceptioncloud\\dragonfly\\versioning\\DragonflyVersion.kt")
 
             if (releaseVersion != version) {
-                println("The build script version isn't identical to the release version! ($version / $releaseVersion)")
-                return@doFirst
-            }
-
-            if (!versionFile.readText().contains("Version(${releaseVersion.replace(".", ", ")})")) {
-                println("The client version isn't identical to the release version!")
-                return@doFirst
+                throw InvalidUserDataException("The build script version isn't identical to the release version! ($version / $releaseVersion)")
+            } else if (!versionFile.readText().contains("Version(${releaseVersion.replace(".", ", ")})")) {
+                throw InvalidUserDataException("The client version isn't identical to the release version!")
             }
 
             val remoteHost = "45.85.219.34"
