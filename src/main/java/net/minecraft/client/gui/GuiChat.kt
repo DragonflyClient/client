@@ -44,6 +44,11 @@ open class GuiChat : GuiScreen {
      */
     private var manuallyClosed = false
 
+    /**
+     * Whether the message has been sent. In this case, the message should never be restored.
+     */
+    private var messageSent = false
+
     constructor()
     constructor(defaultText: String) {
         defaultInputFieldText = defaultText
@@ -113,7 +118,7 @@ open class GuiChat : GuiScreen {
      * [messageRestoreMode][OptionsSectionChat.messageRestoreMode].
      */
     private fun shouldCacheMessage() = OptionsSectionChat.messageRestoreMode.key.get().let {
-        it != 0 && ((it == 1 && !manuallyClosed) || it == 2)
+        it != 0 && ((it == 1 && !manuallyClosed) || it == 2) && !messageSent
     }
 
     /**
@@ -152,6 +157,7 @@ open class GuiChat : GuiScreen {
                 messageToSend = s
             }
             manuallyClosed = true
+            messageSent = true
             transition.setBackward()
         }
     }

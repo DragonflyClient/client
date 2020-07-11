@@ -28,7 +28,7 @@ object OptionsSectionChat {
 
         key {
             fileKey = "messageRestoreMode"
-            default = { 2 }
+            default = { 1 }
         }
     }
 

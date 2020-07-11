@@ -85,7 +85,7 @@ class OptionEntryMultipleChoice(
      * @see OptionChoice
      * @see getChoiceByIdentifier
      */
-    private var selectedChoice = getChoiceByIdentifier(default)!!
+    private var selectedChoice = getChoiceByIdentifier(key.get())!!
 
     /**
      * The index of the currently selected option.
