@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.*
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
+import java.util.*
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -25,6 +26,11 @@ import kotlin.reflect.jvm.isAccessible
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
 abstract class Widget<W : Widget<W>> : IDraw {
+
+    /**
+     * An object on which some operations are synchronized to provide thread-safety.
+     */
+    var mutex = Any()
 
     /**
      * Whether the widget is an internal clone. Can be used to prevent spamming the console.
@@ -66,7 +72,7 @@ abstract class Widget<W : Widget<W>> : IDraw {
      * override all animations that were applied before. To add an animation on top of the stack, use
      * [attachAnimation]. Animations in any place of the stack can be removed by calling [detachAnimation].
      */
-    val animationStack = mutableListOf<Animation>()
+    val animationStack: MutableList<Animation> = Collections.synchronizedList(mutableListOf<Animation>())
 
     /**
      * The animation scratchpad of this object.
@@ -113,9 +119,11 @@ abstract class Widget<W : Widget<W>> : IDraw {
 
         if (!animationStack.isNullOrEmpty()) {
             scratchpad = clone().apply { isInternalClone = true }
-            animationStack.removeAll { it.finished }
-            animationStack.toTypedArray().forEach { it.tick() }
-            animationStack.toTypedArray().forEach { it.applyToShape(scratchpad = scratchpad!!, base = this) }
+            synchronized(mutex) {
+                animationStack.removeAll { it.finished }
+                animationStack.toTypedArray().forEach { it.tick() }
+                animationStack.toTypedArray().forEach { it.applyToShape(scratchpad = scratchpad!!, base = this) }
+            }
 
             if (!isStateEqual(scratchpad as W)) {
                 stateChanged(scratchpad as W)

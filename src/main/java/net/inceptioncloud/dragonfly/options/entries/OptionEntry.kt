@@ -7,14 +7,15 @@ import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward
 import net.inceptioncloud.dragonfly.ui.components.list.UIListEntry
+import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui.*
 import org.lwjgl.input.Mouse
 
 /**
  * An abstract entry that can be used for every type of option key.
  */
-abstract class OptionEntry<T>(val name: String, val description: String) : UIListEntry()
-{
+abstract class OptionEntry<T>(val name: String, val description: String) : UIListEntry() {
     /**
      * The time when the cursor moved on the trigger.
      *
@@ -40,29 +41,19 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
     /**
      * The transition that flies in the description and its background.
      *
-     * When the condition ([isDescriptionShown]) is fulfilled, this transition will start
+     * When the condition ([isTriggerHovered]) is fulfilled, this transition will start
      * moving a background and the description text from the left over the entry.
      */
     private val transitionDescription = SmoothDoubleTransition.builder()
         .start(0.0).end(1.0)
         .fadeIn(20).stay(20).fadeOut(0)
-        .autoTransformator(ForwardBackward { isDescriptionShown() })
-        .build()
-
-    /**
-     * The transition that shows the hover hint when the cursor is moved over the trigger.
-     */
-    private val transitionHoverHint = SmoothDoubleTransition.builder()
-        .start(0.0).end(1.0)
-        .fadeIn(20).stay(20).fadeOut(20)
         .autoTransformator(ForwardBackward { isTriggerHovered() })
         .build()
 
     /**
      * Called when the entry is drawn at a certain position with the given height and with.
      */
-    final override fun drawEntry(x: Int, y: Int, height: Int, width: Int)
-    {
+    final override fun drawEntry(x: Int, y: Int, height: Int, width: Int) {
         this.height = height
 
         drawRect(x, y, x + width, y + height, RGB.of(BACKGROUND).alpha(0.7F).rgb())
@@ -70,23 +61,7 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
 
         drawContent(x, y, height, width)
 
-        // Manages the hover state of the description trigger
-        if (isTriggerHovered())
-        {
-            if (triggerHoverMoment == 0L)
-            {
-                triggerHoverMoment = System.currentTimeMillis()
-            } else if (isDescriptionShown() && !Mouse.isGrabbed())
-            {
-                Mouse.setGrabbed(true)
-            }
-        } else if (triggerHoverMoment != 0L) {
-            triggerHoverMoment = 0
-            Mouse.setGrabbed(false)
-        }
-
-        // Draws the description over the content
-        drawRect(x, y, x + 1, y + height, RGB.of(FOREGROUND).alpha(transitionHoverHint.get().toFloat() / 2).rgb())
+        // description overlay
         drawRect(x, y, x + (width * transitionDescription.get()).toInt(), y + height, BACKGROUND.rgb)
 
         val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 12 }
@@ -106,20 +81,15 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
     }
 
     /**
-     * Checks whether the cursor stayed on the trigger for at least two seconds.
-     *
-     * If the condition is fulfilled, the description appears from the left since the
-     * [transitionDescription] transition is running.
-     */
-    private fun isDescriptionShown() = triggerHoverMoment != 0L && System.currentTimeMillis() - triggerHoverMoment >= 1_200
-
-    /**
      * Checks whether the description trigger on the left side of the entry is hovered.
      *
      * If it's hovered, a white line appears that indicates that. After the cursor stays on
      * this trigger for two seconds, the description will fly in from the left.
      */
-    private fun isTriggerHovered() = getMouseX() in x..x + 5 && getMouseY() in y..y + height
+    private fun isTriggerHovered() =
+        getMouseX() in (x - 19)..(x - 5)
+                && getMouseY() in (y + 3)..(y + height - 3)
+                && (Minecraft.getMinecraft().currentScreen as? ModOptionsUI)?.helpAttachedEntry == this
 
     /**
      * Extension to [drawEntry].
@@ -129,14 +99,30 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
     /**
      * Called when the entry is (double-) clicked.
      */
-    override fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int, entryHeight: Int)
-    {
+    override fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int, entryHeight: Int) {
     }
 
     /**
      * Removes the selection effect.
      */
-    override fun drawSelectionEffect(left: Int, right: Int, topY: Int, targetHeight: Int)
-    {
+    override fun drawSelectionEffect(left: Int, right: Int, topY: Int, targetHeight: Int) {
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as OptionEntry<*>
+
+        if (name != other.name) return false
+        if (description != other.description) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + description.hashCode()
+        return result
     }
 }

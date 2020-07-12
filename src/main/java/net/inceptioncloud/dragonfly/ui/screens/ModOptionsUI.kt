@@ -3,8 +3,13 @@ package net.inceptioncloud.dragonfly.ui.screens
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
 import net.inceptioncloud.dragonfly.design.color.RGB
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.entries.OptionEntry
@@ -15,8 +20,10 @@ import net.inceptioncloud.dragonfly.options.sections.OptionSection
 import net.inceptioncloud.dragonfly.ui.components.button.BluePaletteButton
 import net.inceptioncloud.dragonfly.ui.components.button.ImageButton
 import net.inceptioncloud.dragonfly.ui.components.list.UIList
+import net.inceptioncloud.dragonfly.ui.components.list.UIListEntry
 import net.inceptioncloud.dragonfly.ui.components.list.UIListFactory.Companion.uiListFactory
 import net.inceptioncloud.dragonfly.utils.TimeUtils
+import net.inceptioncloud.dragonfly.utils.smartLog
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
@@ -40,6 +47,7 @@ import java.util.*
  * @property previousScreen the screen which this ui was opened from
  */
 class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
+
     /**
      * List with all setting elements.
      */
@@ -54,10 +62,23 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         "dragonflyres/ingame_background_${if (Random().nextBoolean()) 2 else 1}.png"
     )
 
+    private var focusedEntry: UIListEntry? = null
+
+    var helpAttachedEntry: OptionEntry<*>? = null
+
     /**
      * UI Initialization
      */
     override fun initGui() {
+        +Image(
+            resourceLocation = ResourceLocation("dragonflyres/icons/info.png"),
+            x = 0.0,
+            y = 0.0,
+            width = 14.0,
+            height = 14.0,
+            color = WidgetColor(255, 255, 255, 0)
+        ) id "help-icon"
+
         uiList = uiListFactory {
             dimensions {
                 widthIn = (width / 2.2).toInt().coerceAtLeast(250).coerceAtMost(350)
@@ -100,6 +121,8 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
      */
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         drawBackground()
+        buffer.render()
+
         drawHeader()
         drawFooter()
 
@@ -108,7 +131,52 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         drawGradientVertical(0, 30, width, 35, Color(0, 0, 0, 80).rgb, Color(0, 0, 0, 0).rgb)
         drawGradientVertical(0, height - 23, width, height - 18, Color(0, 0, 0, 0).rgb, Color(0, 0, 0, 80).rgb)
 
-        super.drawScreen(mouseX, mouseY, partialTicks)
+        for (guiButton in ArrayList(buttonList)) {
+            guiButton.drawButton(mc, mouseX, mouseY)
+        }
+
+        val newFocusedEntry = uiList.entries
+            .firstOrNull {
+                if (focusedEntry == it) {
+                    mouseX in it.x - 24..it.x + uiList.listWidth
+                } else {
+                    mouseX in it.x..it.x + uiList.listWidth
+                } && mouseY in it.y..it.y + uiList.entryHeight
+            }
+
+        val helpIcon = getWidget<Image>("help-icon")
+        if (newFocusedEntry == null && focusedEntry != null) {
+            focusedEntry = newFocusedEntry
+            helpAttachedEntry = null
+            helpIcon?.morph(50, EaseCubic.IN_OUT) {
+                color = WidgetColor(255, 255, 255, 0)
+            }?.start()
+        } else if (newFocusedEntry is OptionEntry<*> && newFocusedEntry != focusedEntry) {
+            focusedEntry = newFocusedEntry
+            helpAttachedEntry = newFocusedEntry
+            if (helpIcon?.color?.alpha != 255) {
+                helpIcon?.run {
+                    x = focusedEntry!!.x - 19.0
+                    y = focusedEntry!!.y + 3.0
+                    morph(50, EaseCubic.IN_OUT) {
+                        color = WidgetColor(255, 255, 255, 255)
+                    }?.start()
+                }
+            } else {
+                helpIcon.morph(25, EaseCubic.IN_OUT) {
+                    x = focusedEntry!!.x - 19.0
+                    y = focusedEntry!!.y + 3.0
+                }?.start()
+            }
+        }
+
+        if (helpAttachedEntry != null) {
+            helpIcon?.apply {
+                isVisible = true
+                x = helpAttachedEntry!!.x - 19.0
+                y = helpAttachedEntry!!.y + 3.0
+            }
+        }
     }
 
     /**
