@@ -69,7 +69,7 @@ open class PublishTask : DefaultTask() {
         val host = readSecret("sftp_host")
         val username = readSecret("sftp_user")
         val password = readSecret("sftp_password")
-        val cdn = "/var/www/cdn/dragonfly/${VersionTask.globalVersion}/"
+        val cdn = "/var/www/cdn/dragonfly/${VersionTask.globalVersion}"
 
         val jsch = JSch().apply { setKnownHosts("$secrets/known_hosts") }
         val jschSession: Session = jsch.getSession(username, host)
@@ -81,7 +81,17 @@ open class PublishTask : DefaultTask() {
         logger.info("Uploading to Content Delivery Network...")
         val channel = jschSession.openChannel("sftp") as ChannelSftp
         channel.connect()
-        channel.mkdir(cdn)
+
+        try {
+            channel.mkdir(cdn)
+        } catch (e: SftpException) {
+            logger.info("Content Delivery Network directory does already exist, recreating...")
+            channel.rm("$cdn/Dragonfly-1.8.8.jar")
+            channel.rm("$cdn/Dragonfly-1.8.8.json")
+            channel.rmdir(cdn)
+            channel.mkdir(cdn)
+        }
+
         channel.put("/build/libs/$outputName", "$cdn/Dragonfly-1.8.8.jar")
         channel.put("/resources/Dragonfly-1.8.8.json", "$cdn/Dragonfly-1.8.8.json")
         channel.exit()
