@@ -1830,7 +1830,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             }
 
             if (this.currentScreen == null && this.gameSettings.keyBindCommand.isPressed() && flag) {
-                LogManager.getLogger().info("Player pressed hotkey to open command input");
                 this.displayGuiScreen(new GuiChat("/"));
             }
 
