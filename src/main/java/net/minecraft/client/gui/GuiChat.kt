@@ -52,7 +52,6 @@ open class GuiChat : GuiScreen {
     constructor()
     constructor(defaultText: String) {
         defaultInputFieldText = defaultText
-        LogManager.getLogger().info("Default field text is $defaultText")
     }
 
     /**
@@ -74,7 +73,6 @@ open class GuiChat : GuiScreen {
         inputField!!.text = defaultInputFieldText
         inputField!!.setCanLoseFocus(false)
 
-        LogManager.getLogger().info("Input field text is ${inputField!!.text}")
         if (messageCache != null && (defaultInputFieldText == "" || messageCache!!.startsWith(defaultInputFieldText))) {
             inputField!!.text = messageCache
             messageCache = null
