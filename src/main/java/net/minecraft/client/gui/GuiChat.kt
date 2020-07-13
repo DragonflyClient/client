@@ -52,6 +52,7 @@ open class GuiChat : GuiScreen {
     constructor()
     constructor(defaultText: String) {
         defaultInputFieldText = defaultText
+        LogManager.getLogger().info("Default field text is $defaultText")
     }
 
     /**
@@ -73,9 +74,11 @@ open class GuiChat : GuiScreen {
         inputField!!.text = defaultInputFieldText
         inputField!!.setCanLoseFocus(false)
 
-        if (messageCache != null) {
+        LogManager.getLogger().info("Input field text is ${inputField!!.text}")
+        if (messageCache != null && (defaultInputFieldText == "" || messageCache!!.startsWith(defaultInputFieldText))) {
             inputField!!.text = messageCache
             messageCache = null
+            LogManager.getLogger().info("Restored message ${inputField!!.text}")
         }
     }
 
@@ -103,7 +106,7 @@ open class GuiChat : GuiScreen {
      */
     override fun onGuiClosed() {
         if (shouldCacheMessage()) {
-            LogManager.getLogger().debug("Cached chat message before closure.")
+            LogManager.getLogger().info("Cached chat message before closure: " + inputField!!.text)
             messageCache = inputField!!.text
         }
 
@@ -117,9 +120,8 @@ open class GuiChat : GuiScreen {
      * Returns whether the currently entered message should be cached depending on the
      * [messageRestoreMode][OptionsSectionChat.messageRestoreMode].
      */
-    private fun shouldCacheMessage() = OptionsSectionChat.messageRestoreMode.key.get().let {
-        it != 0 && ((it == 1 && !manuallyClosed) || it == 2) && !messageSent
-    }
+    private fun shouldCacheMessage() = !messageSent && inputField!!.text.let { it.isNotEmpty() && it != "/" }
+            && OptionsSectionChat.messageRestoreMode.key.get().let { it != 0 && ((it == 1 && !manuallyClosed) || it == 2) }
 
     /**
      * Called from the main game loop to update the screen.
