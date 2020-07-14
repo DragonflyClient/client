@@ -4,7 +4,6 @@ import net.inceptioncloud.dragonfly.discord.RichPresenceAdapter;
 import net.inceptioncloud.dragonfly.state.play.MultiplayerState;
 import net.inceptioncloud.dragonfly.state.play.PlayingState;
 import net.inceptioncloud.dragonfly.state.play.SingleplayerState;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -24,7 +23,7 @@ public abstract class GameState
      *
      * @param consumer The consumer to handle the value
      */
-    public final void ifSingleplayer (@NotNull Consumer<SingleplayerState> consumer)
+    public final void ifSingleplayer (Consumer<SingleplayerState> consumer)
     {
         if (this instanceof SingleplayerState)
             consumer.accept((SingleplayerState) this);
@@ -35,7 +34,7 @@ public abstract class GameState
      *
      * @param consumer The consumer to handle the value
      */
-    public final void ifMultiplayer (@NotNull Consumer<MultiplayerState> consumer)
+    public final void ifMultiplayer (Consumer<MultiplayerState> consumer)
     {
         if (this instanceof MultiplayerState)
             consumer.accept((MultiplayerState) this);
@@ -46,7 +45,7 @@ public abstract class GameState
      *
      * @param consumer The consumer to handle the value
      */
-    public final void ifPlaying (@NotNull Consumer<PlayingState> consumer)
+    public final void ifPlaying (Consumer<PlayingState> consumer)
     {
         if (this instanceof PlayingState)
             consumer.accept((PlayingState) this);
