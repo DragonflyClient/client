@@ -60,8 +60,6 @@ public class RichPresenceAdapter
             .setEndTimestamp(endMillis)
             .setBigImage(bigImageKey, bigImageText)
             .setSmallImage(smallImageKey, smallImageText)
-            .setParty("myPartyId", 1, 6)
-            .setSecrets("secret-abababa", null)
             .build();
     }
 
