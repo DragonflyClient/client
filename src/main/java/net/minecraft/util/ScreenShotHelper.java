@@ -109,10 +109,14 @@ public class ScreenShotHelper
                 File file;
 
                 if (screenshotName == null) {
+                    LogManager.getLogger().info("screenshotsFolder = " + screenshotsFolder);
                     file = getTimestampedPNGFileForDirectory(screenshotsFolder);
                 } else {
                     file = new File(screenshotsFolder, screenshotName);
                 }
+
+                LogManager.getLogger().info("screenshotsFolder.getAbsolutePath() = " + screenshotsFolder.getAbsolutePath());
+                LogManager.getLogger().info("file.getAbsolutePath() = " + file.getAbsolutePath());
 
                 final ScreenshotEvent event = new ScreenshotEvent(bufferedimage[0], file);
                 Dragonfly.getEventBus().post(event);

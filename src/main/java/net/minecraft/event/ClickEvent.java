@@ -7,11 +7,19 @@ public class ClickEvent
 {
     private final ClickEvent.Action action;
     private final String value;
+    private final Runnable callback;
 
     public ClickEvent(ClickEvent.Action theAction, String theValue)
     {
         this.action = theAction;
         this.value = theValue;
+        this.callback = null;
+    }
+
+    public ClickEvent(Runnable callback) {
+        this.callback = callback;
+        this.action = Action.RUN_CALLBACK;
+        this.value = null;
     }
 
     /**
@@ -29,6 +37,13 @@ public class ClickEvent
     public String getValue()
     {
         return this.value;
+    }
+
+    /**
+     * Getter Method for {@link #callback}
+     */
+    public Runnable getCallback() {
+        return callback;
     }
 
     public boolean equals(Object p_equals_1_)
@@ -49,17 +64,9 @@ public class ClickEvent
             {
                 if (this.value != null)
                 {
-                    if (!this.value.equals(clickevent.value))
-                    {
-                        return false;
-                    }
+                    return this.value.equals(clickevent.value);
                 }
-                else if (clickevent.value != null)
-                {
-                    return false;
-                }
-
-                return true;
+                else return clickevent.value == null;
             }
         }
         else
@@ -70,7 +77,7 @@ public class ClickEvent
 
     public String toString()
     {
-        return "ClickEvent{action=" + this.action + ", value=\'" + this.value + '\'' + '}';
+        return "ClickEvent{action=" + this.action + ", value='" + this.value + '\'' + '}';
     }
 
     public int hashCode()
@@ -87,7 +94,8 @@ public class ClickEvent
         RUN_COMMAND("run_command", true),
         TWITCH_USER_INFO("twitch_user_info", false),
         SUGGEST_COMMAND("suggest_command", true),
-        CHANGE_PAGE("change_page", true);
+        CHANGE_PAGE("change_page", true),
+        RUN_CALLBACK("run_callback", false);
 
         private static final Map<String, ClickEvent.Action> nameMapping = Maps.<String, ClickEvent.Action>newHashMap();
         private final boolean allowedInChat;
@@ -111,7 +119,7 @@ public class ClickEvent
 
         public static ClickEvent.Action getValueByCanonicalName(String canonicalNameIn)
         {
-            return (ClickEvent.Action)nameMapping.get(canonicalNameIn);
+            return nameMapping.get(canonicalNameIn);
         }
 
         static {

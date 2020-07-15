@@ -1,7 +1,7 @@
 {
   "lastServer": {
     "serverName": "Inception Cloud :^)",
-    "serverIP": "inceptioncloud.net",
+    "serverIP": "inceptioncloud.net:25565",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -16,5 +16,6 @@
   "zoomMouseSensitivity": 79,
   "fontQuality": 2.0,
   "messageRestoreMode": 1,
-  "renderOwnName": true
+  "renderOwnName": true,
+  "screenshotUtilities": false
 }

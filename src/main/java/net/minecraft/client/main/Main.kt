@@ -25,9 +25,6 @@ object Main {
             return
         }
 
-        val runtimeMxBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
-        val arguments: List<String> = runtimeMxBean.inputArguments
-
         System.setProperty("java.net.preferIPv4Stack", "true")
         val optionParser = OptionParser()
         optionParser.allowsUnrecognizedOptions()
@@ -40,7 +37,7 @@ object Main {
         val specPort: OptionSpec<Int> =
             optionParser.accepts("port").withRequiredArg().ofType(Int::class.java).defaultsTo(25565)
         val specGameDir: OptionSpec<File> =
-            optionParser.accepts("gameDir").withRequiredArg().ofType(File::class.java).defaultsTo(File("."))
+            optionParser.accepts("gameDir").withRequiredArg().ofType(File::class.java).defaultsTo(File(System.getProperty("user.dir")))
         val specAssetsDir: OptionSpec<File> =
             optionParser.accepts("assetsDir").withRequiredArg().ofType(File::class.java)
         val specResourcePackDir: OptionSpec<File> =

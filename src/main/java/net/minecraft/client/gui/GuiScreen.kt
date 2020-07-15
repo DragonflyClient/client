@@ -392,6 +392,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                     } else {
                         LOGGER.error("Tried to handle twitch user but couldn't find them!")
                     }
+                } else if (clickevent.action == ClickEvent.Action.RUN_CALLBACK) {
+                    clickevent.callback?.run()
                 } else {
                     LOGGER.error("Don't know how to handle $clickevent")
                 }
@@ -670,16 +672,6 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         }
     }
 
-    private fun openWebLink(p_175282_1_: URI?) {
-        try {
-            val oclass = Class.forName("java.awt.Desktop")
-            val `object` = oclass.getMethod("getDesktop", *arrayOfNulls(0)).invoke(null)
-            oclass.getMethod("browse", *arrayOf<Class<*>>(URI::class.java)).invoke(`object`, p_175282_1_)
-        } catch (throwable: Throwable) {
-            LOGGER.error("Couldn't open link", throwable)
-        }
-    }
-
     /**
      * Called when the GUI is resized in order to update the world and the resolution
      */
@@ -735,6 +727,17 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                     }
                 }
             }
+
+        @JvmStatic
+        fun openWebLink(uri: URI?) {
+            try {
+                val oclass = Class.forName("java.awt.Desktop")
+                val `object` = oclass.getMethod("getDesktop", *arrayOfNulls(0)).invoke(null)
+                oclass.getMethod("browse", *arrayOf<Class<*>>(URI::class.java)).invoke(`object`, uri)
+            } catch (throwable: Throwable) {
+                LOGGER.error("Couldn't open link", throwable)
+            }
+        }
 
         @JvmStatic
         @JvmOverloads
