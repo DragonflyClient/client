@@ -1,5 +1,8 @@
 package net.minecraft.util;
 
+import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.event.client.ScreenshotEvent;
+import net.inceptioncloud.dragonfly.screenshot.ScreenshotUtilities;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -103,24 +106,33 @@ public class ScreenShotHelper
                     bufferedimage[0].setRGB(0, 0, finalWidth, finalHeight, pixelValues, 0, finalWidth1);
                 }
 
-                File file2;
+                File file;
 
                 if (screenshotName == null) {
-                    file2 = getTimestampedPNGFileForDirectory(screenshotsFolder);
+                    file = getTimestampedPNGFileForDirectory(screenshotsFolder);
                 } else {
-                    file2 = new File(screenshotsFolder, screenshotName);
+                    file = new File(screenshotsFolder, screenshotName);
+                }
+
+                final ScreenshotEvent event = new ScreenshotEvent(bufferedimage[0], file);
+                Dragonfly.getEventBus().post(event);
+
+                if (event.isCancelled()) {
+                    return;
                 }
 
                 try {
-                    ImageIO.write(bufferedimage[0], "png", file2);
+                    ImageIO.write(bufferedimage[0], "png", file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                IChatComponent ichatcomponent = new ChatComponentText(file2.getName());
-                ichatcomponent.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file2.getAbsolutePath()));
+                IChatComponent ichatcomponent = new ChatComponentText(file.getName());
+                ichatcomponent.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
                 ichatcomponent.getChatStyle().setUnderlined(Boolean.TRUE);
 
-                callback.accept(new ChatComponentTranslation("screenshot.success", ichatcomponent));
+                if (!ScreenshotUtilities.screenshotTaken(bufferedimage[0], file)) {
+                    callback.accept(new ChatComponentTranslation("screenshot.success", ichatcomponent));
+                }
             });
 
         } catch (Exception exception) {

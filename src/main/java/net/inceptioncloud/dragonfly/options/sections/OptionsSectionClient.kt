@@ -11,8 +11,8 @@ import net.minecraft.client.Minecraft
  *
  * This object contains all options for the client itself, like the window or the program behaviour.
  */
-object OptionsSectionClient
-{
+object OptionsSectionClient {
+
     /**
      * ## Windowed Fullscreen
      * If this is enabled, the user can use the cursor outside the client window when it is visible (thus in a GUI).
@@ -35,15 +35,31 @@ object OptionsSectionClient
     }
 
     /**
+     * ## Screenshot Utilities
+     *
+     * Enables uploading and copying of screenshots directly from within the client.
+     */
+    @JvmStatic
+    val screenshotUtilities = optionEntryBoolean {
+        name = "Screenshot Utilities"
+        description = "Provides additional utility functions to the screenshot system like uploading and " +
+                "copying. Note that this overrides the default screenshot behavior."
+        key {
+            fileKey = "screenshotUtilities"
+            default = { true }
+        }
+    }
+
+    /**
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
-    fun init()
-    {
+    fun init() {
         optionSection {
             title = "Client"
 
             +windowedFullscreen
+            +screenshotUtilities
         }
     }
 }
