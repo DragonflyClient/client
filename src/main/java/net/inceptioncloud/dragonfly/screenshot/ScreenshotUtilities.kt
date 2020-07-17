@@ -120,7 +120,7 @@ object ScreenshotUtilities {
      */
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun savePermanently(image: BufferedImage, file: File) {
-        GlobalScope.launch (Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             val chatGUI = Minecraft.getMinecraft().ingameGUI.chatGUI
             ImageIO.write(image, "png", file)
             chatGUI.printChatMessage("§8·•● §6Dragonfly §8» §7Your screenshot has been saved to your device.")
@@ -154,5 +154,24 @@ object ScreenshotUtilities {
     /**
      * Convenient function for printing a [message] to the chat.
      */
-    private fun GuiNewChat.printChatMessage(message: String) = printChatMessage(ChatComponentText(message))
+    private fun GuiNewChat.printChatMessage(message: String) {
+        val split = message.split(" ")
+        var colorCode = ""
+        val total = split.joinToString(" ") {
+            var unformatted = it
+            if (unformatted.startsWith("§")) {
+                colorCode = ""
+                while (unformatted.startsWith("§")) {
+                    colorCode += unformatted.substring(0..1)
+                    unformatted = unformatted.substring(2)
+                }
+
+                colorCode + unformatted
+            } else {
+                colorCode + it
+            }
+        }
+
+        printChatMessage(ChatComponentText(total))
+    }
 }
