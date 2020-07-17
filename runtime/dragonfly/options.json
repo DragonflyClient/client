@@ -1,7 +1,7 @@
 {
   "lastServer": {
     "serverName": "Inception Cloud :^)",
-    "serverIP": "inceptioncloud.net",
+    "serverIP": "inceptioncloud.net:25565",
     "lan": false
   },
   "enableZoomAnimation": true,
