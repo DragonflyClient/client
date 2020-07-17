@@ -11,6 +11,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.event.client.ClientStartupEvent;
 import net.inceptioncloud.dragonfly.event.client.GraphicsInitializedEvent;
+import net.inceptioncloud.dragonfly.event.client.ResizeEvent;
 import net.inceptioncloud.dragonfly.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
@@ -1546,14 +1547,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         this.displayWidth = Math.max(1, width);
         this.displayHeight = Math.max(1, height);
+        ScaledResolution scaledresolution = new ScaledResolution(this);
 
         if (this.currentScreen != null) {
-            ScaledResolution scaledresolution = new ScaledResolution(this);
             this.currentScreen.onResize(this, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight());
         }
 
         this.loadingScreen = new LoadingScreenRenderer(this);
         this.updateFramebufferSize();
+
+        final ResizeEvent resizeEvent = new ResizeEvent(width, height, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight());
+        Dragonfly.getEventBus().post(resizeEvent);
     }
 
     private void updateFramebufferSize ()
