@@ -109,14 +109,10 @@ public class ScreenShotHelper
                 File file;
 
                 if (screenshotName == null) {
-                    LogManager.getLogger().info("screenshotsFolder = " + screenshotsFolder);
                     file = getTimestampedPNGFileForDirectory(screenshotsFolder);
                 } else {
                     file = new File(screenshotsFolder, screenshotName);
                 }
-
-                LogManager.getLogger().info("screenshotsFolder.getAbsolutePath() = " + screenshotsFolder.getAbsolutePath());
-                LogManager.getLogger().info("file.getAbsolutePath() = " + file.getAbsolutePath());
 
                 final ScreenshotEvent event = new ScreenshotEvent(bufferedimage[0], file);
                 Dragonfly.getEventBus().post(event);
@@ -125,16 +121,16 @@ public class ScreenShotHelper
                     return;
                 }
 
-                try {
-                    ImageIO.write(bufferedimage[0], "png", file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                IChatComponent ichatcomponent = new ChatComponentText(file.getName());
-                ichatcomponent.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
-                ichatcomponent.getChatStyle().setUnderlined(Boolean.TRUE);
-
                 if (!ScreenshotUtilities.screenshotTaken(bufferedimage[0], file)) {
+                    try {
+                        ImageIO.write(bufferedimage[0], "png", file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    IChatComponent ichatcomponent = new ChatComponentText(file.getName());
+                    ichatcomponent.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
+                    ichatcomponent.getChatStyle().setUnderlined(Boolean.TRUE);
                     callback.accept(new ChatComponentTranslation("screenshot.success", ichatcomponent));
                 }
             });

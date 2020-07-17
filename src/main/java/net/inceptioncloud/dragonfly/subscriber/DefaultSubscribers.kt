@@ -21,7 +21,8 @@ object DefaultSubscribers {
             register(TickSubscriber())
             register(LastServerSaveSubscriber())
             register(StartupGuiSubscriber)
-            register(DeveloperModeSubscriber())
+            register(DeveloperModeSubscriber)
+            register(ShutdownSubscriber)
         }
     }
 }

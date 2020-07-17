@@ -8,7 +8,7 @@ import net.minecraft.client.gui.Gui
 import java.awt.Color
 import java.awt.Font
 
-class DeveloperModeSubscriber {
+object DeveloperModeSubscriber {
     @Subscribe
     fun postRender(event: PostRenderEvent) {
         if (!Dragonfly.isDeveloperMode)
