@@ -5,7 +5,6 @@ import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette;
 import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor;
-import net.inceptioncloud.dragonfly.impl.Tickable;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion;
@@ -25,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.IntSupplier;
 
-public class GuiNewChat extends Gui implements Tickable
+public class GuiNewChat extends Gui
 {
     private static final Logger logger = LogManager.getLogger();
 
@@ -80,8 +79,6 @@ public class GuiNewChat extends Gui implements Tickable
     public GuiNewChat (Minecraft mcIn)
     {
         this.mc = mcIn;
-
-        Dragonfly.handleTickable(this);
     }
 
     public static int calculateChatboxWidth (float chatWidthSetting)
@@ -108,11 +105,7 @@ public class GuiNewChat extends Gui implements Tickable
         return Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen instanceof GuiChat;
     }
 
-    /**
-     * Handle the mod tick.
-     */
-    @Override
-    public void modTick ()
+    public void drawChat (int updateTimes)
     {
         final double difference = Math.abs(targetHeight - height);
         final double factor = 0.05;
@@ -121,10 +114,7 @@ public class GuiNewChat extends Gui implements Tickable
             height += targetHeight > height ? difference * factor : -( difference * factor );
         else
             height = targetHeight;
-    }
 
-    public void drawChat (int updateTimes)
-    {
         if (this.mc.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN) {
             int amountOfLines = this.getLineCount();
             boolean chatOpen = false;
