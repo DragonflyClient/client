@@ -23,10 +23,9 @@ public class GuiUtilRenderComponents {
         return !forceColor && !Minecraft.getMinecraft().gameSettings.chatColours ? EnumChatFormatting.getTextWithoutFormattingCodes(text) : text;
     }
 
-    public static List<IChatComponent> splitText (IChatComponent original, int maxTextLenght, IFontRenderer ignored /* NOTE: This parameter is unnecessary because the Minecraft Font Renderer is used to split the text */,
+    public static List<IChatComponent> splitText (IChatComponent original, int maxTextLenght, IFontRenderer fontRenderer /* NOTE: This parameter is unnecessary because the Minecraft Font Renderer is used to split the text */,
                                                   boolean trimSpace, boolean forceTextColor)
     {
-        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         int i = 0;
         IChatComponent currentComponent = new ChatComponentText("");
         List<IChatComponent> newList = Lists.newArrayList();
@@ -60,7 +59,7 @@ public class GuiUtilRenderComponents {
                 String s2 = fontRenderer.trimStringToWidth(s4, maxTextLenght - i);
                 String s3 = s2.length() < s4.length() ? s4.substring(s2.length()) : null;
 
-                if (s3 != null && s3.length() > 0)
+                if (s3 != null)
                 {
                     int l = s2.lastIndexOf(" ");
 
