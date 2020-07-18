@@ -3,11 +3,13 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.font.*
 import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.internal.Alignment.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
+import org.apache.logging.log4j.LogManager
 import kotlin.properties.Delegates
 
 /**
@@ -32,8 +34,8 @@ class TextField(
     @property:State var staticText: String = "No static text set",
     @property:State var dynamicText: (() -> String)? = null,
 
-    @property:State var textAlignHorizontal: Alignment = Alignment.START,
-    @property:State var textAlignVertical: Alignment = Alignment.START,
+    @property:State var textAlignHorizontal: Alignment = START,
+    @property:State var textAlignVertical: Alignment = START,
 
     @property:State var fontRenderer: IFontRenderer = Dragonfly.fontDesign.regular,
     @property:State var font: WidgetFont? = null,
@@ -51,8 +53,9 @@ class TextField(
     @property:Interpolate override var width: Double = 50.0,
     @property:Interpolate override var height: Double = 50.0,
     @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
-    @property:State override var horizontalAlignment: Alignment = Alignment.START,
-    @property:State override var verticalAlignment: Alignment = Alignment.START
+    @property:State override var horizontalAlignment: Alignment = START,
+    @property:State override var verticalAlignment: Alignment = START,
+    @property:State var adaptHeight: Boolean = false
 ) : AssembledWidget<TextField>(), IPosition, IDimension, IColor, IAlign, IOutline {
 
     @Interpolate
@@ -82,6 +85,22 @@ class TextField(
 
         val lines = fontRenderer.listFormattedStringToWidth(currentText(), width.toInt())
         val size = lines.size * fontRenderer.height
+
+        if (adaptHeight) {
+            val previousHeight = height
+            height = size.toDouble()
+
+            if (verticalAlignment == END) {
+                y += previousHeight - height
+            }
+
+            if (textAlignVertical == CENTER || textAlignVertical == END) {
+                LogManager.getLogger().warn(
+                    "Using adapted height on a text field with vertical alignment of 'center' or 'end' will remove the effect of the alignment"
+                )
+            }
+        }
+
         for ((index, line) in lines.withIndex()) {
             val widget = structure["line-$index"] ?: TextRenderer().also { structure["line-$index"] = it }
             (widget as TextRenderer).also {
@@ -93,11 +112,16 @@ class TextField(
                 it.color = color
                 it.x = alignText(textAlignHorizontal, x, width, fontRenderer.getStringWidth(it.text).toDouble())
                 it.y = when (textAlignVertical) {
-                    Alignment.START -> y + index * fontRenderer.height
-                    Alignment.CENTER -> y + (height - size) / 2 + index * fontRenderer.height
-                    Alignment.END -> y + height - size + index * fontRenderer.height
+                    START -> y + index * fontRenderer.height
+                    CENTER -> y + (height - size) / 2 + index * fontRenderer.height
+                    END -> y + height - size + index * fontRenderer.height
                 }
             }
+        }
+
+        structure.forEach { (key, _) ->
+            if (key.startsWith("line-") && key.removePrefix("line-").toInt() >= lines.size)
+                structure.remove(key)
         }
 
         (structure["background"] as Rectangle).also {
@@ -114,7 +138,7 @@ class TextField(
     override fun update() {
         // update instantly when using dynamic text
         if (dynamicText != null) {
-            (structure["text"] as TextRenderer).text = currentText()
+            updateStructure()
         }
 
         super.update()
@@ -136,16 +160,16 @@ class TextField(
      */
     private fun alignText(alignment: Alignment, coordinate: Double, size: Double, textSize: Double): Double =
         when (alignment) {
-            Alignment.START -> coordinate + padding
-            Alignment.CENTER -> coordinate + (size / 2) - (textSize / 2)
-            Alignment.END -> coordinate + size - textSize - padding
+            START -> coordinate + padding
+            CENTER -> coordinate + (size / 2) - (textSize / 2)
+            END -> coordinate + size - textSize - padding
         }
 
     override fun clone() = TextField(
         staticText, dynamicText, textAlignHorizontal, textAlignVertical,
         fontRenderer, font, fontWeight, fontSize,
         backgroundColor, padding, outlineStroke, outlineColor,
-        x, y, width, height, color, horizontalAlignment, verticalAlignment
+        x, y, width, height, color, horizontalAlignment, verticalAlignment, adaptHeight
     )
 
     override fun newInstance() = TextField()

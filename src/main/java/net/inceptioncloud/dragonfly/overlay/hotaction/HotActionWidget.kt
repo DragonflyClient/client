@@ -4,14 +4,15 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.font.*
 import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
 import net.inceptioncloud.dragonfly.engine.internal.Widget
+import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import org.apache.logging.log4j.LogManager
 import kotlin.math.max
 
 class HotActionWidget(
-    val title: String = "Hot Action",
-    val message: String = "This is a hot action",
-    val actions: List<Action> = listOf()
+    @property:State val title: String = "Hot Action",
+    @property:State val message: String = "This is a hot action",
+    @property:State val actions: List<Action> = listOf()
 ) : AssembledWidget<HotActionWidget>() {
 
     init {
@@ -43,7 +44,7 @@ class HotActionWidget(
         val actionWidth = actions.sumBy { messageFR.getStringWidth(it.name) } +
                 (MIN_SPACE_BETWEEN_ACTIONS * actions.size - 1)
 
-        val containerWidth = max(max(messageWidth, titleWidth), actionWidth)
+        val containerWidth = max(max(messageWidth, titleWidth), actionWidth) + 10.0
 
         updateWidget<RoundedRectangle>("container") {
             x = -5.0

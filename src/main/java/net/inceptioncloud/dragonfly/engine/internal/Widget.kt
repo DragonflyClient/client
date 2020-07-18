@@ -267,7 +267,17 @@ abstract class Widget<W : Widget<W>> : IDraw {
         .sortedByDescending { if (it.hasAnnotation<State>()) 3 else if (it.hasAnnotation<Interpolate>()) 2 else 1 }
         .joinToString("\n") {
             it.isAccessible = true
-            (if (it.hasAnnotation<State>()) "--state" else "") + "${it.name} = ${it.getter.call(this)}"
+            val name = it.name
+            var value = it.getter.call(this).toString()
+
+            if (value.length > 40) {
+                value = "${value.substring(0, 40)}..."
+            }
+
+            if (it.hasAnnotation<State>())
+                "--state$name = $value"
+            else
+                "$name = $value"
         }.split("\n")
 
     /**
