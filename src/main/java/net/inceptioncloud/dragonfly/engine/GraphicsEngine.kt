@@ -87,8 +87,10 @@ object GraphicsEngine {
             val infoHeight = 2 + titleRenderer.height + (fontRenderer.height + 0.5) * info.size
             val infoWidth = 4 + (titleRenderer.getStringWidth(title))
                 .coerceAtLeast(info.map { fontRenderer.getStringWidth(it.replaceFirst("--state", "> ")) }.max()!!).toDouble()
-            val infoX = getMouseX().toDouble() + 5.0 //x + width + 10
-            val infoY = getMouseY().toDouble() + 5.0 //y - 5
+            val infoX = (getMouseX().toDouble() + 5.0)
+                .coerceIn(0.0, Minecraft.getMinecraft().currentScreen.width - infoWidth)
+            val infoY = (getMouseY().toDouble() + 5.0)
+                .coerceIn(0.0, Minecraft.getMinecraft().currentScreen.height - infoHeight)
 
             val avgColor = readAveragePixelColor(infoX.toInt(), infoY.toInt(), infoWidth.toInt(), infoHeight.toInt())
             val backgroundColor = avgColor.selectHighestContrast(WidgetColor(0, 0, 0, 170), WidgetColor(255, 255, 255, 170))
