@@ -70,6 +70,7 @@ class TextField(
         val (alignedX, alignedY) = align(x, y, width, height)
         this.x = alignedX
         this.y = alignedY
+        adaptHeight()
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -90,20 +91,7 @@ class TextField(
             .let { if (adaptHeight) it else it.take(maxAmount) }
         val size = lines.size * fontRenderer.height
 
-        if (adaptHeight) {
-            val previousHeight = height
-            height = (size + padding * 2)
-
-            if (verticalAlignment == END) {
-                y += previousHeight - height
-            }
-
-            if (textAlignVertical == CENTER || textAlignVertical == END) {
-                LogManager.getLogger().warn(
-                    "Using adapted height on a text field with vertical alignment of 'center' or 'end' will remove the effect of the alignment"
-                )
-            }
-        }
+        adaptHeight()
 
         for ((index, line) in lines.withIndex()) {
             val widget = structure["line-$index"] ?: TextRenderer().also { structure["line-$index"] = it }
@@ -136,6 +124,26 @@ class TextField(
             it.color = backgroundColor
             it.outlineColor = outlineColor
             it.outlineStroke = outlineStroke
+        }
+    }
+
+    private fun adaptHeight() {
+        if (!adaptHeight)
+            return
+
+        val lines = fontRenderer.listFormattedStringToWidth(currentText(), (width - padding * 2).toInt())
+        val size = lines.size * fontRenderer.height
+        val previousHeight = height
+        height = (size + padding * 2)
+
+        if (verticalAlignment == END) {
+            y += previousHeight - height
+        }
+
+        if (textAlignVertical == CENTER || textAlignVertical == END) {
+            LogManager.getLogger().warn(
+                "Using adapted height on a text field with vertical alignment of 'center' or 'end' will remove the effect of the alignment"
+            )
         }
     }
 
