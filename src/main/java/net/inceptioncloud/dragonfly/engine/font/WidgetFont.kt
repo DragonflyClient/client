@@ -82,7 +82,8 @@ class WidgetFont @JvmOverloads constructor(
      *
      * This function will return null while the building process is running and will return the
      * font renderer if it's ready. You can also pass an optional [callback] as a parameter
-     * that will be called immediately once the font renderer has been built.
+     * that will be called immediately once the font renderer has been built and if it is already
+     * available.
      */
     fun fontRendererAsync(
         fontWeight: FontWeight = FontWeight.REGULAR,
@@ -94,7 +95,9 @@ class WidgetFont @JvmOverloads constructor(
 
         // if a cached version is available
         if (asyncBuilding.containsKey(builder)) {
-            return asyncBuilding[builder]
+            val stored = asyncBuilding[builder]
+            stored?.let { callback?.invoke(it) }
+            return stored
         }
 
         // store 'null' to indicate that a build is running
