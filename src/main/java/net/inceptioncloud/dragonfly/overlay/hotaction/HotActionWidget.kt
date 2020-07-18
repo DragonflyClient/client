@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import org.apache.logging.log4j.LogManager
 import kotlin.math.max
 
@@ -22,7 +23,9 @@ class HotActionWidget(
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle()
+        "container" to RoundedRectangle(),
+        "title" to TextField(),
+        "message" to TextField()
     )
 
     override fun updateStructure() {
@@ -45,6 +48,12 @@ class HotActionWidget(
                 (MIN_SPACE_BETWEEN_ACTIONS * actions.size - 1)
 
         val containerWidth = max(max(messageWidth, titleWidth), actionWidth) + 10.0
+
+        updateWidget<TextField>("title") {
+            x = 0.0
+            y = 10.0
+            width = containerWidth
+        }
 
         updateWidget<RoundedRectangle>("container") {
             x = -5.0

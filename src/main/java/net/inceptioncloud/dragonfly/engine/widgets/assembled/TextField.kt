@@ -10,6 +10,8 @@ import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
 import org.apache.logging.log4j.LogManager
+import kotlin.math.floor
+import kotlin.math.max
 import kotlin.properties.Delegates
 
 /**
@@ -83,12 +85,14 @@ class TextField(
             ) ?: fontRenderer
         }
 
-        val lines = fontRenderer.listFormattedStringToWidth(currentText(), width.toInt())
+        val maxAmount = floor((height - padding * 2) / fontRenderer.height).toInt()
+        val lines = fontRenderer.listFormattedStringToWidth(currentText(), (width - padding * 2).toInt())
+            .let { if (adaptHeight) it else it.take(maxAmount) }
         val size = lines.size * fontRenderer.height
 
         if (adaptHeight) {
             val previousHeight = height
-            height = size.toDouble()
+            height = (size + padding * 2)
 
             if (verticalAlignment == END) {
                 y += previousHeight - height
@@ -112,9 +116,9 @@ class TextField(
                 it.color = color
                 it.x = alignText(textAlignHorizontal, x, width, fontRenderer.getStringWidth(it.text).toDouble())
                 it.y = when (textAlignVertical) {
-                    START -> y + index * fontRenderer.height
+                    START -> y + index * fontRenderer.height + padding
                     CENTER -> y + (height - size) / 2 + index * fontRenderer.height
-                    END -> y + height - size + index * fontRenderer.height
+                    END -> y + height - size + index * fontRenderer.height - padding
                 }
             }
         }
