@@ -216,7 +216,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         val titleString = "Mod Options"
         val y = 15 - fontSize / 2 + 2
         val fontRenderer: GlyphFontRenderer? =
-            font.fontRendererAsync { size = fontSize * 2; fontWeight = FontWeight.MEDIUM }
+            font.fontRendererAsync(size = fontSize * 2, fontWeight = FontWeight.MEDIUM)
         val stringWidth = fontRenderer?.getStringWidth(titleString)
 
         drawRect(0, 0, width, 30, BluePalette.FOREGROUND.rgb)
@@ -232,7 +232,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
     private fun drawFooter() {
         drawRect(0, height - 18, width, height, BluePalette.FOREGROUND.rgb)
 
-        Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 15 }
+        Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = 15)
             ?.drawString(DragonflyVersion.string, 5, height - 10, Color(0, 0, 0, 50).rgb)
     }
 

@@ -47,10 +47,10 @@ class TextRenderer(
 
     override fun render() {
         if (font != null) {
-            fontRenderer = font?.fontRenderer {
-                fontWeight = this@TextRenderer.fontWeight
+            fontRenderer = font?.fontRenderer(
+                fontWeight = this@TextRenderer.fontWeight,
                 size = fontSize.toInt()
-            } ?: fontRenderer
+            ) ?: fontRenderer
         }
 
         val posX = x.toFloat()

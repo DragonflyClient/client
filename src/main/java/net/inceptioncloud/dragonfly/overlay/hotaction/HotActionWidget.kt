@@ -12,7 +12,7 @@ class HotActionWidget(
     val actions: List<Action> = listOf()
 ) : AssembledWidget<HotActionWidget>() {
 
-    val titleFontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync {  }
+    val titleFontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync()
 
     init {
         if (actions.isEmpty()) {

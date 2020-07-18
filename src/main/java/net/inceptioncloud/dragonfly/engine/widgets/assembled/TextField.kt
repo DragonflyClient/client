@@ -74,10 +74,10 @@ class TextField(
     override fun updateStructure() {
         reassemble()
         if (font != null) {
-            fontRenderer = font?.fontRenderer {
-                fontWeight = this@TextField.fontWeight
+            fontRenderer = font?.fontRenderer(
+                fontWeight = this@TextField.fontWeight,
                 size = fontSize.toInt()
-            } ?: fontRenderer
+            ) ?: fontRenderer
         }
 
         val lines = fontRenderer.listFormattedStringToWidth(currentText(), width.toInt())

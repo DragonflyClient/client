@@ -163,16 +163,16 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
 
         // Title
         var percent = imageSize / 280.0
-        var fontRenderer = fontDesign.defaultFont.fontRendererAsync {
-            fontWeight = FontWeight.MEDIUM
+        var fontRenderer = fontDesign.defaultFont.fontRendererAsync(
+            fontWeight = FontWeight.MEDIUM,
             size = (25 + percent * 60).toInt()
-        }
+        )
         fontRenderer?.drawCenteredString("Inception Cloud Dragonfly", width / 2, height / 8 + imageSize + 10, 0xFFFFFF, true)
 
         // Subtitle
         val previousHeight = fontRenderer?.height ?: 0
         percent = imageSize / 280.0
-        fontRenderer = fontDesign.defaultFont.fontRendererAsync { size = (15 + percent * 40).toInt() }
+        fontRenderer = fontDesign.defaultFont.fontRendererAsync(size = (15 + percent * 40).toInt())
         fontRenderer?.drawCenteredString(DragonflyVersion.string, width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true)
 
         // About
@@ -198,7 +198,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
     private fun updateSize(): IFontRenderer? {
         val percent = min(height / 540.0, 1.0)
         val buttonFontSize = (18 + percent * 15).toInt()
-        val fontRenderer = fontDesign.defaultFont.fontRendererAsync { size = buttonFontSize }
+        val fontRenderer = fontDesign.defaultFont.fontRendererAsync(size = buttonFontSize)
         if (fontRenderer != null) {
             buttonWidth = (80 + percent * 30).toInt()
             buttonHeight = fontRenderer.height
