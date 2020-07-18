@@ -9,9 +9,9 @@ import net.inceptioncloud.dragonfly.engine.internal.WidgetIdBuilder
  *
  * @param name the name of the component
  */
-abstract class OverlayComponent(
+abstract class OverlayComponent<W : Widget<W>>(
     val name: String
-) : Widget<OverlayComponent>() {
+) : Widget<W>() {
 
     /**
      * A collection of all child widgets used on the overlay component.

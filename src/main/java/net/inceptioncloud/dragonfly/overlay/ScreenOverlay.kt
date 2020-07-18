@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly.overlay
 
 import com.google.common.eventbus.Subscribe
-import net.inceptioncloud.dragonfly.engine.internal.WidgetBuffer
+import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.inceptioncloud.dragonfly.event.client.ResizeEvent
 
@@ -18,8 +18,8 @@ object ScreenOverlay {
     /**
      * Adds a component to the screen [buffer].
      */
-    fun addComponent(component: OverlayComponent) {
-        buffer.add(component.name to component)
+    fun addComponent(name: String, component: AssembledWidget<*>) {
+        buffer.add(name to component)
     }
 
     /**
@@ -36,7 +36,8 @@ object ScreenOverlay {
      */
     @Subscribe
     fun onResize(event: ResizeEvent) {
-        buffer.content.map { it as? OverlayComponent }
-            .forEach { it?.initialize(event.width.toDouble(), event.height.toDouble()) }
+        buffer.content
+            .map { it as? AssembledWidget<*> }
+            .forEach { it?.reassemble() }
     }
 }
