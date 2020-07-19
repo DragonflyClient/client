@@ -127,7 +127,7 @@ class TextField(
         }
     }
 
-    private fun adaptHeight() {
+    fun adaptHeight() {
         if (!adaptHeight)
             return
 

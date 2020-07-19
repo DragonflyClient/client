@@ -1,14 +1,14 @@
 package net.inceptioncloud.dragonfly.overlay.hotaction
 
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.*
-import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
-import net.inceptioncloud.dragonfly.engine.internal.Widget
+import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import org.apache.logging.log4j.LogManager
-import kotlin.math.max
 
 class HotActionWidget(
     @property:State val title: String = "Hot Action",
@@ -29,8 +29,17 @@ class HotActionWidget(
     )
 
     override fun updateStructure() {
-        val messageFR = Dragonfly.fontDesign.defaultFont.fontRendererAsync()
-        Dragonfly.fontDesign.defaultFont.fontRendererAsync(fontWeight = FontWeight.MEDIUM, size = 24) {
+        val messageFR: GlyphFontRenderer?
+        var titleFR: GlyphFontRenderer? = null
+
+        messageFR = Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = 16) {
+            println("Finished message font renderer!")
+            if (titleFR != null) {
+                continueUpdate(it, titleFR!!)
+            }
+        }
+        titleFR = Dragonfly.fontDesign.defaultFont.fontRendererAsync(fontWeight = FontWeight.MEDIUM, size = 20) {
+            println("Finished title font renderer!")
             if (messageFR != null) {
                 continueUpdate(messageFR, it)
             }
@@ -42,32 +51,53 @@ class HotActionWidget(
      * asynchronously.
      */
     private fun continueUpdate(messageFR: GlyphFontRenderer, titleFR: GlyphFontRenderer) {
+        println("HELLO WORLD!")
         val messageWidth = messageFR.getStringWidth(message)
         val titleWidth = titleFR.getStringWidth(title)
         val actionWidth = actions.sumBy { messageFR.getStringWidth(it.name) } +
                 (MIN_SPACE_BETWEEN_ACTIONS * actions.size - 1)
 
-        val containerWidth = max(max(messageWidth, titleWidth), actionWidth) + 10.0
+        val containerWidth = listOf(messageWidth, titleWidth, actionWidth)
+            .max()!!.coerceAtMost((ScreenOverlay.dimensions.getWidth() / 5).toInt()) + PADDING * 2.0
 
-        updateWidget<TextField>("title") {
+        val titleWidget = updateWidget<TextField>("title") {
             x = 0.0
             y = 10.0
             width = containerWidth
-        }
+            padding = PADDING
+            fontRenderer = titleFR
+            staticText = title
+            color = DragonflyPalette.foreground
+            adaptHeight = true
+        }!!.also { it.adaptHeight() }
+
+        val messageWidget = updateWidget<TextField>("message") {
+            x = 0.0
+            y = titleWidget.height.also { println("it = ${it}") }
+            width = containerWidth
+            padding = PADDING
+            fontRenderer = messageFR
+            staticText = message
+            color = DragonflyPalette.foreground.apply { alphaDouble = 0.9 }
+            adaptHeight = true
+        }!!
 
         updateWidget<RoundedRectangle>("container") {
             x = -5.0
             y = 10.0
-            width = containerWidth + 5.0
+            width = containerWidth
             arc = 5.0
+            color = DragonflyPalette.background.apply { alphaDouble = 0.8 }
         }
     }
 
-    override fun clone(): HotActionWidget {
-        TODO("Not yet implemented")
-    }
+    override fun clone(): HotActionWidget = HotActionWidget(
+        title, message, actions
+    )
 
     override fun newInstance(): HotActionWidget = HotActionWidget()
 }
 
 const val MIN_SPACE_BETWEEN_ACTIONS = 5
+
+const val PADDING = 3.0

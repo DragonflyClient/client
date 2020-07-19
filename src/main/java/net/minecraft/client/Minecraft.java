@@ -16,6 +16,8 @@ import net.inceptioncloud.dragonfly.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
+import net.inceptioncloud.dragonfly.overlay.ScreenOverlay;
+import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction;
 import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -1753,6 +1755,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                                     break;
                                 case Keyboard.KEY_T:
                                     TransitionTracker.INSTANCE.toggle();
+                                    break;
+                                case Keyboard.KEY_0:
+                                    HotAction.test();
                                     break;
                             }
                         }
