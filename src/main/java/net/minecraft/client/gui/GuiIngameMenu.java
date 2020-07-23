@@ -167,7 +167,6 @@ public class GuiIngameMenu extends GuiScreen
 
     private void requestClose ()
     {
-        LogManager.getLogger().info("Ingame Menu close requested! " + closeRequested);
         this.closeRequested = true;
     }
 

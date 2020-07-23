@@ -25,15 +25,15 @@ public class TickSubscriber
     @Subscribe
     public void modTick (ClientTickEvent event)
     {
+        if (!TransitionTracker.INSTANCE.getFrame().isVisible())
+            return;
+
         TimeUtils.requireDelay("transition-tracking", 5000, () ->
         {
-            if (!TransitionTracker.INSTANCE.getFrame().isVisible())
-                return;
-
             final int trackingPoint = ( int ) ( ( System.currentTimeMillis() - startUp ) / 5000 );
             final Map<String, Integer> groupedAmounts =
-                Dragonfly.getTransitions().stream().collect(Collectors.groupingBy(Transition::getOriginClass)).entrySet().stream()                                                      // Group Transitions by Origin
-                    .map(( Function<Map.Entry<String, List<Transition>>, Map.Entry<String, Integer>> ) stringListEntry -> new Map.Entry<String, Integer>()          // Map to an String-Integer Map by counting the amount of Transitions
+                Dragonfly.getTransitions().stream().collect(Collectors.groupingBy(Transition::getOriginClass)).entrySet().stream() // Group Transitions by Origin
+                    .map(( Function<Map.Entry<String, List<Transition>>, Map.Entry<String, Integer>> ) stringListEntry -> new Map.Entry<String, Integer>() // Map to an String-Integer Map by counting the amount of Transitions
                     {
                         @Override
                         public String getKey ()
@@ -52,8 +52,8 @@ public class TickSubscriber
                         {
                             return value;
                         }
-                    }).sorted(Map.Entry.comparingByValue())                                                                                                     // Sort by value
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));                                     // Collect to LinkedHashMap
+                    }).sorted(Map.Entry.comparingByValue()) // Sort by value
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)); // Collect to LinkedHashMap
 
             TransitionTracker.INSTANCE.getData().add(new TrackingData(trackingPoint, groupedAmounts));
             TransitionTracker.INSTANCE.updateUI();
