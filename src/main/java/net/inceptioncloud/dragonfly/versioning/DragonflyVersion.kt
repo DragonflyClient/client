@@ -26,7 +26,7 @@ object DragonflyVersion {
     /**
      * Retrieves the current version status from the Inception Cloud API Services.
      */
-    val versionStatus: VersionStatus? by lazy<VersionStatus?> {
+    val versionStatus: VersionStatus? by lazy {
         val result: String = get(
             "https://api.inceptioncloud.net/updates" +
                     "?channel=${getChannel()?.identifier ?: "stable"}" +

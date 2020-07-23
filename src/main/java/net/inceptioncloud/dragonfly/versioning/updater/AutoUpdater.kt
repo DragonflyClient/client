@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.versioning.updater
 
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion.versionStatus
 import org.apache.logging.log4j.LogManager

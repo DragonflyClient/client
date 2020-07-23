@@ -10,23 +10,18 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.main.GameConfiguration.*
 import net.minecraft.util.Session
 import java.io.File
-import java.lang.management.ManagementFactory
-import java.lang.management.RuntimeMXBean
 import java.net.*
 
 object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val event = ApplicationStartEvent()
+        val event = ApplicationStartEvent(args.contains("--drgn-developer"))
         Dragonfly.eventBus.post(event)
 
         if (event.isCancelled) {
             return
         }
-
-        val runtimeMxBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
-        val arguments: List<String> = runtimeMxBean.inputArguments
 
         System.setProperty("java.net.preferIPv4Stack", "true")
         val optionParser = OptionParser()
@@ -85,7 +80,7 @@ object Main {
         }
         val s1 = optionset.valueOf(specProxyUser)
         val s2 = optionset.valueOf(specProxyPass)
-        val isDrgnDebug = optionset.has("drgn-developer")
+        val isDeveloperMode = optionset.has("drgn-developer")
         if (proxy != Proxy.NO_PROXY && isNullOrEmpty(s1) && isNullOrEmpty(s2)) {
             Authenticator.setDefault(object : Authenticator() {
                 override fun getPasswordAuthentication(): PasswordAuthentication {
@@ -125,7 +120,7 @@ object Main {
             UserInformation(session, userProperties, profileProperties, proxy),
             DisplayInformation(width, height, fullscreen, checkGlErrors),
             FolderInformation(gameDir, resourcePacksDir, assetsDir, assetsIndex),
-            GameInformation(demo, version, isDrgnDebug),
+            GameInformation(demo, version, isDeveloperMode),
             ServerInformation(server, port)
         )
         Runtime.getRuntime().addShutdownHook(object : Thread("Client Shutdown Thread") {

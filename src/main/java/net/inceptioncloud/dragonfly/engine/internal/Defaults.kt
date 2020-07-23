@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
 import net.inceptioncloud.dragonfly.engine.structure.*
-import kotlin.test.assertEquals
 
 /**
  * ## Defaults
@@ -94,7 +93,7 @@ object Defaults
             }
             is ISize ->
             {
-                assertEquals(width, height)
+                require(width == height)
                 widget.size = width
             }
             else -> throw IllegalArgumentException("Cannot set size or dimension for widget $widget")
