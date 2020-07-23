@@ -17,6 +17,15 @@ object Options {
     private val OPTIONS_FILE = File("dragonfly/options.json")
 
     /**
+     * A cache for values of the option keys.
+     *
+     * Since computing these values via [gson] can sometimes take resources and decreases
+     * the performance, the values are cached in this map. The value is cached when it is
+     * accessed the first time [get] or when it changes.
+     */
+    private val valueCache = mutableMapOf<OptionKey<*>, Any>()
+
+    /**
      * The Gson instance that allows the (de-)serialization of objects.
      */
     @JvmStatic
@@ -70,13 +79,16 @@ object Options {
      */
     @JvmStatic
     fun <T> getValue(optionKey: OptionKey<T>): T {
-        Validate.notNull(optionKey, "The key for the options value cannot be null!")
+        @Suppress("UNCHECKED_CAST")
+        if (valueCache.containsKey(optionKey)) // check for cached value
+            return valueCache[optionKey] as T
 
         if (jsonObject!!.has(optionKey.key)) {
             try {
                 val jsonElement = jsonObject!![optionKey.key]
                 val value = gson.fromJson(jsonElement, optionKey.typeClass)
-                if (optionKey.validator.test(value)) return value
+                if (optionKey.validator.test(value))
+                    return value.also { valueCache[optionKey] = it as Any }
             } catch (exception: JsonSyntaxException) {
                 if (exception.cause!!.javaClass.simpleName == "IllegalStateException" || exception.cause!!.javaClass.simpleName == "NumberFormatException") {
                     LogManager.getLogger().info(
@@ -91,7 +103,7 @@ object Options {
 
         val value = optionKey.defaultValue.get()
         setValue(optionKey, value)
-        return value
+        return value.also { valueCache[optionKey] = it as Any }
     }
 
     /**
@@ -106,11 +118,11 @@ object Options {
     @JvmStatic
     fun <T> setValue(optionKey: OptionKey<T>, value: T): Boolean {
         if (!optionKey.validator.test(value)) {
-            LogManager.getLogger()
-                .error("Failed to set option value {} for key {} (validation failed!)", value, optionKey.key)
+            LogManager.getLogger().error("Failed to set option value {} for key {} (validation failed!)", value, optionKey.key)
             return false
         }
         jsonObject!!.add(optionKey.key, gson.toJsonTree(value))
+        valueCache[optionKey] = value as Any
         return true
     }
 

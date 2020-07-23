@@ -1,17 +1,17 @@
 {
   "lastServer": {
-    "serverName": "Inception Cloud :^)",
-    "serverIP": "inceptioncloud.net",
+    "serverName": "RoyalPixels",
+    "serverIP": "royalpixels.de:25565",
     "lan": false
   },
   "enableZoomAnimation": true,
-  "scoreboardBackground": true,
+  "scoreboardBackground": false,
   "scoreboardScores": 2,
-  "scoreboardTitle": true,
+  "scoreboardTitle": false,
   "zoomAnimation": true,
   "fontQualityScale": 3.1,
   "borderlessWindow": true,
-  "windowedFullscreen": true,
+  "windowedFullscreen": false,
   "zoomFieldOfView": 30,
   "zoomMouseSensitivity": 79,
   "fontQuality": 2.0,
