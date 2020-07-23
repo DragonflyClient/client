@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.font
 
+import com.google.gson.Gson
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.texture.DynamicTexture
 import org.apache.commons.lang3.builder.EqualsBuilder
@@ -11,8 +12,8 @@ import java.awt.font.TextAttribute
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
-import java.util.*
 import javax.imageio.ImageIO
+import kotlin.collections.HashMap
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
@@ -20,18 +21,21 @@ class GlyphPage(
     val font: Font
 ) {
     @JvmField
-    var glyphCharacterMap = HashMap<Char, Glyph>()
-    private var imgSize = 0
+    var glyphCharacterMap = mutableMapOf<Char, Glyph>()
+
     var maxFontHeight = -1
         private set
+
+    private var imgSize = 0
+
     private var bufferedImage: BufferedImage? = null
+
     private val loadedTexture by lazy { DynamicTexture(bufferedImage) }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
-        val glyphPage =
-            other as GlyphPage
+        val glyphPage = other as GlyphPage
         return EqualsBuilder()
             .append(font, glyphPage.font)
             .isEquals
@@ -44,9 +48,6 @@ class GlyphPage(
     }
 
     fun generateGlyphPage(chars: CharArray) {
-        val cached = getCachedGlyph(font)
-        println("cached = $cached")
-
         // Calculate glyphPageSize
         var maxWidth = -1.0
         var maxHeight = -1.0
@@ -62,71 +63,81 @@ class GlyphPage(
         // Leave some additional space
         maxWidth += 2.0
         maxHeight += 2.0
-        imgSize = ceil(
-            ceil(sqrt(maxWidth * maxWidth * chars.size) / maxWidth)
-                .coerceAtLeast(ceil(sqrt(maxHeight * maxHeight * chars.size) / maxHeight))
-                    * maxWidth.coerceAtLeast(maxHeight)
+        imgSize = ceil(ceil(sqrt(maxWidth * maxWidth * chars.size) / maxWidth)
+            .coerceAtLeast(ceil(sqrt(maxHeight * maxHeight * chars.size) / maxHeight)) * maxWidth.coerceAtLeast(maxHeight)
         ).toInt() + 1
 
+
+        val cached = getCachedGlyph()
+
+        @Suppress("UNCHECKED_CAST")
         if (cached != null) {
-            return
-        }
+            val (cachedImage, cachedProperties) = cached
+            bufferedImage = cachedImage
+            glyphCharacterMap = cachedProperties
+                .mapKeys { (it.key as String)[0] }
+                .mapValues {
+                    val map = it.value as Map<String, Int>
+                    @Suppress("MapGetWithNotNullAssertionOperator")
+                    Glyph().apply {
+                        x = map["x"]!!
+                        y = map["y"]!!
+                        width = map["width"]!!
+                        height = map["height"]!!
+                    }
+                }
+                .toMutableMap()
+            maxFontHeight = glyphCharacterMap.map { it.value.height }.max()!!
+        } else {
+            bufferedImage = BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB)
 
-        bufferedImage = BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB)
+            val graphics = bufferedImage!!.graphics as Graphics2D
 
-        val graphics = bufferedImage!!.graphics as Graphics2D
+            graphics.font = font
+            graphics.color = Color(255, 255, 255, 0)
+            graphics.fillRect(0, 0, imgSize, imgSize)
+            graphics.color = Color.white
 
-        graphics.font = font
-        graphics.color = Color(255, 255, 255, 0)
-        graphics.fillRect(0, 0, imgSize, imgSize)
+            graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF)
+            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
 
-        graphics.color = Color.white
+            val fontMetrics = graphics.fontMetrics
+            var currentCharHeight = 0
+            var posX = 0
+            var posY = 1
 
-        graphics.setRenderingHint(
-            RenderingHints.KEY_FRACTIONALMETRICS,
-            RenderingHints.VALUE_FRACTIONALMETRICS_ON
-        )
-        graphics.setRenderingHint(
-            RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_OFF
-        )
-        graphics.setRenderingHint(
-            RenderingHints.KEY_TEXT_ANTIALIASING,
-            RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-        )
+            for (ch in chars) {
+                val glyph = Glyph()
+                val bounds = fontMetrics.getStringBounds(ch.toString(), graphics)
+                glyph.width = bounds.bounds.width + 8 // Leave some additional space
+                glyph.height = bounds.height.toInt()
+                check(posY + glyph.height < imgSize) { "Not all characters will fit" }
 
-        val fontMetrics = graphics.fontMetrics
-        var currentCharHeight = 0
-        var posX = 0
-        var posY = 1
-        for (ch in chars) {
-            val glyph = Glyph()
-            val bounds = fontMetrics.getStringBounds(ch.toString(), graphics)
-            glyph.width = bounds.bounds.width + 8 // Leave some additional space
-            glyph.height = bounds.height.toInt()
-            check(posY + glyph.height < imgSize) { "Not all characters will fit" }
-            if (ch == 'j') glyph.width += 4
-            if (posX + glyph.width >= imgSize) {
-                posX = 0
-                posY += currentCharHeight
-                currentCharHeight = 0
-            }
-            glyph.x = posX
-            glyph.y = posY
-            if (glyph.height > maxFontHeight) {
-                maxFontHeight = glyph.height
-            }
-            if (glyph.height > currentCharHeight) {
-                currentCharHeight = glyph.height
-            }
-            if (cached == null) {
+                if (ch == 'j') glyph.width += 4
+                if (posX + glyph.width >= imgSize) {
+                    posX = 0
+                    posY += currentCharHeight
+                    currentCharHeight = 0
+                }
+
+                glyph.x = posX
+                glyph.y = posY
+
+                if (glyph.height > maxFontHeight) {
+                    maxFontHeight = glyph.height
+                }
+                if (glyph.height > currentCharHeight) {
+                    currentCharHeight = glyph.height
+                }
+
                 graphics.drawString(ch.toString(), posX + if (ch == 'j') 5 else 2, posY + fontMetrics.ascent)
+                posX += glyph.width
+                glyphCharacterMap[ch] = glyph
             }
-            posX += glyph.width
-            glyphCharacterMap[ch] = glyph
-        }
 
-        cacheGlyph(font, bufferedImage!!)
+            cacheGlyph()
+        }
     }
 
     fun bindTexture() {
@@ -138,7 +149,7 @@ class GlyphPage(
     }
 
     fun drawChar(ch: Char, x: Float, y: Float): Float {
-        val glyph = glyphCharacterMap[if (ch == '▏') '|' else ch] ?: return (-1).toFloat()
+        val glyph = glyphCharacterMap[if (ch == '▏') '|' else ch] ?: return (-1F).also { println("NF") }
         val pageX = glyph.x / imgSize.toFloat()
         val pageY = glyph.y / imgSize.toFloat()
         val pageWidth = glyph.width / imgSize.toFloat()
@@ -166,29 +177,35 @@ class GlyphPage(
         return (if (glyphCharacterMap.containsKey(ch)) glyphCharacterMap[ch]!!.width else 0).toFloat()
     }
 
-    companion object {
+    /** the directory in which the glyphs are cached */
+    private val glyphsDirectory = with(font) {
+        File("dragonfly/glyphs/${name}/${attributes[TextAttribute.TRACKING]}/${style}").also { it.mkdirs() }
+    }
 
-        /**
-         * Returns a cached glyph image for the [font].
-         */
-        fun getCachedGlyph(font: Font): BufferedImage? {
-            val dir = File("dragonfly/glyphs").also { it.mkdir() }
-            val file = File(dir, with(font) { "${name}_${style}_${size}_${attributes[TextAttribute.TRACKING]}.png" })
+    /** the file that caches the glyph image */
+    private val glyphImage = File(glyphsDirectory, "${font.size}.png")
 
-            return if (file.exists()) {
-                ImageIO.read(file)
-            } else null
-        }
+    /** the file that caches the glyph properties */
+    private val glyphProperties = File(glyphsDirectory, "${font.size}.json")
 
-        /**
-         * Saves the glyph [image] to a file and associates it with the [font].
-         */
-        fun cacheGlyph(font: Font, image: BufferedImage) {
-            val dir = File("dragonfly/glyphs").also { it.mkdir() }
-            val file = File(dir, with(font) { "${name}_${style}_${size}_${attributes[TextAttribute.TRACKING]}.png" })
+    /**
+     * Returns a cached glyph image for the [font].
+     */
+    private fun getCachedGlyph(): Pair<BufferedImage, HashMap<*, *>>? =
+        if (glyphImage.exists() && glyphProperties.exists()) {
+            ImageIO.read(glyphImage) to Gson().fromJson(glyphProperties.readText(), HashMap::class.java)
+        } else null
 
-            ImageIO.write(image, "png", file)
-        }
+    /**
+     * Saves the glyph [bufferedImage] to a file and associates it with the [font].
+     */
+    private fun cacheGlyph() {
+        ImageIO.write(bufferedImage!!, "png", glyphImage)
+        glyphProperties.writeText(Gson().toJson(glyphCharacterMap))
+    }
+
+    override fun toString(): String {
+        return "GlyphPage(font=$font, glyphCharacterMap=$glyphCharacterMap, maxFontHeight=$maxFontHeight, imgSize=$imgSize, bufferedImage=$bufferedImage)"
     }
 
     class Glyph internal constructor() {
@@ -196,5 +213,9 @@ class GlyphPage(
         var y = 0
         var width = 0
         var height = 0
+
+        override fun toString(): String {
+            return "{x=${x.toDouble()}, y=${y.toDouble()}, width=${width.toDouble()}, height=${height.toDouble()}}"
+        }
     }
 }
