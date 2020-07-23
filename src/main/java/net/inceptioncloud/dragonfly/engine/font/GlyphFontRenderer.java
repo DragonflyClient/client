@@ -46,6 +46,11 @@ public class GlyphFontRenderer implements IFontRenderer {
     private final GlyphPage unscaledPageRegular, unscaledPageBold, unscaledPageItalic, unscaledPageBoldItalic;
 
     /**
+     * Random used for generating chars when the {@link #randomStyle} is enabled.
+     */
+    private final Random fontRandom = new Random();
+
+    /**
      * Current X coordinate at which to draw the next character.
      */
     private float posX;
@@ -59,10 +64,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      * Used to specify new red value for the current color.
      */
     private float red;
-    /**
-     * Random used for generating chars when the {@link #randomStyle} is enabled.
-     */
-    private final Random fontRandom = new Random();
+
     /**
      * Used to specify new blue value for the current color.
      */
@@ -97,6 +99,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      * Set if the "m" style (strikethrough) is active in currently rendering string
      */
     private boolean strikethroughStyle;
+
     /**
      * Used to specify new green value for the current color.
      */
@@ -152,18 +155,14 @@ public class GlyphFontRenderer implements IFontRenderer {
     public static GlyphFontRenderer create(
             String fontName,
             int size,
-            double letterSpacing,
-            boolean bold,
-            boolean italic,
-            boolean boldItalic
+            double letterSpacing
     ) {
         // If the font isn't already loaded, import it from a .ttf file
         if (!LOADED_FONTS.contains(fontName)) {
             try {
                 // Load the graphics environment
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                ge.registerFont(Font
-                        .createFont(Font.TRUETYPE_FONT, new File("dragonfly/assets/fonts/" + fontName + ".ttf")));
+                ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("dragonfly/assets/fonts/" + fontName + ".ttf")));
                 LogManager.getLogger().debug("Importing font {}...", fontName);
                 LOADED_FONTS.add(fontName);
             } catch (FontFormatException | IOException e) {
@@ -172,71 +171,35 @@ public class GlyphFontRenderer implements IFontRenderer {
         }
 
         final char[] chars = GraphicsEngine.CHARACTERS;
+        final int scaledSize = (int) (size * getFontQualityScale());
 
-        GlyphPage regularPage =
-                new GlyphPage(makeFont(fontName, Font.PLAIN, (int) (size * getFontQualityScale()), letterSpacing),
-                        true,
-                        true
-                );
+        GlyphPage regularPage = new GlyphPage(makeFont(fontName, Font.PLAIN, scaledSize, letterSpacing));
         regularPage.generateGlyphPage(chars);
 
+        GlyphPage unscaledRegular = new GlyphPage(makeFont(fontName, Font.PLAIN, size, letterSpacing));
+        unscaledRegular.generateGlyphPage(chars);
 
-        GlyphPage realRegular = new GlyphPage(makeFont(fontName, Font.PLAIN, size, letterSpacing), true, true);
-        realRegular.generateGlyphPage(chars);
+        GlyphPage boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, scaledSize, letterSpacing));
+        boldPage.generateGlyphPage(chars);
 
-        GlyphPage boldPage = regularPage;
-        GlyphPage italicPage = regularPage;
-        GlyphPage boldItalicPage = regularPage;
+        GlyphPage unscaledBold = new GlyphPage(makeFont(fontName, Font.BOLD, size, letterSpacing));
+        unscaledBold.generateGlyphPage(chars);
 
-        GlyphPage unscaledBold = regularPage;
-        GlyphPage unscaledItalic = regularPage;
-        GlyphPage unscaledBoldItalic = regularPage;
+        GlyphPage italicPage = new GlyphPage(makeFont(fontName, Font.ITALIC, scaledSize, letterSpacing));
+        italicPage.generateGlyphPage(chars);
 
-        if (bold) {
-            boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, (int) (size * getFontQualityScale()), letterSpacing),
-                    true,
-                    true
-            );
-            boldPage.generateGlyphPage(chars);
+        GlyphPage unscaledItalic = new GlyphPage(makeFont(fontName, Font.ITALIC, size, letterSpacing));
+        unscaledItalic.generateGlyphPage(chars);
 
-            unscaledBold = new GlyphPage(makeFont(fontName, Font.BOLD, size, letterSpacing), true, true);
-            unscaledBold.generateGlyphPage(chars);
-        }
+        GlyphPage boldItalicPage = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, scaledSize, letterSpacing));
+        boldItalicPage.generateGlyphPage(chars);
 
-        if (italic) {
-            italicPage =
-                    new GlyphPage(makeFont(fontName, Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing),
-                            true,
-                            true
-                    );
-            italicPage.generateGlyphPage(chars);
-
-            unscaledItalic = new GlyphPage(makeFont(fontName, Font.ITALIC, size, letterSpacing), true, true);
-            unscaledItalic.generateGlyphPage(chars);
-        }
-
-        if (boldItalic) {
-            boldItalicPage = new GlyphPage(makeFont(fontName,
-                    Font.BOLD | Font.ITALIC,
-                    (int) (size * getFontQualityScale()),
-                    letterSpacing
-            ), true, true);
-            boldItalicPage.generateGlyphPage(chars);
-
-            unscaledBoldItalic =
-                    new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing), true, true);
-            unscaledBoldItalic.generateGlyphPage(chars);
-        }
+        GlyphPage unscaledBoldItalic = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing));
+        unscaledBoldItalic.generateGlyphPage(chars);
 
         return new GlyphFontRenderer(
-                regularPage,
-                boldPage,
-                italicPage,
-                boldItalicPage,
-                realRegular,
-                unscaledBold,
-                unscaledItalic,
-                unscaledBoldItalic
+                regularPage, boldPage, italicPage, boldItalicPage,
+                unscaledRegular, unscaledBold, unscaledItalic, unscaledBoldItalic
         );
     }
 
@@ -406,7 +369,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      * The exact with of the specific char in the current font.
      *
      * @param ch The character
-     *
      * @return The width in pixels
      */
     @Override
@@ -699,7 +661,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The list of broken strings
      */
     @Override
@@ -712,7 +673,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The string with new lines determined via \n
      */
     @Override
@@ -735,7 +695,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The amount of characters
      */
     @Override

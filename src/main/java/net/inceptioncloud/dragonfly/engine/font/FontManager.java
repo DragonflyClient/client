@@ -54,7 +54,7 @@ public class FontManager {
             return cache.get(info);
 
         final GlyphFontRenderer fontRenderer =
-                GlyphFontRenderer.create(info.name, info.size, info.letterSpacing, true, true, true);
+                GlyphFontRenderer.create(info.name, info.size, info.letterSpacing);
         cache.put(info, fontRenderer);
 
         return fontRenderer;

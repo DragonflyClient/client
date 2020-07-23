@@ -61,10 +61,7 @@ class WidgetFont @JvmOverloads constructor(
             GlyphFontRenderer.create(
                 fontWeights[builder.fontWeight],
                 builder.size,
-                builder.letterSpacing,
-                true,
-                true,
-                true
+                builder.letterSpacing
             ).also { cachedFontRenderer[builder] = it }
         }
     }
