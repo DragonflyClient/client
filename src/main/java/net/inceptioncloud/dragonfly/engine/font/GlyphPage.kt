@@ -149,7 +149,7 @@ class GlyphPage(
     }
 
     fun drawChar(ch: Char, x: Float, y: Float): Float {
-        val glyph = glyphCharacterMap[if (ch == '▏') '|' else ch] ?: return (-1F).also { println("NF") }
+        val glyph = glyphCharacterMap[if (ch == '▏') '|' else ch] ?: return -1F
         val pageX = glyph.x / imgSize.toFloat()
         val pageY = glyph.y / imgSize.toFloat()
         val pageWidth = glyph.width / imgSize.toFloat()

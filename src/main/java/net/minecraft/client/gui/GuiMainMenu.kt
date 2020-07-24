@@ -54,7 +54,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
      * The transitions that are responsible for the different Quick Action Buttons.
      */
     private val quickActionTransitions: MutableMap<Int, DoubleTransition> = HashMap()
-    private val aboutString = "About ICM"
+    private val aboutString = "About Dragonfly"
 
     /**
      * The transition that lets the navigation bar rise when it's hovered.

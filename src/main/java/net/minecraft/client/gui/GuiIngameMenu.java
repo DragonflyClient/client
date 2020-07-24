@@ -47,7 +47,7 @@ public class GuiIngameMenu extends GuiScreen
      */
     private SmoothDoubleTransition pushOffset;
 
-    private final String aboutString = "About ICM";
+    private final String aboutString = "About Dragonfly";
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
