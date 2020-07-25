@@ -40,7 +40,7 @@ object GraphicsEngine {
      * All characters that can be rendered by the [GlyphFontRenderer].
      */
     @JvmField
-    val CHARACTERS = ((32..126) + (161..215)).map { it.toChar() }.toCharArray()
+    val CHARACTERS = ((32..126) + (161..252)).map { it.toChar() }.toCharArray()
 
     /**
      * Renders the debug overlay for the given widgets and their identifiers.
