@@ -260,6 +260,19 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
         return i;
     }
 
+    @Override
+    public int drawStringWithCustomShadow(String text, int x, int y, int color, int shadowColor, float distance) {
+        y -= 3;
+        GlStateManager.enableAlpha();
+        this.resetStyles();
+        int i;
+
+        i = this.renderString(text, x + distance, y + distance, shadowColor, true);
+        i = Math.max(i, this.renderString(text, x, y, color, false));
+
+        return i;
+    }
+
     /**
      * Get the width of a string in the current font.
      *

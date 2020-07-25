@@ -271,9 +271,7 @@ public class GlyphFontRenderer implements IFontRenderer {
         return i;
     }
 
-    /**
-     * Draws the specified string with a shadow that can have a custom color and distance.
-     */
+    @Override
     public int drawStringWithCustomShadow(String text, int x, int y, int color, int shadowColor, float distance) {
         y -= 3;
         GlStateManager.enableAlpha();

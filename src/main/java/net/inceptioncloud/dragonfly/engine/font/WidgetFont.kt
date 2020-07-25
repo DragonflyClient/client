@@ -33,12 +33,12 @@ class WidgetFont @JvmOverloads constructor(
     /**
      * Cache for already created font renderer.
      */
-    private val cachedFontRenderer = mutableMapOf<FontRendererBuilder, GlyphFontRenderer>()
+    private val cachedFontRenderer = mutableMapOf<FontRendererBuilder, IFontRenderer>()
 
     /**
      * A cache with all running async productions and already built font renderers.
      */
-    private val asyncBuilding = mutableMapOf<FontRendererBuilder, GlyphFontRenderer?>()
+    private val asyncBuilding = mutableMapOf<FontRendererBuilder, IFontRenderer?>()
 
     /**
      * Clears both caches when changing the font quality.
@@ -51,7 +51,7 @@ class WidgetFont @JvmOverloads constructor(
     /**
      * Builds a new font renderer with preferences set by the [preferences] block.
      */
-    fun fontRenderer(preferences: (FontRendererBuilder.() -> Unit)? = null): GlyphFontRenderer {
+    fun fontRenderer(preferences: (FontRendererBuilder.() -> Unit)? = null): IFontRenderer {
         val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
         preferences?.invoke(builder)
 
@@ -73,7 +73,7 @@ class WidgetFont @JvmOverloads constructor(
      */
     fun fontRendererAsync(
         preferences: (FontRendererBuilder.() -> Unit)? = null
-    ): GlyphFontRenderer? {
+    ): IFontRenderer? {
         val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
         preferences?.invoke(builder)
 

@@ -191,6 +191,12 @@ public class UnicodeFontRenderer implements IFontRenderer
         return ( int ) x / 2;
     }
 
+    @Override
+    public int drawStringWithCustomShadow(String text, int x, int y, int color, int shadowColor, float distance) {
+        drawString(StringUtils.stripControlCodes(text), x + distance, y + distance, shadowColor, false);
+        return drawString(text, x, y, color, false);
+    }
+
     /**
      * Draw a left-justified string at the given location with a specific color and
      * a shadow.

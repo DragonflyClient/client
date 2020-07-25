@@ -5,8 +5,7 @@ import net.inceptioncloud.dragonfly.design.color.BluePalette
 import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.font.FontWeight
-import net.inceptioncloud.dragonfly.engine.font.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.*
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
@@ -215,7 +214,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         val fontSize = 16
         val titleString = "Mod Options"
         val y = 15 - fontSize / 2 + 2
-        val fontRenderer: GlyphFontRenderer? =
+        val fontRenderer: IFontRenderer? =
             font.fontRendererAsync { size = fontSize * 2; fontWeight = FontWeight.MEDIUM }
         val stringWidth = fontRenderer?.getStringWidth(titleString)
 
