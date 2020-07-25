@@ -2,9 +2,18 @@ package net.inceptioncloud.dragonfly.engine.font.renderer
 
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 
+/**
+ * A wrapper around a [base] font renderer that is re-used with a different font size.
+ * This wrapper will apply the [scale] to any input and output values in order to guarantee
+ * a save use of the font renderer.
+ *
+ * @param base the base font renderer that is being re-used
+ * @param scale the scale that has to be applied to the new font renderer in order to
+ * receive the size of the [base] (base.size / new.size)
+ */
 class ScaledFontRenderer(
-    val base: IFontRenderer, // 30 -> 15
-    val scale: Double        // 2
+    val base: IFontRenderer,
+    val scale: Double
 ) : IFontRenderer {
 
     override fun trimStringToWidth(text: String?, width: Int): String {

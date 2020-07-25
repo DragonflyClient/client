@@ -83,6 +83,11 @@ class OptionEntryBoolean(
     }
 
     /**
+     * Convenient function to access the value of the option entry.
+     */
+    operator fun invoke(): Boolean? = typeKey.get()
+
+    /**
      * Whether the current value isn't the value of the key.
      */
     override var valueChanged: Boolean = false

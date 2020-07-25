@@ -56,7 +56,6 @@ object OptionsSectionScoreboard {
         name = "Scores"
         description = "Select the mode in which the scoreboard scores (red numbers on the right) " +
                 "should be displayed. (0 = off, 1 = on, 2 = auto)"
-        default = 2
         +OptionChoice(0, "Off")
         +OptionChoice(1, "On")
         +OptionChoice(2, "Auto")

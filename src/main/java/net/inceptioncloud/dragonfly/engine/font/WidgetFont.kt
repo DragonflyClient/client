@@ -3,6 +3,8 @@ package net.inceptioncloud.dragonfly.engine.font
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.engine.font.renderer.*
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -114,13 +116,22 @@ class WidgetFont @JvmOverloads constructor(
         return null
     }
 
-    private fun findScaled(builder: FontRendererBuilder): ScaledFontRenderer? {
-        return cachedFontRenderer.toList()
-            .filter { (other, _) -> other.fontWeight == builder.fontWeight && other.letterSpacing == builder.letterSpacing }
-            .sortedBy { (other, _) -> other.size }
-            .firstOrNull { (other, _) -> other.size / builder.size.toDouble() in 1.0..2.0 }
-            ?.let { (other, base) -> ScaledFontRenderer(base, (other.size / builder.size.toDouble())) }
-    }
+    /**
+     * Tries to find and adapt an already existing font renderer to save resources and improve performance.
+     * This will return a [ScaledFontRenderer] object which uses the base font renderer while applying a
+     * scale to adapt to the target font size.
+     */
+    private fun findScaled(builder: FontRendererBuilder) =
+        if (OptionsSectionUI.useScaledFontRenderers() != true) {
+            null
+        } else {
+            cachedFontRenderer.toList()
+                .filter { (other, _) -> other.fontWeight == builder.fontWeight && other.letterSpacing == builder.letterSpacing }
+                .sortedBy { (other, _) -> other.size }
+                .firstOrNull { (other, _) -> other.size / builder.size.toDouble() in 1.0..2.0 }
+                ?.let { (other, base) -> ScaledFontRenderer(base, (other.size / builder.size.toDouble())) }
+        }
+
 
     override fun toString(): String {
         return "WidgetFont(name='$familyName')"

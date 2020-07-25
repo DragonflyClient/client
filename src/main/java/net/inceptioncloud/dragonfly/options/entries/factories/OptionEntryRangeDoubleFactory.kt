@@ -80,7 +80,7 @@ class OptionEntryRangeDoubleFactory : OptionEntryFactory<Double>()
         val key = OptionKey(
                 Double::class.java,
                 keyFactory.fileKey,
-                { value -> value in minValue!!..maxValue!! },
+                keyFactory.validator ?: { value -> value in minValue!!..maxValue!! },
                 keyFactory.default
         )
 

@@ -226,6 +226,11 @@ class OptionEntryMultipleChoice(
     }
 
     /**
+     * Convenient function to access the value of the option entry.
+     */
+    operator fun invoke(): Int? = key.get()
+
+    /**
      * A cache for the current value in case it should be applied externally.
      */
     override var valueCache: Int = selectedChoice.identifier

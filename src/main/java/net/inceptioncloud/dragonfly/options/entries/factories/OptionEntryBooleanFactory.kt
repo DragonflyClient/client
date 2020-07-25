@@ -52,7 +52,7 @@ class OptionEntryBooleanFactory : OptionEntryFactory<Boolean>()
         val key = OptionKey(
                 Boolean::class.java,
                 keyFactory.fileKey,
-                keyFactory.validator,
+                keyFactory.validator ?: { true },
                 keyFactory.default
         )
         return OptionEntryBoolean(

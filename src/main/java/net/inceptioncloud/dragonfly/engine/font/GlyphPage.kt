@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.font
 
 import com.google.gson.Gson
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.texture.DynamicTexture
 import org.apache.commons.lang3.builder.EqualsBuilder
@@ -66,7 +67,6 @@ class GlyphPage(
         imgSize = ceil(ceil(sqrt(maxWidth * maxWidth * chars.size) / maxWidth)
             .coerceAtLeast(ceil(sqrt(maxHeight * maxHeight * chars.size) / maxHeight)) * maxWidth.coerceAtLeast(maxHeight)
         ).toInt() + 1
-
 
         val cached = getCachedGlyph()
 
@@ -192,7 +192,7 @@ class GlyphPage(
      * Returns a cached glyph image for the [font].
      */
     private fun getCachedGlyph(): Pair<BufferedImage, HashMap<*, *>>? =
-        if (glyphImage.exists() && glyphProperties.exists()) {
+        if (OptionsSectionUI.saveGlyphs() == true && glyphImage.exists() && glyphProperties.exists()) {
             ImageIO.read(glyphImage) to Gson().fromJson(glyphProperties.readText(), HashMap::class.java)
         } else null
 
@@ -200,8 +200,10 @@ class GlyphPage(
      * Saves the glyph [bufferedImage] to a file and associates it with the [font].
      */
     private fun cacheGlyph() {
-        ImageIO.write(bufferedImage!!, "png", glyphImage)
-        glyphProperties.writeText(Gson().toJson(glyphCharacterMap))
+        if (OptionsSectionUI.saveGlyphs() == true) {
+            ImageIO.write(bufferedImage!!, "png", glyphImage)
+            glyphProperties.writeText(Gson().toJson(glyphCharacterMap))
+        }
     }
 
     override fun toString(): String {
