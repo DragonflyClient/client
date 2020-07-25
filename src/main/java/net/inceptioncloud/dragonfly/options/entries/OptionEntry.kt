@@ -76,7 +76,7 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
                 fontY + (fontRenderer.height / 2), FOREGROUND.rgb
             )
 
-            fontY += fontRenderer.height
+            fontY += fontRenderer.height + 1
         }
     }
 

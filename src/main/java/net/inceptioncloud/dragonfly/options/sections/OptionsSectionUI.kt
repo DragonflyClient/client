@@ -72,7 +72,7 @@ object OptionsSectionUI
     val saveGlyphs = optionEntryBoolean {
         name = "Save Glyphs"
         description = "Saves the glyphs that are created for the font renderers on the local machine. This will improve the " +
-                "performance when entering ui screens and costs less then 5 MB storage."
+                "performance when entering ui screens and costs less than 5 MB storage."
         key {
             fileKey = "saveGlyphs"
             default = { true }

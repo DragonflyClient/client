@@ -55,8 +55,7 @@ class GlyphPage(
         val affineTransform = AffineTransform()
         val fontRenderContext = FontRenderContext(affineTransform, true, true)
         for (ch in chars) {
-            val bounds =
-                font.getStringBounds(ch.toString(), fontRenderContext)
+            val bounds = font.getStringBounds(ch.toString(), fontRenderContext)
             if (maxWidth < bounds.width) maxWidth = bounds.width
             if (maxHeight < bounds.height) maxHeight = bounds.height
         }
