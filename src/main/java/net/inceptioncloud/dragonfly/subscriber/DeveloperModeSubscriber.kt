@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.subscriber
 
 import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.engine.font.renderer.ScaledFontRenderer
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
@@ -40,11 +41,15 @@ class DeveloperModeSubscriber {
             asyncBuilding.size.toString(),
             event.scaledWidth, 26
         )
-
         renderDebugInfo(
             "Cached: ",
             cachedFontRenderer.size.toString(),
             event.scaledWidth, 34
+        )
+        renderDebugInfo(
+            "Scaled: ",
+            cachedFontRenderer.count { it.value is ScaledFontRenderer }.toString(),
+            event.scaledWidth, 42
         )
     }
 

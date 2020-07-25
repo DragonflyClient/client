@@ -1,6 +1,8 @@
-package net.inceptioncloud.dragonfly.engine.font;
+package net.inceptioncloud.dragonfly.engine.font.renderer;
 
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine;
+import net.inceptioncloud.dragonfly.engine.font.FontManager;
+import net.inceptioncloud.dragonfly.engine.font.GlyphPage;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

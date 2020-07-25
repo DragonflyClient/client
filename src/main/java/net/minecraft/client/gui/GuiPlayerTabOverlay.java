@@ -4,7 +4,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.mojang.authlib.GameProfile;
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;

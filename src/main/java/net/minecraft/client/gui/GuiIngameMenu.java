@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.CloudColor;
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardNothing;
@@ -16,7 +16,6 @@ import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.realms.RealmsBridge;
-import org.apache.logging.log4j.LogManager;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;

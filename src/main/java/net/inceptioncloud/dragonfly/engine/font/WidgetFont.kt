@@ -2,6 +2,8 @@ package net.inceptioncloud.dragonfly.engine.font
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import org.apache.logging.log4j.LogManager
 
 /**

@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.engine
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.engine.font.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.ui.renderer.RectangleRenderer

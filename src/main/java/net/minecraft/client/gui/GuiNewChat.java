@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import com.google.common.collect.Lists;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor;
 import net.inceptioncloud.dragonfly.impl.Tickable;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;

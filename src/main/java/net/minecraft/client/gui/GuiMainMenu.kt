@@ -2,7 +2,8 @@ package net.minecraft.client.gui
 
 import net.inceptioncloud.dragonfly.Dragonfly.fontDesign
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.ScaledFontRenderer
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward

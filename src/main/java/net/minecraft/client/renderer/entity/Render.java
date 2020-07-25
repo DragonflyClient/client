@@ -1,7 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

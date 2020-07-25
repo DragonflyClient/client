@@ -2,6 +2,8 @@ package net.inceptioncloud.dragonfly.engine.widgets.primitive
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.internal.annotations.State

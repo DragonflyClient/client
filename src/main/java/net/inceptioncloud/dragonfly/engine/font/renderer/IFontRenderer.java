@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.engine.font;
+package net.inceptioncloud.dragonfly.engine.font.renderer;
 
 import net.minecraft.client.gui.FontRenderer;
 

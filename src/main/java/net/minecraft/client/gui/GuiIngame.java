@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
 import net.inceptioncloud.dragonfly.design.color.RGB;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;

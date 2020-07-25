@@ -1,5 +1,8 @@
 package net.inceptioncloud.dragonfly.engine.font;
 
+import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
+
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.util.HashMap;
