@@ -6,6 +6,8 @@ import com.google.common.eventbus.SubscriberExceptionHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Method;
+
 /**
  * A custom subscriber exception handler for the {@link EventBus}.
  */
@@ -28,6 +30,10 @@ public class ModSubscriberExceptionHandler implements SubscriberExceptionHandler
     @Override
     public void handleException (Throwable exception, SubscriberExceptionContext context)
     {
-        logger.error("Could not dispatch event: " + context.getSubscriber() + " to " + context.getSubscriberMethod(), exception.getCause());
+        final Object event = context.getEvent();
+        final Method method = context.getSubscriberMethod();
+        logger.error("Could not dispatch event " + event.getClass().getSimpleName()
+                + " to " + method.getDeclaringClass().getName() + "." + method.getName() + "()");
+        logger.error(exception);
     }
 }

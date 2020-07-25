@@ -33,12 +33,12 @@ class WidgetFont @JvmOverloads constructor(
     /**
      * Cache for already created font renderer.
      */
-    private val cachedFontRenderer = mutableMapOf<FontRendererBuilder, IFontRenderer>()
+    val cachedFontRenderer = mutableMapOf<FontRendererBuilder, IFontRenderer>()
 
     /**
      * A cache with all running async productions and already built font renderers.
      */
-    private val asyncBuilding = mutableMapOf<FontRendererBuilder, IFontRenderer?>()
+    val asyncBuilding = mutableMapOf<FontRendererBuilder, IFontRenderer?>()
 
     /**
      * Clears both caches when changing the font quality.
@@ -80,6 +80,8 @@ class WidgetFont @JvmOverloads constructor(
         // if a cached version is available
         if (asyncBuilding.containsKey(builder)) {
             return asyncBuilding[builder]
+        } else if (cachedFontRenderer.containsKey(builder)) {
+            return cachedFontRenderer[builder]
         }
 
         // store 'null' to indicate that a build is running
@@ -92,7 +94,8 @@ class WidgetFont @JvmOverloads constructor(
             )
 
             val fontRenderer = fontRenderer(preferences)
-            asyncBuilding[builder] = fontRenderer
+            asyncBuilding.remove(builder)
+            cachedFontRenderer[builder] = fontRenderer
         }
 
         return null

@@ -5,8 +5,10 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
+import org.github.jamm.MemoryMeter
 import java.awt.Color
 import java.awt.Font
+
 
 class DeveloperModeSubscriber {
     @Subscribe
@@ -14,13 +16,35 @@ class DeveloperModeSubscriber {
         if (!Dragonfly.isDeveloperMode)
             return
 
-        renderDebugInfo("FPS: ", Minecraft.getDebugFPS().toString(), event.scaledWidth, 2)
-        renderDebugInfo("TPS: ", Dragonfly.lastTPS.toString(), event.scaledWidth, 10)
+        renderDebugInfo(
+            "FPS: ",
+            Minecraft.getDebugFPS().toString(),
+            event.scaledWidth, 2
+        )
+        renderDebugInfo(
+            "TPS: ",
+            Dragonfly.lastTPS.toString(),
+            event.scaledWidth, 10
+        )
         renderDebugInfo(
             "GUI: ",
             Minecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "null",
-            event.scaledWidth,
-            18
+            event.scaledWidth, 18
+        )
+
+        val asyncBuilding = Dragonfly.fontDesign.defaultFont.asyncBuilding
+        val cachedFontRenderer = Dragonfly.fontDesign.defaultFont.cachedFontRenderer
+
+        renderDebugInfo(
+            "Async Building: ",
+            asyncBuilding.size.toString(),
+            event.scaledWidth, 26
+        )
+
+        renderDebugInfo(
+            "Cached: ",
+            cachedFontRenderer.size.toString(),
+            event.scaledWidth, 34
         )
     }
 
