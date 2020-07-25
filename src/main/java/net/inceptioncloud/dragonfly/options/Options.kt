@@ -23,7 +23,7 @@ object Options {
      * the performance, the values are cached in this map. The value is cached when it is
      * accessed the first time [get] or when it changes.
      */
-    private val valueCache = mutableMapOf<OptionKey<*>, Any>()
+    private val valueCache = mutableMapOf<OptionKey<*>, Any?>()
 
     /**
      * The Gson instance that allows the (de-)serialization of objects.
@@ -78,7 +78,7 @@ object Options {
      * @return The saved value or the default value
      */
     @JvmStatic
-    fun <T> getValue(optionKey: OptionKey<T>): T {
+    fun <T> getValue(optionKey: OptionKey<T>): T? {
         @Suppress("UNCHECKED_CAST")
         if (valueCache.containsKey(optionKey)) // check for cached value
             return valueCache[optionKey] as T
@@ -103,7 +103,7 @@ object Options {
 
         val value = optionKey.defaultValue.get()
         setValue(optionKey, value)
-        return value.also { valueCache[optionKey] = it as Any }
+        return value.also { valueCache[optionKey] = it as Any? }
     }
 
     /**
@@ -122,7 +122,7 @@ object Options {
             return false
         }
         jsonObject!!.add(optionKey.key, gson.toJsonTree(value))
-        valueCache[optionKey] = value as Any
+        valueCache[optionKey] = value as Any?
         return true
     }
 

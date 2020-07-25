@@ -2,8 +2,7 @@ package net.inceptioncloud.dragonfly.engine.font
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
-import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.*
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -60,6 +59,12 @@ class WidgetFont @JvmOverloads constructor(
         return if (cachedFontRenderer.containsKey(builder)) {
             cachedFontRenderer[builder]!!
         } else {
+            val scaled = findScaled(builder)
+            if (scaled != null) {
+                cachedFontRenderer[builder] = scaled
+                return scaled
+            }
+
             GlyphFontRenderer.create(
                 fontWeights[builder.fontWeight],
                 builder.size,
@@ -86,6 +91,12 @@ class WidgetFont @JvmOverloads constructor(
             return cachedFontRenderer[builder]
         }
 
+        val scaled = findScaled(builder)
+        if (scaled != null) {
+            cachedFontRenderer[builder] = scaled
+            return scaled
+        }
+
         // store 'null' to indicate that a build is running
         asyncBuilding[builder] = null
 
@@ -101,6 +112,14 @@ class WidgetFont @JvmOverloads constructor(
         }
 
         return null
+    }
+
+    private fun findScaled(builder: FontRendererBuilder): ScaledFontRenderer? {
+        return cachedFontRenderer.toList()
+            .filter { (other, _) -> other.fontWeight == builder.fontWeight && other.letterSpacing == builder.letterSpacing }
+            .sortedBy { (other, _) -> other.size }
+            .firstOrNull { (other, _) -> other.size / builder.size.toDouble() in 1.0..2.0 }
+            ?.let { (other, base) -> ScaledFontRenderer(base, (other.size / builder.size.toDouble())) }
     }
 
     override fun toString(): String {
