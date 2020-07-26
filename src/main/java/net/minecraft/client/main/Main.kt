@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import com.mojang.authlib.properties.PropertyMap
 import joptsimple.OptionParser
 import joptsimple.OptionSpec
+import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.event.client.ApplicationStartEvent
 import net.minecraft.client.Minecraft
@@ -14,13 +15,15 @@ import java.net.*
 
 object Main {
 
+    val context = newSingleThreadContext("Client coroutine")
+
     @JvmStatic
-    fun main(args: Array<String>) {
+    fun main(args: Array<String>) = runBlocking {
         val event = ApplicationStartEvent(args.contains("--drgn-developer"))
         Dragonfly.eventBus.post(event)
 
         if (event.isCancelled) {
-            return
+            return@runBlocking
         }
 
         System.setProperty("java.net.preferIPv4Stack", "true")
@@ -128,8 +131,17 @@ object Main {
                 Minecraft.stopIntegratedServer()
             }
         })
-        Thread.currentThread().name = "Client thread"
-        Minecraft(gameConfiguration).run()
+
+        val job = GlobalScope.launch(context) {
+            Minecraft(gameConfiguration).run()
+        }
+
+        delay(5_000)
+        withContext(context) {
+            println("Hello World!")
+        }
+
+        job.join()
     }
 
     private fun isNullOrEmpty(str: String?): Boolean {

@@ -1,6 +1,9 @@
 package net.minecraft.client.renderer.chunk
 
 import com.google.common.collect.Sets
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import net.minecraft.block.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.multiplayer.WorldClient
@@ -25,6 +28,7 @@ open class RenderChunk(
 ) {
     @JvmField
     val lockCompileTask: ReentrantLock = ReentrantLock()
+
     @JvmField
     val lockCompiledChunk = ReentrantLock()
 
@@ -32,8 +36,10 @@ open class RenderChunk(
     private val modelviewMatrix = GLAllocation.createDirectFloatBuffer(16)
     private val vertexBuffers =
         arrayOfNulls<VertexBuffer>(EnumWorldBlockLayer.values().size)
+
     @JvmField
     var compiledChunk = CompiledChunk.DUMMY
+
     @JvmField
     var boundingBox: AxisAlignedBB? = null
     var position: BlockPos? = null
@@ -84,7 +90,6 @@ open class RenderChunk(
 
     fun rebuildChunk(x: Float, y: Float, z: Float, generator: ChunkCompileTaskGenerator) {
         val compiledchunk = CompiledChunk()
-        val flag = true
         val blockpos = position
         val blockpos1 = blockpos!!.add(15, 15, 15)
         generator.lock.lock()
@@ -126,50 +131,53 @@ open class RenderChunk(
 
                 if (ReflectorForge.blockHasTileEntity(iblockstate)) {
                     val tileEntity = regionrendercache.getTileEntity(BlockPos(blockposm))
-                    val tileentityspecialrenderer: TileEntitySpecialRenderer<*>? =
+                    val tileEntitySpecialRenderer: TileEntitySpecialRenderer<*>? =
                         TileEntityRendererDispatcher.instance.getSpecialRenderer<TileEntity>(tileEntity)
-                    if (tileEntity != null && tileentityspecialrenderer != null) {
+                    if (tileEntity != null && tileEntitySpecialRenderer != null) {
                         compiledchunk.addTileEntity(tileEntity)
-                        if (tileentityspecialrenderer.func_181055_a()) {
+                        if (tileEntitySpecialRenderer.func_181055_a()) {
                             set.add(tileEntity)
                         }
                     }
                 }
 
-                var aenumworldblocklayer: Array<EnumWorldBlockLayer?>
+                val enumWorldBlockLayers: Array<EnumWorldBlockLayer?>
 
                 if (flag2) {
-                    aenumworldblocklayer = ENUM_WORLD_BLOCK_LAYERS
+                    enumWorldBlockLayers = ENUM_WORLD_BLOCK_LAYERS
                 } else {
-                    aenumworldblocklayer = blockLayersSingle
-                    aenumworldblocklayer[0] = block.blockLayer
+                    enumWorldBlockLayers = blockLayersSingle
+                    enumWorldBlockLayers[0] = block.blockLayer
                 }
 
-                for (i in aenumworldblocklayer.indices) {
-                    var enumworldblocklayer = aenumworldblocklayer[i]
+                for (i in enumWorldBlockLayers.indices) {
+                    var enumWorldBlockLayer = enumWorldBlockLayers[i]
                     if (flag2) {
                         val flag4 =
-                            Reflector.callBoolean(block, Reflector.ForgeBlock_canRenderInLayer, enumworldblocklayer)
+                            Reflector.callBoolean(block, Reflector.ForgeBlock_canRenderInLayer, enumWorldBlockLayer)
                         if (!flag4) {
                             continue
                         }
                     }
                     if (flag3) {
-                        Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, enumworldblocklayer)
+                        Reflector.callVoid(Reflector.ForgeHooksClient_setRenderLayer, enumWorldBlockLayer)
                     }
                     if (fixBlockLayer) {
-                        enumworldblocklayer = fixBlockLayer(block, enumworldblocklayer)
+                        enumWorldBlockLayer = fixBlockLayer(block, enumWorldBlockLayer)
                     }
-                    val j = enumworldblocklayer!!.ordinal
+
+                    val j = enumWorldBlockLayer!!.ordinal
                     if (block.renderType != -1) {
-                        val worldrenderer = generator.regionRenderCacheBuilder.getWorldRendererByLayerId(j)
-                        worldrenderer.setBlockLayer(enumworldblocklayer)
-                        if (!compiledchunk.isLayerStarted(enumworldblocklayer)) {
-                            compiledchunk.setLayerStarted(enumworldblocklayer)
-                            preRenderBlocks(worldrenderer, blockpos)
+                        val worldRenderer = generator.regionRenderCacheBuilder.getWorldRendererByLayerId(j)
+                        worldRenderer.setBlockLayer(enumWorldBlockLayer)
+
+                        if (!compiledchunk.isLayerStarted(enumWorldBlockLayer)) {
+                            compiledchunk.setLayerStarted(enumWorldBlockLayer)
+                            preRenderBlocks(worldRenderer, blockpos)
+
                         }
-                        aboolean[j] =
-                            aboolean[j] or blockrendererdispatcher.renderBlock(iblockstate, blockposm, regionrendercache, worldrenderer)
+
+                        aboolean[j] = aboolean[j] or blockrendererdispatcher.renderBlock(iblockstate, blockposm, regionrendercache, worldRenderer)
                     }
                 }
             }
@@ -381,6 +389,7 @@ open class RenderChunk(
 
     companion object {
         private const val __OBFID = "CL_00002452"
+
         @JvmField
         var renderChunksUpdated = 0
         private val ENUM_WORLD_BLOCK_LAYERS: Array<EnumWorldBlockLayer?> = EnumWorldBlockLayer.values().map { it.takeIf { true } }.toTypedArray()

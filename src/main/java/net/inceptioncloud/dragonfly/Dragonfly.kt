@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly
 
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import net.inceptioncloud.dragonfly.design.DesignSubscribers
 import net.inceptioncloud.dragonfly.design.splash.ModSplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
@@ -15,6 +17,7 @@ import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers
 import net.inceptioncloud.dragonfly.transition.Transition
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.Minecraft
+import net.minecraft.client.main.Main
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.lwjgl.opengl.Display
