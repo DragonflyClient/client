@@ -35,7 +35,7 @@ public class ChunkRenderWorker implements Runnable {
         while (true) {
             try {
                 this.processTask(this.chunkRenderDispatcher.getNextChunkUpdate());
-                Thread.sleep(50);
+                Thread.sleep(1_000);
             } catch (InterruptedException var3) {
                 LOGGER.debug("Stopping due to interrupt");
                 return;
