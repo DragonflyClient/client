@@ -41,7 +41,7 @@ object OptionsSectionClient {
      */
     @JvmStatic
     val screenshotUtilities = optionEntryBoolean {
-        name = "Screenshot Utilities"
+        name = "Screenshot utilities"
         description = "Provides additional utility functions to the screenshot system like uploading and " +
                 "copying. Note that this overrides the default screenshot behavior."
         key {
