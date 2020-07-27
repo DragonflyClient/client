@@ -22,3 +22,8 @@ gradlew.bat
 /runtime/transition-tracker
 /runtime/assets/skins
 /runtime/logs
+/runtime/dragonfly/alpha.key
+/runtime/shaderpacks/
+/runtime/resourcepacks/
+/runtime/crash-reports/
+/runtime/assets/objects/

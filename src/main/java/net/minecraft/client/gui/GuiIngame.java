@@ -6,6 +6,8 @@ import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
 import net.inceptioncloud.dragonfly.design.color.RGB;
 import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.hotkeys.Hotkey;
+import net.inceptioncloud.dragonfly.hotkeys.HotkeyController;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
@@ -60,6 +62,11 @@ public class GuiIngame extends Gui {
     private final RenderItem itemRenderer;
 
     /**
+     * Controller of all set hotkeys
+     */
+    HotkeyController controller = new HotkeyController();
+
+    /**
      * ChatGUI instance that retains all previous chat data
      */
     private final GuiNewChat persistantChatGUI;
@@ -71,12 +78,7 @@ public class GuiIngame extends Gui {
      */
     private final GuiSpectator spectatorGui;
     private final GuiPlayerTabOverlay overlayPlayerList;
-    private final SmoothDoubleTransition goodGameProcess = SmoothDoubleTransition.builder()
-            .fadeIn(0).stay(50).fadeOut(100)
-            .start(0).end(1)
-            .autoTransformator((ForwardBackward) () -> Keyboard.isCreated() && Keyboard.isKeyDown(Keyboard.KEY_G) && !GuiNewChat.isChatOpen())
-            .reachEnd(() -> sendChatMessage("gg", false))
-        .build();
+
     /**
      * Previous frame vignette brightness (slowly changes by 1% each frame)
      */
@@ -354,7 +356,9 @@ public class GuiIngame extends Gui {
         if (!this.mc.isIntegratedServerRunning() || this.mc.thePlayer.sendQueue.getPlayerInfoMap().size() > 1 || scoreobjective1 != null)
             this.overlayPlayerList.renderPlayerlist(scaledWidth, scoreboard, scoreobjective1);
 
-        drawRect(0, scaledHeight - 1, goodGameProcess.get() * scaledWidth, scaledHeight, new Color(0x26de81).getRGB());
+        for(Hotkey key : controller.getHotkeys()) {
+            key.draw();
+        }
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableLighting();
