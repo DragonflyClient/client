@@ -2,6 +2,7 @@ package net.minecraft.client.gui;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import kotlin.jvm.JvmStatic;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
 import net.inceptioncloud.dragonfly.design.color.RGB;
@@ -60,11 +61,6 @@ public class GuiIngame extends Gui {
     private final Random rand = new Random();
     private final Minecraft mc;
     private final RenderItem itemRenderer;
-
-    /**
-     * Controller of all set hotkeys
-     */
-    HotkeyController controller = new HotkeyController();
 
     /**
      * ChatGUI instance that retains all previous chat data
@@ -153,6 +149,7 @@ public class GuiIngame extends Gui {
         this.title_fadeOut = 20;
     }
 
+    @JvmStatic
     public void renderGameOverlay (float partialTicks)
     {
         ScaledResolution scaledresolution = new ScaledResolution(this.mc);
@@ -356,7 +353,7 @@ public class GuiIngame extends Gui {
         if (!this.mc.isIntegratedServerRunning() || this.mc.thePlayer.sendQueue.getPlayerInfoMap().size() > 1 || scoreobjective1 != null)
             this.overlayPlayerList.renderPlayerlist(scaledWidth, scoreboard, scoreobjective1);
 
-        for(Hotkey key : controller.getHotkeys()) {
+        for(Hotkey key : HotkeyController.getHotkeys()) {
             key.draw();
         }
 

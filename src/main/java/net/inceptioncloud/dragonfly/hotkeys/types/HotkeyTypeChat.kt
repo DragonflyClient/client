@@ -14,6 +14,7 @@ import java.util.*
 
 class HotkeyTypeChat(
     override val key: Int,
+    override val modifierKey: Int?,
     override val time: Double,
     override val delay: Double,
     override val color: Color,
@@ -23,15 +24,12 @@ class HotkeyTypeChat(
     Hotkey() {
 
     var drawLine = true
+    var direction = 0
 
     var transition = SmoothDoubleTransition.builder()
         .fadeIn(0).stay((time * 180).toInt()).fadeOut((time * 20).toInt())
         .start(0.0).end(1.0)
-        .autoTransformator(ForwardBackward {
-            Keyboard.isCreated() && Keyboard.isKeyDown(
-                key
-            ) && !GuiNewChat.isChatOpen()
-        })
+        .autoTransformator { direction }
         .reachEnd { actionPerformed() }
         .build()
 
@@ -47,11 +45,7 @@ class HotkeyTypeChat(
                     transition = SmoothDoubleTransition.builder()
                         .fadeIn(0).stay((time * 180).toInt()).fadeOut((time * 20).toInt())
                         .start(0.0).end(1.0)
-                        .autoTransformator(ForwardBackward {
-                            Keyboard.isCreated() && Keyboard.isKeyDown(
-                                key
-                            ) && !GuiNewChat.isChatOpen()
-                        })
+                        .autoTransformator { direction }
                         .reachEnd { actionPerformed() }
                         .build()
                     drawLine = true
