@@ -60,8 +60,14 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         "dragonflyres/ingame_background_${if (Random().nextBoolean()) 2 else 1}.png"
     )
 
+    /**
+     * The ui list entry that is currently focused (hovered).
+     */
     private var focusedEntry: UIListEntry? = null
 
+    /**
+     * The option entry that the help icon is currently attached to.
+     */
     var helpAttachedEntry: OptionEntry<*>? = null
 
     /**
@@ -135,11 +141,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
 
         val newFocusedEntry = uiList.entries
             .firstOrNull {
-                if (focusedEntry == it) {
-                    mouseX in it.x - 24..it.x + uiList.listWidth
-                } else {
-                    mouseX in it.x..it.x + uiList.listWidth
-                } && mouseY in it.y..it.y + uiList.entryHeight
+                mouseX in it.x - 24..it.x + uiList.listWidth && mouseY in it.y..it.y + uiList.entryHeight
             }
 
         val helpIcon = getWidget<Image>("help-icon")

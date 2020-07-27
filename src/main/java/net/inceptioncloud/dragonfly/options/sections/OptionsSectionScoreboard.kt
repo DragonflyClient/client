@@ -18,31 +18,29 @@ object OptionsSectionScoreboard {
      * Whether the title of the scoreboard should be visible.
      */
     @JvmStatic
-    val scoreboardTitle =
-        optionEntryBoolean {
-            name = "Title"
-            description = "Shows the scoreboard title (first line) of the scoreboard. It usually contains " +
-                    "the name of the server or gamemode that you are currently playing."
-            key {
-                fileKey = "scoreboardTitle"
-                default = { true }
-            }
+    val scoreboardTitle = optionEntryBoolean {
+        name = "Title"
+        description = "Shows the scoreboard title (first line) of the scoreboard. It usually contains " +
+                "the name of the server or gamemode that you are currently playing."
+        key {
+            fileKey = "scoreboardTitle"
+            default = { true }
         }
+    }
 
     /**
      * ## Background
      * Whether the scoreboard background should be visible.
      */
     @JvmStatic
-    val scoreboardBackground =
-        optionEntryBoolean {
-            name = "Background"
-            description = "Renders a transparent black background behind the scoreboard entries and title."
-            key {
-                fileKey = "scoreboardBackground"
-                default = { true }
-            }
+    val scoreboardBackground = optionEntryBoolean {
+        name = "Background"
+        description = "Renders a transparent black background behind the scoreboard entries and title."
+        key {
+            fileKey = "scoreboardBackground"
+            default = { true }
         }
+    }
 
     /**
      * ## Background

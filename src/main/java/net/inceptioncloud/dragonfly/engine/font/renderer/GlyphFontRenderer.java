@@ -3,7 +3,7 @@ package net.inceptioncloud.dragonfly.engine.font.renderer;
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine;
 import net.inceptioncloud.dragonfly.engine.font.FontManager;
 import net.inceptioncloud.dragonfly.engine.font.GlyphPage;
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI;
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -206,10 +206,10 @@ public class GlyphFontRenderer implements IFontRenderer {
     }
 
     /**
-     * Quick Method to access {@link OptionsSectionUI#getFontQuality()}
+     * Quick Method to access {@link OptionsSectionPerformance#getFontQuality()}
      */
     public static double getFontQualityScale() {
-        final double quality = OptionsSectionUI.getFontQuality().getKey().get();
+        final double quality = OptionsSectionPerformance.getFontQuality().invoke();
         return Math.round(quality * 10.0) / 10.0;
     }
 

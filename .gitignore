@@ -1,6 +1,7 @@
 # Files
 gradlew
 gradlew.bat
+gradle.properties
 
 # Directories
 /out/

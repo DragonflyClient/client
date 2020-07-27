@@ -17,7 +17,7 @@ object OptionsSectionChat {
      */
     @JvmStatic
     val messageRestoreMode = optionEntryMultipleChoice {
-        name = "Message Restore Mode"
+        name = "Message restore mode"
         description = "When closing the chat, your last entered message (that hasn't been sent) can be restored. " +
                 "You can select when this should happen."
 

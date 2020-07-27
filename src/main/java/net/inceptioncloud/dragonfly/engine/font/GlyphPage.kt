@@ -2,7 +2,6 @@ package net.inceptioncloud.dragonfly.engine.font
 
 import com.google.gson.Gson
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.texture.DynamicTexture
 import org.apache.commons.lang3.builder.EqualsBuilder
