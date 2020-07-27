@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.engine
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.engine.font.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.ui.renderer.RectangleRenderer
@@ -40,7 +40,7 @@ object GraphicsEngine {
      * All characters that can be rendered by the [GlyphFontRenderer].
      */
     @JvmField
-    val CHARACTERS = (0..300).map { it.toChar() }.toCharArray()
+    val CHARACTERS = ((32..126) + (161..252)).map { it.toChar() }.toCharArray()
 
     /**
      * Renders the debug overlay for the given widgets and their identifiers.

@@ -20,7 +20,7 @@ object OptionsSectionClient {
      */
     @JvmStatic
     val windowedFullscreen = optionEntryBoolean {
-        name = "Windowed Fullscreen"
+        name = "Windowed fullscreen"
         description = "Uses windowed fullscreen instead of the default fullscreen to allow moving " +
                 "the cursor out of the game when in a GUI."
         externalApply = { value, optionKey ->

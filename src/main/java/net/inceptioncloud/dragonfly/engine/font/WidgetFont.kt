@@ -2,6 +2,8 @@ package net.inceptioncloud.dragonfly.engine.font
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import net.inceptioncloud.dragonfly.engine.font.renderer.*
+import net.inceptioncloud.dragonfly.options.sections.*
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -33,12 +35,12 @@ class WidgetFont @JvmOverloads constructor(
     /**
      * Cache for already created font renderer.
      */
-    private val cachedFontRenderer = mutableMapOf<FontRendererBuilder, GlyphFontRenderer>()
+    val cachedFontRenderer = mutableMapOf<FontRendererBuilder, IFontRenderer>()
 
     /**
      * A cache with all running async productions and already built font renderers.
      */
-    private val asyncBuilding = mutableMapOf<FontRendererBuilder, GlyphFontRenderer?>()
+    val asyncBuilding = mutableMapOf<FontRendererBuilder, IFontRenderer?>()
 
     /**
      * Clears both caches when changing the font quality.
@@ -51,20 +53,23 @@ class WidgetFont @JvmOverloads constructor(
     /**
      * Builds a new font renderer with preferences set by the [preferences] block.
      */
-    fun fontRenderer(preferences: (FontRendererBuilder.() -> Unit)? = null): GlyphFontRenderer {
+    fun fontRenderer(preferences: (FontRendererBuilder.() -> Unit)? = null): IFontRenderer {
         val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
         preferences?.invoke(builder)
 
         return if (cachedFontRenderer.containsKey(builder)) {
             cachedFontRenderer[builder]!!
         } else {
+            val scaled = findScaled(builder)
+            if (scaled != null) {
+                cachedFontRenderer[builder] = scaled
+                return scaled
+            }
+
             GlyphFontRenderer.create(
                 fontWeights[builder.fontWeight],
                 builder.size,
-                builder.letterSpacing,
-                true,
-                true,
-                true
+                builder.letterSpacing
             ).also { cachedFontRenderer[builder] = it }
         }
     }
@@ -76,13 +81,21 @@ class WidgetFont @JvmOverloads constructor(
      */
     fun fontRendererAsync(
         preferences: (FontRendererBuilder.() -> Unit)? = null
-    ): GlyphFontRenderer? {
+    ): IFontRenderer? {
         val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
         preferences?.invoke(builder)
 
         // if a cached version is available
         if (asyncBuilding.containsKey(builder)) {
             return asyncBuilding[builder]
+        } else if (cachedFontRenderer.containsKey(builder)) {
+            return cachedFontRenderer[builder]
+        }
+
+        val scaled = findScaled(builder)
+        if (scaled != null) {
+            cachedFontRenderer[builder] = scaled
+            return scaled
         }
 
         // store 'null' to indicate that a build is running
@@ -95,11 +108,29 @@ class WidgetFont @JvmOverloads constructor(
             )
 
             val fontRenderer = fontRenderer(preferences)
-            asyncBuilding[builder] = fontRenderer
+            asyncBuilding.remove(builder)
+            cachedFontRenderer[builder] = fontRenderer
         }
 
         return null
     }
+
+    /**
+     * Tries to find and adapt an already existing font renderer to save resources and improve performance.
+     * This will return a [ScaledFontRenderer] object which uses the base font renderer while applying a
+     * scale to adapt to the target font size.
+     */
+    private fun findScaled(builder: FontRendererBuilder) =
+        if (OptionsSectionPerformance.useScaledFontRenderers() != true) {
+            null
+        } else {
+            cachedFontRenderer.toList()
+                .filter { (other, _) -> other.fontWeight == builder.fontWeight && other.letterSpacing == builder.letterSpacing }
+                .sortedBy { (other, _) -> other.size }
+                .firstOrNull { (other, _) -> other.size / builder.size.toDouble() in 1.0..2.0 }
+                ?.let { (other, base) -> ScaledFontRenderer(base, (other.size / builder.size.toDouble())) }
+        }
+
 
     override fun toString(): String {
         return "WidgetFont(name='$familyName')"

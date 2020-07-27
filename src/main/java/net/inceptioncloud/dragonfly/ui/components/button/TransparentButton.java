@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.ui.components.button;
 
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.RGB;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
 import net.minecraft.client.Minecraft;

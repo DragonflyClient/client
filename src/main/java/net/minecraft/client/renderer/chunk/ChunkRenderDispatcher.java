@@ -94,19 +94,13 @@ public class ChunkRenderDispatcher
 
     public boolean updateChunkLater(RenderChunk chunkRenderer)
     {
-        chunkRenderer.getLockCompileTask().lock();
+        chunkRenderer.lockCompileTask.lock();
         boolean flag1;
 
         try
         {
             final ChunkCompileTaskGenerator chunkcompiletaskgenerator = chunkRenderer.makeCompileTaskChunk();
-            chunkcompiletaskgenerator.addFinishRunnable(new Runnable()
-            {
-                public void run()
-                {
-                    ChunkRenderDispatcher.this.queueChunkUpdates.remove(chunkcompiletaskgenerator);
-                }
-            });
+            chunkcompiletaskgenerator.addFinishRunnable(() -> ChunkRenderDispatcher.this.queueChunkUpdates.remove(chunkcompiletaskgenerator));
             boolean flag = this.queueChunkUpdates.offer(chunkcompiletaskgenerator);
 
             if (!flag)
@@ -118,7 +112,7 @@ public class ChunkRenderDispatcher
         }
         finally
         {
-            chunkRenderer.getLockCompileTask().unlock();
+            chunkRenderer.lockCompileTask.unlock();
         }
 
         return flag1;
@@ -126,7 +120,7 @@ public class ChunkRenderDispatcher
 
     public boolean updateChunkNow(RenderChunk chunkRenderer)
     {
-        chunkRenderer.getLockCompileTask().lock();
+        chunkRenderer.lockCompileTask.lock();
         boolean flag;
 
         try
@@ -146,7 +140,7 @@ public class ChunkRenderDispatcher
         }
         finally
         {
-            chunkRenderer.getLockCompileTask().unlock();
+            chunkRenderer.lockCompileTask.unlock();
         }
 
         return flag;
@@ -195,7 +189,7 @@ public class ChunkRenderDispatcher
 
     public boolean updateTransparencyLater(RenderChunk chunkRenderer)
     {
-        chunkRenderer.getLockCompileTask().lock();
+        chunkRenderer.lockCompileTask.lock();
         boolean flag;
 
         try
@@ -219,7 +213,7 @@ public class ChunkRenderDispatcher
         }
         finally
         {
-            chunkRenderer.getLockCompileTask().unlock();
+            chunkRenderer.lockCompileTask.unlock();
         }
 
         return flag;

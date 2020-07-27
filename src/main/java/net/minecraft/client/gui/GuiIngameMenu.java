@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.CloudColor;
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardNothing;
@@ -16,7 +16,6 @@ import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.realms.RealmsBridge;
-import org.apache.logging.log4j.LogManager;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -47,7 +46,7 @@ public class GuiIngameMenu extends GuiScreen
      */
     private SmoothDoubleTransition pushOffset;
 
-    private final String aboutString = "About ICM";
+    private final String aboutString = "About Dragonfly";
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
@@ -167,7 +166,6 @@ public class GuiIngameMenu extends GuiScreen
 
     private void requestClose ()
     {
-        LogManager.getLogger().info("Ingame Menu close requested! " + closeRequested);
         this.closeRequested = true;
     }
 

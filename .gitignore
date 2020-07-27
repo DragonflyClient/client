@@ -1,6 +1,7 @@
 # Files
 gradlew
 gradlew.bat
+gradle.properties
 
 # Directories
 /out/
@@ -22,3 +23,7 @@ gradlew.bat
 /runtime/transition-tracker
 /runtime/assets/skins
 /runtime/logs
+
+# Runtime Dragonfly
+/runtime/dragonfly/options.json
+/runtime/dragonfly/glyphs

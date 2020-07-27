@@ -113,4 +113,9 @@ class OptionEntryRangeInt(name: String, description: String, private val typeKey
     {
         return typeKey
     }
+
+    /**
+     * Convenient function to access the value of the option entry.
+     */
+    operator fun invoke(): Int? = typeKey.get()
 }

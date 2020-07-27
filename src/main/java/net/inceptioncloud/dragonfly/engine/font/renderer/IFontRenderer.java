@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.engine.font;
+package net.inceptioncloud.dragonfly.engine.font.renderer;
 
 import net.minecraft.client.gui.FontRenderer;
 
@@ -29,6 +29,11 @@ public interface IFontRenderer
      * @return The end x-value
      */
     int drawString (String text, float x, float y, int color, boolean dropShadow);
+
+    /**
+     * Draws the specified string with a shadow that can have a custom color and distance.
+     */
+    int drawStringWithCustomShadow(String text, int x, int y, int color, int shadowColor, float distance);
 
     /**
      * Draw a left-justified string at the given location with a specific color and

@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.discord.RichPresenceManager
 import net.inceptioncloud.dragonfly.engine.font.FontManager
 import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
+import net.inceptioncloud.dragonfly.event.client.ClientTickEvent
 import net.inceptioncloud.dragonfly.impl.Tickable
 import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.OptionsManager
@@ -203,7 +204,12 @@ object Dragonfly {
         synchronized(this) {
             transitions.toTypedArray().forEach { it.tick() }
             tickables.toTypedArray().forEach { it!!.modTick() }
-            if (Minecraft.getMinecraft().currentScreen != null) Minecraft.getMinecraft().currentScreen.buffer.update()
+
+            if (Minecraft.getMinecraft().currentScreen != null)
+                Minecraft.getMinecraft().currentScreen.buffer.update()
+
+            val tickEvent = ClientTickEvent()
+            eventBus.post(tickEvent)
         }
     }
 }

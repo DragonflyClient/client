@@ -34,7 +34,7 @@ object OptionsSectionZoom
      */
     @JvmStatic
     val fieldOfView = optionEntryRangeInt {
-        name = "Field of View"
+        name = "Field of view"
         description = "The value to which the FOV is reduced during the zoom (the percentage of the original value)."
         minValue = 1
         maxValue = 100
@@ -54,7 +54,7 @@ object OptionsSectionZoom
      */
     @JvmStatic
     val mouseSensitivity = optionEntryRangeInt {
-        name = "Mouse Sensitivity"
+        name = "Mouse sensitivity"
         description = "The mouse sensitivity during the zoom (the percentage of the original value)."
         minValue = 1
         maxValue = 100
