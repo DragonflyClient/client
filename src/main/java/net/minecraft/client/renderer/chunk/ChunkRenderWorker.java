@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RegionRenderCacheBuilder;
 import net.minecraft.crash.CrashReport;
@@ -21,6 +22,12 @@ public class ChunkRenderWorker implements Runnable {
     private static final Logger LOGGER = LogManager.getLogger();
     private final ChunkRenderDispatcher chunkRenderDispatcher;
     private final RegionRenderCacheBuilder regionRenderCacheBuilder;
+
+    public static long chunkUpdateDelay = calculateUpdateDelay();
+
+    public static long calculateUpdateDelay() {
+        return OptionsSectionPerformance.getChunkUpdateSpeed().invoke().longValue();
+    }
 
     public ChunkRenderWorker(ChunkRenderDispatcher p_i46201_1_) {
         this(p_i46201_1_, null);
@@ -35,7 +42,8 @@ public class ChunkRenderWorker implements Runnable {
         while (true) {
             try {
                 this.processTask(this.chunkRenderDispatcher.getNextChunkUpdate());
-                Thread.sleep(50);
+                //noinspection BusyWait
+                Thread.sleep(chunkUpdateDelay);
             } catch (InterruptedException var3) {
                 LOGGER.debug("Stopping due to interrupt");
                 return;

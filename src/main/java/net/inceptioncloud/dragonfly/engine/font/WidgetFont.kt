@@ -3,8 +3,7 @@ package net.inceptioncloud.dragonfly.engine.font
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.engine.font.renderer.*
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI
+import net.inceptioncloud.dragonfly.options.sections.*
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -122,7 +121,7 @@ class WidgetFont @JvmOverloads constructor(
      * scale to adapt to the target font size.
      */
     private fun findScaled(builder: FontRendererBuilder) =
-        if (OptionsSectionUI.useScaledFontRenderers() != true) {
+        if (OptionsSectionPerformance.useScaledFontRenderers() != true) {
             null
         } else {
             cachedFontRenderer.toList()

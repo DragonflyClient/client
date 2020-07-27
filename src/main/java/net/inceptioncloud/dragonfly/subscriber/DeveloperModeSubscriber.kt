@@ -6,10 +6,8 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.ScaledFontRenderer
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
-import org.github.jamm.MemoryMeter
 import java.awt.Color
 import java.awt.Font
-
 
 class DeveloperModeSubscriber {
     @Subscribe
@@ -37,19 +35,19 @@ class DeveloperModeSubscriber {
         val cachedFontRenderer = Dragonfly.fontDesign.defaultFont.cachedFontRenderer
 
         renderDebugInfo(
-            "Async Building: ",
+            "Building: ",
             asyncBuilding.size.toString(),
-            event.scaledWidth, 26
+            event.scaledWidth, 28
         )
         renderDebugInfo(
             "Cached: ",
             cachedFontRenderer.size.toString(),
-            event.scaledWidth, 34
+            event.scaledWidth, 36
         )
         renderDebugInfo(
             "Scaled: ",
             cachedFontRenderer.count { it.value is ScaledFontRenderer }.toString(),
-            event.scaledWidth, 42
+            event.scaledWidth, 44
         )
     }
 

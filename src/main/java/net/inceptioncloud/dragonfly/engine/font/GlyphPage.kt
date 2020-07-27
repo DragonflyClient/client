@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.font
 
 import com.google.gson.Gson
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -191,7 +192,7 @@ class GlyphPage(
      * Returns a cached glyph image for the [font].
      */
     private fun getCachedGlyph(): Pair<BufferedImage, HashMap<*, *>>? =
-        if (OptionsSectionUI.saveGlyphs() == true && glyphImage.exists() && glyphProperties.exists()) {
+        if (OptionsSectionPerformance.saveGlyphs() == true && glyphImage.exists() && glyphProperties.exists()) {
             ImageIO.read(glyphImage) to Gson().fromJson(glyphProperties.readText(), HashMap::class.java)
         } else null
 
@@ -199,7 +200,7 @@ class GlyphPage(
      * Saves the glyph [bufferedImage] to a file and associates it with the [font].
      */
     private fun cacheGlyph() {
-        if (OptionsSectionUI.saveGlyphs() == true) {
+        if (OptionsSectionPerformance.saveGlyphs() == true) {
             ImageIO.write(bufferedImage!!, "png", glyphImage)
             glyphProperties.writeText(Gson().toJson(glyphCharacterMap))
         }

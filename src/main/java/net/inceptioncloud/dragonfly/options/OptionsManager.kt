@@ -8,6 +8,7 @@ object OptionsManager {
         Options
 
         OptionsSectionClient.init()
+        OptionsSectionPerformance.init()
         OptionsSectionUI.init()
         OptionsSectionPlayer.init()
         OptionsSectionChat.init()

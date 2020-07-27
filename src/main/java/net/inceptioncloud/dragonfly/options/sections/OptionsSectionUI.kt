@@ -49,37 +49,6 @@ object OptionsSectionUI
     }
 
     /**
-     * ## Use Scaled Font Renderers
-     * Enables the use of font renderers that apply a scale to adapt the font size of another
-     * font renderer.
-     */
-    @JvmStatic
-    val useScaledFontRenderers = optionEntryBoolean {
-        name = "Use Scaled Font Renderers"
-        description = "Improves the performance by re-using already created font renderers and adapting the font size by " +
-                "applying a scale while rendering. Note that this can cause some animations to be less smooth!"
-        key {
-            fileKey = "useScaledFontRenderers"
-            default = { true }
-        }
-    }
-
-    /**
-     * ## Save Glyphs
-     * Enables the storing of glyph (images and properties) on the local machine.
-     */
-    @JvmStatic
-    val saveGlyphs = optionEntryBoolean {
-        name = "Save Glyphs"
-        description = "Saves the glyphs that are created for the font renderers on the local machine. This will improve the " +
-                "performance when entering ui screens and costs less than 5 MB storage."
-        key {
-            fileKey = "saveGlyphs"
-            default = { true }
-        }
-    }
-
-    /**
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
@@ -89,8 +58,6 @@ object OptionsSectionUI
             title = "User Interface"
 
             +fontQuality
-            +useScaledFontRenderers
-            +saveGlyphs
         }
     }
 }
