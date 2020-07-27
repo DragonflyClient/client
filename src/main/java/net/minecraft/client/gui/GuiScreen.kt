@@ -670,11 +670,11 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         }
     }
 
-    private fun openWebLink(p_175282_1_: URI?) {
+    fun openWebLink(url: URI?) {
         try {
-            val oclass = Class.forName("java.awt.Desktop")
-            val `object` = oclass.getMethod("getDesktop", *arrayOfNulls(0)).invoke(null)
-            oclass.getMethod("browse", *arrayOf<Class<*>>(URI::class.java)).invoke(`object`, p_175282_1_)
+            val `class` = Class.forName("java.awt.Desktop")
+            val `object` = `class`.getMethod("getDesktop", *arrayOfNulls(0)).invoke(null)
+            `class`.getMethod("browse", *arrayOf<Class<*>>(URI::class.java)).invoke(`object`, url)
         } catch (throwable: Throwable) {
             LOGGER.error("Couldn't open link", throwable)
         }

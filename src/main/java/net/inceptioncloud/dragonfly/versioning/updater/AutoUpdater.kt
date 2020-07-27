@@ -1,8 +1,7 @@
 package net.inceptioncloud.dragonfly.versioning.updater
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
-import net.inceptioncloud.dragonfly.versioning.DragonflyVersion.versionStatus
+import net.inceptioncloud.dragonfly.versioning.DragonflyVersion.update
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -45,7 +44,7 @@ object AutoUpdater {
         val updater = System.getenv("appdata") + "\\Dragonfly\\Dragonfly-Updater.jar"
         val programArguments = mutableListOf("--version=${DragonflyVersion.remoteVersion.toString()}")
 
-        if (versionStatus?.requiresInstaller == true) {
+        if (update?.requiresInstaller == true) {
             programArguments.add("--requireInstaller")
         }
 

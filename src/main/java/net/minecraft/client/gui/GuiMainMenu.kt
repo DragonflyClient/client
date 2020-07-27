@@ -3,7 +3,6 @@ package net.minecraft.client.gui
 import net.inceptioncloud.dragonfly.Dragonfly.fontDesign
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
-import net.inceptioncloud.dragonfly.engine.font.renderer.ScaledFontRenderer
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward
@@ -29,6 +28,7 @@ import org.lwjgl.opengl.GLContext
 import java.awt.Color
 import java.io.IOException
 import java.net.URI
+import java.net.URL
 import java.util.*
 import java.util.function.Consumer
 import kotlin.math.max
@@ -157,28 +157,43 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
             }
 
         // Logo
+        val initialHeight = height / 20
         val imageSize = (height / 3).coerceAtMost(300)
         val image = ResourceLocation("dragonflyres/logos/white_outline.png")
-        RenderUtils.drawImage(image, width / 2 - imageSize / 2 + 2, height / 8 + 2, imageSize, imageSize, 0f, 0f, 0f, 0.4f)
-        RenderUtils.drawImage(image, width / 2 - imageSize / 2, height / 8, imageSize, imageSize)
+        RenderUtils.drawImage(image, width / 2 - imageSize / 2 + 2, initialHeight + 2, imageSize, imageSize, 0f, 0f, 0f, 0.4f)
+        RenderUtils.drawImage(image, width / 2 - imageSize / 2, initialHeight, imageSize, imageSize)
 
         // Title
-        var percent = imageSize / 280.0
+        val percent = imageSize / 280.0
         var fontRenderer = fontDesign.defaultFont.fontRendererAsync {
             fontWeight = FontWeight.MEDIUM
             size = (25 + percent * 60).toInt()
         }
-        fontRenderer?.drawCenteredString("Inception Cloud Dragonfly", width / 2, height / 8 + imageSize + 10, 0xFFFFFF, true)
+        fontRenderer?.drawCenteredString("Inception Cloud Dragonfly", width / 2, initialHeight + imageSize + 10, 0xFFFFFF, true)
 
         // Subtitle
-        val previousHeight = fontRenderer?.height ?: 0
-        percent = imageSize / 280.0
+        var previousHeight = fontRenderer?.height ?: 0
         fontRenderer = fontDesign.defaultFont.fontRendererAsync { size = (15 + percent * 40).toInt() }
-        fontRenderer?.drawCenteredString(DragonflyVersion.string, width / 2, height / 8 + imageSize + 12 + previousHeight, 0xFFFFFF, true)
+        fontRenderer?.drawCenteredString(DragonflyVersion.string, width / 2, initialHeight + imageSize + 12 + previousHeight, 0xFFFFFF, true)
+
+        // Update title
+        val updateTitle = DragonflyVersion.update?.title
+        updateTitle?.let {
+            previousHeight += fontRenderer?.height ?: 0
+            fontRenderer = fontDesign.defaultFont.fontRendererAsync { size = (10 + percent * 30).toInt() }
+            fontRenderer?.drawCenteredString(it, width / 2, initialHeight + imageSize + 13 + previousHeight, Color(255, 255, 255, 200).rgb, true)
+        }
 
         // About
         fontRenderer = fontDesign.defaultFont.fontRendererAsync()
         fontRenderer?.drawString(aboutString, 5f, 5f, Color.WHITE.rgb, true)
+
+        // What's new?
+        if (DragonflyVersion.update?.patchNotes != null) {
+            val s = "What's new?"
+            fontRenderer = fontDesign.defaultFont.fontRendererAsync()
+            fontRenderer?.drawString(s, width - 5f - (fontRenderer?.getStringWidth(s) ?: 0), 5f, Color.WHITE.rgb, true)
+        }
 
         // Bottom Bar
         drawRect(0, height - navbarHeight, width, height, Color(0, 0, 0, 100).rgb)
@@ -347,15 +362,23 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         super.mouseClicked(mouseX, mouseY, mouseButton)
         synchronized(threadLock) {
             if (openGLWarning1.isNotEmpty() && mouseX >= field92022T && mouseX <= field92020V && mouseY >= field92021U && mouseY <= field92019W) {
-                val guiconfirmopenlink = GuiConfirmOpenLink(this, openGLWarningLink, 13, true)
-                guiconfirmopenlink.disableSecurityWarning()
-                mc.displayGuiScreen(guiconfirmopenlink)
+                val guiConfirmOpenLink = GuiConfirmOpenLink(this, openGLWarningLink, 13, true)
+                guiConfirmOpenLink.disableSecurityWarning()
+                mc.displayGuiScreen(guiConfirmOpenLink)
             }
         }
-        val fontRenderer = fontDesign.regular
-        if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString) && mouseY >= 5 && mouseY <= 5 + fontRenderer.height
-        ) {
-            mc.displayGuiScreen(AboutUI(this))
+
+        val fontRenderer = fontDesign.defaultFont.fontRendererAsync()
+        if (mouseY in 5..5 + (fontRenderer?.height ?: 0)) {
+            if (mouseX in 5..5 + (fontRenderer?.getStringWidth(aboutString) ?: 0)) {
+                mc.displayGuiScreen(AboutUI(this))
+            } else {
+                val s = "What's new?"
+                val sWidth = fontRenderer?.getStringWidth(s) ?: 0
+                if (mouseX in width - sWidth - 5..width - 5) {
+                    openWebLink(URL(DragonflyVersion.update?.patchNotes ?: "https://google.net").toURI())
+                }
+            }
         }
     }
 
