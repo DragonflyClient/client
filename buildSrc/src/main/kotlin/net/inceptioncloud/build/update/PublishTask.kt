@@ -56,6 +56,15 @@ open class PublishTask : DefaultTask() {
     var patchNotes: String? = null
 
     /**
+     * The link to the patch notes or any other news resource.
+     */
+    @set:Option(
+        option = "title",
+        description = "The title of the update"
+    )
+    var title: String? = null
+
+    /**
      * The directory which the Inception Cloud Secrets are stored in.
      */
     private val secrets = getSecretsDirectory()
@@ -106,6 +115,7 @@ open class PublishTask : DefaultTask() {
             "version" to VersionTask.globalVersion,
             "requiresInstaller" to requiresInstaller,
             "patchNotes" to patchNotes,
+            "title" to title,
             "releaseDate" to System.currentTimeMillis()
         )
 
