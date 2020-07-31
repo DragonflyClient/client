@@ -10,7 +10,6 @@ import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 
@@ -40,7 +39,6 @@ class HotActionWidget(
         "message" to TextField(),
         "horizontal-rule" to Rectangle(),
         "actions" to TextField(),
-        "timer-container" to Rectangle(),
         "timer-background" to Rectangle(),
         "timer" to Rectangle()
     )
@@ -75,7 +73,7 @@ class HotActionWidget(
             padding = PADDING
             fontRenderer = messageFR
             staticText = message
-            color = DragonflyPalette.foreground
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.8 }
             adaptHeight = true
         }!!.also { it.adaptHeight() }
 
@@ -84,7 +82,7 @@ class HotActionWidget(
             y = messageWidget.end() + 2.0
             width = containerWidth - ARC
             height = 0.5
-            color = DragonflyPalette.foreground
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.5 }
         }!!
 
         val actionsWidget = updateWidget<TextField>("actions") {
@@ -113,10 +111,10 @@ class HotActionWidget(
             width = containerWidth
             height = actionsWidget.end() - posY + 3.0
             arc = ARC
-            color = DragonflyPalette.background
+            color = DragonflyPalette.background.altered { alphaDouble = 0.8 }
         }!!
 
-        val timerContainer = updateWidget<Rectangle>("timer-container") {
+        val timerBackground = updateWidget<Rectangle>("timer-background") {
             width = containerWidth
             height = ARC
             x = posX - ARC
@@ -124,22 +122,14 @@ class HotActionWidget(
             color = DragonflyPalette.background
         }!!
 
-        updateWidget<Rectangle>("timer-background") {
-            x = timerContainer.x
-            y = timerContainer.y + 1.0
-            width = timerContainer.width
-            height = timerContainer.height - 1.0
-            color = DragonflyPalette.accentDark
-        }!!
-
         updateWidget<Rectangle>("timer") {
-            x = timerContainer.x
-            y = timerContainer.y + 1.0
-            width = timerContainer.width
-            height = timerContainer.height - 1.0
+            x = timerBackground.x
+            y = timerBackground.y
+            width = timerBackground.width
+            height = timerBackground.height
             color = DragonflyPalette.accentNormal
         }!!.dynamic {
-            width = timerContainer.width * (1.0 - ((System.currentTimeMillis() - initialTime) / (duration * 5.0)).coerceIn(0.0, 1.0))
+            width = timerBackground.width * (1.0 - ((System.currentTimeMillis() - initialTime) / (duration * 5.0)).coerceIn(0.0, 1.0))
         }
     }
 
@@ -152,7 +142,7 @@ class HotActionWidget(
 
 const val PADDING = 1.5
 
-const val ARC = 2.0
+const val ARC = 1.0
 
 fun Widget<*>.end(): Double = if (this is IPosition && (this is IDimension || this is ISize)) {
     this.y + Defaults.getSizeOrDimension(this).second
