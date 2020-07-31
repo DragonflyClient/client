@@ -8,6 +8,7 @@ import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
 import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.OptionsManager
+import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.state.GameStateManager
 import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers
 import net.inceptioncloud.dragonfly.transition.Transition
@@ -171,6 +172,7 @@ object Dragonfly {
     private fun tick() {
         synchronized(this) {
             transitions.toTypedArray().forEach { it.tick() }
+            ScreenOverlay.buffer.update()
             if (Minecraft.getMinecraft().currentScreen != null)
                 Minecraft.getMinecraft().currentScreen.buffer.update()
         }

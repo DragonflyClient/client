@@ -9,6 +9,7 @@ object HotAction {
         ScreenOverlay.addComponent("hot-action", HotActionWidget(
             "Lorem ipsum dolor sit amet, co",
             "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut l",
+            1000,
             listOf(
                 Action("Save") { println("Save") },
                 Action("Copy") { println("Copy") },
