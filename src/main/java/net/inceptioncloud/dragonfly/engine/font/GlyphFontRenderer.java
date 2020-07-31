@@ -753,49 +753,51 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     @Override
     public int sizeStringToWidth(final String text, final int width) {
-        int i = text.length();
+        int length = text.length();
         float f = 0.0F;
-        int j = 0;
-        int k = -1;
+        int index = 0;
+        int result = -1;
 
-        for (boolean flag = false; j < i; ++j) {
-            char c0 = text.charAt(j);
+        for (boolean colorCodeActivated = false; index < length; ++index) {
+            char character = text.charAt(index);
 
-            switch (c0) {
+            switch (character) {
                 case '\n':
-                    --j;
+                    --index;
                     break;
 
                 case ' ':
-                    k = j;
+                    result = index;
 
                 default:
-                    f += this.getCharWidthFloat(c0);
+                    f += this.getCharWidthFloat(character);
 
-                    if (flag) {
+                    if (colorCodeActivated) {
                         ++f;
                     }
 
                     break;
 
-                case '\u00a7':
-                    if (j < i - 1) {
-                        ++j;
-                        char c1 = text.charAt(j);
+                case '§':
+                    if (index + 7 < length) {
+                        index += 7;
+                    } else if (index + 1 < length) {
+                        ++index;
+                        char c1 = text.charAt(index);
 
                         if (c1 != 108 && c1 != 76) {
                             if (c1 == 114 || c1 == 82 || FontRenderer.isFormatColor(c1)) {
-                                flag = false;
+                                colorCodeActivated = false;
                             }
                         } else {
-                            flag = true;
+                            colorCodeActivated = true;
                         }
                     }
             }
 
-            if (c0 == 10) {
-                ++j;
-                k = j;
+            if (character == 10) {
+                ++index;
+                result = index;
                 break;
             }
 
@@ -804,7 +806,7 @@ public class GlyphFontRenderer implements IFontRenderer {
             }
         }
 
-        return j != i && k != -1 && k < j ? k : j;
+        return index != length && result != -1 && result < index ? result : index;
     }
 
     @Override

@@ -23,7 +23,7 @@ class HotActionWidget(
     @property:Interpolate val posY: Double = 10.0
 ) : AssembledWidget<HotActionWidget>() {
 
-    val joinFunc: (action: Action) -> CharSequence = { "${actions.indexOf(it) + 1}. ${it.name}" }
+    val joinFunc: (action: Action) -> CharSequence = { "§#EF852E${actions.indexOf(it) + 1}. §r${it.name}" }
 
     var initialTime = System.currentTimeMillis()
 
