@@ -12,20 +12,39 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
+import kotlin.properties.Delegates
 
+/**
+ * ## Hot Action Assembled Widget
+ *
+ * This widget is used to represent an active hot action in the top left corner of the screen.
+ * It displays the [title] and [message] above all available [actions] in a container while being
+ * fully responsive and adapting to the length of the [title], [message] and the amount of [actions].
+ *
+ * @param title the title of the hot action
+ * @param message an additional message that describes the reason for the hot action's appearance
+ * @param duration how many ticks the hot action will remain on the screen
+ * @param actions a list of actions that can be executed
+ */
 class HotActionWidget(
     @property:State val title: String = "Hot Action",
     @property:State val message: String = "This is a hot action",
     @property:State val duration: Int = 200,
     @property:State val actions: List<Action> = listOf(),
 
-    @property:Interpolate val posX: Double = 0.0,
-    @property:Interpolate val posY: Double = 10.0
-) : AssembledWidget<HotActionWidget>() {
+    @property:Interpolate override var x: Double = 0.0,
+    @property:Interpolate override var y: Double = 10.0
+) : AssembledWidget<HotActionWidget>(), IPosition {
 
+    /**
+     * The function that is used to convert an [Action] to a representing string
+     */
     val joinFunc: (action: Action) -> CharSequence = { "§#EF852E${actions.indexOf(it) + 1}. §r${it.name}" }
 
-    var initialTime = System.currentTimeMillis()
+    /**
+     * The time of initialization that is used for the timer (set when invoking [updateStructure])
+     */
+    var initialTime by Delegates.notNull<Long>()
 
     init {
         if (actions.isEmpty()) {
@@ -56,8 +75,8 @@ class HotActionWidget(
             .max()!!.coerceAtMost(200) + PADDING * 2.0
 
         val titleWidget = updateWidget<TextField>("title") {
-            x = posX
-            y = posY
+            x = this@HotActionWidget.x
+            y = this@HotActionWidget.y
             width = containerWidth - ARC
             padding = PADDING
             fontRenderer = titleFR
@@ -67,7 +86,7 @@ class HotActionWidget(
         }!!.also { it.adaptHeight() }
 
         val messageWidget = updateWidget<TextField>("message") {
-            x = posX
+            x = this@HotActionWidget.x
             y = titleWidget.end()
             width = containerWidth - ARC
             padding = PADDING
@@ -78,7 +97,7 @@ class HotActionWidget(
         }!!.also { it.adaptHeight() }
 
         val horizontalRule = updateWidget<Rectangle>("horizontal-rule") {
-            x = posX
+            x = this@HotActionWidget.x
             y = messageWidget.end() + 2.0
             width = containerWidth - ARC
             height = 0.5
@@ -86,7 +105,7 @@ class HotActionWidget(
         }!!
 
         val actionsWidget = updateWidget<TextField>("actions") {
-            x = posX - 1.0
+            x = this@HotActionWidget.x - 1.0
             y = horizontalRule.end() + 2.0
             width = containerWidth - ARC + 1.0
             padding = PADDING
@@ -106,10 +125,10 @@ class HotActionWidget(
         }!!.also { it.adaptHeight() }
 
         val containerWidget = updateWidget<RoundedRectangle>("container") {
-            x = posX - ARC
-            y = posY
+            x = this@HotActionWidget.x - ARC
+            y = this@HotActionWidget.y
             width = containerWidth
-            height = actionsWidget.end() - posY + 3.0
+            height = actionsWidget.end() - this@HotActionWidget.y + 3.0
             arc = ARC
             color = DragonflyPalette.background.altered { alphaDouble = 0.8 }
         }!!
@@ -117,7 +136,7 @@ class HotActionWidget(
         val timerBackground = updateWidget<Rectangle>("timer-background") {
             width = containerWidth
             height = ARC
-            x = posX - ARC
+            x = this@HotActionWidget.x - ARC
             y = containerWidget.end() - height
             color = DragonflyPalette.background
         }!!
@@ -140,10 +159,20 @@ class HotActionWidget(
     override fun newInstance(): HotActionWidget = HotActionWidget()
 }
 
+/**
+ * The amount of padding that the different text fields use
+ */
 const val PADDING = 1.5
 
+/**
+ * The corner-arc value of the hot action container
+ */
 const val ARC = 1.0
 
+/**
+ * Convenient function to get the vertical end of a widget using the position and the dimension
+ * of the widget
+ */
 fun Widget<*>.end(): Double = if (this is IPosition && (this is IDimension || this is ISize)) {
-    this.y + Defaults.getSizeOrDimension(this).second
+    y + Defaults.getSizeOrDimension(this).second
 } else error("You should not use this method on the widget $this")
