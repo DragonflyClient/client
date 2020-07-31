@@ -174,7 +174,8 @@ public class GlyphFontRenderer implements IFontRenderer {
         final char[] chars = GraphicsEngine.CHARACTERS;
 
         GlyphPage regularPage =
-                new GlyphPage(makeFont(fontName, Font.PLAIN, (int) (size * getFontQualityScale()), letterSpacing),
+                new GlyphPage(
+                        makeFont(fontName, Font.PLAIN, (int) (size * getFontQualityScale()), letterSpacing),
                         true,
                         true
                 );
@@ -193,7 +194,8 @@ public class GlyphFontRenderer implements IFontRenderer {
         GlyphPage unscaledBoldItalic = regularPage;
 
         if (bold) {
-            boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, (int) (size * getFontQualityScale()), letterSpacing),
+            boldPage = new GlyphPage(
+                    makeFont(fontName, Font.BOLD, (int) (size * getFontQualityScale()), letterSpacing),
                     true,
                     true
             );
@@ -205,7 +207,8 @@ public class GlyphFontRenderer implements IFontRenderer {
 
         if (italic) {
             italicPage =
-                    new GlyphPage(makeFont(fontName, Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing),
+                    new GlyphPage(
+                            makeFont(fontName, Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing),
                             true,
                             true
                     );
@@ -216,7 +219,8 @@ public class GlyphFontRenderer implements IFontRenderer {
         }
 
         if (boldItalic) {
-            boldItalicPage = new GlyphPage(makeFont(fontName,
+            boldItalicPage = new GlyphPage(makeFont(
+                    fontName,
                     Font.BOLD | Font.ITALIC,
                     (int) (size * getFontQualityScale()),
                     letterSpacing
@@ -412,7 +416,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      * The exact with of the specific char in the current font.
      *
      * @param ch The character
-     *
      * @return The width in pixels
      */
     @Override
@@ -486,31 +489,21 @@ public class GlyphFontRenderer implements IFontRenderer {
 
                 if (charIndex + 7 < text.length() && text.charAt(charIndex + 1) == '#') {
                     // custom color code here!
+                    String hex = text.substring(charIndex + 1, charIndex + 8);
 
-                    if (shadow) {
-                        int j1 = 0x4134165;
+                    try {
+                        Color color = Color.decode(hex);
 
-                        currentRed = (float) (j1 >> 16) / 255.0F;
-                        currentGreen = (float) (j1 >> 8 & 255) / 255.0F;
-                        currentBlue = (float) (j1 & 255) / 255.0F;
-                        GlStateManager.color(currentRed, currentGreen, currentBlue, this.alpha);
-
-                        charIndex += 7;
-                    } else {
-                        String hex = text.substring(charIndex + 1, charIndex + 8);
-
-                        try {
-                            Color color = Color.decode(hex);
-
+                        if (!shadow) {
                             currentRed = color.getRed() / 255F;
                             currentGreen = color.getGreen() / 255F;
                             currentBlue = color.getBlue() / 255F;
                             GlStateManager.color(currentRed, currentGreen, currentBlue, this.alpha);
-
-                            charIndex += 7;
-                        } catch (NumberFormatException e) {
-                            LogManager.getLogger().warn("Invalid hex code: " + hex);
                         }
+
+                        charIndex += 7;
+                    } catch (NumberFormatException e) {
+                        LogManager.getLogger().warn("Invalid hex code: " + hex);
                     }
                 } else {
                     if (indexOf < 16) {
@@ -722,7 +715,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The list of broken strings
      */
     @Override
@@ -735,7 +727,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The string with new lines determined via \n
      */
     @Override
@@ -758,7 +749,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The amount of characters
      */
     @Override
