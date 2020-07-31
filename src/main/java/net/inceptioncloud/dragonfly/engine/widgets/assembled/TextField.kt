@@ -31,6 +31,7 @@ import kotlin.properties.Delegates
  * @param fontSize the size of the font (has no effect if no [font] is set)
  * @param backgroundColor the color of the background rectangle
  * @param padding a padding between the bounds and the text
+ * @param adaptHeight whether the height of the text field should be adapted to its requirements
  */
 class TextField(
     @property:State var staticText: String = "No static text set",
@@ -127,6 +128,9 @@ class TextField(
         }
     }
 
+    /**
+     * Performs the height-adaption.
+     */
     fun adaptHeight() {
         if (!adaptHeight)
             return

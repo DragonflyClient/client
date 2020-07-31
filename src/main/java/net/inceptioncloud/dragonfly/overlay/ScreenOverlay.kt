@@ -19,6 +19,9 @@ object ScreenOverlay {
      */
     val buffer = WidgetBuffer()
 
+    /**
+     * Getter for conveniently accessing the scaled dimensions of the screen.
+     */
     val dimensions: Dimension
         get() {
             val scaledResolution = ScaledResolution(Minecraft.getMinecraft())

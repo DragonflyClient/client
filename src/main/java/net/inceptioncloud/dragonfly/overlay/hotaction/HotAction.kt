@@ -7,10 +7,13 @@ object HotAction {
     fun test() {
         ScreenOverlay.buffer.clear()
         ScreenOverlay.addComponent("hot-action", HotActionWidget(
-            "Screenshot",
-            "A screenshot has been created! Do you wish to take further actions?",
+            "Lorem ipsum dolor sit amet, co",
+            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut l",
             listOf(
-                Action("Save") { println(it) }
+                Action("Save") { println("Save") },
+                Action("Copy") { println("Copy") },
+                Action("Open") { println("Open") },
+                Action("Upload") { println("Upload") }
             )
         ))
     }

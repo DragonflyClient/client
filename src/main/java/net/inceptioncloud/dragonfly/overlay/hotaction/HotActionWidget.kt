@@ -4,17 +4,26 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.*
 import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.internal.annotations.State
+import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
+import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 
 class HotActionWidget(
     @property:State val title: String = "Hot Action",
     @property:State val message: String = "This is a hot action",
-    @property:State val actions: List<Action> = listOf()
+    @property:State val actions: List<Action> = listOf(),
+
+    @property:Interpolate val posX: Double = 0.0,
+    @property:Interpolate val posY: Double = 10.0
 ) : AssembledWidget<HotActionWidget>() {
+
+    val joinFunc: (action: Action) -> CharSequence = { "${actions.indexOf(it) + 1}. ${it.name}" }
 
     init {
         if (actions.isEmpty()) {
@@ -25,45 +34,25 @@ class HotActionWidget(
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
         "title" to TextField(),
-        "message" to TextField()
+        "message" to TextField(),
+        "horizontal-rule" to Rectangle(),
+        "actions" to TextField()
     )
 
     override fun updateStructure() {
-        val messageFR: GlyphFontRenderer?
-        var titleFR: GlyphFontRenderer? = null
+        val messageFR = Dragonfly.fontDesign.defaultFont.fontRenderer(size = 16)
+        val titleFR = Dragonfly.fontDesign.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 20)
 
-        messageFR = Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = 16) {
-            println("Finished message font renderer!")
-            if (titleFR != null) {
-                continueUpdate(it, titleFR!!)
-            }
-        }
-        titleFR = Dragonfly.fontDesign.defaultFont.fontRendererAsync(fontWeight = FontWeight.MEDIUM, size = 20) {
-            println("Finished title font renderer!")
-            if (messageFR != null) {
-                continueUpdate(messageFR, it)
-            }
-        }
-    }
-
-    /**
-     * Continues the process of [updateStructure] after the font renderer have been built
-     * asynchronously.
-     */
-    private fun continueUpdate(messageFR: GlyphFontRenderer, titleFR: GlyphFontRenderer) {
-        println("HELLO WORLD!")
         val messageWidth = messageFR.getStringWidth(message)
         val titleWidth = titleFR.getStringWidth(title)
-        val actionWidth = actions.sumBy { messageFR.getStringWidth(it.name) } +
-                (MIN_SPACE_BETWEEN_ACTIONS * actions.size - 1)
-
+        val actionWidth = messageFR.getStringWidth(actions.joinToString(" ", transform = joinFunc))
         val containerWidth = listOf(messageWidth, titleWidth, actionWidth)
-            .max()!!.coerceAtMost((ScreenOverlay.dimensions.getWidth() / 5).toInt()) + PADDING * 2.0
+            .max()!!.coerceAtMost(200) + PADDING * 2.0
 
         val titleWidget = updateWidget<TextField>("title") {
-            x = 0.0
-            y = 10.0
-            width = containerWidth
+            x = posX
+            y = posY
+            width = containerWidth - 5.0
             padding = PADDING
             fontRenderer = titleFR
             staticText = title
@@ -72,22 +61,50 @@ class HotActionWidget(
         }!!.also { it.adaptHeight() }
 
         val messageWidget = updateWidget<TextField>("message") {
-            x = 0.0
-            y = titleWidget.height.also { println("it = ${it}") }
-            width = containerWidth
+            x = posX
+            y = titleWidget.end()
+            width = containerWidth - 5.0
             padding = PADDING
             fontRenderer = messageFR
             staticText = message
-            color = DragonflyPalette.foreground.apply { alphaDouble = 0.9 }
+            color = DragonflyPalette.foreground
             adaptHeight = true
+        }!!.also { it.adaptHeight() }
+
+        val horizontalRule = updateWidget<Rectangle>("horizontal-rule") {
+            x = posX
+            y = messageWidget.end() + 2.0
+            width = containerWidth - 5.0
+            height = 0.5
+            color = DragonflyPalette.foreground
         }!!
 
+        updateWidget<TextField>("actions") {
+            x = posX - 1.0
+            y = horizontalRule.end() + 2.0
+            width = containerWidth - 5.0
+            padding = PADDING
+            fontRenderer = messageFR
+            textAlignHorizontal = Alignment.CENTER
+            color = DragonflyPalette.foreground
+            adaptHeight = true
+
+            var string = ""
+            var amountOfSpaces = 1
+
+            while (messageFR.getStringWidth(string) < width - (padding * 2) - 5.0) {
+                string = actions.joinToString(StringUtils.repeat(" ", ++amountOfSpaces), transform = joinFunc)
+            }
+
+            staticText = actions.joinToString(StringUtils.repeat(" ", amountOfSpaces - 1), transform = joinFunc)
+        }
+
         updateWidget<RoundedRectangle>("container") {
-            x = -5.0
-            y = 10.0
+            x = posX - 5.0
+            y = posY
             width = containerWidth
-            arc = 5.0
-            color = DragonflyPalette.background.apply { alphaDouble = 0.8 }
+            arc = 2.0
+            color = DragonflyPalette.background
         }
     }
 
@@ -98,6 +115,8 @@ class HotActionWidget(
     override fun newInstance(): HotActionWidget = HotActionWidget()
 }
 
-const val MIN_SPACE_BETWEEN_ACTIONS = 5
+const val PADDING = 1.5
 
-const val PADDING = 3.0
+fun Widget<*>.end(): Double = if (this is IPosition && (this is IDimension || this is ISize)) {
+    this.y + Defaults.getSizeOrDimension(this).second
+} else error("You should not use this method on the widget $this")
