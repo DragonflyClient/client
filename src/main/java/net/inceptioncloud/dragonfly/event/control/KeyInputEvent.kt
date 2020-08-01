@@ -8,11 +8,13 @@ import java.io.File
 /**
  * Called whenever Minecraft recognizes a key-press.
  *
- * Note that this event is called on every key press regarding of the current gui or state
- * of the game. This also means that cancelling it won't affect cases like movement or gui
- * input but other global key events like Twitch broadcasting and screenshot saving.
+ * This event is called either when a key is pressed ingame or in a gui, what means that it can interrupt
+ * the key-handling process that is individual for the two game states. Unlike [KeyDispatchEvent], this
+ * event can cancel any effect that a key input has.
+ *
+ * @see KeyDispatchEvent
  */
-data class KeyStateChangeEvent @JvmOverloads constructor(
+data class KeyInputEvent @JvmOverloads constructor(
     val key: Int,
     val press: Boolean = Keyboard.isKeyDown(key)
 ) : Cancellable()

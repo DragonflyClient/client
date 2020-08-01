@@ -4,10 +4,8 @@ import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetBuffer
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
-import net.inceptioncloud.dragonfly.event.control.KeyStateChangeEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
-import org.lwjgl.input.Keyboard
 import java.awt.Dimension
 
 /**

@@ -5,7 +5,8 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.event.control.KeyStateChangeEvent
+import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent
+import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionHotActions
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import org.lwjgl.input.Keyboard
@@ -66,11 +67,11 @@ object HotAction {
     }
 
     /**
-     * Listens to the [KeyStateChangeEvent] to execute the actions when the dedicated trigger
+     * Listens to the [KeyDispatchEvent] to execute the actions when the dedicated trigger
      * is activated
      */
     @Subscribe
-    fun onKeyType(event: KeyStateChangeEvent) {
+    fun onKeyType(event: KeyInputEvent) {
         if (!event.press)
             return
 

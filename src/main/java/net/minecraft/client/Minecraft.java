@@ -12,7 +12,8 @@ import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.event.client.ClientStartupEvent;
 import net.inceptioncloud.dragonfly.event.client.GraphicsInitializedEvent;
 import net.inceptioncloud.dragonfly.event.client.ResizeEvent;
-import net.inceptioncloud.dragonfly.event.control.KeyStateChangeEvent;
+import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent;
+import net.inceptioncloud.dragonfly.event.control.KeyInputEvent;
 import net.inceptioncloud.dragonfly.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
@@ -1694,6 +1695,16 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             while (Keyboard.next()) {
                 int k = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
+
+                if (this.currentScreen == null) {
+                    KeyInputEvent keyInputEvent = new KeyInputEvent(k);
+                    Dragonfly.getEventBus().post(keyInputEvent);
+
+                    if (keyInputEvent.isCancelled()) {
+                        continue;
+                    }
+                }
+
                 KeyBinding.setKeyBindState(k, Keyboard.getEventKeyState());
 
                 if (Keyboard.getEventKeyState()) {
@@ -2599,10 +2610,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() : Keyboard.getEventKey();
 
-        KeyStateChangeEvent keyStateChangeEvent = new KeyStateChangeEvent(i);
-        Dragonfly.getEventBus().post(keyStateChangeEvent);
+        KeyDispatchEvent keyDispatchEvent = new KeyDispatchEvent(i);
+        Dragonfly.getEventBus().post(keyDispatchEvent);
 
-        if (keyStateChangeEvent.isCancelled()) {
+        if (keyDispatchEvent.isCancelled()) {
             return;
         }
 

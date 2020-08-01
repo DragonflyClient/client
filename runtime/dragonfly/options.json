@@ -19,6 +19,6 @@
   "renderOwnName": true,
   "screenshotUtilities": true,
   "enableHotActions": true,
-  "hotActionsTriggerMode": 1,
-  "hotActionsTriggerKey": 6
+  "hotActionsTriggerMode": 0,
+  "hotActionsTriggerKey": 0
 }

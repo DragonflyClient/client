@@ -35,7 +35,7 @@ class HotActionWidget(
     @property:State val allowMultipleActions: Boolean = false,
 
     @property:Interpolate override var x: Double = 0.0,
-    @property:Interpolate override var y: Double = 10.0,
+    @property:Interpolate override var y: Double = 15.0,
     @property:Interpolate override var width: Double = -1.0,
     @property:Interpolate override var height: Double = -1.0
 ) : AssembledWidget<HotActionWidget>(), IPosition, IDimension {
