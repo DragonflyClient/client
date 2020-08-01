@@ -86,8 +86,9 @@ object OptionsSectionOverlay {
     @JvmStatic
     fun init() {
         optionSection {
-            title = "Hot Actions"
+            title = "Overlay"
 
+            +enableToastMessages
             +enableHotActions
             +hotActionsTriggerMode
             +hotActionsTriggerKey
