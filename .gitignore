@@ -13,7 +13,7 @@ gradle.properties
 /runtime/resourcepacks
 /runtime/saves
 /runtime/shaderpacks
-/runtime/authetication.txt
+/runtime/authentication.txt
 /runtime/options.txt
 /runtime/optionsof.txt
 /runtime/optionsshaders.txt

@@ -1,7 +1,7 @@
 {
   "lastServer": {
-    "serverName": "Inception \u0026 Cloud",
-    "serverIP": "inceptioncloud.net:25565",
+    "serverName": "RoyalPixels",
+    "serverIP": "royalpixels.de",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -21,5 +21,8 @@
   "enableHotActions": true,
   "hotActionsTriggerMode": 0,
   "hotActionsTriggerKey": 4,
-  "enableToastMessages": true
+  "enableToastMessages": true,
+  "chunkUpdateSpeed": 10,
+  "useScaledFontRenderers": true,
+  "saveGlyphs": true
 }

@@ -180,7 +180,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val updateTitle = DragonflyVersion.update?.title
         updateTitle?.let {
             previousHeight += fontRenderer?.height ?: 0
-            fontRenderer = fontDesign.defaultFont.fontRendererAsync { size = (10 + percent * 30).toInt() }
+            fontRenderer = fontDesign.defaultFont.fontRendererAsync(size = (10 + percent * 30).toInt())
             fontRenderer?.drawCenteredString(it, width / 2, initialHeight + imageSize + 13 + previousHeight, Color(255, 255, 255, 200).rgb, true)
         }
 

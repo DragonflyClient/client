@@ -46,7 +46,6 @@ object OptionsSectionOverlay {
     val hotActionsTriggerMode = optionEntryMultipleChoice {
         name = "Trigger mode"
         description = "Whether to use the modern (trigger key + number key) or the legacy (F7 - F10 keys) trigger mode for hot actions."
-        default = 0
 
         +OptionChoice(0, "Legacy")
         +OptionChoice(1, "Modern")
@@ -64,7 +63,6 @@ object OptionsSectionOverlay {
     val hotActionsTriggerKey = optionEntryMultipleChoice {
         name = "Trigger key"
         description = "Select the trigger key for the modern trigger mode. If the legacy trigger mode is used this option will have no effect."
-        default = 0
 
         +OptionChoice(0, "Left Control")
         +OptionChoice(1, "Right Control")

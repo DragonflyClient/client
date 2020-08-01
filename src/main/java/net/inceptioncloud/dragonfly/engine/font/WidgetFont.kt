@@ -124,7 +124,7 @@ class WidgetFont @JvmOverloads constructor(
                 "${Thread.currentThread().name} is building font renderer for ${this@WidgetFont.familyName} with $builder"
             )
 
-            val fontRenderer = fontRenderer(preferences)
+            val fontRenderer = fontRenderer(fontWeight, size, letterSpacing)
             asyncBuilding.remove(builder)
             cachedFontRenderer[builder] = fontRenderer
             callback?.invoke(fontRenderer)

@@ -7,7 +7,6 @@ import net.inceptioncloud.dragonfly.engine.font.FontManager
 import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
 import net.inceptioncloud.dragonfly.event.client.ClientTickEvent
-import net.inceptioncloud.dragonfly.impl.Tickable
 import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.OptionsManager
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
