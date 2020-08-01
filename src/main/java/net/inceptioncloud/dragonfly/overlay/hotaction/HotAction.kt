@@ -6,16 +6,18 @@ import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.control.KeyStateChangeEvent
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionHotActions
 import net.inceptioncloud.dragonfly.overlay.IngameOverlay
 import org.lwjgl.input.Keyboard
+import java.lang.IllegalStateException
 import java.util.concurrent.LinkedBlockingQueue
 
 object HotAction {
 
     private val queue = LinkedBlockingQueue<HotActionWidget>()
 
-    fun queue(title: String, message: String, duration: Int, actions: List<Action>) {
-        queue.offer(HotActionWidget(title, message, duration, actions))
+    fun queue(title: String, message: String, duration: Int, actions: List<Action>, allowMultipleActions: Boolean) {
+        queue.offer(HotActionWidget(title, message, duration, actions, allowMultipleActions))
         displayNext()
     }
 
@@ -48,23 +50,18 @@ object HotAction {
 
     @Subscribe
     fun onKeyType(event: KeyStateChangeEvent) {
+        if (!event.press)
+            return
+
         val current = IngameOverlay.buffer["hot-action"] as? HotActionWidget ?: return
+        val target = getSelectedAction(event.key) ?: return
 
-        if (event.press && event.key != Keyboard.KEY_LCONTROL && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
-            val target = when(event.key) {
-                Keyboard.KEY_1 -> 1
-                Keyboard.KEY_2 -> 2
-                Keyboard.KEY_3 -> 3
-                Keyboard.KEY_4 -> 4
-                Keyboard.KEY_5 -> 5
-                else -> return
-            }
+        current.actions.getOrNull(target - 1)?.perform?.let {
+            event.isCancelled = true
+            it.invoke(current)
 
-            current.actions.getOrNull(target - 1)?.perform?.let {
-                it.invoke(current)
-                if (!current.allowMultipleActions) {
-                    onExpire(current)
-                }
+            if (!current.allowMultipleActions) {
+                onExpire(current)
             }
         }
     }
@@ -80,7 +77,48 @@ object HotAction {
                 Action("Copy") { println("Copy") },
                 Action("Open") { println("Open") },
                 Action("Upload") { println("Upload") }
-            )
+            ),
+            true
         )
     }
+
+    private fun getSelectedAction(key: Int): Int? {
+        val triggerMode = OptionsSectionHotActions.triggerMode.key.get()
+        return if (triggerMode == 0) when (key) {
+            Keyboard.KEY_F7 -> 1
+            Keyboard.KEY_F8 -> 2
+            Keyboard.KEY_F9 -> 3
+            Keyboard.KEY_F10 -> 4
+            else -> null
+        } else if (triggerMode == 1 && checkModernTrigger()) when (key) {
+            Keyboard.KEY_1 -> 1
+            Keyboard.KEY_2 -> 2
+            Keyboard.KEY_3 -> 3
+            Keyboard.KEY_4 -> 4
+            else -> null
+        } else null
+    }
+
+    private fun getTriggerKey(triggerKeyOption: Int): List<Int> = when (triggerKeyOption) {
+        0 -> listOf(Keyboard.KEY_LCONTROL)
+        1 -> listOf(Keyboard.KEY_RCONTROL)
+        2 -> listOf(Keyboard.KEY_LMENU)
+        3 -> listOf(Keyboard.KEY_RMENU)
+        4 -> listOf(Keyboard.KEY_LSHIFT)
+        5 -> listOf(Keyboard.KEY_RSHIFT)
+        else -> throw IllegalStateException()
+    }
+
+    private fun checkModernTrigger(): Boolean {
+        val triggerKeyOption = OptionsSectionHotActions.triggerKey.key.get()
+        return if (triggerKeyOption == 6) {
+            (Keyboard.KEY_LCONTROL.isPressed || Keyboard.KEY_RCONTROL.isPressed) &&
+                    (Keyboard.KEY_LMENU.isPressed || Keyboard.KEY_RMENU.isPressed)
+        } else {
+            getTriggerKey(triggerKeyOption).all { it.isPressed }
+        }
+    }
+
+    private val Int.isPressed
+        get() = Keyboard.isKeyDown(this)
 }

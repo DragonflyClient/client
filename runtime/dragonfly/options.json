@@ -17,5 +17,8 @@
   "fontQuality": 2.0,
   "messageRestoreMode": 1,
   "renderOwnName": true,
-  "screenshotUtilities": true
+  "screenshotUtilities": true,
+  "enableHotActions": true,
+  "hotActionsTriggerMode": 1,
+  "hotActionsTriggerKey": 6
 }
