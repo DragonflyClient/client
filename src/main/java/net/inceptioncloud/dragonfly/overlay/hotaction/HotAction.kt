@@ -88,22 +88,6 @@ object HotAction {
         }
     }
 
-    @JvmStatic
-    fun test() {
-        queue(
-            "Screenshot Utilities",
-            "A screenshot has been created! Do you wish to take further actions?",
-            2000,
-            listOf(
-                Action("Save") { println("Save") },
-                Action("Copy") { println("Copy") },
-                Action("Open") { println("Open") },
-                Action("Upload") { println("Upload") }
-            ),
-            true
-        )
-    }
-
     /**
      * Returns the targeted action (1 - 4) depending on the selected trigger mode and key. Returns
      * null if no action was selected.

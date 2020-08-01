@@ -64,12 +64,4 @@ object Toast {
             displayNext()
         }?.start()
     }
-
-    @JvmStatic
-    fun test() {
-        queue(
-            "Your screenshot has been copied!",
-            1000
-        )
-    }
 }

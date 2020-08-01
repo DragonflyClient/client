@@ -1768,12 +1768,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                                 case Keyboard.KEY_T:
                                     TransitionTracker.INSTANCE.toggle();
                                     break;
-                                case Keyboard.KEY_0:
-                                    HotAction.test();
-                                    break;
-                                case Keyboard.KEY_1:
-                                    Toast.test();
-                                    break;
                             }
                         }
 

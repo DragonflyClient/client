@@ -55,11 +55,12 @@ class ToastWidget(
         }!!.also { it.adaptHeight() }
 
         val container = updateWidget<RoundedRectangle>("container") {
-            arc = 5.0
-            x = textField.x - arc
-            y = textField.y - arc + 1.0
-            width = textField.width + (arc * 2)
-            height = textField.height + (arc * 2) - 1.0
+            val padding = 3.5
+            arc = 3.0
+            x = textField.x - padding
+            y = textField.y - padding + 1.0
+            width = textField.width + (padding * 2)
+            height = textField.height + (padding * 2) - 1.0
             color = DragonflyPalette.background.altered { alphaDouble = 0.8 }
         }!!
 
