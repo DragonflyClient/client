@@ -31,6 +31,7 @@ class HotActionWidget(
     @property:State val message: String = "This is a hot action",
     @property:State val duration: Int = 200,
     @property:State val actions: List<Action> = listOf(),
+    @property:State val allowMultipleActions: Boolean = false,
 
     @property:Interpolate override var x: Double = 0.0,
     @property:Interpolate override var y: Double = 10.0,
@@ -163,15 +164,13 @@ class HotActionWidget(
             width = timerBackground.width * remaining
 
             if (remaining == 0.0 && !expired) {
-                expired = true
-                getWidget<Rectangle>("timer")?.isVisible = false
                 HotAction.onExpire(this@HotActionWidget)
             }
         }
     }
 
     override fun clone(): HotActionWidget = HotActionWidget(
-        title, message, duration, actions, x, y, width, height
+        title, message, duration, actions, allowMultipleActions, x, y, width, height
     )
 
     override fun newInstance(): HotActionWidget = HotActionWidget()
