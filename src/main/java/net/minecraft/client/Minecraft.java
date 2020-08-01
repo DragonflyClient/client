@@ -12,6 +12,7 @@ import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.event.client.ClientStartupEvent;
 import net.inceptioncloud.dragonfly.event.client.GraphicsInitializedEvent;
 import net.inceptioncloud.dragonfly.event.client.ResizeEvent;
+import net.inceptioncloud.dragonfly.event.control.KeyStateChangeEvent;
 import net.inceptioncloud.dragonfly.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
@@ -2597,6 +2598,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     public void dispatchKeypresses ()
     {
         int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() : Keyboard.getEventKey();
+
+        KeyStateChangeEvent keyStateChangeEvent = new KeyStateChangeEvent(i);
+        Dragonfly.getEventBus().post(keyStateChangeEvent);
+
+        if (keyStateChangeEvent.isCancelled()) {
+            return;
+        }
 
         if (i != 0 && !Keyboard.isRepeatEvent()) {
             if (!(this.currentScreen instanceof GuiControls) || ((GuiControls) this.currentScreen).time <= getSystemTime() - 20L) {

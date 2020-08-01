@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.subscriber
 import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.key.StartupGuiSubscriber
 import net.inceptioncloud.dragonfly.overlay.IngameOverlay
+import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction
 import net.inceptioncloud.dragonfly.tracking.transitions.FileSaveSubscriber
 import net.inceptioncloud.dragonfly.tracking.transitions.TickSubscriber
 
@@ -25,6 +26,7 @@ object DefaultSubscribers {
             register(DeveloperModeSubscriber)
             register(ShutdownSubscriber)
             register(IngameOverlay)
+            register(HotAction)
         }
     }
 }

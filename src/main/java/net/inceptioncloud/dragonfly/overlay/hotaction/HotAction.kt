@@ -1,9 +1,12 @@
 package net.inceptioncloud.dragonfly.overlay.hotaction
 
+import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
+import net.inceptioncloud.dragonfly.event.control.KeyStateChangeEvent
 import net.inceptioncloud.dragonfly.overlay.IngameOverlay
+import org.lwjgl.input.Keyboard
 import java.util.concurrent.LinkedBlockingQueue
 
 object HotAction {
@@ -38,6 +41,11 @@ object HotAction {
             IngameOverlay.buffer.content.remove("hot-action")
             displayNext()
         }?.start()
+    }
+
+    @Subscribe
+    fun onKeyType(event: KeyStateChangeEvent) {
+        println("Typed: " + event.key + " (" + Keyboard.isKeyDown(event.key) + ")")
     }
 
     @JvmStatic
