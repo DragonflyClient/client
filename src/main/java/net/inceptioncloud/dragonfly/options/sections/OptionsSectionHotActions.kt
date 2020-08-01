@@ -19,7 +19,7 @@ object OptionsSectionHotActions {
     @JvmStatic
     val enabled = optionEntryBoolean {
         name = "Enabled"
-        description = "Turning this on enables hot actions to appear at the top left corner of your screen. These hot actions are notification " +
+        description = "Turning this on enables hot actions to appear at the top left corner of your screen. These hot actions are notifications " +
                 "that you can interact with by selecting one of the suggested actions using a trigger or the F7 - F10 keys."
         key {
             fileKey = "enableHotActions"
@@ -33,7 +33,7 @@ object OptionsSectionHotActions {
     @JvmStatic
     val triggerMode = optionEntryMultipleChoice {
         name = "Trigger mode"
-        description = "Whether to use the modern (trigger key + number key) or the legacy (F7 - F10 keys)."
+        description = "Whether to use the modern (trigger key + number key) or the legacy (F7 - F10 keys) trigger mode."
         default = 0
 
         +OptionChoice(0, "Legacy")
