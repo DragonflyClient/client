@@ -3,9 +3,8 @@ package net.inceptioncloud.dragonfly.event;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.common.eventbus.SubscriberExceptionHandler;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A custom subscriber exception handler for the {@link EventBus}.
@@ -23,12 +22,12 @@ public class ModSubscriberExceptionHandler implements SubscriberExceptionHandler
      */
     public ModSubscriberExceptionHandler ()
     {
-        logger = Logger.getLogger("Dragonfly Event Bus");
+        logger = LogManager.getLogger("Dragonfly Event Bus");
     }
 
     @Override
     public void handleException (Throwable exception, SubscriberExceptionContext context)
     {
-        logger.log(Level.SEVERE, "Could not dispatch event: " + context.getSubscriber() + " to " + context.getSubscriberMethod(), exception.getCause());
+        logger.error("Could not dispatch event: " + context.getSubscriber() + " to " + context.getSubscriberMethod(), exception.getCause());
     }
 }
