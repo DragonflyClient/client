@@ -13,7 +13,7 @@ import java.awt.Dimension
 /**
  * Manages all components that are added to the screen overlay and renders them.
  */
-object IngameOverlay {
+object ScreenOverlay {
 
     /**
      * A widget buffer that contains all components.
@@ -43,8 +43,6 @@ object IngameOverlay {
      */
     @Subscribe
     fun onPostRender(event: PostRenderEvent) {
-        if (Minecraft.getMinecraft().currentScreen == null) {
-            buffer.render()
-        }
+        buffer.render()
     }
 }

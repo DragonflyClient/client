@@ -7,22 +7,35 @@ import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.control.KeyStateChangeEvent
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionHotActions
-import net.inceptioncloud.dragonfly.overlay.IngameOverlay
+import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import org.lwjgl.input.Keyboard
 import java.lang.IllegalStateException
 import java.util.concurrent.LinkedBlockingQueue
 
+/**
+ * Manages the appearance and interaction of hot actions.
+ */
 object HotAction {
 
+    /**
+     * Contains all queued hot actions
+     */
     private val queue = LinkedBlockingQueue<HotActionWidget>()
 
+    /**
+     * Adds a new hot action with the specified properties to the [queue] and calls [displayNext]
+     */
     fun queue(title: String, message: String, duration: Int, actions: List<Action>, allowMultipleActions: Boolean) {
         queue.offer(HotActionWidget(title, message, duration, actions, allowMultipleActions))
         displayNext()
     }
 
+    /**
+     * Adds the next hot action in the [queue] (if available) to the [ScreenOverlay] while providing
+     * a smooth fly-in animation
+     */
     fun displayNext() {
-        if (IngameOverlay.buffer["hot-action"] != null || queue.isEmpty())
+        if (ScreenOverlay.buffer["hot-action"] != null || queue.isEmpty())
             return
 
         val next = queue.poll()
@@ -31,37 +44,45 @@ object HotAction {
         next.x = -next.width - 5.0
         next.updateStructure()
 
-        IngameOverlay.addComponent("hot-action", next)
+        ScreenOverlay.addComponent("hot-action", next)
         next.morph(duration = 70, easing = EaseCubic.IN_OUT) {
             x = 0.0
         }?.start()
     }
 
-    fun onExpire(hotAction: HotActionWidget): Unit = with(hotAction) {
+    /**
+     * Removes the given [hotAction] from the [ScreenOverlay] after finishing the fly-out transition
+     * and calls [displayNext]
+     */
+    fun finish(hotAction: HotActionWidget): Unit = with(hotAction) {
         expired = true
         getWidget<Rectangle>("timer")?.isVisible = false
         morph(duration = 70, easing = EaseCubic.IN_OUT) {
             x = -width - 5.0
         }?.post { _, _ ->
-            IngameOverlay.buffer.content.remove("hot-action")
+            ScreenOverlay.buffer.content.remove("hot-action")
             displayNext()
         }?.start()
     }
 
+    /**
+     * Listens to the [KeyStateChangeEvent] to execute the actions when the dedicated trigger
+     * is activated
+     */
     @Subscribe
     fun onKeyType(event: KeyStateChangeEvent) {
         if (!event.press)
             return
 
-        val current = IngameOverlay.buffer["hot-action"] as? HotActionWidget ?: return
-        val target = getSelectedAction(event.key) ?: return
+        val current = ScreenOverlay.buffer["hot-action"] as? HotActionWidget ?: return
+        val target = getTargetAction(event.key) ?: return
 
         current.actions.getOrNull(target - 1)?.perform?.let {
             event.isCancelled = true
             it.invoke(current)
 
             if (!current.allowMultipleActions) {
-                onExpire(current)
+                finish(current)
             }
         }
     }
@@ -82,7 +103,11 @@ object HotAction {
         )
     }
 
-    private fun getSelectedAction(key: Int): Int? {
+    /**
+     * Returns the targeted action (1 - 4) depending on the selected trigger mode and key. Returns
+     * null if no action was selected.
+     */
+    private fun getTargetAction(key: Int): Int? {
         val triggerMode = OptionsSectionHotActions.triggerMode.key.get()
         return if (triggerMode == 0) when (key) {
             Keyboard.KEY_F7 -> 1
@@ -90,7 +115,7 @@ object HotAction {
             Keyboard.KEY_F9 -> 3
             Keyboard.KEY_F10 -> 4
             else -> null
-        } else if (triggerMode == 1 && checkModernTrigger()) when (key) {
+        } else if (triggerMode == 1 && isTriggerKeyActive()) when (key) {
             Keyboard.KEY_1 -> 1
             Keyboard.KEY_2 -> 2
             Keyboard.KEY_3 -> 3
@@ -99,7 +124,21 @@ object HotAction {
         } else null
     }
 
-    private fun getTriggerKey(triggerKeyOption: Int): List<Int> = when (triggerKeyOption) {
+    /**
+     * Checks if the specified trigger key for the modern trigger mode is active
+     */
+    private fun isTriggerKeyActive(): Boolean = if (OptionsSectionHotActions.triggerKey.key.get() == 6) {
+        (Keyboard.KEY_LCONTROL.isPressed || Keyboard.KEY_RCONTROL.isPressed) &&
+                (Keyboard.KEY_LMENU.isPressed || Keyboard.KEY_RMENU.isPressed)
+    } else {
+        getTriggerKeyCode(OptionsSectionHotActions.triggerKey.key.get()).all { it.isPressed }
+    }
+
+    /**
+     * Returns the key code ([Keyboard]) for the selected trigger key. Note that this function only works
+     * for single-key trigger keys (not Alt Gr).
+     */
+    private fun getTriggerKeyCode(triggerKeyOption: Int): List<Int> = when (triggerKeyOption) {
         0 -> listOf(Keyboard.KEY_LCONTROL)
         1 -> listOf(Keyboard.KEY_RCONTROL)
         2 -> listOf(Keyboard.KEY_LMENU)
@@ -109,16 +148,9 @@ object HotAction {
         else -> throw IllegalStateException()
     }
 
-    private fun checkModernTrigger(): Boolean {
-        val triggerKeyOption = OptionsSectionHotActions.triggerKey.key.get()
-        return if (triggerKeyOption == 6) {
-            (Keyboard.KEY_LCONTROL.isPressed || Keyboard.KEY_RCONTROL.isPressed) &&
-                    (Keyboard.KEY_LMENU.isPressed || Keyboard.KEY_RMENU.isPressed)
-        } else {
-            getTriggerKey(triggerKeyOption).all { it.isPressed }
-        }
-    }
-
+    /**
+     * Convenient function to check if a certain key is pressed via [Keyboard.isKeyDown]
+     */
     private val Int.isPressed
         get() = Keyboard.isKeyDown(this)
 }

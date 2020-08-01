@@ -171,7 +171,7 @@ class HotActionWidget(
             width = timerBackground.width * remaining
 
             if (remaining == 0.0 && !expired) {
-                HotAction.onExpire(this@HotActionWidget)
+                HotAction.finish(this@HotActionWidget)
             }
         }
     }
