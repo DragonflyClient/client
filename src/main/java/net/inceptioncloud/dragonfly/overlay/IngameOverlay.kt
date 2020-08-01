@@ -12,10 +12,10 @@ import java.awt.Dimension
 /**
  * Manages all components that are added to the screen overlay and renders them.
  */
-object ScreenOverlay {
+object IngameOverlay {
 
     /**
-     * A widget buffer that contains all [components][OverlayComponent].
+     * A widget buffer that contains all components.
      */
     val buffer = WidgetBuffer()
 
@@ -32,8 +32,9 @@ object ScreenOverlay {
      * Adds a component to the screen [buffer].
      */
     @JvmStatic
-    fun addComponent(name: String, component: AssembledWidget<*>) {
+    fun addComponent(name: String, component: AssembledWidget<*>): AssembledWidget<*> {
         buffer.add(name to component)
+        return component
     }
 
     /**
@@ -41,17 +42,8 @@ object ScreenOverlay {
      */
     @Subscribe
     fun onPostRender(event: PostRenderEvent) {
-        buffer.render()
-    }
-
-    /**
-     * Re-initializes the [components][OverlayComponent] in the buffer when the window
-     * is resized.
-     */
-    @Subscribe
-    fun onResize(event: ResizeEvent) {
-        buffer.content
-            .map { it as? AssembledWidget<*> }
-            .forEach { it?.reassemble() }
+        if (Minecraft.getMinecraft().currentScreen == null) {
+            buffer.render()
+        }
     }
 }

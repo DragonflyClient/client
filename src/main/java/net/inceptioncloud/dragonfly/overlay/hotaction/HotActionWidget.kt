@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.overlay.hotaction
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.internal.annotations.State
@@ -33,8 +33,10 @@ class HotActionWidget(
     @property:State val actions: List<Action> = listOf(),
 
     @property:Interpolate override var x: Double = 0.0,
-    @property:Interpolate override var y: Double = 10.0
-) : AssembledWidget<HotActionWidget>(), IPosition {
+    @property:Interpolate override var y: Double = 10.0,
+    @property:Interpolate override var width: Double = -1.0,
+    @property:Interpolate override var height: Double = -1.0
+) : AssembledWidget<HotActionWidget>(), IPosition, IDimension {
 
     /**
      * The function that is used to convert an [Action] to a representing string
@@ -45,6 +47,11 @@ class HotActionWidget(
      * The time of initialization that is used for the timer (set when invoking [updateStructure])
      */
     var initialTime by Delegates.notNull<Long>()
+
+    /**
+     * Whether the timer of the widget has already expired.
+     */
+    var expired = false
 
     init {
         if (actions.isEmpty()) {
@@ -131,6 +138,10 @@ class HotActionWidget(
             height = actionsWidget.end() - this@HotActionWidget.y + 3.0
             arc = ARC
             color = DragonflyPalette.background.altered { alphaDouble = 0.8 }
+
+            // assign the width and height to the global widget dimensions
+            this@HotActionWidget.width = width
+            this@HotActionWidget.height = height
         }!!
 
         val timerBackground = updateWidget<Rectangle>("timer-background") {
@@ -148,12 +159,19 @@ class HotActionWidget(
             height = timerBackground.height
             color = DragonflyPalette.accentNormal
         }!!.dynamic {
-            width = timerBackground.width * (1.0 - ((System.currentTimeMillis() - initialTime) / (duration * 5.0)).coerceIn(0.0, 1.0))
+            val remaining = 1.0 - ((System.currentTimeMillis() - initialTime) / (duration * 5.0)).coerceIn(0.0, 1.0)
+            width = timerBackground.width * remaining
+
+            if (remaining == 0.0 && !expired) {
+                expired = true
+                getWidget<Rectangle>("timer")?.isVisible = false
+                HotAction.onExpire(this@HotActionWidget)
+            }
         }
     }
 
     override fun clone(): HotActionWidget = HotActionWidget(
-        title, message, duration, actions
+        title, message, duration, actions, x, y, width, height
     )
 
     override fun newInstance(): HotActionWidget = HotActionWidget()
