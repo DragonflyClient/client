@@ -6,19 +6,31 @@ import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryBoolean
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryMultipleChoiceFactory.Companion.optionEntryMultipleChoice
 import net.inceptioncloud.dragonfly.options.entries.util.OptionChoice
 import net.inceptioncloud.dragonfly.options.sections.OptionSectionFactory.Companion.optionSection
-import net.minecraft.client.Minecraft
 
 /**
  * The "Hot Actions" options section.
  */
-object OptionsSectionHotActions {
+object OptionsSectionOverlay {
 
     /**
      * Whether hot actions should be enabled or not
      */
     @JvmStatic
-    val enabled = optionEntryBoolean {
-        name = "Enabled"
+    val enableToastMessages = optionEntryBoolean {
+        name = "Enable toast messages"
+        description = "Toast messages are small notifications that pop up at the bottom of your screen and display short messages. With this " +
+                "option, you can enable or disable them."
+        key {
+            fileKey = "enableToastMessages"
+            default = { true }
+        }
+    }
+    /**
+     * Whether hot actions should be enabled or not
+     */
+    @JvmStatic
+    val enableHotActions = optionEntryBoolean {
+        name = "Enable hot actions"
         description = "Turning this on enables hot actions to appear at the top left corner of your screen. These hot actions are notifications " +
                 "that you can interact with by selecting one of the suggested actions using a trigger or the F7 - F10 keys."
         key {
@@ -31,9 +43,9 @@ object OptionsSectionHotActions {
      * The trigger mode that is used to select a suggested action
      */
     @JvmStatic
-    val triggerMode = optionEntryMultipleChoice {
+    val hotActionsTriggerMode = optionEntryMultipleChoice {
         name = "Trigger mode"
-        description = "Whether to use the modern (trigger key + number key) or the legacy (F7 - F10 keys) trigger mode."
+        description = "Whether to use the modern (trigger key + number key) or the legacy (F7 - F10 keys) trigger mode for hot actions."
         default = 0
 
         +OptionChoice(0, "Legacy")
@@ -49,7 +61,7 @@ object OptionsSectionHotActions {
      * Which trigger key is used to select an action (used for the modern trigger mode)
      */
     @JvmStatic
-    val triggerKey = optionEntryMultipleChoice {
+    val hotActionsTriggerKey = optionEntryMultipleChoice {
         name = "Trigger key"
         description = "Select the trigger key for the modern trigger mode. If the legacy trigger mode is used this option will have no effect."
         default = 0
@@ -76,9 +88,9 @@ object OptionsSectionHotActions {
         optionSection {
             title = "Hot Actions"
 
-            +enabled
-            +triggerMode
-            +triggerKey
+            +enableHotActions
+            +hotActionsTriggerMode
+            +hotActionsTriggerKey
         }
     }
 }

@@ -7,7 +7,7 @@ import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionHotActions
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import org.lwjgl.input.Keyboard
 import java.lang.IllegalStateException
@@ -27,6 +27,9 @@ object HotAction {
      * Adds a new hot action with the specified properties to the [queue] and calls [displayNext]
      */
     fun queue(title: String, message: String, duration: Int, actions: List<Action>, allowMultipleActions: Boolean) {
+        if (!OptionsSectionOverlay.enableHotActions.getKey().get())
+            return
+
         queue.offer(HotActionWidget(title, message, duration, actions, allowMultipleActions))
         displayNext()
     }
@@ -93,7 +96,7 @@ object HotAction {
      * null if no action was selected.
      */
     private fun getTargetAction(key: Int): Int? {
-        val triggerMode = OptionsSectionHotActions.triggerMode.key.get()
+        val triggerMode = OptionsSectionOverlay.hotActionsTriggerMode.key.get()
         return if (triggerMode == 0) when (key) {
             Keyboard.KEY_F7 -> 1
             Keyboard.KEY_F8 -> 2
@@ -112,11 +115,11 @@ object HotAction {
     /**
      * Checks if the specified trigger key for the modern trigger mode is active
      */
-    private fun isTriggerKeyActive(): Boolean = if (OptionsSectionHotActions.triggerKey.key.get() == 6) {
+    private fun isTriggerKeyActive(): Boolean = if (OptionsSectionOverlay.hotActionsTriggerKey.key.get() == 6) {
         (Keyboard.KEY_LCONTROL.isPressed || Keyboard.KEY_RCONTROL.isPressed) &&
                 (Keyboard.KEY_LMENU.isPressed || Keyboard.KEY_RMENU.isPressed)
     } else {
-        getTriggerKeyCode(OptionsSectionHotActions.triggerKey.key.get()).all { it.isPressed }
+        getTriggerKeyCode(OptionsSectionOverlay.hotActionsTriggerKey.key.get()).all { it.isPressed }
     }
 
     /**

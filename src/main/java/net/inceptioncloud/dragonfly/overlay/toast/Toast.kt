@@ -3,7 +3,7 @@ package net.inceptioncloud.dragonfly.overlay.toast
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseBack
-import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.minecraft.client.gui.GuiIngame
 import java.util.concurrent.LinkedBlockingQueue
@@ -19,6 +19,9 @@ object Toast {
      * Adds a new toast message with the specified properties to the [queue] and calls [displayNext]
      */
     fun queue(title: String, duration: Int) {
+        if (!OptionsSectionOverlay.enableToastMessages.getKey().get())
+            return
+
         queue.offer(ToastWidget(title, duration))
         displayNext()
     }

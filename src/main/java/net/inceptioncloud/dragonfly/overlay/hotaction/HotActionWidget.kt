@@ -10,7 +10,7 @@ import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionHotActions
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 import kotlin.properties.Delegates
@@ -44,7 +44,7 @@ class HotActionWidget(
      * The function that is used to convert an [Action] to a representing string
      */
     val joinFunc: (action: Action) -> CharSequence = { "§#EF852E${actions.indexOf(it).let { 
-        if (OptionsSectionHotActions.triggerMode.key.get() == 0) {
+        if (OptionsSectionOverlay.hotActionsTriggerMode.key.get() == 0) {
             "F${it + 7}"
         } else {
             "${it + 1}."

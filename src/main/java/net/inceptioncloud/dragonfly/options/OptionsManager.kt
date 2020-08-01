@@ -10,7 +10,7 @@ object OptionsManager {
         OptionsSectionClient.init()
         OptionsSectionUI.init()
         OptionsSectionPlayer.init()
-        OptionsSectionHotActions.init()
+        OptionsSectionOverlay.init()
         OptionsSectionChat.init()
         OptionsSectionScoreboard.init()
         OptionsSectionZoom.init()
