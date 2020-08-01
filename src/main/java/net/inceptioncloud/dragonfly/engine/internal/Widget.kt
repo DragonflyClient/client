@@ -118,7 +118,7 @@ abstract class Widget<W : Widget<W>> : IDraw {
         }
 
         if (!animationStack.isNullOrEmpty()) {
-            scratchpad = if (animationStack.all { !it.requireScratchpad }) this else clone().apply { isInternalClone = true }
+            scratchpad = clone().apply { isInternalClone = true }
             synchronized(mutex) {
                 animationStack.removeAll { it.finished }
                 animationStack.toTypedArray().forEach { it.tick() }

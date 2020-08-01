@@ -30,11 +30,6 @@ abstract class Animation {
     var running = false
 
     /**
-     * Whether this animation should be drawn using a scratchpad.
-     */
-    open var requireScratchpad = true
-
-    /**
      * A list of actions that will be performed when the animation has finished.
      * These functions have the animation as a receiver so the variables can be
      * accessed easily.
