@@ -35,6 +35,9 @@ class MorphAnimation(
      */
     private val propertySequences: MutableMap<KMutableProperty<*>, Sequence<*>> = mutableMapOf()
 
+    // disable scratchpads
+    override var requireScratchpad = false
+
     override fun initAnimation(parent: Widget<*>): Boolean {
         return if (super.initAnimation(parent)) {
             parent::class.memberProperties

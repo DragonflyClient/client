@@ -12,6 +12,7 @@ typealias PostAction = (Animation, Widget<*>) -> Unit
  * and some abstract methods that will be implemented in the child animations.
  */
 abstract class Animation {
+
     /**
      * Represents if the animation has run through it's lifecycle and is now finished.
      *
@@ -27,6 +28,11 @@ abstract class Animation {
      * updated to true once the [start] method was called.
      */
     var running = false
+
+    /**
+     * Whether this animation should be drawn using a scratchpad.
+     */
+    open var requireScratchpad = true
 
     /**
      * A list of actions that will be performed when the animation has finished.
