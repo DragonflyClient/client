@@ -2,8 +2,6 @@ package net.inceptioncloud.dragonfly.event.control
 
 import net.inceptioncloud.dragonfly.event.Cancellable
 import org.lwjgl.input.Keyboard
-import java.awt.image.BufferedImage
-import java.io.File
 
 /**
  * Called whenever Minecraft recognizes a key-press.
