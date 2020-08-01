@@ -2,7 +2,9 @@ package net.inceptioncloud.dragonfly.overlay.hotaction
 
 import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.animation.companion
 import net.inceptioncloud.dragonfly.engine.animation.post
+import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent
@@ -60,12 +62,15 @@ object HotAction {
      */
     fun finish(hotAction: HotActionWidget): Unit = with(hotAction) {
         expired = true
-        getWidget<Rectangle>("timer")?.isVisible = false
+
         morph(duration = 70, easing = EaseCubic.IN_OUT) {
             x = -width - 5.0
         }?.post { _, _ ->
             ScreenOverlay.buffer.content.remove("hot-action")
             displayNext()
+        }?.companion { scratchpad, base ->
+            (scratchpad as AssembledWidget).getWidget<Rectangle>("timer")?.isVisible = false
+            (base as AssembledWidget).getWidget<Rectangle>("timer")?.isVisible = false
         }?.start()
     }
 
