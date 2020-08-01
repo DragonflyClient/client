@@ -23,6 +23,7 @@ gradle.properties
 /runtime/transition-tracker
 /runtime/assets/skins
 /runtime/logs
+/runtime/screenshots
 
 # Runtime Dragonfly
 /runtime/dragonfly/options.json

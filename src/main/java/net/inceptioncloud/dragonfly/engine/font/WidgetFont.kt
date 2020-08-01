@@ -51,11 +51,18 @@ class WidgetFont @JvmOverloads constructor(
     }
 
     /**
-     * Builds a new font renderer with preferences set by the [preferences] block.
+     * Creates a font renderer with the given properties ([fontWeight], [size], [letterSpacing]).
+     *
+     * Note that this will block the thread during the creation. To have the font renderer built
+     * asynchronously, consider using the [fontRendererAsync] function which also allows passing
+     * a callback as an additional parameter.
      */
-    fun fontRenderer(preferences: (FontRendererBuilder.() -> Unit)? = null): IFontRenderer {
-        val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
-        preferences?.invoke(builder)
+    fun fontRenderer(
+        fontWeight: FontWeight = FontWeight.REGULAR,
+        size: Int = 19,
+        letterSpacing: Double? = null
+    ): IFontRenderer {
+        val builder = FontRendererBuilder(fontWeight, size, letterSpacing ?: this.letterSpacing)
 
         return if (cachedFontRenderer.containsKey(builder)) {
             cachedFontRenderer[builder]!!
@@ -75,21 +82,31 @@ class WidgetFont @JvmOverloads constructor(
     }
 
     /**
-     * Orders the asynchronous creation of a font renderer based on this font with the [preferences].
-     * While the renderer is in production, this function will return null. After the production, this function
-     * will return a cached font renderer according to the [preferences].
+     * Creates a font renderer asynchronously using the given properties ([fontWeight], [size],
+     * [letterSpacing]).
+     *
+     * This function will return null while the building process is running and will return the
+     * font renderer if it's ready. You can also pass an optional [callback] as a parameter
+     * that will be called immediately once the font renderer has been built and if it is already
+     * available.
      */
     fun fontRendererAsync(
-        preferences: (FontRendererBuilder.() -> Unit)? = null
+        fontWeight: FontWeight = FontWeight.REGULAR,
+        size: Int = 19,
+        letterSpacing: Double? = null,
+        callback: ((IFontRenderer) -> Unit)? = null
     ): IFontRenderer? {
-        val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
-        preferences?.invoke(builder)
+        val builder = FontRendererBuilder(fontWeight, size, letterSpacing ?: this.letterSpacing)
 
         // if a cached version is available
         if (asyncBuilding.containsKey(builder)) {
-            return asyncBuilding[builder]
+            val stored = asyncBuilding[builder]
+            stored?.let { callback?.invoke(it) }
+            return stored
         } else if (cachedFontRenderer.containsKey(builder)) {
-            return cachedFontRenderer[builder]
+            val stored = cachedFontRenderer[builder]
+            stored?.let { callback?.invoke(it) }
+            return stored
         }
 
         val scaled = findScaled(builder)
@@ -110,6 +127,7 @@ class WidgetFont @JvmOverloads constructor(
             val fontRenderer = fontRenderer(preferences)
             asyncBuilding.remove(builder)
             cachedFontRenderer[builder] = fontRenderer
+            callback?.invoke(fontRenderer)
         }
 
         return null

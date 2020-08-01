@@ -5,6 +5,8 @@ import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.*
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.overlay.hotaction.HotActionWidget
 import java.util.*
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
@@ -122,7 +124,10 @@ abstract class Widget<W : Widget<W>> : IDraw {
             synchronized(mutex) {
                 animationStack.removeAll { it.finished }
                 animationStack.toTypedArray().forEach { it.tick() }
-                animationStack.toTypedArray().forEach { it.applyToShape(scratchpad = scratchpad!!, base = this) }
+                animationStack.toTypedArray().forEach {
+                    it.applyToShape(scratchpad = scratchpad!!, base = this)
+                    it.companions.forEach { lambda -> lambda(scratchpad!!, this) }
+                }
             }
 
             if (!isStateEqual(scratchpad as W)) {
@@ -267,7 +272,17 @@ abstract class Widget<W : Widget<W>> : IDraw {
         .sortedByDescending { if (it.hasAnnotation<State>()) 3 else if (it.hasAnnotation<Interpolate>()) 2 else 1 }
         .joinToString("\n") {
             it.isAccessible = true
-            (if (it.hasAnnotation<State>()) "--state" else "") + "${it.name} = ${it.getter.call(this)}"
+            val name = it.name
+            var value = it.getter.call(this).toString()
+
+            if (value.length > 40) {
+                value = "${value.substring(0, 40)}..."
+            }
+
+            if (it.hasAnnotation<State>())
+                "--state$name = $value"
+            else
+                "$name = $value"
         }.split("\n")
 
     /**

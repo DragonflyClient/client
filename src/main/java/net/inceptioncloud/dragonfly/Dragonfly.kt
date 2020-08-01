@@ -10,6 +10,7 @@ import net.inceptioncloud.dragonfly.event.client.ClientTickEvent
 import net.inceptioncloud.dragonfly.impl.Tickable
 import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.OptionsManager
+import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.state.GameStateManager
 import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers
 import net.inceptioncloud.dragonfly.transition.Transition
@@ -70,16 +71,6 @@ object Dragonfly {
      * The [Timer] that performs the mod ticks.
      */
     private lateinit var tickTimer: Timer
-
-    /**
-     * All classes that implement the tickable interface.
-     */
-    private val tickables = Collections.synchronizedList(ArrayList<Tickable>())
-
-    /**
-     * If a tickable has an associated class, it is stored in here so it can be replaced.
-     */
-    private val associatedTickables: MutableMap<Class<*>, Tickable> = HashMap()
 
     /**
      * The amount of ticks that have been executed in the current second.
@@ -178,32 +169,12 @@ object Dragonfly {
     fun stopTransition(target: Transition) = transitions.remove(target)
 
     /**
-     * Add a tickable interface to handle.
-     *
-     * @param tickable        The implementing class
-     * @param associatedClass The class that this tickable is connected with if it should be replaced
-     */
-    @JvmOverloads
-    @JvmStatic
-    fun handleTickable(tickable: Tickable, associatedClass: Class<*>? = null) {
-        if (associatedClass != null && associatedTickables.containsKey(associatedClass)) {
-            val previous = associatedTickables[associatedClass]
-            tickables.remove(previous)
-            LogManager.getLogger().info("Replaced previous Tickable " + previous!!.javaClass.simpleName)
-        }
-
-        LogManager.getLogger().info("Mod is now handling Tickable " + tickable.javaClass.simpleName)
-        tickables.add(tickable)
-        if (associatedClass != null) associatedTickables[associatedClass] = tickable
-    }
-
-    /**
      * Perform the mod tick.
      */
     private fun tick() {
         synchronized(this) {
             transitions.toTypedArray().forEach { it.tick() }
-            tickables.toTypedArray().forEach { it!!.modTick() }
+            ScreenOverlay.buffer.update()
 
             if (Minecraft.getMinecraft().currentScreen != null)
                 Minecraft.getMinecraft().currentScreen.buffer.update()

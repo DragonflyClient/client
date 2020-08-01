@@ -68,7 +68,7 @@ public class GuiIngameMenu extends GuiScreen
             .start(0).end(1)
             .fadeIn(25).stay(15).fadeOut(0)
             .autoTransformator(
-                (ForwardBackward) () -> mc != null && mc.currentScreen instanceof GuiIngameMenu
+                    (ForwardBackward) () -> mc.currentScreen instanceof GuiIngameMenu
             ).build();
 
         transitionHeader = SmoothDoubleTransition.builder()
@@ -81,7 +81,7 @@ public class GuiIngameMenu extends GuiScreen
             .start(0.0F).end(0.7F)
             .fadeIn(0).stay(15).fadeOut(15)
             .autoTransformator(
-                (ForwardBackward) () -> mc != null && mc.currentScreen instanceof GuiIngameMenu && !closeRequested
+                    (ForwardBackward) () -> mc.currentScreen instanceof GuiIngameMenu && !closeRequested
             ).build();
 
         this.buttonList.forEach(GuiButton::destroy);

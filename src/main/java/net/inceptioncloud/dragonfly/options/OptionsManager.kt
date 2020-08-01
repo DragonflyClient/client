@@ -11,6 +11,7 @@ object OptionsManager {
         OptionsSectionZoom.init()
         OptionsSectionScoreboard.init()
         OptionsSectionPlayer.init()
+        OptionsSectionOverlay.init()
         OptionsSectionChat.init()
         OptionsSectionPerformance.init()
     }

@@ -18,6 +18,7 @@ import net.inceptioncloud.dragonfly.engine.structure.IDraw
  * You cannot directly remove a widget from the buffer, but you can change it's visibility state ([Widget.isVisible]).
  */
 class WidgetBuffer {
+
     /**
      * A mutable map that contains all widgets of the buffer.
      *

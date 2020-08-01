@@ -11,10 +11,15 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.event.client.ClientStartupEvent;
 import net.inceptioncloud.dragonfly.event.client.GraphicsInitializedEvent;
+import net.inceptioncloud.dragonfly.event.client.ResizeEvent;
+import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent;
+import net.inceptioncloud.dragonfly.event.control.KeyInputEvent;
 import net.inceptioncloud.dragonfly.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
+import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction;
+import net.inceptioncloud.dragonfly.overlay.toast.Toast;
 import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -1546,14 +1551,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         this.displayWidth = Math.max(1, width);
         this.displayHeight = Math.max(1, height);
+        ScaledResolution scaledresolution = new ScaledResolution(this);
 
         if (this.currentScreen != null) {
-            ScaledResolution scaledresolution = new ScaledResolution(this);
             this.currentScreen.onResize(this, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight());
         }
 
         this.loadingScreen = new LoadingScreenRenderer(this);
         this.updateFramebufferSize();
+
+        final ResizeEvent resizeEvent = new ResizeEvent(width, height, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight());
+        Dragonfly.getEventBus().post(resizeEvent);
     }
 
     private void updateFramebufferSize ()
@@ -1688,6 +1696,16 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             while (Keyboard.next()) {
                 int k = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
+
+                if (this.currentScreen == null) {
+                    KeyInputEvent keyInputEvent = new KeyInputEvent(k);
+                    Dragonfly.getEventBus().post(keyInputEvent);
+
+                    if (keyInputEvent.isCancelled()) {
+                        continue;
+                    }
+                }
+
                 KeyBinding.setKeyBindState(k, Keyboard.getEventKeyState());
 
                 if (Keyboard.getEventKeyState()) {
@@ -2589,6 +2607,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     public void dispatchKeypresses ()
     {
         int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() : Keyboard.getEventKey();
+
+        KeyDispatchEvent keyDispatchEvent = new KeyDispatchEvent(i);
+        Dragonfly.getEventBus().post(keyDispatchEvent);
+
+        if (keyDispatchEvent.isCancelled()) {
+            return;
+        }
 
         if (i != 0 && !Keyboard.isRepeatEvent()) {
             if (!(this.currentScreen instanceof GuiControls) || ((GuiControls) this.currentScreen).time <= getSystemTime() - 20L) {

@@ -64,7 +64,7 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
         // description overlay
         drawRect(x, y, x + (width * transitionDescription.get()).toInt(), y + height, BACKGROUND.rgb)
 
-        val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 12 }
+        val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = 12)
         val lines = fontRenderer?.listFormattedStringToWidth(description, width - 10) ?: listOf()
         val centerY = y + height / 2 - 1
         var fontY = if (fontRenderer != null) centerY - (lines.size * fontRenderer.height / 2) else 0

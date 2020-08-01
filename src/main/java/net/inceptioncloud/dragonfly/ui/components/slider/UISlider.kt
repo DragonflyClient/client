@@ -137,7 +137,7 @@ class UISlider(var x: Int, var y: Int, var width: Int,
             BluePalette.PRIMARY_LIGHT
         )
 
-        val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 34 }
+        val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = 34)
         val stringWidth = fontRenderer?.getStringWidth(displayString)
 
         fontRenderer?.drawString(

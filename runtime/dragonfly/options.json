@@ -1,0 +1,25 @@
+{
+  "lastServer": {
+    "serverName": "Inception \u0026 Cloud",
+    "serverIP": "inceptioncloud.net:25565",
+    "lan": false
+  },
+  "enableZoomAnimation": true,
+  "scoreboardBackground": true,
+  "scoreboardScores": 2,
+  "scoreboardTitle": true,
+  "zoomAnimation": true,
+  "fontQualityScale": 3.1,
+  "borderlessWindow": true,
+  "windowedFullscreen": true,
+  "zoomFieldOfView": 30,
+  "zoomMouseSensitivity": 79,
+  "fontQuality": 2.0,
+  "messageRestoreMode": 1,
+  "renderOwnName": true,
+  "screenshotUtilities": true,
+  "enableHotActions": true,
+  "hotActionsTriggerMode": 0,
+  "hotActionsTriggerKey": 4,
+  "enableToastMessages": true
+}

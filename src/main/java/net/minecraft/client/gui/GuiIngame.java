@@ -122,6 +122,7 @@ public class GuiIngame extends Gui {
      */
     private long healthUpdateCounter = 0L;
     private boolean actionBarDisplayed = false;
+    public static boolean canDisplayActionBar = true;
     private final DoubleTransition actionBar = DoubleTransition.builder().start(0.0D).end(1.0D).amountOfSteps(20).autoTransformator(new ForwardBackward()
     {
         @Override
@@ -248,7 +249,7 @@ public class GuiIngame extends Gui {
             this.overlayDebug.renderDebugInfo(scaledresolution);
         }
 
-        if (this.actionBarDisplayed) {
+        if (canDisplayActionBar && this.actionBarDisplayed) {
             this.mc.mcProfiler.startSection("overlayMessage");
             float f3 = ( float ) this.recordPlayingUpFor - partialTicks;
             int k1 = ( int ) ( f3 * 255.0F / 20.0F );

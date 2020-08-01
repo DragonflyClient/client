@@ -102,7 +102,7 @@ class InputTextField(
             DoubleSequence(fontSize, fontSize / 1.8, 20).also {
                 for (i in 0..20) {
                     it.next()
-                    font.fontRenderer { size = it.current.toInt(); fontWeight = this@InputTextField.fontWeight }
+                    font.fontRenderer(size = it.current.toInt(), fontWeight = this@InputTextField.fontWeight)
                 }
             }
         }
