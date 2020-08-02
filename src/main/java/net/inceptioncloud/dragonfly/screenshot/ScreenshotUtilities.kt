@@ -70,7 +70,7 @@ object ScreenshotUtilities {
                     "Authorization" to "Client-ID c78854cfb8f4e5d"
                 ),
                 data = mapOf(
-                    "image" to Base64.getEncoder().encodeToString(bytes).also { println("==> $it") }
+                    "image" to Base64.getEncoder().encodeToString(bytes)
                 )
             )
 
