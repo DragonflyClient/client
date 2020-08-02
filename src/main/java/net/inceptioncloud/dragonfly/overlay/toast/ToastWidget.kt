@@ -12,6 +12,15 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import kotlin.properties.Delegates
 
+/**
+ * ## Toast Assembled Widget
+ *
+ * This widget is used to display a toast message at the bottom of the screen. It is created and
+ * displayed using the [Toast] object.
+ *
+ * @param text the text that is displayed
+ * @param duration the duration in ticks that the toast message stays on the screen
+ */
 class ToastWidget(
     @property:State val text: String = "This is a toast message",
     @property:State val duration: Int = 200,
