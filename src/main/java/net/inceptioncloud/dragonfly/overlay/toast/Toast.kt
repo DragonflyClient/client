@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.overlay.toast
 
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
-import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseBack
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.minecraft.client.gui.GuiIngame
@@ -37,13 +37,14 @@ object Toast {
         val next = queue.poll()
 
         next.updateStructure()
-        next.y = ScreenOverlay.dimensions.height + next.height
+        next.y = ScreenOverlay.dimensions.height - 45.0
         next.updateStructure()
 
         ScreenOverlay.addComponent("toast", next)
 
-        next.morph(duration = 100, easing = EaseBack.OUT) {
+        next.morph(duration = 60, easing = EaseCubic.IN_OUT) {
             y = ScreenOverlay.dimensions.height - 85.0
+            opacity = 1.0
         }?.post { _, _ ->
             GuiIngame.canDisplayActionBar = false
         }?.start()
@@ -60,8 +61,9 @@ object Toast {
             GuiIngame.canDisplayActionBar = true
 
         expired = true
-        morph(duration = 100, easing = EaseBack.IN) {
-            y = ScreenOverlay.dimensions.height + height
+        morph(duration = 60, easing = EaseCubic.IN_OUT) {
+            y = ScreenOverlay.dimensions.height - 45.0
+            opacity = 0.0
         }?.post { _, _ ->
             ScreenOverlay.buffer.content.remove("toast")
             displayNext()

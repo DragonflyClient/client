@@ -48,6 +48,9 @@ class TextRenderer(
     }
 
     override fun render() {
+        if (color.alphaDouble <= 0.1)
+            return
+
         if (font != null) {
             fontRenderer = font?.fontRenderer(
                 fontWeight = this@TextRenderer.fontWeight,

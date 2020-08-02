@@ -24,12 +24,14 @@ import kotlin.properties.Delegates
 class ToastWidget(
     @property:State val text: String = "This is a toast message",
     @property:State val duration: Int = 200,
+    @property:Interpolate var opacity: Double = 0.0,
 
     @property:Interpolate override var x: Double = -1.0,
     @property:Interpolate override var y: Double = -1.0,
     @property:Interpolate override var width: Double = -1.0,
     @property:Interpolate override var height: Double = -1.0
 ) : AssembledWidget<ToastWidget>(), IPosition, IDimension {
+
 
     /**
      * The time of initialization that is used for the timer (set when invoking [updateStructure])
@@ -57,7 +59,7 @@ class ToastWidget(
             y = this@ToastWidget.y + 3.0
             staticText = text
             adaptHeight = true
-            color = DragonflyPalette.foreground
+            color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
             textAlignHorizontal = Alignment.CENTER
             this.fontRenderer = fontRenderer
         }!!.also { it.adaptHeight() }
@@ -69,7 +71,7 @@ class ToastWidget(
             y = textField.y - padding + 1.0
             width = textField.width + (padding * 2)
             height = textField.height + (padding * 2) - 1.0
-            color = DragonflyPalette.background.altered { alphaDouble = 0.8 }
+            color = DragonflyPalette.background.altered { alphaDouble = 0.8 * opacity }
         }!!
 
         this.x = container.x
@@ -88,7 +90,7 @@ class ToastWidget(
         super.update()
     }
 
-    override fun clone(): ToastWidget = ToastWidget(text, duration, x, y, width, height)
+    override fun clone(): ToastWidget = ToastWidget(text, duration, opacity, x, y, width, height)
 
     override fun newInstance(): ToastWidget = ToastWidget()
 }
