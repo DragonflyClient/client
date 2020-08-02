@@ -15,12 +15,15 @@ object KeyController {
      */
     fun attachKey(key: String): Result = try {
         val response = khttp.post(
-            url = "https://api.inceptioncloud.net/keys/attach",
+            url = "https://api.playdragonfly.net/keys/attach",
+            timeout = 10.0,
             json = mapOf(
                 "key" to key,
                 "machineIdentifier" to MachineIdentifier.generateIdentifier()
             ),
-            timeout = 10.0
+            headers = mapOf(
+                "Content-Type" to "application/json"
+            )
         )
 
         response.toResult()
@@ -35,12 +38,15 @@ object KeyController {
         try {
             val key = KeyStorage.getStoredKey() ?: return Result(false, "No key stored on local machine!")
             val response = khttp.post(
-                url = "https://api.inceptioncloud.net/keys/validate",
+                url = "https://api.playdragonfly.net/keys/validate",
+                timeout = 10.0,
                 json = mapOf(
                     "key" to key,
                     "machineIdentifier" to MachineIdentifier.generateIdentifier()
                 ),
-                timeout = 10.0
+                headers = mapOf(
+                    "Content-Type" to "application/json"
+                )
             )
 
             return response.toResult()

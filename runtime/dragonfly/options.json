@@ -1,7 +1,7 @@
 {
   "lastServer": {
     "serverName": "RoyalPixels",
-    "serverIP": "royalpixels.de",
+    "serverIP": "royalpixels.de:25565",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -23,6 +23,6 @@
   "hotActionsTriggerKey": 4,
   "enableToastMessages": true,
   "chunkUpdateSpeed": 10,
-  "useScaledFontRenderers": true,
+  "useScaledFontRenderers": false,
   "saveGlyphs": true
 }
