@@ -45,12 +45,11 @@ class ToastWidget(
         val textField = updateWidget<TextField>("text") {
             width = (fontRenderer.getStringWidth(text).toDouble() + 4.0).coerceAtMost(ScreenOverlay.dimensions.width / 2.0)
             x = (ScreenOverlay.dimensions.width) / 2 - (width / 2)
-            y = this@ToastWidget.y + 4.0
+            y = this@ToastWidget.y + 3.0
             staticText = text
             adaptHeight = true
             color = DragonflyPalette.foreground
             textAlignHorizontal = Alignment.CENTER
-            textAlignVertical = Alignment.CENTER
             this.fontRenderer = fontRenderer
         }!!.also { it.adaptHeight() }
 
