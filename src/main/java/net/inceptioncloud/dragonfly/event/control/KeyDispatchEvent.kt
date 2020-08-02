@@ -15,5 +15,5 @@ import org.lwjgl.input.Keyboard
  */
 data class KeyDispatchEvent @JvmOverloads constructor(
     val key: Int,
-    val press: Boolean = Keyboard.isKeyDown(key)
+    val press: Boolean = try { Keyboard.isKeyDown(key) } catch (e: Exception) { false }
 ) : Cancellable()
