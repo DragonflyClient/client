@@ -66,7 +66,7 @@ public class ModSplashScreen
             return;
 
         final StackTraceElement element = RuntimeUtils.getStackTrace(ModSplashScreen.class);
-        this.percentage = Math.min(1.0D, this.percentage + (1.0D / 20));
+        this.percentage = Math.min(1.0D, this.percentage + (1.0D / 21));
         this.action = element == null ? "..." : element.getClassName() + " - " + element.getMethodName();
 
         performRender(Minecraft.getMinecraft().getTextureManager());
@@ -81,15 +81,15 @@ public class ModSplashScreen
     {
         if (titleFR == null)
             titleFR = UnicodeFontRenderer
-                    .newInstance(Dragonfly.getFontDesign().getFontFamily() + " Medium", 132, Font.PLAIN);
+                    .newInstance(Dragonfly.getFontManager().getFontFamily() + " Medium", 132, Font.PLAIN);
 
         if (defaultFR == null)
             defaultFR = UnicodeFontRenderer
-                    .newInstance(Dragonfly.getFontDesign().getFontFamily() + " Medium", 75, Font.PLAIN);
+                    .newInstance(Dragonfly.getFontManager().getFontFamily() + " Medium", 75, Font.PLAIN);
 
         if (actionFR == null)
             actionFR = UnicodeFontRenderer
-                    .newInstance(Dragonfly.getFontDesign().getFontFamily() + " Light", 65, Font.PLAIN);
+                    .newInstance(Dragonfly.getFontManager().getFontFamily() + " Light", 65, Font.PLAIN);
 
         if (logo == null)
             logo = new ResourceLocation("dragonflyres/logos/splash.png");

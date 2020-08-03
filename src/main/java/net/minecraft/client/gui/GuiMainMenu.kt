@@ -1,6 +1,6 @@
 package net.minecraft.client.gui
 
-import net.inceptioncloud.dragonfly.Dragonfly.fontDesign
+import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition
@@ -165,33 +165,29 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
 
         // Title
         val percent = imageSize / 280.0
-        var fontRenderer = fontDesign.defaultFont.fontRendererAsync(
-            fontWeight = FontWeight.MEDIUM,
-            size = (25 + percent * 60).toInt()
-        )
+        var fontRenderer = fontManager.defaultFont.fontRendererAsync(fontWeight = FontWeight.MEDIUM, size = (25 + percent * 60).toInt())
         fontRenderer?.drawCenteredString("Inception Cloud Dragonfly", width / 2, initialHeight + imageSize + 10, 0xFFFFFF, true)
 
         // Subtitle
         var previousHeight = fontRenderer?.height ?: 0
-        fontRenderer = fontDesign.defaultFont.fontRendererAsync(size = (15 + percent * 40).toInt())
+        fontRenderer = fontManager.defaultFont.fontRendererAsync(size = (15 + percent * 40).toInt())
         fontRenderer?.drawCenteredString(DragonflyVersion.string, width / 2, initialHeight + imageSize + 12 + previousHeight, 0xFFFFFF, true)
 
         // Update title
         val updateTitle = DragonflyVersion.update?.title
         updateTitle?.let {
             previousHeight += fontRenderer?.height ?: 0
-            fontRenderer = fontDesign.defaultFont.fontRendererAsync(size = (10 + percent * 30).toInt())
+            fontRenderer = fontManager.defaultFont.fontRendererAsync(size = (10 + percent * 30).toInt())
             fontRenderer?.drawCenteredString(it, width / 2, initialHeight + imageSize + 13 + previousHeight, Color(255, 255, 255, 200).rgb, true)
         }
 
         // About
-        fontRenderer = fontDesign.defaultFont.fontRendererAsync()
+        fontRenderer = fontManager.defaultFont.fontRendererAsync()
         fontRenderer?.drawString(aboutString, 5f, 5f, Color.WHITE.rgb, true)
 
         // What's new?
         if (DragonflyVersion.update?.patchNotes != null) {
             val s = "What's new?"
-            fontRenderer = fontDesign.defaultFont.fontRendererAsync()
             fontRenderer?.drawString(s, width - 5f - (fontRenderer?.getStringWidth(s) ?: 0), 5f, Color.WHITE.rgb, true)
         }
 
@@ -214,7 +210,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
     private fun updateSize(): IFontRenderer? {
         val percent = min(height / 540.0, 1.0)
         val buttonFontSize = (18 + percent * 15).toInt()
-        val fontRenderer = fontDesign.defaultFont.fontRendererAsync(size = buttonFontSize)
+        val fontRenderer = fontManager.defaultFont.fontRendererAsync(size = buttonFontSize)
         if (fontRenderer != null) {
             buttonWidth = (80 + percent * 30).toInt()
             buttonHeight = fontRenderer.height
@@ -368,7 +364,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
             }
         }
 
-        val fontRenderer = fontDesign.defaultFont.fontRendererAsync()
+        val fontRenderer = fontManager.defaultFont.fontRendererAsync()
         if (mouseY in 5..5 + (fontRenderer?.height ?: 0)) {
             if (mouseX in 5..5 + (fontRenderer?.getStringWidth(aboutString) ?: 0)) {
                 mc.displayGuiScreen(AboutUI(this))

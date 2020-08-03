@@ -8,7 +8,6 @@ import net.inceptioncloud.dragonfly.Dragonfly.eventBus
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
-import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
@@ -213,7 +212,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             GlStateManager.disableLighting()
             GlStateManager.disableDepth()
             var i = 0
-            val fontRenderer = Dragonfly.fontDesign.regular
+            val fontRenderer = Dragonfly.fontManager.regular
             for (s in textLines) {
                 val j = fontRenderer.getStringWidth(s)
                 if (j > i) {

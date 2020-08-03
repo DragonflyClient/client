@@ -108,7 +108,7 @@ class OptionEntryMultipleChoice(
         val viewX = x + width - viewWidth - 6
         val viewY = y + 3
 
-        val fontRenderer = Dragonfly.fontDesign.regular
+        val fontRenderer = Dragonfly.fontManager.regular
         fontRenderer.drawCenteredString(
                 selectedChoice.displayString,
                 viewX + viewWidth / 2, viewY + height / 2 - fontRenderer.height / 2,

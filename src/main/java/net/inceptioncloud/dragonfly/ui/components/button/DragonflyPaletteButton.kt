@@ -1,6 +1,6 @@
 package net.inceptioncloud.dragonfly.ui.components.button
 
-import net.inceptioncloud.dragonfly.Dragonfly.fontDesign
+import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentBright
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.foreground
@@ -61,7 +61,7 @@ class DragonflyPaletteButton : GuiButton {
      */
     override fun drawButton(mc: Minecraft, mouseX: Int, mouseY: Int) {
         if (visible) {
-            val fontrenderer = fontDesign.defaultFont.fontRendererAsync(size = 19, fontWeight = FontWeight.MEDIUM)
+            val fontrenderer = fontManager.defaultFont.fontRendererAsync(size = 19, fontWeight = FontWeight.MEDIUM)
             val border = 1.0
             val left = xPosition + border
             val top = yPosition + border

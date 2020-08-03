@@ -76,8 +76,8 @@ object GraphicsEngine {
 
             RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 0.8)
 
-            val titleRenderer = Dragonfly.fontDesign.retrieveOrBuild(" Medium", 12)
-            val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("", 10)
+            val titleRenderer = Dragonfly.fontManager.retrieveOrBuild(" Medium", 12)
+            val fontRenderer = Dragonfly.fontManager.retrieveOrBuild("", 10)
             val title = "${uppermostWidget.value::class.simpleName} #${widget.key}"
             val info = uppermostWidget.value.toInfo().toMutableList()
                 .apply {

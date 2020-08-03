@@ -12,7 +12,6 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
 import org.apache.logging.log4j.LogManager
 import kotlin.math.floor
-import kotlin.math.max
 import kotlin.properties.Delegates
 
 /**
@@ -41,7 +40,7 @@ class TextField(
     @property:State var textAlignHorizontal: Alignment = START,
     @property:State var textAlignVertical: Alignment = START,
 
-    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontDesign.regular,
+    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontManager.regular,
     @property:State var font: WidgetFont? = null,
     @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
     @property:Interpolate var fontSize: Double = 19.0,

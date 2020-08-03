@@ -51,7 +51,7 @@ class ToastWidget(
     override fun updateStructure() {
         initialTime = System.currentTimeMillis()
 
-        val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRenderer(size = 16)
+        val fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 16)
 
         val textField = updateWidget<TextField>("text") {
             width = (fontRenderer.getStringWidth(text).toDouble() + 4.0).coerceAtMost(ScreenOverlay.dimensions.width / 2.0)

@@ -56,7 +56,7 @@ public class OutlineButton extends GuiButton
     public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
     {
         if (this.visible) {
-            IFontRenderer fontRenderer = Dragonfly.getFontDesign().getMedium();
+            IFontRenderer fontRenderer = Dragonfly.getFontManager().getMedium();
 
             double transition = 1 - hoverTransition.get();
             int offset = ( int ) ( 7 * transition );

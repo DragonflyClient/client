@@ -596,13 +596,16 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.checkGLError("Post startup");
         this.ingameGUI = new GuiIngame(this);
 
-        Dragonfly.getSplashScreen().setActive(false);
-
         final GuiScreen targetStartupGui = this.serverName != null
                 ? new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort)
                 : new GuiMainMenu();
+
         final StartupGuiEvent event = new StartupGuiEvent(targetStartupGui);
         Dragonfly.getEventBus().post(event);
+
+        Dragonfly.getFontManager().getDefaultFont().preload(event.getTarget());
+
+        Dragonfly.getSplashScreen().setActive(false);
         this.displayGuiScreen(event.getTarget());
 
         this.renderEngine.deleteTexture(this.mojangLogo);

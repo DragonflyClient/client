@@ -271,7 +271,7 @@ public class GuiIngame extends Gui {
             int color = recordAnimateColor ? i1 + ( k1 << 24 & -16777216 ) : 0xFFFFFF;
             color = RGB.of(color).alpha(( int ) (55 + (200D * actionBar.get() ) )).rgb();
 
-            IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
+            IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
             fontRenderer.drawCenteredString(this.recordPlaying, 0, posY, color, true);
 
             GlStateManager.disableBlend();
@@ -298,8 +298,8 @@ public class GuiIngame extends Gui {
 
             if (l1 > 8) {
 
-                final IFontRenderer titleRenderer = Dragonfly.getFontDesign().getTitle();
-                final IFontRenderer subtitleRenderer = Dragonfly.getFontDesign().getSubtitle();
+                final IFontRenderer titleRenderer = Dragonfly.getFontManager().getTitle();
+                final IFontRenderer subtitleRenderer = Dragonfly.getFontManager().getSubtitle();
 
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(( float ) ( scaledWidth / 2 ), ( float ) ( scaledHeight / 2 ), 0.0F);
@@ -413,7 +413,7 @@ public class GuiIngame extends Gui {
         this.mc.mcProfiler.startSection("expBar");
         this.mc.getTextureManager().bindTexture(Gui.icons);
         int i = this.mc.thePlayer.xpBarCap();
-        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getMedium();
+        final IFontRenderer fontRenderer = Dragonfly.getFontManager().getMedium();
 
         if (i > 0) {
             short short1 = 182;
@@ -451,7 +451,7 @@ public class GuiIngame extends Gui {
     public void drawSelectedItemName (ScaledResolution resolution)
     {
         this.mc.mcProfiler.startSection("selectedItemName");
-        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
 
         if (this.remainingHighlightTicks > 0 && this.highlightingItemStack != null) {
             String s = this.highlightingItemStack.getDisplayName();
@@ -489,7 +489,7 @@ public class GuiIngame extends Gui {
     public void renderDemo (ScaledResolution p_175185_1_)
     {
         this.mc.mcProfiler.startSection("demo");
-        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
         String s = "";
 
         if (this.mc.theWorld.getTotalWorldTime() >= 120500L) {
@@ -531,8 +531,8 @@ public class GuiIngame extends Gui {
 
     private void renderScoreboard (ScoreObjective objective, ScaledResolution resolution)
     {
-        IFontRenderer fontRegular = Dragonfly.getFontDesign().getRegular();
-        IFontRenderer fontMedium = Dragonfly.getFontDesign().getRegular();
+        IFontRenderer fontRegular = Dragonfly.getFontManager().getRegular();
+        IFontRenderer fontMedium = Dragonfly.getFontManager().getRegular();
         Scoreboard scoreboard = objective.getScoreboard();
         Collection<Score> sortedScores = scoreboard.getSortedScores(objective);
         ArrayList<Score> displayableScores = sortedScores.stream().filter(score -> score.getPlayerName() != null && !score.getPlayerName().startsWith("#")).collect(Collectors.toCollection(Lists::newArrayList));
@@ -865,7 +865,7 @@ public class GuiIngame extends Gui {
     {
         if (BossStatus.bossName != null && BossStatus.statusBarTime > 0) {
             --BossStatus.statusBarTime;
-            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getRegular();
+            IFontRenderer fontrenderer = Dragonfly.getFontManager().getRegular();
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaledWidth();
             short short1 = 182;

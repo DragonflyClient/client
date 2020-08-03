@@ -35,7 +35,7 @@ val DEFAULT_TEXT_COLOR = WidgetColor(0xababab)
  * @param color the color that is used for the cursor and other highlighted parts of the field
  */
 class InputTextField(
-    @property:State var font: WidgetFont = Dragonfly.fontDesign.defaultFont,
+    @property:State var font: WidgetFont = Dragonfly.fontManager.defaultFont,
     @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
     @property:Interpolate var fontSize: Double = 18.0,
     @property:Interpolate var padding: Double = 2.0,

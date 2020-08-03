@@ -121,7 +121,7 @@ public class GuiNewChat extends Gui
             int visibleChatLines = 0;
             int amountOfSeperateLines = this.seperateChatLines.size();
             float f = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
-            final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
+            final IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
 
             if (amountOfSeperateLines > 0) {
 
@@ -306,7 +306,7 @@ public class GuiNewChat extends Gui
         }
 
         int i = MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale());
-        List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, Dragonfly.getFontDesign().getRegular(), false, false);
+        List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, Dragonfly.getFontManager().getRegular(), false, false);
         boolean chatOpen = isChatOpen();
 
         for (IChatComponent ichatcomponent : list) {
@@ -403,8 +403,8 @@ public class GuiNewChat extends Gui
             if (j >= 0 && k >= 0) {
                 int l = Math.min(this.getLineCount(), this.seperateChatLines.size());
 
-                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < Dragonfly.getFontDesign().getRegular().getHeight() * l + l) {
-                    int i1 = k / Dragonfly.getFontDesign().getRegular().getHeight() + this.scrollPos;
+                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < Dragonfly.getFontManager().getRegular().getHeight() * l + l) {
+                    int i1 = k / Dragonfly.getFontManager().getRegular().getHeight() + this.scrollPos;
 
                     if (i1 >= 0 && i1 < this.seperateChatLines.size()) {
                         ChatLine chatline = this.seperateChatLines.get(i1);
@@ -412,7 +412,7 @@ public class GuiNewChat extends Gui
 
                         for (IChatComponent ichatcomponent : chatline.getChatComponent()) {
                             if (ichatcomponent instanceof ChatComponentText) {
-                                j1 += Dragonfly.getFontDesign().getRegular().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
+                                j1 += Dragonfly.getFontManager().getRegular().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
 
                                 if (j1 > j) {
                                     return ichatcomponent;

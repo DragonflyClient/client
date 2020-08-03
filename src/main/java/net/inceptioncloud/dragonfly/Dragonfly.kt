@@ -34,7 +34,7 @@ object Dragonfly {
         private set
 
     @JvmStatic
-    lateinit var fontDesign: FontManager
+    lateinit var fontManager: FontManager
         private set
 
     @JvmStatic
@@ -94,7 +94,7 @@ object Dragonfly {
         DefaultSubscribers.register(eventBus)
         DesignSubscribers.register(eventBus)
 
-        fontDesign = FontManager()
+        fontManager = FontManager()
         splashScreen = ModSplashScreen()
         richPresenceManager = RichPresenceManager()
         gameStateManager = GameStateManager()
@@ -133,7 +133,7 @@ object Dragonfly {
     @JvmStatic
     fun reload() {
         Options.contentSave()
-        fontDesign.clearCache()
+        fontManager.clearCache()
     }
 
     /**

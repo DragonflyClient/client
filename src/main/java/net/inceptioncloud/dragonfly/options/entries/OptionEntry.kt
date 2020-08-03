@@ -10,7 +10,6 @@ import net.inceptioncloud.dragonfly.ui.components.list.UIListEntry
 import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui.*
-import org.lwjgl.input.Mouse
 
 /**
  * An abstract entry that can be used for every type of option key.
@@ -57,14 +56,14 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
         this.height = height
 
         drawRect(x, y, x + width, y + height, RGB.of(BACKGROUND).alpha(0.7F).rgb())
-        Dragonfly.fontDesign.regular.drawString(name, x + 5 + textOffset, y + 7, FOREGROUND.rgb)
+        Dragonfly.fontManager.regular.drawString(name, x + 5 + textOffset, y + 7, FOREGROUND.rgb)
 
         drawContent(x, y, height, width)
 
         // description overlay
         drawRect(x, y, x + (width * transitionDescription.get()).toInt(), y + height, BACKGROUND.rgb)
 
-        val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = 12)
+        val fontRenderer = Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 12)
         val lines = fontRenderer?.listFormattedStringToWidth(description, width - 10) ?: listOf()
         val centerY = y + height / 2 - 1
         var fontY = if (fontRenderer != null) centerY - (lines.size * fontRenderer.height / 2) else 0

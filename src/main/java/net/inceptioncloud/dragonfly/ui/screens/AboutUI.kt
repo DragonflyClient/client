@@ -52,7 +52,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
 
             val header = wHeight / 11
             val body = wHeight - header
-            val fontRenderer = Dragonfly.fontDesign.defaultFont.fontRendererAsync(
+            val fontRenderer = Dragonfly.fontManager.defaultFont.fontRendererAsync(
                 fontWeight = FontWeight.MEDIUM,
                 size = (header * 1.1).toInt()
             )
@@ -71,9 +71,9 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
             drawRect(wX, wY + header, wX + wWidth, wY + wHeight - header / 2, BluePalette.FOREGROUND.rgb)
 
             //region Content
-            val titleFont = Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = (header * 1.15).toInt())
-            val largeFont = Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = (header / 1))
-            val smallFont = Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = (header / 1.5).toInt())
+            val titleFont = Dragonfly.fontManager.defaultFont.fontRendererAsync(size = (header * 1.15).toInt())
+            val largeFont = Dragonfly.fontManager.defaultFont.fontRendererAsync(size = (header / 1))
+            val smallFont = Dragonfly.fontManager.defaultFont.fontRendererAsync(size = (header / 1.5).toInt())
 
             if (titleFont == null || largeFont == null || smallFont == null)
                 return

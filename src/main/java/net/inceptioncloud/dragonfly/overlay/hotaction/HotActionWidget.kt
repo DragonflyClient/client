@@ -80,8 +80,8 @@ class HotActionWidget(
     override fun updateStructure() {
         initialTime = System.currentTimeMillis()
 
-        val messageFR = Dragonfly.fontDesign.defaultFont.fontRenderer(size = 16)
-        val titleFR = Dragonfly.fontDesign.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 20)
+        val messageFR = Dragonfly.fontManager.defaultFont.fontRenderer(size = 16)
+        val titleFR = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 20)
 
         val messageWidth = messageFR.getStringWidth(message)
         val titleWidth = titleFR.getStringWidth(title)

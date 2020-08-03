@@ -111,7 +111,7 @@ public class GuiPlayerTabOverlay extends Gui
         int x = mc.displayWidth / 2 - hotkeyFlyIn.castToInt();
         int y = mc.displayHeight / 2 - 50;
         drawRect(x - 3, y - 3, mc.displayWidth / 2, y + 20, new Color(0, 0, 0, 50).getRGB());
-        HotkeyRenderer.render(Dragonfly.getFontDesign().retrieveOrBuild("", 20), KeyEvent.VK_P, "Open Indicator Menu", x, y);
+        HotkeyRenderer.render(Dragonfly.getFontManager().retrieveOrBuild("", 20), KeyEvent.VK_P, "Open Indicator Menu", x, y);
     }
 
     /**
@@ -119,7 +119,7 @@ public class GuiPlayerTabOverlay extends Gui
      */
     public void renderPlayerlist (int width, Scoreboard scoreboard, ScoreObjective scoreObjective)
     {
-        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
         final double modifier = Math.max(1 - tablistFlyIn.get(), 0.1);
         final int offset = ( int ) ( tablistFlyIn.get() * estimatePlayerListHeight(fontRenderer, width) );
         final int backgroundColor = new Color(0, 0, 0, ( int ) ( 120 * modifier )).getRGB();

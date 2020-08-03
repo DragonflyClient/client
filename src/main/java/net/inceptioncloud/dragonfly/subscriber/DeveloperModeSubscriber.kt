@@ -31,8 +31,8 @@ object DeveloperModeSubscriber {
             event.scaledWidth, 18
         )
 
-        val asyncBuilding = Dragonfly.fontDesign.defaultFont.asyncBuilding
-        val cachedFontRenderer = Dragonfly.fontDesign.defaultFont.cachedFontRenderer
+        val asyncBuilding = Dragonfly.fontManager.defaultFont.asyncBuilding
+        val cachedFontRenderer = Dragonfly.fontManager.defaultFont.cachedFontRenderer
 
         renderDebugInfo(
             "Building: ",
@@ -52,7 +52,7 @@ object DeveloperModeSubscriber {
     }
 
     private fun renderDebugInfo(title: String, content: String, screenWidth: Int, y: Int) {
-        val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 14)
+        val fontRenderer = Dragonfly.fontManager.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 14)
         val height = fontRenderer.height
         val framesTitleWidth = fontRenderer.getStringWidth(title)
         val framesWidth = framesTitleWidth + fontRenderer.getStringWidth(content)

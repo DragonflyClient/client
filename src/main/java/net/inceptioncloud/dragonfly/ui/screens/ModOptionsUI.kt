@@ -211,7 +211,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
      * Draws the header with the "Mod Options" title.
      */
     private fun drawHeader() {
-        val font = Dragonfly.fontDesign.defaultFont
+        val font = Dragonfly.fontManager.defaultFont
         val fontSize = 16
         val titleString = "Mod Options"
         val y = 15 - fontSize / 2 + 2
@@ -232,7 +232,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
     private fun drawFooter() {
         drawRect(0, height - 18, width, height, BluePalette.FOREGROUND.rgb)
 
-        Dragonfly.fontDesign.defaultFont.fontRendererAsync(size = 15)
+        Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 15)
             ?.drawString(DragonflyVersion.string, 5, height - 10, Color(0, 0, 0, 50).rgb)
     }
 

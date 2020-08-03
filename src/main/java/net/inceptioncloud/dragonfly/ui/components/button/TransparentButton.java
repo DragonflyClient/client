@@ -23,7 +23,7 @@ public class TransparentButton extends GuiButton
     /**
      * The font renderer with which the button text is drawn.
      */
-    private IFontRenderer fontRenderer = Dragonfly.getFontDesign().retrieveOrBuild(" Medium", 22);
+    private IFontRenderer fontRenderer = Dragonfly.getFontManager().retrieveOrBuild(" Medium", 22);
     /**
      * Whether the clean button is highlighted by an underline.
      */

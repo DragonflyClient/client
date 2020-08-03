@@ -79,7 +79,7 @@ public class ConfirmationButton extends SimpleButton
     public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
     {
         if (this.visible) {
-            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getMedium();
+            IFontRenderer fontrenderer = Dragonfly.getFontManager().getMedium();
             final double border = 0.5;
             final double left = this.xPosition + border;
             final double top = this.yPosition + border;

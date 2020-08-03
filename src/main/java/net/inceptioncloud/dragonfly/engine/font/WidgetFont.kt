@@ -2,8 +2,10 @@ package net.inceptioncloud.dragonfly.engine.font
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.engine.font.renderer.*
-import net.inceptioncloud.dragonfly.options.sections.*
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
+import net.minecraft.client.gui.*
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -95,7 +97,7 @@ class WidgetFont @JvmOverloads constructor(
         // if a cached version is available
         if (cachedFontRenderer.containsKey(builder)) {
             val stored = cachedFontRenderer[builder]
-            stored?.let { callback?.invoke(it) }
+            stored?.takeIf { it !is ScaledFontRenderer }?.let { callback?.invoke(it) }
             return stored
         } else if (asyncBuilding.containsKey(builder)) {
             val stored = asyncBuilding[builder]
@@ -126,6 +128,25 @@ class WidgetFont @JvmOverloads constructor(
         }
 
         return null
+    }
+
+    /**
+     * Preloads some commonly used font renderers for this font.
+     */
+    fun preload(screen: GuiScreen) {
+        splashScreen.update()
+
+        fontRenderer(fontWeight = FontWeight.REGULAR, size = 16)
+        fontRenderer(fontWeight = FontWeight.MEDIUM, size = 20)
+        fontRenderer()
+
+        if (screen is GuiMainMenu) {
+            val percent = (screen.height / 3).coerceAtMost(300) / 280.0
+
+            fontRenderer(fontWeight = FontWeight.MEDIUM, size = (25 + percent * 60).toInt())
+            fontRenderer(fontWeight = FontWeight.REGULAR, size = (15 + percent * 40).toInt())
+            fontRenderer(fontWeight = FontWeight.REGULAR, size = (10 + percent * 30).toInt())
+        }
     }
 
     /**

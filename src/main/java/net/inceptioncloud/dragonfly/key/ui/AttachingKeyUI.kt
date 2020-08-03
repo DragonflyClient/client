@@ -138,7 +138,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             width = 250.0,
             height = 20.0,
             staticText = "Attaching key to current device...",
-            font = Dragonfly.fontDesign.defaultFont,
+            font = Dragonfly.fontManager.defaultFont,
             fontSize = 30.0,
             color = DragonflyPalette.foreground,
             textAlignVertical = Alignment.START,

@@ -25,7 +25,7 @@ class TextRenderer(
     @property:Interpolate var text: String = "Default Text",
     @property:Interpolate var dropShadow: Boolean = false,
 
-    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontDesign.regular,
+    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontManager.regular,
     @property:State var font: WidgetFont? = null,
     @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
     @property:Interpolate var fontSize: Double = 19.0,
