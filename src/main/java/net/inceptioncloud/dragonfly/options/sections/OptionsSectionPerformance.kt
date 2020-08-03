@@ -84,8 +84,8 @@ object OptionsSectionPerformance
     @JvmStatic
     val useScaledFontRenderers = optionEntryBoolean {
         name = "Use scaled font renderers"
-        description = "Improves the performance by re-using already created font renderers and adapting the font size by " +
-                "applying a scale while rendering. Note that this can cause some animations to be less smooth!"
+        description = "Improves the ui loading time by re-using already created font renderers and adapting the font size by " +
+                "applying a scale while rendering until an actual new font renderer has been created."
         key {
             fileKey = "useScaledFontRenderers"
             default = { true }
