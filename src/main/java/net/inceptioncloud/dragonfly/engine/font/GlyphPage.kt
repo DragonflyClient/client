@@ -71,72 +71,77 @@ class GlyphPage(
 
         @Suppress("UNCHECKED_CAST")
         if (cached != null) {
-            val (cachedImage, cachedProperties) = cached
-            bufferedImage = cachedImage
-            glyphCharacterMap = cachedProperties
-                .mapKeys { (it.key as String)[0] }
-                .mapValues {
-                    val map = it.value as Map<String, Int>
-                    @Suppress("MapGetWithNotNullAssertionOperator")
-                    Glyph().apply {
-                        x = map["x"]!!
-                        y = map["y"]!!
-                        width = map["width"]!!
-                        height = map["height"]!!
+            try {
+                val (cachedImage, cachedProperties) = cached
+                bufferedImage = cachedImage
+                glyphCharacterMap = cachedProperties
+                    .mapKeys { (it.key as String)[0] }
+                    .mapValues {
+                        val map = it.value as Map<String, Int>
+                        @Suppress("MapGetWithNotNullAssertionOperator")
+                        Glyph().apply {
+                            x = map["x"]!!
+                            y = map["y"]!!
+                            width = map["width"]!!
+                            height = map["height"]!!
+                        }
                     }
-                }
-                .toMutableMap()
-            maxFontHeight = glyphCharacterMap.map { it.value.height }.max()!!
-        } else {
-            bufferedImage = BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB)
+                    .toMutableMap()
+                maxFontHeight = glyphCharacterMap.map { it.value.height }.max()!!
+                return
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
 
-            val graphics = bufferedImage!!.graphics as Graphics2D
+        bufferedImage = BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB)
 
-            graphics.font = font
-            graphics.color = Color(255, 255, 255, 0)
-            graphics.fillRect(0, 0, imgSize, imgSize)
-            graphics.color = Color.white
+        val graphics = bufferedImage!!.graphics as Graphics2D
 
-            graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF)
-            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+        graphics.font = font
+        graphics.color = Color(255, 255, 255, 0)
+        graphics.fillRect(0, 0, imgSize, imgSize)
+        graphics.color = Color.white
 
-            val fontMetrics = graphics.fontMetrics
-            var currentCharHeight = 0
-            var posX = 0
-            var posY = 1
+        graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF)
+        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
 
-            for (ch in chars) {
-                val glyph = Glyph()
-                val bounds = fontMetrics.getStringBounds(ch.toString(), graphics)
-                glyph.width = bounds.bounds.width + 8 // Leave some additional space
-                glyph.height = bounds.height.toInt()
-                check(posY + glyph.height < imgSize) { "Not all characters will fit" }
+        val fontMetrics = graphics.fontMetrics
+        var currentCharHeight = 0
+        var posX = 0
+        var posY = 1
 
-                if (ch == 'j') glyph.width += 4
-                if (posX + glyph.width >= imgSize) {
-                    posX = 0
-                    posY += currentCharHeight
-                    currentCharHeight = 0
-                }
+        for (ch in chars) {
+            val glyph = Glyph()
+            val bounds = fontMetrics.getStringBounds(ch.toString(), graphics)
+            glyph.width = bounds.bounds.width + 8 // Leave some additional space
+            glyph.height = bounds.height.toInt()
+            check(posY + glyph.height < imgSize) { "Not all characters will fit" }
 
-                glyph.x = posX
-                glyph.y = posY
-
-                if (glyph.height > maxFontHeight) {
-                    maxFontHeight = glyph.height
-                }
-                if (glyph.height > currentCharHeight) {
-                    currentCharHeight = glyph.height
-                }
-
-                graphics.drawString(ch.toString(), posX + if (ch == 'j') 5 else 2, posY + fontMetrics.ascent)
-                posX += glyph.width
-                glyphCharacterMap[ch] = glyph
+            if (ch == 'j') glyph.width += 4
+            if (posX + glyph.width >= imgSize) {
+                posX = 0
+                posY += currentCharHeight
+                currentCharHeight = 0
             }
 
-            cacheGlyph()
+            glyph.x = posX
+            glyph.y = posY
+
+            if (glyph.height > maxFontHeight) {
+                maxFontHeight = glyph.height
+            }
+            if (glyph.height > currentCharHeight) {
+                currentCharHeight = glyph.height
+            }
+
+            graphics.drawString(ch.toString(), posX + if (ch == 'j') 5 else 2, posY + fontMetrics.ascent)
+            posX += glyph.width
+            glyphCharacterMap[ch] = glyph
         }
+
+        cacheGlyph()
     }
 
     fun bindTexture() {

@@ -1,7 +1,7 @@
 {
   "lastServer": {
-    "serverName": "hypixel.net",
-    "serverIP": "hypixel.net",
+    "serverName": "Inception \u0026 Cloud",
+    "serverIP": "inceptioncloud.net:25565",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -24,5 +24,6 @@
   "enableToastMessages": true,
   "chunkUpdateSpeed": 10,
   "useScaledFontRenderers": true,
-  "saveGlyphs": true
+  "saveGlyphs": true,
+  "preloadFontRenderers": true
 }
