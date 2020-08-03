@@ -136,6 +136,9 @@ class WidgetFont @JvmOverloads constructor(
     fun preload(screen: GuiScreen) {
         splashScreen.update()
 
+        if (OptionsSectionPerformance.preloadFontRenderers() != true)
+            return
+
         fontRenderer(fontWeight = FontWeight.REGULAR, size = 16)
         fontRenderer(fontWeight = FontWeight.MEDIUM, size = 20)
         fontRenderer()
