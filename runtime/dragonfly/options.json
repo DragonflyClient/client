@@ -1,7 +1,7 @@
 {
   "lastServer": {
-    "serverName": "RoyalPixels",
-    "serverIP": "royalpixels.de",
+    "serverName": "hypixel.net",
+    "serverIP": "hypixel.net",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -14,7 +14,7 @@
   "windowedFullscreen": true,
   "zoomFieldOfView": 30,
   "zoomMouseSensitivity": 79,
-  "fontQuality": 2.0,
+  "fontQuality": 1.9836065573770492,
   "messageRestoreMode": 1,
   "renderOwnName": true,
   "screenshotUtilities": true,
@@ -23,6 +23,6 @@
   "hotActionsTriggerKey": 4,
   "enableToastMessages": true,
   "chunkUpdateSpeed": 10,
-  "useScaledFontRenderers": false,
+  "useScaledFontRenderers": true,
   "saveGlyphs": true
 }

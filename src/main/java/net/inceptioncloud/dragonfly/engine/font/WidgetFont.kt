@@ -64,15 +64,9 @@ class WidgetFont @JvmOverloads constructor(
     ): IFontRenderer {
         val builder = FontRendererBuilder(fontWeight, size, letterSpacing ?: this.letterSpacing)
 
-        return if (cachedFontRenderer.containsKey(builder)) {
+        return if (cachedFontRenderer.containsKey(builder) && cachedFontRenderer[builder] !is ScaledFontRenderer) {
             cachedFontRenderer[builder]!!
         } else {
-            val scaled = findScaled(builder)
-            if (scaled != null) {
-                cachedFontRenderer[builder] = scaled
-                return scaled
-            }
-
             GlyphFontRenderer.create(
                 fontWeights[builder.fontWeight],
                 builder.size,
@@ -99,21 +93,17 @@ class WidgetFont @JvmOverloads constructor(
         val builder = FontRendererBuilder(fontWeight, size, letterSpacing ?: this.letterSpacing)
 
         // if a cached version is available
-        if (asyncBuilding.containsKey(builder)) {
-            val stored = asyncBuilding[builder]
+        if (cachedFontRenderer.containsKey(builder)) {
+            val stored = cachedFontRenderer[builder]
             stored?.let { callback?.invoke(it) }
             return stored
-        } else if (cachedFontRenderer.containsKey(builder)) {
-            val stored = cachedFontRenderer[builder]
+        } else if (asyncBuilding.containsKey(builder)) {
+            val stored = asyncBuilding[builder]
             stored?.let { callback?.invoke(it) }
             return stored
         }
 
         val scaled = findScaled(builder)
-        if (scaled != null) {
-            cachedFontRenderer[builder] = scaled
-            return scaled
-        }
 
         // store 'null' to indicate that a build is running
         asyncBuilding[builder] = null
@@ -128,6 +118,11 @@ class WidgetFont @JvmOverloads constructor(
             asyncBuilding.remove(builder)
             cachedFontRenderer[builder] = fontRenderer
             callback?.invoke(fontRenderer)
+        }
+
+        if (scaled != null) {
+            cachedFontRenderer[builder] = scaled
+            return scaled
         }
 
         return null
