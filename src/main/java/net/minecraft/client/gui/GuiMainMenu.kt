@@ -165,30 +165,30 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
 
         // Title
         val percent = imageSize / 280.0
-        var fontRenderer = fontManager.defaultFont.fontRendererAsync(fontWeight = FontWeight.MEDIUM, size = (25 + percent * 60).toInt())
-        fontRenderer?.drawCenteredString("Inception Cloud Dragonfly", width / 2, initialHeight + imageSize + 10, 0xFFFFFF, true)
+        var fontRenderer = fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = (25 + percent * 60).toInt())
+        fontRenderer.drawCenteredString("Inception Cloud Dragonfly", width / 2, initialHeight + imageSize + 10, 0xFFFFFF, true)
 
         // Subtitle
-        var previousHeight = fontRenderer?.height ?: 0
-        fontRenderer = fontManager.defaultFont.fontRendererAsync(size = (15 + percent * 40).toInt())
-        fontRenderer?.drawCenteredString(DragonflyVersion.string, width / 2, initialHeight + imageSize + 12 + previousHeight, 0xFFFFFF, true)
+        var previousHeight = fontRenderer.height
+        fontRenderer = fontManager.defaultFont.fontRenderer(size = (15 + percent * 40).toInt())
+        fontRenderer.drawCenteredString(DragonflyVersion.string, width / 2, initialHeight + imageSize + 12 + previousHeight, 0xFFFFFF, true)
 
         // Update title
         val updateTitle = DragonflyVersion.update?.title
         updateTitle?.let {
-            previousHeight += fontRenderer?.height ?: 0
-            fontRenderer = fontManager.defaultFont.fontRendererAsync(size = (10 + percent * 30).toInt())
-            fontRenderer?.drawCenteredString(it, width / 2, initialHeight + imageSize + 13 + previousHeight, Color(255, 255, 255, 200).rgb, true)
+            previousHeight += fontRenderer.height
+            fontRenderer = fontManager.defaultFont.fontRenderer(size = (10 + percent * 30).toInt())
+            fontRenderer.drawCenteredString(it, width / 2, initialHeight + imageSize + 13 + previousHeight, Color(255, 255, 255, 200).rgb, true)
         }
 
         // About
-        fontRenderer = fontManager.defaultFont.fontRendererAsync()
-        fontRenderer?.drawString(aboutString, 5f, 5f, Color.WHITE.rgb, true)
+        fontRenderer = fontManager.defaultFont.fontRenderer()
+        fontRenderer.drawString(aboutString, 5f, 5f, Color.WHITE.rgb, true)
 
         // What's new?
         if (DragonflyVersion.update?.patchNotes != null) {
             val s = "What's new?"
-            fontRenderer?.drawString(s, width - 5f - (fontRenderer?.getStringWidth(s) ?: 0), 5f, Color.WHITE.rgb, true)
+            fontRenderer.drawString(s, width - 5f - fontRenderer.getStringWidth(s), 5f, Color.WHITE.rgb, true)
         }
 
         // Bottom Bar
