@@ -14,7 +14,7 @@ class HotkeyTypeChat(
     override val key: Int,
     override val modifierKey: Int?,
     override val time: Double,
-    override val delay: Double, // Only active if 'fadeOut' is 'false'
+    override val delay: Double,
     override val color: Color,
     val fadeOut: Boolean,
     val message: String
@@ -35,6 +35,10 @@ class HotkeyTypeChat(
     override fun actionPerformed() {
         sendChatMessage(message, false)
         HotkeyController.blockedHotkeys.add(this)
+
+        if(modifierKey != null) {
+            direction = -1
+        }
 
         if (!fadeOut) {
             activateDelay()

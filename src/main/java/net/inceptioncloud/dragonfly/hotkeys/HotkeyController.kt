@@ -13,12 +13,13 @@ object HotkeyController {
 
     val blockedHotkeys = mutableListOf<Hotkey>()
 
+    val pressedKeys = HashMap<Int, Long>()
+
     init {
         println("Initializing hotkeys...")
         val test = HotkeyTypeChat(
             Keyboard.KEY_G,
-            null,
-            //Keyboard.KEY_LSHIFT,
+            Keyboard.KEY_LSHIFT,
             1.0,
             10.0,
             Color(0x26de81),
@@ -38,9 +39,11 @@ object HotkeyController {
 
             if (secondary == null) {
                 if (primary.isKeyPressed()) {
+
                     if (hotkey is HotkeyTypeChat && !blockedHotkeys.contains(hotkey)) {
                         hotkey.direction = 1
                     }
+
                 } else {
                     if (hotkey is HotkeyTypeChat) {
                         if (!hotkey.transition.isAtStart) {
@@ -48,6 +51,35 @@ object HotkeyController {
                         }
                     }
                 }
+            } else {
+
+                if (primary.isKeyPressed() && !pressedKeys.containsKey(primary)) {
+                    pressedKeys[primary] = System.currentTimeMillis()
+                } else if (secondary.isKeyPressed() && !pressedKeys.containsKey(secondary)) {
+                    pressedKeys[secondary] = System.currentTimeMillis()
+                } else if (!primary.isKeyPressed() && !secondary.isKeyPressed()) {
+                    pressedKeys.remove(primary)
+                    pressedKeys.remove(secondary)
+                }
+
+                if (primary.isKeyPressed() && secondary.isKeyPressed()) {
+
+                    if (pressedKeys.containsKey(primary) && pressedKeys.containsKey(secondary)) {
+                        if (pressedKeys[primary]!! > pressedKeys[secondary]!!) {
+                            if (hotkey is HotkeyTypeChat && !blockedHotkeys.contains(hotkey)) {
+                                hotkey.direction = 1
+                            }
+
+                        }
+                    }
+                } else {
+
+                    if (hotkey is HotkeyTypeChat && !blockedHotkeys.contains(hotkey)) {
+                        hotkey.direction = -1
+                    }
+
+                }
+
             }
         }
     }
