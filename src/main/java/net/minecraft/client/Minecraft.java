@@ -608,6 +608,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         Dragonfly.getSplashScreen().setActive(false);
         this.displayGuiScreen(event.getTarget());
 
+        logger.info("Additional loading time: " + Dragonfly.getSplashScreen().getAdditionalLoadingMillis() + "ms");
+
         this.renderEngine.deleteTexture(this.mojangLogo);
         this.mojangLogo = null;
         this.loadingScreen = new LoadingScreenRenderer(this);
@@ -647,7 +649,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             logger.error("Couldn't initialize twitch stream");
         }
 
-        Dragonfly.getSplashScreen().update();
     }
 
     private void createDisplay () throws LWJGLException
@@ -674,14 +675,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     private void setInitialDisplayMode () throws LWJGLException
     {
-        if (this.fullscreen) {
-            Display.setFullscreen(true);
-            DisplayMode displaymode = Display.getDisplayMode();
-            this.displayWidth = Math.max(1, displaymode.getWidth());
-            this.displayHeight = Math.max(1, displaymode.getHeight());
-        } else {
-            Display.setDisplayMode(new DisplayMode(this.displayWidth, this.displayHeight));
-        }
+        this.displayWidth = 400;
+        this.displayHeight = 500;
+
+        System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+        Display.setDisplayMode(new DisplayMode(this.displayWidth, this.displayHeight));
     }
 
     private void setWindowIcon ()

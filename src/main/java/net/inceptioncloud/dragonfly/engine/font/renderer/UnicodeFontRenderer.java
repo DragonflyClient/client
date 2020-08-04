@@ -90,7 +90,7 @@ public class UnicodeFontRenderer implements IFontRenderer
         }
 
         final Font font = new Font(name, style, size);
-        return new UnicodeFontRenderer(font, 0, 3);
+        return new UnicodeFontRenderer(font, 1, 3);
     }
     //</editor-fold>
 

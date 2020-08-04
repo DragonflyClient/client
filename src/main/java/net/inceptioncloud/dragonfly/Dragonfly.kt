@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly
 
 import net.inceptioncloud.dragonfly.design.DesignSubscribers
-import net.inceptioncloud.dragonfly.design.splash.ModSplashScreen
+import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
 import net.inceptioncloud.dragonfly.engine.font.FontManager
 import net.inceptioncloud.dragonfly.event.ModEventBus
@@ -38,7 +38,7 @@ object Dragonfly {
         private set
 
     @JvmStatic
-    lateinit var splashScreen: ModSplashScreen
+    lateinit var splashScreen: DragonflySplashScreen
         private set
 
     @JvmStatic
@@ -95,7 +95,7 @@ object Dragonfly {
         DesignSubscribers.register(eventBus)
 
         fontManager = FontManager()
-        splashScreen = ModSplashScreen()
+        splashScreen = DragonflySplashScreen()
         richPresenceManager = RichPresenceManager()
         gameStateManager = GameStateManager()
         tickTimer = Timer("Dragonfly Tick Timer")

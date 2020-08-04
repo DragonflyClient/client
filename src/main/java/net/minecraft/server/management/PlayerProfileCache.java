@@ -242,11 +242,7 @@ public class PlayerProfileCache
                 }
             }
         }
-        catch (FileNotFoundException var9)
-        {
-            ;
-        }
-        catch (JsonParseException var10)
+        catch (Exception var9)
         {
             ;
         }
