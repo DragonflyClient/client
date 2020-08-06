@@ -25,10 +25,7 @@ object HotkeyController {
 
     init {
         println("Initializing hotkeys...")
-        removeHotkey(
-            Keyboard.KEY_G,
-            null
-        )
+        addHotkey(Keyboard.KEY_G, null, 1.0, 1.0, Color.decode("#fff"), "HotkeyTypeChat", "false", "Hello there!")
         println("Initialized hotkeys! (${configFile.absolutePath})")
     }
 
@@ -41,7 +38,7 @@ object HotkeyController {
         type: String,
         extra1: String,
         extra2: String
-    ) {
+    ): Boolean {
 
         if (!configFile.exists()) {
             configFile.writeText("[]")
@@ -52,6 +49,21 @@ object HotkeyController {
             val reader = FileReader(configFile)
             val obj = JSONParser().parse(reader)
             val hotkeys = obj as JSONArray
+
+            for (entry in hotkeys) {
+                val hotkey = entry as JSONObject
+
+                if (modifierKey == null) {
+                    if (hotkey.get("$key") != null) {
+                        return false
+                    }
+                } else {
+                    if (hotkey.get("${modifierKey}_$key") != null) {
+                        return false
+                    }
+                }
+
+            }
 
             val details = JSONObject()
             details.put("key", key.toString())
@@ -83,6 +95,7 @@ object HotkeyController {
                 writer.write(hotkeys.toJSONString())
                 writer.flush()
                 writer.close()
+                return true
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -92,6 +105,7 @@ object HotkeyController {
             e.printStackTrace()
         }
 
+        return false
     }
 
     fun removeHotkey(
