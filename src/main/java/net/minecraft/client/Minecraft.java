@@ -605,8 +605,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
         Dragonfly.getFontManager().getDefaultFont().preload(event.getTarget());
 
-        Dragonfly.getSplashScreen().setActive(false);
         this.displayGuiScreen(event.getTarget());
+        this.setPostInitialDisplayMode();
 
         logger.info("Additional loading time: " + Dragonfly.getSplashScreen().getAdditionalLoadingMillis() + "ms");
 
@@ -675,10 +675,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     private void setInitialDisplayMode () throws LWJGLException
     {
-        this.displayWidth = 400;
-        this.displayHeight = 500;
-
         System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+        Display.setDisplayMode(new DisplayMode(400, 500));
+    }
+
+    private void setPostInitialDisplayMode() throws LWJGLException {
+        Dragonfly.getSplashScreen().setActive(false);
+        System.setProperty("org.lwjgl.opengl.Window.undecorated", "false");
         Display.setDisplayMode(new DisplayMode(this.displayWidth, this.displayHeight));
     }
 

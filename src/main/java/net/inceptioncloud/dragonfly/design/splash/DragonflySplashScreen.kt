@@ -52,6 +52,7 @@ class DragonflySplashScreen {
      */
     fun update() {
         if (Minecraft.getMinecraft() == null || Minecraft.getMinecraft().languageManager == null || !isActive) return
+
         val element = RuntimeUtils.getStackTrace(DragonflySplashScreen::class.java)
         targetPercentage = (percentage + 1.0 / 20).coerceIn(0.0..1.0)
         action = if (element == null) "..." else element.className.split(".").last() + " - " + element.methodName
@@ -78,7 +79,7 @@ class DragonflySplashScreen {
         if (actionFR == null) actionFR = UnicodeFontRenderer.newInstance(fontManager.fontFamily, 50, Font.PLAIN)
         if (logo == null) logo = ResourceLocation("dragonflyres/logos/splash.png")
 
-        val resolution = Dimension(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight)
+        val resolution = Dimension(400, 500)
         val factor = 2.0
         val framebuffer = Framebuffer(resolution.width, resolution.height, true)
         framebuffer.bindFramebuffer(false)
