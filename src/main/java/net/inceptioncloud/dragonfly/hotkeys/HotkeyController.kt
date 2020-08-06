@@ -21,20 +21,33 @@ object HotkeyController {
 
     val pressedKeys = HashMap<Int, Long>()
 
-    val configFile = File("")
+    val configFile = File("dragonfly/hotkeys.json")
 
     init {
         println("Initializing hotkeys...")
-        val test = HotkeyTypeChat(
+        addHotkey(
+            Keyboard.KEY_G,
+            null,
+            1.0,
+            10.0,
+            Color(0x26de81),
+            "HotkeyTypeChat",
+            "false",
+            "Mitte Safe, alles Safe"
+        )
+
+        addHotkey(
             Keyboard.KEY_G,
             Keyboard.KEY_LSHIFT,
             1.0,
             10.0,
             Color(0x26de81),
-            false,
-            "Mitte Safe, alles Safe"
+            "HotkeyTypeChat",
+            "false",
+            "Alles Safe, mitte Safe"
         )
 
+        println("Initialized hotkeys! (${configFile.absolutePath})")
     }
 
     fun addHotkey(
@@ -76,7 +89,11 @@ object HotkeyController {
             }
 
             hotkeys.add(hotkey)
-            hotkey.getAsHotkey()?.let { this.hotkeys.add(it) }
+
+            if (type == "HotkeyTypeChat") {
+                this.hotkeys.add(HotkeyTypeChat(key, modifierKey, time, delay, color, extra1.toBoolean(), extra2))
+            }
+
 
             try {
 
@@ -183,7 +200,7 @@ object HotkeyController {
             val secondary = hotkey.modifierKey
 
             if (secondary == null) {
-                if (primary.isKeyPressed()) {
+                if (primary.isKeyPressed() && !Keyboard.KEY_LSHIFT.isKeyPressed() && !Keyboard.KEY_LCONTROL.isKeyPressed() && !Keyboard.KEY_LMENU.isKeyPressed()) {
 
                     if (hotkey is HotkeyTypeChat && !blockedHotkeys.contains(hotkey)) {
                         hotkey.direction = 1
