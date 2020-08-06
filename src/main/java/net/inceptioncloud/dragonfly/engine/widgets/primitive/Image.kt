@@ -144,4 +144,6 @@ class Image(
     )
 
     override fun newInstance(): Image = Image()
+
+    companion object
 }

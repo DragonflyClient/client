@@ -40,8 +40,8 @@ class ResponsiveImage(
             val differenceWidth = inOriginalWidth - this@ResponsiveImage.width
             val differenceHeight = inOriginalHeight - this@ResponsiveImage.height
 
-            x = -(differenceWidth / 2)
-            y = -(differenceHeight / 2)
+            x = this@ResponsiveImage.x - (differenceWidth / 2)
+            y = this@ResponsiveImage.y - (differenceHeight / 2)
             width = inOriginalWidth
             height = inOriginalHeight
             color = this@ResponsiveImage.color
