@@ -474,7 +474,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                 height = height.toDouble(),
                 originalWidth = it.width,
                 originalHeight = it.height,
-                resourceLocation = ResourceLocation(it.resourceLocation),
+                resourceLocation = it.image.resourceLocation,
+                dynamicTexture = it.image.dynamicTexture,
                 color = backgroundFill ?: WidgetColor.DEFAULT
             ) id "background"
         }

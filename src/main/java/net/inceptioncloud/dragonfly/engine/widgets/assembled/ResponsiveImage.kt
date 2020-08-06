@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
 
 class ResponsiveImage(
@@ -17,7 +18,8 @@ class ResponsiveImage(
 
     @property:Interpolate var originalWidth: Double = width,
     @property:Interpolate var originalHeight: Double = width,
-    @property:State var resourceLocation: ResourceLocation? = null
+    @property:State var resourceLocation: ResourceLocation? = null,
+    @property:State var dynamicTexture: DynamicTexture? = null
 ) : AssembledWidget<ResponsiveImage>(), IPosition, IDimension, IColor {
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -44,6 +46,7 @@ class ResponsiveImage(
             height = inOriginalHeight
             color = this@ResponsiveImage.color
             resourceLocation = this@ResponsiveImage.resourceLocation
+            dynamicTexture = this@ResponsiveImage.dynamicTexture
         }
     }
 
