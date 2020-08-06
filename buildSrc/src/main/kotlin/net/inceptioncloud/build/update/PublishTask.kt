@@ -119,21 +119,14 @@ open class PublishTask : DefaultTask() {
             "releaseDate" to System.currentTimeMillis()
         )
 
-        val urls = mutableListOf<String>().apply {
-            if (earlyAccess) add("eap")
-            if (stable) add("stable")
-        }
+        val response = khttp.post(
+            url = "https://api.inceptioncloud.net/publish?eap=$earlyAccess&stable=$stable",
+            auth = BasicAuthorization(readSecret("api_user"), readSecret("api_password")),
+            json = json
+        )
 
-        for (url in urls) {
-            val response = khttp.post(
-                url = "https://api.inceptioncloud.net/publish/$url",
-                auth = BasicAuthorization(readSecret("api_user"), readSecret("api_password")),
-                json = json
-            )
-
-            if (response.statusCode != 200) {
-                throw java.lang.IllegalStateException("Failed to publish update: $response")
-            }
+        if (response.statusCode != 200) {
+            throw java.lang.IllegalStateException("Failed to publish update: $response")
         }
     }
 
