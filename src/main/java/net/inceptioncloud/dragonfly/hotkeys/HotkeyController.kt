@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.hotkeys
 import net.inceptioncloud.dragonfly.hotkeys.types.HotkeyTypeChat
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
+import org.apache.logging.log4j.LogManager
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
@@ -24,9 +25,8 @@ object HotkeyController {
     val configFile = File("dragonfly/hotkeys.json")
 
     init {
-        println("Initializing hotkeys...")
-        addHotkey(Keyboard.KEY_G, null, 1.0, 1.0, Color.decode("#fff"), "HotkeyTypeChat", "false", "Hello there!")
-        println("Initialized hotkeys! (${configFile.absolutePath})")
+        registerHotkeys()
+        LogManager.getLogger().info("Hotkey initializing successful!")
     }
 
     fun addHotkey(
@@ -159,17 +159,23 @@ object HotkeyController {
 
     }
 
-    fun getHotkeys(): JSONArray? {
-
+    fun registerHotkeys() {
         if (configFile.exists()) {
             val reader = FileReader(configFile)
             val obj = JSONParser().parse(reader)
             val hotkeys = obj as JSONArray
 
-            return hotkeys
-        }
+            for (title in hotkeys) {
+                for (key in (title as JSONObject).keys) {
+                    val hotkey = title.get(key) as JSONObject
+                    hotkey.getAsHotkey()?.let { this.hotkeys.add(it) }
+                }
 
-        return null
+            }
+
+        } else {
+            configFile.writeText("[]")
+        }
     }
 
     fun JSONObject.getAsHotkey(): Hotkey? {
