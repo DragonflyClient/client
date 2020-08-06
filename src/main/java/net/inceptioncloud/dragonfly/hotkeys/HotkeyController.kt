@@ -25,28 +25,10 @@ object HotkeyController {
 
     init {
         println("Initializing hotkeys...")
-        addHotkey(
+        removeHotkey(
             Keyboard.KEY_G,
-            null,
-            1.0,
-            10.0,
-            Color(0x26de81),
-            "HotkeyTypeChat",
-            "false",
-            "Mitte Safe, alles Safe"
+            null
         )
-
-        addHotkey(
-            Keyboard.KEY_G,
-            Keyboard.KEY_LSHIFT,
-            1.0,
-            10.0,
-            Color(0x26de81),
-            "HotkeyTypeChat",
-            "false",
-            "Alles Safe, mitte Safe"
-        )
-
         println("Initialized hotkeys! (${configFile.absolutePath})")
     }
 
@@ -112,7 +94,10 @@ object HotkeyController {
 
     }
 
-    fun removeHotkey(key: Int, modifierKey: Int?) {
+    fun removeHotkey(
+        key: Int,
+        modifierKey: Int?
+    ) {
 
         if (configFile.exists()) {
 
@@ -128,14 +113,14 @@ object HotkeyController {
                     if (modifierKey == null) {
                         if (hotkey.get("$key") != null) {
                             hotkeys.remove(hotkey)
-                            hotkey.getAsHotkey()?.let { this.hotkeys.remove(it) }
+                            (hotkey.get("$key") as JSONObject).getAsHotkey()?.let { this.hotkeys.remove(it) }
                             break
                         }
                     } else {
                         if (hotkey.get("${modifierKey}_$key") != null) {
                             hotkeys.remove(hotkey)
-
-                            hotkey.getAsHotkey()?.let { this.hotkeys.remove(it) }
+                            (hotkey.get("${modifierKey}_$key") as JSONObject).getAsHotkey()
+                                ?.let { this.hotkeys.remove(it) }
                             break
                         }
                     }
@@ -175,10 +160,10 @@ object HotkeyController {
 
     fun JSONObject.getAsHotkey(): Hotkey? {
 
-        val key: Int = this.get("key") as Int
-        val modifierKey: Int = this.get("modifierKey") as Int
-        val time: Double = this.get("time") as Double
-        val delay: Double = this.get("delay") as Double
+        val key: Int = this.get("key").toString().toInt()
+        val modifierKey: Int? = this.get("modifierKey").toString().toIntOrNull()
+        val time: Double = this.get("time").toString().toDouble()
+        val delay: Double = this.get("delay").toString().toDouble()
         val color: Color = Color.decode(this.get("color") as String)
         val type: String = this.get("type") as String
         val extra1: String = this.get("extra1") as String
