@@ -25,4 +25,9 @@ class ImageResource {
     constructor(resourceLocation: ResourceLocation) {
         this.resourceLocation = resourceLocation
     }
+
+    /**
+     * Convenient constructor using a static resource
+     */
+    constructor(resourceLocation: String) : this(ResourceLocation(resourceLocation))
 }

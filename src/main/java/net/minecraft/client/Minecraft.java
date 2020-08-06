@@ -21,6 +21,7 @@ import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
 import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction;
 import net.inceptioncloud.dragonfly.overlay.toast.Toast;
 import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker;
+import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -598,7 +599,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
         final GuiScreen targetStartupGui = this.serverName != null
                 ? new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort)
-                : new GuiMainMenu();
+                : new MainMenuUI();
 
         final StartupGuiEvent event = new StartupGuiEvent(targetStartupGui);
         Dragonfly.getEventBus().post(event);

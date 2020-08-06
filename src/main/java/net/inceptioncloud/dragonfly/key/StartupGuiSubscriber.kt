@@ -18,7 +18,6 @@ object StartupGuiSubscriber {
             val result = KeyController.validateStoredKey()
             if (result.success) {
                 LogManager.getLogger().info("Validation successful!")
-                event.target = GuiMainMenu()
             } else {
                 LogManager.getLogger().info("Validation failed: ${result.message}")
                 event.target = EnterKeyUI("Error while validating stored key: " + result.message)
