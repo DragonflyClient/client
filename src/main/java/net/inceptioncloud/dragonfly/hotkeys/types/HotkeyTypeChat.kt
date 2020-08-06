@@ -21,10 +21,24 @@ class HotkeyTypeChat(
 ) :
     Hotkey() {
 
+    /**
+     * This boolean is used to apply the delay on the 'draw' function
+     */
     var drawLine = true
+
+    /**
+     * Int which is used as Integer Supplier
+     */
     var direction = 0
+
+    /**
+     * This Thread is used to apply the delay after the fadeOut animation (asynchronous)
+     */
     lateinit var asyncDelay: Thread
 
+    /**
+     * Hold-Time progress bar animation
+     */
     var transition = SmoothDoubleTransition.builder()
         .fadeIn(0).stay((time * 180).toInt()).fadeOut((time * 20).toInt())
         .start(0.0).end(1.0)
@@ -55,6 +69,9 @@ class HotkeyTypeChat(
         }
     }
 
+    /**
+     * Function which apply the delay
+     */
     fun activateDelay() {
         transition.destroy()
         drawLine = false
