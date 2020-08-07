@@ -4,9 +4,11 @@ import com.google.common.base.Splitter
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.Dragonfly.eventBus
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
+import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
@@ -210,7 +212,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             GlStateManager.disableLighting()
             GlStateManager.disableDepth()
             var i = 0
-            val fontRenderer = Dragonfly.fontDesign.regular
+            val fontRenderer = Dragonfly.fontManager.regular
             for (s in textLines) {
                 val j = fontRenderer.getStringWidth(s)
                 if (j > i) {
@@ -595,6 +597,15 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      */
     @Throws(IOException::class)
     open fun handleKeyboardInput() {
+        val i = if (Keyboard.getEventKey() == 0) Keyboard.getEventCharacter().toInt() else Keyboard.getEventKey()
+
+        val keyInputEvent = KeyInputEvent(i)
+        eventBus.post(keyInputEvent)
+
+        if (keyInputEvent.isCancelled) {
+            return
+        }
+
         if (Keyboard.getEventKeyState()) {
             val eventCharacter = Keyboard.getEventCharacter()
             val eventKey = Keyboard.getEventKey()

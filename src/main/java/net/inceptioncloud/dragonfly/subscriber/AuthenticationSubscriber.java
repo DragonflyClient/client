@@ -37,7 +37,7 @@ public class AuthenticationSubscriber
     private void authenticateWithFile ()
     {
         try {
-            final File credentials = new File("authetication.txt");
+            final File credentials = new File("authentication.txt");
 
             if (!credentials.exists())
                 return;
@@ -60,8 +60,7 @@ public class AuthenticationSubscriber
                         auth.getAuthenticatedToken(),
                         "mojang"
                 ));
-                LogManager.getLogger()
-                        .info("Logged in with account " + Minecraft.getMinecraft().getSession().getUsername());
+                LogManager.getLogger().info("Logged in with account " + Minecraft.getMinecraft().getSession().getUsername());
             } catch (AuthenticationException exception) {
                 LogManager.getLogger().error("Invalid credentials in authentication file!");
             }

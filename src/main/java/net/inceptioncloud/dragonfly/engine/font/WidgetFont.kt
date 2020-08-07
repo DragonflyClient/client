@@ -2,6 +2,10 @@ package net.inceptioncloud.dragonfly.engine.font
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
+import net.inceptioncloud.dragonfly.engine.font.renderer.*
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
+import net.minecraft.client.gui.*
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -33,12 +37,12 @@ class WidgetFont @JvmOverloads constructor(
     /**
      * Cache for already created font renderer.
      */
-    private val cachedFontRenderer = mutableMapOf<FontRendererBuilder, GlyphFontRenderer>()
+    val cachedFontRenderer = mutableMapOf<FontRendererBuilder, IFontRenderer>()
 
     /**
      * A cache with all running async productions and already built font renderers.
      */
-    private val asyncBuilding = mutableMapOf<FontRendererBuilder, GlyphFontRenderer?>()
+    val asyncBuilding = mutableMapOf<FontRendererBuilder, IFontRenderer?>()
 
     /**
      * Clears both caches when changing the font quality.
@@ -49,41 +53,59 @@ class WidgetFont @JvmOverloads constructor(
     }
 
     /**
-     * Builds a new font renderer with preferences set by the [preferences] block.
+     * Creates a font renderer with the given properties ([fontWeight], [size], [letterSpacing]).
+     *
+     * Note that this will block the thread during the creation. To have the font renderer built
+     * asynchronously, consider using the [fontRendererAsync] function which also allows passing
+     * a callback as an additional parameter.
      */
-    fun fontRenderer(preferences: (FontRendererBuilder.() -> Unit)? = null): GlyphFontRenderer {
-        val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
-        preferences?.invoke(builder)
+    fun fontRenderer(
+        fontWeight: FontWeight = FontWeight.REGULAR,
+        size: Int = 19,
+        letterSpacing: Double? = null
+    ): IFontRenderer {
+        val builder = FontRendererBuilder(fontWeight, size, letterSpacing ?: this.letterSpacing)
 
-        return if (cachedFontRenderer.containsKey(builder)) {
+        return if (cachedFontRenderer.containsKey(builder) && cachedFontRenderer[builder] !is ScaledFontRenderer) {
             cachedFontRenderer[builder]!!
         } else {
             GlyphFontRenderer.create(
                 fontWeights[builder.fontWeight],
                 builder.size,
-                builder.letterSpacing,
-                true,
-                true,
-                true
+                builder.letterSpacing
             ).also { cachedFontRenderer[builder] = it }
         }
     }
 
     /**
-     * Orders the asynchronous creation of a font renderer based on this font with the [preferences].
-     * While the renderer is in production, this function will return null. After the production, this function
-     * will return a cached font renderer according to the [preferences].
+     * Creates a font renderer asynchronously using the given properties ([fontWeight], [size],
+     * [letterSpacing]).
+     *
+     * This function will return null while the building process is running and will return the
+     * font renderer if it's ready. You can also pass an optional [callback] as a parameter
+     * that will be called immediately once the font renderer has been built and if it is already
+     * available.
      */
     fun fontRendererAsync(
-        preferences: (FontRendererBuilder.() -> Unit)? = null
-    ): GlyphFontRenderer? {
-        val builder = FontRendererBuilder(FontWeight.REGULAR, 19, letterSpacing)
-        preferences?.invoke(builder)
+        fontWeight: FontWeight = FontWeight.REGULAR,
+        size: Int = 19,
+        letterSpacing: Double? = null,
+        callback: ((IFontRenderer) -> Unit)? = null
+    ): IFontRenderer? {
+        val builder = FontRendererBuilder(fontWeight, size, letterSpacing ?: this.letterSpacing)
 
         // if a cached version is available
-        if (asyncBuilding.containsKey(builder)) {
-            return asyncBuilding[builder]
+        if (cachedFontRenderer.containsKey(builder)) {
+            val stored = cachedFontRenderer[builder]
+            stored?.takeIf { it !is ScaledFontRenderer }?.let { callback?.invoke(it) }
+            return stored
+        } else if (asyncBuilding.containsKey(builder)) {
+            val stored = asyncBuilding[builder]
+            stored?.let { callback?.invoke(it) }
+            return stored
         }
+
+        val scaled = findScaled(builder)
 
         // store 'null' to indicate that a build is running
         asyncBuilding[builder] = null
@@ -94,12 +116,58 @@ class WidgetFont @JvmOverloads constructor(
                 "${Thread.currentThread().name} is building font renderer for ${this@WidgetFont.familyName} with $builder"
             )
 
-            val fontRenderer = fontRenderer(preferences)
-            asyncBuilding[builder] = fontRenderer
+            val fontRenderer = fontRenderer(fontWeight, size, letterSpacing)
+            asyncBuilding.remove(builder)
+            cachedFontRenderer[builder] = fontRenderer
+            callback?.invoke(fontRenderer)
+        }
+
+        if (scaled != null) {
+            cachedFontRenderer[builder] = scaled
+            return scaled
         }
 
         return null
     }
+
+    /**
+     * Preloads some commonly used font renderers for this font.
+     */
+    fun preload(screen: GuiScreen) {
+        splashScreen.update()
+
+        if (OptionsSectionPerformance.preloadFontRenderers() != true)
+            return
+
+        fontRenderer(fontWeight = FontWeight.REGULAR, size = 16)
+        fontRenderer(fontWeight = FontWeight.MEDIUM, size = 20)
+        fontRenderer()
+
+        if (screen is GuiMainMenu) {
+            val percent = (screen.height / 3).coerceAtMost(300) / 280.0
+
+            fontRenderer(fontWeight = FontWeight.MEDIUM, size = (25 + percent * 60).toInt())
+            fontRenderer(fontWeight = FontWeight.REGULAR, size = (15 + percent * 40).toInt())
+            fontRenderer(fontWeight = FontWeight.REGULAR, size = (10 + percent * 30).toInt())
+        }
+    }
+
+    /**
+     * Tries to find and adapt an already existing font renderer to save resources and improve performance.
+     * This will return a [ScaledFontRenderer] object which uses the base font renderer while applying a
+     * scale to adapt to the target font size.
+     */
+    private fun findScaled(builder: FontRendererBuilder) =
+        if (OptionsSectionPerformance.useScaledFontRenderers() != true) {
+            null
+        } else {
+            cachedFontRenderer.toList()
+                .filter { (other, _) -> other.fontWeight == builder.fontWeight && other.letterSpacing == builder.letterSpacing }
+                .sortedBy { (other, _) -> other.size }
+                .firstOrNull { (other, _) -> other.size / builder.size.toDouble() in 1.0..2.0 }
+                ?.let { (other, base) -> ScaledFontRenderer(base, (other.size / builder.size.toDouble())) }
+        }
+
 
     override fun toString(): String {
         return "WidgetFont(name='$familyName')"

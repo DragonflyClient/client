@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.CloudColor;
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardNothing;
@@ -16,7 +16,6 @@ import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.realms.RealmsBridge;
-import org.apache.logging.log4j.LogManager;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -47,7 +46,7 @@ public class GuiIngameMenu extends GuiScreen
      */
     private SmoothDoubleTransition pushOffset;
 
-    private final String aboutString = "About ICM";
+    private final String aboutString = "About Dragonfly";
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
@@ -69,7 +68,7 @@ public class GuiIngameMenu extends GuiScreen
             .start(0).end(1)
             .fadeIn(25).stay(15).fadeOut(0)
             .autoTransformator(
-                (ForwardBackward) () -> mc != null && mc.currentScreen instanceof GuiIngameMenu
+                    (ForwardBackward) () -> mc.currentScreen instanceof GuiIngameMenu
             ).build();
 
         transitionHeader = SmoothDoubleTransition.builder()
@@ -82,7 +81,7 @@ public class GuiIngameMenu extends GuiScreen
             .start(0.0F).end(0.7F)
             .fadeIn(0).stay(15).fadeOut(15)
             .autoTransformator(
-                (ForwardBackward) () -> mc != null && mc.currentScreen instanceof GuiIngameMenu && !closeRequested
+                    (ForwardBackward) () -> mc.currentScreen instanceof GuiIngameMenu && !closeRequested
             ).build();
 
         this.buttonList.forEach(GuiButton::destroy);
@@ -167,7 +166,6 @@ public class GuiIngameMenu extends GuiScreen
 
     private void requestClose ()
     {
-        LogManager.getLogger().info("Ingame Menu close requested! " + closeRequested);
         this.closeRequested = true;
     }
 
@@ -216,7 +214,7 @@ public class GuiIngameMenu extends GuiScreen
         /* Title */
         final float opacity = (float) transitionHeader.get();
         final Color color = new Color(1, 1, 1, Math.max(0.05f, opacity));
-        IFontRenderer fontRenderer = Dragonfly.getFontDesign().retrieveOrBuild(" Medium", 22);
+        IFontRenderer fontRenderer = Dragonfly.getFontManager().retrieveOrBuild(" Medium", 22);
 
         drawCenteredString(fontRenderer, "Ingame Menu", left + (width / 2), top + 9, color.getRGB());
         GlStateManager.color(1f, 1f, 1f, color.getAlpha() / 255f);
@@ -234,7 +232,7 @@ public class GuiIngameMenu extends GuiScreen
         }
 
         // About
-        fontRenderer = Dragonfly.getFontDesign().getRegular();
+        fontRenderer = Dragonfly.getFontManager().getRegular();
         fontRenderer.drawString(aboutString, 5, 5, Color.WHITE.getRGB(), true);
     }
 
@@ -263,7 +261,7 @@ public class GuiIngameMenu extends GuiScreen
     @Override
     protected void mouseClicked (final int mouseX, final int mouseY, final int mouseButton) throws IOException
     {
-        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
+        final IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
         if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString)
             && mouseY >= 5 && mouseY <= 5 + fontRenderer.getHeight()) {
             this.mc.displayGuiScreen(new AboutUI(this));

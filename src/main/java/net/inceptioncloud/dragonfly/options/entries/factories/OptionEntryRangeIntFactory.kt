@@ -62,8 +62,18 @@ class OptionEntryRangeIntFactory : OptionEntryFactory<Int>()
      */
     private fun finish(): OptionEntryRangeInt
     {
-        return OptionEntryRangeInt(name ?: "boolean value", description ?: "description not set",
-                OptionKey(Int::class.java, keyFactory.fileKey, { value -> value in minValue!!..maxValue!! }, keyFactory.default),
-                minValue!!, maxValue!!, formatter)
+        return OptionEntryRangeInt(
+            name ?: "boolean value",
+            description ?: "description not set",
+            OptionKey(
+                Int::class.java,
+                keyFactory.fileKey,
+                keyFactory.validator ?: { value -> value in minValue!!..maxValue!! },
+                keyFactory.default
+            ),
+            minValue!!,
+            maxValue!!,
+            formatter
+        )
     }
 }

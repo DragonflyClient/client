@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.subscriber
 
 import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.engine.font.renderer.ScaledFontRenderer
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
@@ -14,18 +15,44 @@ object DeveloperModeSubscriber {
         if (!Dragonfly.isDeveloperMode)
             return
 
-        renderDebugInfo("FPS: ", Minecraft.getDebugFPS().toString(), event.scaledWidth, 2)
-        renderDebugInfo("TPS: ", Dragonfly.lastTPS.toString(), event.scaledWidth, 10)
+        renderDebugInfo(
+            "FPS: ",
+            Minecraft.getDebugFPS().toString(),
+            event.scaledWidth, 2
+        )
+        renderDebugInfo(
+            "TPS: ",
+            Dragonfly.lastTPS.toString(),
+            event.scaledWidth, 10
+        )
         renderDebugInfo(
             "GUI: ",
             Minecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "null",
-            event.scaledWidth,
-            18
+            event.scaledWidth, 18
+        )
+
+        val asyncBuilding = Dragonfly.fontManager.defaultFont.asyncBuilding
+        val cachedFontRenderer = Dragonfly.fontManager.defaultFont.cachedFontRenderer
+
+        renderDebugInfo(
+            "Building: ",
+            asyncBuilding.size.toString(),
+            event.scaledWidth, 28
+        )
+        renderDebugInfo(
+            "Cached: ",
+            cachedFontRenderer.size.toString(),
+            event.scaledWidth, 36
+        )
+        renderDebugInfo(
+            "Scaled: ",
+            cachedFontRenderer.count { it.value is ScaledFontRenderer }.toString(),
+            event.scaledWidth, 44
         )
     }
 
     private fun renderDebugInfo(title: String, content: String, screenWidth: Int, y: Int) {
-        val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 14)
+        val fontRenderer = Dragonfly.fontManager.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 14)
         val height = fontRenderer.height
         val framesTitleWidth = fontRenderer.getStringWidth(title)
         val framesWidth = framesTitleWidth + fontRenderer.getStringWidth(content)

@@ -51,7 +51,7 @@ open class OptionEntryFactory<T>
          *
          * By default, this function validates all input value, but it can be overwritten to change that.
          */
-        var validator: (T) -> Boolean = { true }
+        var validator: ((T) -> Boolean)? = null
 
         /**
          * A function that supplies the default value for the key.

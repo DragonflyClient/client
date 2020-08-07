@@ -41,14 +41,6 @@ class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>()
     val choices = mutableListOf<OptionChoice>()
 
     /**
-     * The identifier of the default option choice.
-     *
-     * The int value must be a valid identifier of one of the [choices]. If not, the initialization
-     * of the [OptionEntryMultipleChoice] will throw an exception.
-     */
-    var default: Int? = null
-
-    /**
      * A companion object that makes the function [optionEntryMultipleChoice] available for
      * static access.
      */
@@ -81,8 +73,8 @@ class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>()
         val key = OptionKey(
                 Int::class.java,
                 keyFactory.fileKey,
-                { value -> value in choices.map { it.identifier } },
-                { default }
+                keyFactory.validator ?: { value -> value in choices.map { it.identifier } },
+                keyFactory.default
         )
 
         return OptionEntryMultipleChoice(
@@ -90,7 +82,7 @@ class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>()
                 description ?: "description not set",
                 key,
                 choices,
-                default!!,
+                keyFactory.default!!.invoke(),
                 externalApply
         )
     }

@@ -94,6 +94,11 @@ class WidgetColor {
     }
 
     /**
+     * Clones the color and applies the [block] to it.
+     */
+    fun altered(block: WidgetColor.() -> Unit) = clone().apply(block)
+
+    /**
      * Returns the [red] value as the first destructuring value.
      */
     operator fun component1(): Int = red

@@ -50,7 +50,7 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
             }
 
             updateStructure()
-        } else LogManager.getLogger().warn("State changed by not-assembled widget")
+        } else LogManager.getLogger().warn("State changed to not-assembled widget")
     }
 
     override fun update() {

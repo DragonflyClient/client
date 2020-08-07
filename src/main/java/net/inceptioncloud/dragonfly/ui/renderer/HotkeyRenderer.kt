@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.ui.renderer
 
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.minecraft.client.gui.Gui
 import java.awt.event.KeyEvent
 

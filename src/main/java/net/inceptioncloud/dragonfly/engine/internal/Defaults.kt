@@ -93,7 +93,7 @@ object Defaults
             }
             is ISize ->
             {
-                assert(width == height)
+                require(width == height)
                 widget.size = width
             }
             else -> throw IllegalArgumentException("Cannot set size or dimension for widget $widget")

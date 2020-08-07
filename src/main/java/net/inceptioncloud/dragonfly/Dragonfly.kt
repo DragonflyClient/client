@@ -1,14 +1,15 @@
 package net.inceptioncloud.dragonfly
 
 import net.inceptioncloud.dragonfly.design.DesignSubscribers
-import net.inceptioncloud.dragonfly.design.splash.ModSplashScreen
+import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
 import net.inceptioncloud.dragonfly.engine.font.FontManager
 import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
-import net.inceptioncloud.dragonfly.impl.Tickable
+import net.inceptioncloud.dragonfly.event.client.ClientTickEvent
 import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.OptionsManager
+import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.state.GameStateManager
 import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers
 import net.inceptioncloud.dragonfly.transition.Transition
@@ -33,11 +34,11 @@ object Dragonfly {
         private set
 
     @JvmStatic
-    lateinit var fontDesign: FontManager
+    lateinit var fontManager: FontManager
         private set
 
     @JvmStatic
-    lateinit var splashScreen: ModSplashScreen
+    lateinit var splashScreen: DragonflySplashScreen
         private set
 
     @JvmStatic
@@ -71,16 +72,6 @@ object Dragonfly {
     private lateinit var tickTimer: Timer
 
     /**
-     * All classes that implement the tickable interface.
-     */
-    private val tickables = Collections.synchronizedList(ArrayList<Tickable>())
-
-    /**
-     * If a tickable has an associated class, it is stored in here so it can be replaced.
-     */
-    private val associatedTickables: MutableMap<Class<*>, Tickable> = HashMap()
-
-    /**
      * The amount of ticks that have been executed in the current second.
      */
     private var ticks = 0
@@ -103,8 +94,8 @@ object Dragonfly {
         DefaultSubscribers.register(eventBus)
         DesignSubscribers.register(eventBus)
 
-        fontDesign = FontManager()
-        splashScreen = ModSplashScreen()
+        fontManager = FontManager()
+        splashScreen = DragonflySplashScreen()
         richPresenceManager = RichPresenceManager()
         gameStateManager = GameStateManager()
         tickTimer = Timer("Dragonfly Tick Timer")
@@ -142,7 +133,7 @@ object Dragonfly {
     @JvmStatic
     fun reload() {
         Options.contentSave()
-        fontDesign.clearCache()
+        fontManager.clearCache()
     }
 
     /**
@@ -177,33 +168,18 @@ object Dragonfly {
     fun stopTransition(target: Transition) = transitions.remove(target)
 
     /**
-     * Add a tickable interface to handle.
-     *
-     * @param tickable        The implementing class
-     * @param associatedClass The class that this tickable is connected with if it should be replaced
-     */
-    @JvmOverloads
-    @JvmStatic
-    fun handleTickable(tickable: Tickable, associatedClass: Class<*>? = null) {
-        if (associatedClass != null && associatedTickables.containsKey(associatedClass)) {
-            val previous = associatedTickables[associatedClass]
-            tickables.remove(previous)
-            LogManager.getLogger().info("Replaced previous Tickable " + previous!!.javaClass.simpleName)
-        }
-
-        LogManager.getLogger().info("Mod is now handling Tickable " + tickable.javaClass.simpleName)
-        tickables.add(tickable)
-        if (associatedClass != null) associatedTickables[associatedClass] = tickable
-    }
-
-    /**
      * Perform the mod tick.
      */
     private fun tick() {
         synchronized(this) {
             transitions.toTypedArray().forEach { it.tick() }
-            tickables.toTypedArray().forEach { it!!.modTick() }
-            if (Minecraft.getMinecraft().currentScreen != null) Minecraft.getMinecraft().currentScreen.buffer.update()
+            ScreenOverlay.buffer.update()
+
+            if (Minecraft.getMinecraft().currentScreen != null)
+                Minecraft.getMinecraft().currentScreen.buffer.update()
+
+            val tickEvent = ClientTickEvent()
+            eventBus.post(tickEvent)
         }
     }
 }

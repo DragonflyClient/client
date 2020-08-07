@@ -4,7 +4,7 @@ import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -256,6 +256,19 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
         } else {
             i = this.renderString(text, x, y, color, false);
         }
+
+        return i;
+    }
+
+    @Override
+    public int drawStringWithCustomShadow(String text, int x, int y, int color, int shadowColor, float distance) {
+        y -= 3;
+        GlStateManager.enableAlpha();
+        this.resetStyles();
+        int i;
+
+        i = this.renderString(text, x + distance, y + distance, shadowColor, true);
+        i = Math.max(i, this.renderString(text, x, y, color, false));
 
         return i;
     }

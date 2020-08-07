@@ -1,7 +1,9 @@
-package net.inceptioncloud.dragonfly.engine.font;
+package net.inceptioncloud.dragonfly.engine.font.renderer;
 
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine;
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI;
+import net.inceptioncloud.dragonfly.engine.font.FontManager;
+import net.inceptioncloud.dragonfly.engine.font.GlyphPage;
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -46,6 +48,11 @@ public class GlyphFontRenderer implements IFontRenderer {
     private final GlyphPage unscaledPageRegular, unscaledPageBold, unscaledPageItalic, unscaledPageBoldItalic;
 
     /**
+     * Random used for generating chars when the {@link #randomStyle} is enabled.
+     */
+    private final Random fontRandom = new Random();
+
+    /**
      * Current X coordinate at which to draw the next character.
      */
     private float posX;
@@ -59,10 +66,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      * Used to specify new red value for the current color.
      */
     private float red;
-    /**
-     * Random used for generating chars when the {@link #randomStyle} is enabled.
-     */
-    private final Random fontRandom = new Random();
+
     /**
      * Used to specify new blue value for the current color.
      */
@@ -97,6 +101,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      * Set if the "m" style (strikethrough) is active in currently rendering string
      */
     private boolean strikethroughStyle;
+
     /**
      * Used to specify new green value for the current color.
      */
@@ -152,18 +157,14 @@ public class GlyphFontRenderer implements IFontRenderer {
     public static GlyphFontRenderer create(
             String fontName,
             int size,
-            double letterSpacing,
-            boolean bold,
-            boolean italic,
-            boolean boldItalic
+            double letterSpacing
     ) {
         // If the font isn't already loaded, import it from a .ttf file
         if (!LOADED_FONTS.contains(fontName)) {
             try {
                 // Load the graphics environment
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                ge.registerFont(Font
-                        .createFont(Font.TRUETYPE_FONT, new File("dragonfly/assets/fonts/" + fontName + ".ttf")));
+                ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("dragonfly/assets/fonts/" + fontName + ".ttf")));
                 LogManager.getLogger().debug("Importing font {}...", fontName);
                 LOADED_FONTS.add(fontName);
             } catch (FontFormatException | IOException e) {
@@ -172,79 +173,43 @@ public class GlyphFontRenderer implements IFontRenderer {
         }
 
         final char[] chars = GraphicsEngine.CHARACTERS;
+        final int scaledSize = (int) (size * getFontQualityScale());
 
-        GlyphPage regularPage =
-                new GlyphPage(makeFont(fontName, Font.PLAIN, (int) (size * getFontQualityScale()), letterSpacing),
-                        true,
-                        true
-                );
+        GlyphPage regularPage = new GlyphPage(makeFont(fontName, Font.PLAIN, scaledSize, letterSpacing));
         regularPage.generateGlyphPage(chars);
 
+        GlyphPage unscaledRegular = new GlyphPage(makeFont(fontName, Font.PLAIN, size, letterSpacing));
+        unscaledRegular.generateGlyphPage(chars);
 
-        GlyphPage realRegular = new GlyphPage(makeFont(fontName, Font.PLAIN, size, letterSpacing), true, true);
-        realRegular.generateGlyphPage(chars);
+        GlyphPage boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, scaledSize, letterSpacing));
+        boldPage.generateGlyphPage(chars);
 
-        GlyphPage boldPage = regularPage;
-        GlyphPage italicPage = regularPage;
-        GlyphPage boldItalicPage = regularPage;
+        GlyphPage unscaledBold = new GlyphPage(makeFont(fontName, Font.BOLD, size, letterSpacing));
+        unscaledBold.generateGlyphPage(chars);
 
-        GlyphPage unscaledBold = regularPage;
-        GlyphPage unscaledItalic = regularPage;
-        GlyphPage unscaledBoldItalic = regularPage;
+        GlyphPage italicPage = new GlyphPage(makeFont(fontName, Font.ITALIC, scaledSize, letterSpacing));
+        italicPage.generateGlyphPage(chars);
 
-        if (bold) {
-            boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, (int) (size * getFontQualityScale()), letterSpacing),
-                    true,
-                    true
-            );
-            boldPage.generateGlyphPage(chars);
+        GlyphPage unscaledItalic = new GlyphPage(makeFont(fontName, Font.ITALIC, size, letterSpacing));
+        unscaledItalic.generateGlyphPage(chars);
 
-            unscaledBold = new GlyphPage(makeFont(fontName, Font.BOLD, size, letterSpacing), true, true);
-            unscaledBold.generateGlyphPage(chars);
-        }
+        GlyphPage boldItalicPage = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, scaledSize, letterSpacing));
+        boldItalicPage.generateGlyphPage(chars);
 
-        if (italic) {
-            italicPage =
-                    new GlyphPage(makeFont(fontName, Font.ITALIC, (int) (size * getFontQualityScale()), letterSpacing),
-                            true,
-                            true
-                    );
-            italicPage.generateGlyphPage(chars);
-
-            unscaledItalic = new GlyphPage(makeFont(fontName, Font.ITALIC, size, letterSpacing), true, true);
-            unscaledItalic.generateGlyphPage(chars);
-        }
-
-        if (boldItalic) {
-            boldItalicPage = new GlyphPage(makeFont(fontName,
-                    Font.BOLD | Font.ITALIC,
-                    (int) (size * getFontQualityScale()),
-                    letterSpacing
-            ), true, true);
-            boldItalicPage.generateGlyphPage(chars);
-
-            unscaledBoldItalic =
-                    new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing), true, true);
-            unscaledBoldItalic.generateGlyphPage(chars);
-        }
+        GlyphPage unscaledBoldItalic = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing));
+        unscaledBoldItalic.generateGlyphPage(chars);
 
         return new GlyphFontRenderer(
-                regularPage,
-                boldPage,
-                italicPage,
-                boldItalicPage,
-                realRegular,
-                unscaledBold,
-                unscaledItalic,
-                unscaledBoldItalic
+                regularPage, boldPage, italicPage, boldItalicPage,
+                unscaledRegular, unscaledBold, unscaledItalic, unscaledBoldItalic
         );
     }
 
     /**
-     * Quick Method to access {@link OptionsSectionUI#getFontQuality()}
+     * Quick Method to access {@link OptionsSectionPerformance#getFontQuality()}
      */
     public static double getFontQualityScale() {
-        final double quality = OptionsSectionUI.getFontQuality().getKey().get();
+        final double quality = OptionsSectionPerformance.getFontQuality().invoke();
         return Math.round(quality * 10.0) / 10.0;
     }
 
@@ -308,9 +273,7 @@ public class GlyphFontRenderer implements IFontRenderer {
         return i;
     }
 
-    /**
-     * Draws the specified string with a shadow that can have a custom color and distance.
-     */
+    @Override
     public int drawStringWithCustomShadow(String text, int x, int y, int color, int shadowColor, float distance) {
         y -= 3;
         GlStateManager.enableAlpha();
@@ -349,19 +312,25 @@ public class GlyphFontRenderer implements IFontRenderer {
         float width = 0;
         int size = text.length();
 
-        boolean flag = false;
+        boolean colorCodeActivated = false;
 
         for (int index = 0; index < size; index++) {
             char charAt = text.charAt(index);
 
             if (charAt == '§') {
-                flag = true;
-            } else if (flag && charAt >= '0' && charAt <= 'r') {
+                if (index + 7 < text.length() && text.charAt(index + 1) == '#') {
+                    boldStyle = false;
+                    italicStyle = false;
+                    index += 7;
+                } else {
+                    colorCodeActivated = true;
+                }
+            } else if (colorCodeActivated && charAt >= '0' && charAt <= 'r') {
                 updateStyle(charAt);
 //                index++;
-                flag = false;
+                colorCodeActivated = false;
             } else {
-//                if (flag) index--;
+//                if (colorCodeActivated) index--;
                 charAt = text.charAt(index);
                 width += getCharWidthFloat(charAt);
             }
@@ -406,7 +375,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      * The exact with of the specific char in the current font.
      *
      * @param ch The character
-     *
      * @return The width in pixels
      */
     @Override
@@ -427,7 +395,6 @@ public class GlyphFontRenderer implements IFontRenderer {
         if (text == null) {
             return 0;
         } else {
-
             GlStateManager.scale(1 / getFontQualityScale(), 1 / getFontQualityScale(), 1 / getFontQualityScale());
             x *= getFontQualityScale();
             y *= getFontQualityScale();
@@ -475,60 +442,77 @@ public class GlyphFontRenderer implements IFontRenderer {
         for (int charIndex = 0; charIndex < text.length(); ++charIndex) {
             char currentChar = text.charAt(charIndex);
 
-            if (currentChar == 167 /* = § */ && charIndex + 1 < text.length()) {
-                /* NOTE: This would be a temporary fix if the § has been doubled */
-//                if (text.charAt(charIndex + 1) == 167)
-//                    continue;
+            if (currentChar == '§' && charIndex + 1 < text.length()) {
 
-                int i1 = "0123456789abcdefklmnor".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(charIndex + 1));
+                int indexOf = "0123456789abcdefklmnor".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(charIndex + 1));
 
-                if (i1 < 16) {
-                    this.randomStyle = false;
-                    this.boldStyle = false;
-                    this.strikethroughStyle = false;
-                    this.underlineStyle = false;
-                    this.italicStyle = false;
+                if (charIndex + 7 < text.length() && text.charAt(charIndex + 1) == '#') {
+                    // custom color code here!
+                    String hex = text.substring(charIndex + 1, charIndex + 8);
 
-                    if (i1 < 0) {
-                        i1 = 15;
+                    try {
+                        Color color = Color.decode(hex);
+
+                        if (!shadow) {
+                            currentRed = color.getRed() / 255F;
+                            currentGreen = color.getGreen() / 255F;
+                            currentBlue = color.getBlue() / 255F;
+                            GlStateManager.color(currentRed, currentGreen, currentBlue, this.alpha);
+                        }
+
+                        charIndex += 7;
+                    } catch (NumberFormatException e) {
+                        LogManager.getLogger().warn("Invalid hex code: " + hex);
                     }
-
-                    if (shadow) {
-                        i1 += 16;
-                    }
-
-                    int j1 = this.colorCode[i1];
-                    final float red = (float) (j1 >> 16) / 255.0F;
-                    final float green = (float) (j1 >> 8 & 255) / 255.0F;
-                    final float blue = (float) (j1 & 255) / 255.0F;
-                    currentRed = red;
-                    currentGreen = green;
-                    currentBlue = blue;
-                    GlStateManager.color(red, green, blue, this.alpha);
-                } else if (i1 == 16) {
-                    this.randomStyle = true;
-                } else if (i1 == 17) {
-                    this.boldStyle = true;
-                } else if (i1 == 18) {
-                    this.strikethroughStyle = true;
-                } else if (i1 == 19) {
-                    this.underlineStyle = true;
-                } else if (i1 == 20) {
-                    this.italicStyle = true;
                 } else {
-                    this.randomStyle = false;
-                    this.boldStyle = false;
-                    this.strikethroughStyle = false;
-                    this.underlineStyle = false;
-                    this.italicStyle = false;
+                    if (indexOf < 16) {
+                        this.randomStyle = false;
+                        this.boldStyle = false;
+                        this.strikethroughStyle = false;
+                        this.underlineStyle = false;
+                        this.italicStyle = false;
 
-                    currentRed = this.red;
-                    currentGreen = this.green;
-                    currentBlue = this.blue;
-                    GlStateManager.color(this.red, this.green, this.blue, this.alpha);
+                        if (indexOf < 0) {
+                            indexOf = 15;
+                        }
+
+                        if (shadow) {
+                            indexOf += 16;
+                        }
+
+                        int j1 = this.colorCode[indexOf];
+                        final float red = (float) (j1 >> 16) / 255.0F;
+                        final float green = (float) (j1 >> 8 & 255) / 255.0F;
+                        final float blue = (float) (j1 & 255) / 255.0F;
+                        currentRed = red;
+                        currentGreen = green;
+                        currentBlue = blue;
+                        GlStateManager.color(red, green, blue, this.alpha);
+                    } else if (indexOf == 16) {
+                        this.randomStyle = true;
+                    } else if (indexOf == 17) {
+                        this.boldStyle = true;
+                    } else if (indexOf == 18) {
+                        this.strikethroughStyle = true;
+                    } else if (indexOf == 19) {
+                        this.underlineStyle = true;
+                    } else if (indexOf == 20) {
+                        this.italicStyle = true;
+                    } else {
+                        this.randomStyle = false;
+                        this.boldStyle = false;
+                        this.strikethroughStyle = false;
+                        this.underlineStyle = false;
+                        this.italicStyle = false;
+
+                        currentRed = this.red;
+                        currentGreen = this.green;
+                        currentBlue = this.blue;
+                        GlStateManager.color(this.red, this.green, this.blue, this.alpha);
+                    }
+
+                    ++charIndex;
                 }
-
-                ++charIndex;
             } else {
                 glyphPage = getCurrentGlyphPage();
                 glyphPage.bindTexture();
@@ -583,10 +567,8 @@ public class GlyphFontRenderer implements IFontRenderer {
             GlStateManager.color(r, g, b, alpha);
             worldRenderer.begin(7, DefaultVertexFormats.POSITION);
             worldRenderer.pos(this.posX, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) + 3, 0.0D).endVertex();
-            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) + 3, 0.0D)
-                    .endVertex();
-            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) - 2, 0.0D)
-                    .endVertex();
+            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) + 3, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) - 2, 0.0D).endVertex();
             worldRenderer.pos(this.posX, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) - 2, 0.0D).endVertex();
             tessellator.draw();
             GlStateManager.enableTexture2D();
@@ -599,12 +581,10 @@ public class GlyphFontRenderer implements IFontRenderer {
             GlStateManager.color(r, g, b, alpha);
             worldRenderer.begin(7, DefaultVertexFormats.POSITION);
             int l = this.underlineStyle ? -1 : 0;
-            worldRenderer.pos(this.posX + (float) l, this.posY + (float) glyphPage.getMaxFontHeight() - 1F, 0.0D)
-                    .endVertex();
+            worldRenderer.pos(this.posX + (float) l, this.posY + (float) glyphPage.getMaxFontHeight() - 1F, 0.0D).endVertex();
             worldRenderer.pos(this.posX + f, this.posY + (float) glyphPage.getMaxFontHeight() - 1F, 0.0D).endVertex();
             worldRenderer.pos(this.posX + f, this.posY + (float) glyphPage.getMaxFontHeight() - 6F, 0.0D).endVertex();
-            worldRenderer.pos(this.posX + (float) l, this.posY + (float) glyphPage.getMaxFontHeight() - 6F, 0.0D)
-                    .endVertex();
+            worldRenderer.pos(this.posX + (float) l, this.posY + (float) glyphPage.getMaxFontHeight() - 6F, 0.0D).endVertex();
             tessellator.draw();
             GlStateManager.enableTexture2D();
         }
@@ -621,17 +601,6 @@ public class GlyphFontRenderer implements IFontRenderer {
             return pageItalic;
         else
             return pageRegular;
-    }
-
-    private GlyphPage getCurrentRealGlyphPage() {
-        if (boldStyle && italicStyle)
-            return unscaledPageBoldItalic;
-        else if (boldStyle)
-            return unscaledPageBold;
-        else if (italicStyle)
-            return unscaledPageItalic;
-        else
-            return unscaledPageRegular;
     }
 
     /**
@@ -670,9 +639,15 @@ public class GlyphFontRenderer implements IFontRenderer {
         for (int i = startIndex; i >= 0 && i < text.length(); i += step) {
             char character = text.charAt(i);
 
-            if (character == '§')
-                colorCodeActivated = true;
-            else if (colorCodeActivated && character >= '0' && character <= 'r') {
+            if (character == '§') {
+                if (i + 7 < text.length() && text.charAt(i + 1) == '#') {
+                    boldStyle = false;
+                    italicStyle = false;
+                    i += 7;
+                } else {
+                    colorCodeActivated = true;
+                }
+            } else if (colorCodeActivated && character >= '0' && character <= 'r') {
                 updateStyle(character);
                 i++;
                 colorCodeActivated = false;
@@ -699,7 +674,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The list of broken strings
      */
     @Override
@@ -712,7 +686,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The string with new lines determined via \n
      */
     @Override
@@ -735,54 +708,55 @@ public class GlyphFontRenderer implements IFontRenderer {
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The amount of characters
      */
     @Override
     public int sizeStringToWidth(final String text, final int width) {
-        int i = text.length();
+        int length = text.length();
         float f = 0.0F;
-        int j = 0;
-        int k = -1;
+        int index = 0;
+        int result = -1;
 
-        for (boolean flag = false; j < i; ++j) {
-            char c0 = text.charAt(j);
+        for (boolean colorCodeActivated = false; index < length; ++index) {
+            char character = text.charAt(index);
 
-            switch (c0) {
+            switch (character) {
                 case '\n':
-                    --j;
+                    --index;
                     break;
 
                 case ' ':
-                    k = j;
+                    result = index;
 
                 default:
-                    f += this.getCharWidthFloat(c0);
+                    f += this.getCharWidthFloat(character);
 
-                    if (flag) {
+                    if (colorCodeActivated) {
                         ++f;
                     }
 
                     break;
 
-                case '\u00a7':
-                    if (j < i - 1) {
-                        ++j;
-                        char c1 = text.charAt(j);
+                case '§':
+                    if (index + 7 < length) {
+                        index += 7;
+                    } else if (index + 1 < length) {
+                        ++index;
+                        char c1 = text.charAt(index);
 
                         if (c1 != 108 && c1 != 76) {
                             if (c1 == 114 || c1 == 82 || FontRenderer.isFormatColor(c1)) {
-                                flag = false;
+                                colorCodeActivated = false;
                             }
                         } else {
-                            flag = true;
+                            colorCodeActivated = true;
                         }
                     }
             }
 
-            if (c0 == 10) {
-                ++j;
-                k = j;
+            if (character == 10) {
+                ++index;
+                result = index;
                 break;
             }
 
@@ -791,7 +765,7 @@ public class GlyphFontRenderer implements IFontRenderer {
             }
         }
 
-        return j != i && k != -1 && k < j ? k : j;
+        return index != length && result != -1 && result < index ? result : index;
     }
 
     @Override

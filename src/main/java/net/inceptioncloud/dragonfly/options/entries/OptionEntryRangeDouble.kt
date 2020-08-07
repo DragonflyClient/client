@@ -141,6 +141,11 @@ class OptionEntryRangeDouble(
     }
 
     /**
+     * Convenient function to access the value of the option entry.
+     */
+    operator fun invoke(): Double? = typeKey.get()
+
+    /**
      * The method that applies the value using the [externalApplier].
      *
      * It is called when the "Save and Exit" button is pressed thus the value should be

@@ -1,20 +1,25 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import net.minecraft.client.gui.GuiScreen
-
 /**
  * A builder for easily creating pairs of a widget and an id.
  *
- * It is initialized when calling the unary plus function on a string in a [GuiScreen] with either the
- * widget or the id set. After that, you can specify the other value by using one of the two infix
- * functions. When they are called, the pair will automatically be built and added to the buffer.
+ * It is initialized when calling the unary plus function on a string with the
+ * widget set. After that, you can specify the id by using the infix function `id`.
+ * When it is called, the pair will automatically be built and added to the buffer.
  *
- * @property buffer the buffer that the widget is added to
- * @property widget the widget that, if given, is mapped to the id
+ * @property onBuild a lambda that is executed when the builder is being built
+ * @property widget the widget that is mapped to the id
  */
-class WidgetIdBuilder<W : Widget<W>>(val buffer: WidgetBuffer, var widget: W) {
+class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> Unit) {
+
     /**
-     * The id to identify the widget in the [buffer].
+     * A convenient constructor for directly adding the widget to a [WidgetBuffer].
+     */
+    constructor(buffer: WidgetBuffer, widget: W)
+            : this(widget, { id, _ -> buffer.add(id to widget) })
+
+    /**
+     * The id to identify the widget.
      */
     var id: String? = null
 
@@ -31,6 +36,6 @@ class WidgetIdBuilder<W : Widget<W>>(val buffer: WidgetBuffer, var widget: W) {
      * Build the pair.
      */
     private fun build() {
-        buffer.add(id!! to widget)
+        onBuild(id!!, widget)
     }
 }

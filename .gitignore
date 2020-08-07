@@ -1,6 +1,7 @@
 # Files
 gradlew
 gradlew.bat
+gradle.properties
 
 # Directories
 /out/
@@ -12,7 +13,7 @@ gradlew.bat
 /runtime/resourcepacks
 /runtime/saves
 /runtime/shaderpacks
-/runtime/authetication.txt
+/runtime/authentication.txt
 /runtime/options.txt
 /runtime/optionsof.txt
 /runtime/optionsshaders.txt
@@ -22,3 +23,8 @@ gradlew.bat
 /runtime/transition-tracker
 /runtime/assets/skins
 /runtime/logs
+/runtime/screenshots
+
+# Runtime Dragonfly
+/runtime/dragonfly/options.json
+/runtime/dragonfly/glyphs

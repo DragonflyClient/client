@@ -1,7 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -349,7 +349,7 @@ public abstract class Render<T extends Entity>
         double d0 = entityIn.getDistanceSqToEntity(this.renderManager.livingPlayer);
 
         if (d0 <= (double) (maxDistance * maxDistance)) {
-            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getRegular();
+            IFontRenderer fontrenderer = Dragonfly.getFontManager().getRegular();
             float f = 1.6F;
             float f1 = 0.016666668F * f;
             GlStateManager.pushMatrix();

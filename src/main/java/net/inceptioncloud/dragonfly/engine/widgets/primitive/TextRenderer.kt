@@ -2,6 +2,8 @@ package net.inceptioncloud.dragonfly.engine.widgets.primitive
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.internal.annotations.State
@@ -23,7 +25,7 @@ class TextRenderer(
     @property:Interpolate var text: String = "Default Text",
     @property:Interpolate var dropShadow: Boolean = false,
 
-    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontDesign.regular,
+    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontManager.regular,
     @property:State var font: WidgetFont? = null,
     @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
     @property:Interpolate var fontSize: Double = 19.0,
@@ -46,11 +48,14 @@ class TextRenderer(
     }
 
     override fun render() {
+        if (color.alphaDouble <= 0.1)
+            return
+
         if (font != null) {
-            fontRenderer = font?.fontRenderer {
-                fontWeight = this@TextRenderer.fontWeight
+            fontRenderer = font?.fontRenderer(
+                fontWeight = this@TextRenderer.fontWeight,
                 size = fontSize.toInt()
-            } ?: fontRenderer
+            ) ?: fontRenderer
         }
 
         val posX = x.toFloat()

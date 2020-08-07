@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.engine.font;
+package net.inceptioncloud.dragonfly.engine.font.renderer;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.StringUtils;
@@ -90,7 +90,7 @@ public class UnicodeFontRenderer implements IFontRenderer
         }
 
         final Font font = new Font(name, style, size);
-        return new UnicodeFontRenderer(font, 0, 3);
+        return new UnicodeFontRenderer(font, 1, 3);
     }
     //</editor-fold>
 
@@ -189,6 +189,12 @@ public class UnicodeFontRenderer implements IFontRenderer
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
         return ( int ) x / 2;
+    }
+
+    @Override
+    public int drawStringWithCustomShadow(String text, int x, int y, int color, int shadowColor, float distance) {
+        drawString(StringUtils.stripControlCodes(text), x + distance, y + distance, shadowColor, false);
+        return drawString(text, x, y, color, false);
     }
 
     /**

@@ -15,7 +15,7 @@ object DragonflyVersion {
     /**
      * The version of this client.
      */
-    val localVersion = Version(1, 0, 1, 0) // 1 0 1 0
+    val localVersion = Version(1, 1, 2, 0)
 
     /**
      * The version that is specified as the latest one, fetched lazily from the Inception Cloud
@@ -26,13 +26,13 @@ object DragonflyVersion {
     /**
      * Retrieves the current version status from the Inception Cloud API Services.
      */
-    val versionStatus: VersionStatus? by lazy<VersionStatus?> {
+    val update: Update? by lazy {
         val result: String = get(
             "https://api.inceptioncloud.net/updates" +
                     "?channel=${getChannel()?.identifier ?: "stable"}" +
                     "&since=$localVersion"
         ).text
-        Gson().fromJson(result, VersionStatus::class.java)
+        Gson().fromJson(result, Update::class.java)
     }
 
     /**
@@ -114,7 +114,7 @@ object DragonflyVersion {
     }
 
     /**
-     * Returns the version from the [versionStatus].
+     * Returns the version from the [update].
      */
-    private fun getRemoteVersionString(): String? = versionStatus?.version
+    private fun getRemoteVersionString(): String? = update?.version
 }

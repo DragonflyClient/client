@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.engine
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.engine.font.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.ui.renderer.RectangleRenderer
@@ -40,7 +40,7 @@ object GraphicsEngine {
      * All characters that can be rendered by the [GlyphFontRenderer].
      */
     @JvmField
-    val CHARACTERS = (0..300).map { it.toChar() }.toCharArray()
+    val CHARACTERS = ((32..126) + (161..252)).map { it.toChar() }.toCharArray()
 
     /**
      * Renders the debug overlay for the given widgets and their identifiers.
@@ -76,8 +76,8 @@ object GraphicsEngine {
 
             RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 0.8)
 
-            val titleRenderer = Dragonfly.fontDesign.retrieveOrBuild(" Medium", 12)
-            val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("", 10)
+            val titleRenderer = Dragonfly.fontManager.retrieveOrBuild(" Medium", 12)
+            val fontRenderer = Dragonfly.fontManager.retrieveOrBuild("", 10)
             val title = "${uppermostWidget.value::class.simpleName} #${widget.key}"
             val info = uppermostWidget.value.toInfo().toMutableList()
                 .apply {
@@ -87,8 +87,10 @@ object GraphicsEngine {
             val infoHeight = 2 + titleRenderer.height + (fontRenderer.height + 0.5) * info.size
             val infoWidth = 4 + (titleRenderer.getStringWidth(title))
                 .coerceAtLeast(info.map { fontRenderer.getStringWidth(it.replaceFirst("--state", "> ")) }.max()!!).toDouble()
-            val infoX = getMouseX().toDouble() + 5.0 //x + width + 10
-            val infoY = getMouseY().toDouble() + 5.0 //y - 5
+            val infoX = (getMouseX().toDouble() + 5.0)
+                .coerceIn(0.0, Minecraft.getMinecraft().currentScreen.width - infoWidth)
+            val infoY = (getMouseY().toDouble() + 5.0)
+                .coerceIn(0.0, Minecraft.getMinecraft().currentScreen.height - infoHeight)
 
             val avgColor = readAveragePixelColor(infoX.toInt(), infoY.toInt(), infoWidth.toInt(), infoHeight.toInt())
             val backgroundColor = avgColor.selectHighestContrast(WidgetColor(0, 0, 0, 170), WidgetColor(255, 255, 255, 170))

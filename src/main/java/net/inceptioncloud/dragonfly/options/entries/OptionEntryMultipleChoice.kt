@@ -108,7 +108,7 @@ class OptionEntryMultipleChoice(
         val viewX = x + width - viewWidth - 6
         val viewY = y + 3
 
-        val fontRenderer = Dragonfly.fontDesign.regular
+        val fontRenderer = Dragonfly.fontManager.regular
         fontRenderer.drawCenteredString(
                 selectedChoice.displayString,
                 viewX + viewWidth / 2, viewY + height / 2 - fontRenderer.height / 2,
@@ -224,6 +224,11 @@ class OptionEntryMultipleChoice(
     {
         return if (selectedIndex - 1 >= 0) choices[selectedIndex - 1] else null
     }
+
+    /**
+     * Convenient function to access the value of the option entry.
+     */
+    operator fun invoke(): Int? = key.get()
 
     /**
      * A cache for the current value in case it should be applied externally.

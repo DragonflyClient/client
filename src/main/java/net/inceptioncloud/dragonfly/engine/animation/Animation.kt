@@ -5,6 +5,8 @@ import net.inceptioncloud.dragonfly.transition.Transition
 
 typealias PostAction = (Animation, Widget<*>) -> Unit
 
+typealias Companion = (scratchpad: Widget<*>, base: Widget<*>) -> Unit
+
 /**
  * ## Animation Class
  *
@@ -12,6 +14,7 @@ typealias PostAction = (Animation, Widget<*>) -> Unit
  * and some abstract methods that will be implemented in the child animations.
  */
 abstract class Animation {
+
     /**
      * Represents if the animation has run through it's lifecycle and is now finished.
      *
@@ -36,6 +39,11 @@ abstract class Animation {
     val postActions = mutableListOf<PostAction>()
 
     /**
+     * A list of lambdas that are executed when the animation is ticking.
+     */
+    val companions = mutableListOf<Companion>()
+
+    /**
      * The parent of an animation is the widget object to which this animation applies. There can only
      * be one parent object for an animation, which means that an animation cannot be added to
      * multiple widgets.
@@ -52,16 +60,11 @@ abstract class Animation {
      *
      * @throws IllegalArgumentException if the animation is already bound to a parent element
      */
-    open fun initAnimation(parent: Widget<*>): Boolean
-    {
-        return if (this::widget.isInitialized || !isApplicable(parent))
-        {
-            false
-        } else
-        {
-            this.widget = parent
-            true
-        }
+    open fun initAnimation(parent: Widget<*>): Boolean = if (this::widget.isInitialized || !isApplicable(parent)) {
+        false
+    } else {
+        this.widget = parent
+        true
     }
 
     /**
@@ -76,10 +79,8 @@ abstract class Animation {
      *
      * @throws IllegalStateException if the animation has already finished
      */
-    open fun start(): Animation
-    {
-        if (finished)
-        {
+    open fun start(): Animation {
+        if (finished) {
             throw IllegalStateException("The animation has already finished and cannot be started again!")
         }
 
@@ -100,8 +101,7 @@ abstract class Animation {
      * SmoothDoubleTransition.builder().reachEnd { finish() }.build()
      * ```
      */
-    protected open fun finish()
-    {
+    protected open fun finish() {
         finished = true
         postActions.forEach { it.invoke(this, widget) }
     }
@@ -136,3 +136,8 @@ abstract class Animation {
  * Convenient method for adding a post action to the animation and returning the instance.
  */
 fun Animation.post(action: PostAction) = this.apply { postActions.add(action) }
+
+/**
+ * Convenient method for adding a companion to the animation and returning the instance.
+ */
+fun Animation.companion(lambda: Companion) = this.apply { companions.add(lambda) }

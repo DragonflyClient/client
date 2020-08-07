@@ -17,7 +17,7 @@ object OptionsSectionPlayer {
      */
     @JvmStatic
     val renderOwnName = optionEntryBoolean {
-        name = "Render own Name"
+        name = "Render own name"
         description = "By default, the Minecraft client doesn't render the user's name. " +
                 "If you enable this option, your nametag will be rendered and you can see it in the third person view."
         key {

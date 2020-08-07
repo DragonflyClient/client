@@ -2,12 +2,16 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.internal.Alignment.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
+import org.apache.logging.log4j.LogManager
+import kotlin.math.floor
 import kotlin.properties.Delegates
 
 /**
@@ -27,15 +31,16 @@ import kotlin.properties.Delegates
  * @param fontSize the size of the font (has no effect if no [font] is set)
  * @param backgroundColor the color of the background rectangle
  * @param padding a padding between the bounds and the text
+ * @param adaptHeight whether the height of the text field should be adapted to its requirements
  */
 class TextField(
     @property:State var staticText: String = "No static text set",
     @property:State var dynamicText: (() -> String)? = null,
 
-    @property:State var textAlignHorizontal: Alignment = Alignment.START,
-    @property:State var textAlignVertical: Alignment = Alignment.START,
+    @property:State var textAlignHorizontal: Alignment = START,
+    @property:State var textAlignVertical: Alignment = START,
 
-    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontDesign.regular,
+    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontManager.regular,
     @property:State var font: WidgetFont? = null,
     @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
     @property:Interpolate var fontSize: Double = 19.0,
@@ -51,8 +56,9 @@ class TextField(
     @property:Interpolate override var width: Double = 50.0,
     @property:Interpolate override var height: Double = 50.0,
     @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
-    @property:State override var horizontalAlignment: Alignment = Alignment.START,
-    @property:State override var verticalAlignment: Alignment = Alignment.START
+    @property:State override var horizontalAlignment: Alignment = START,
+    @property:State override var verticalAlignment: Alignment = START,
+    @property:State var adaptHeight: Boolean = false
 ) : AssembledWidget<TextField>(), IPosition, IDimension, IColor, IAlign, IOutline {
 
     @Interpolate
@@ -65,6 +71,7 @@ class TextField(
         val (alignedX, alignedY) = align(x, y, width, height)
         this.x = alignedX
         this.y = alignedY
+        adaptHeight()
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -74,14 +81,19 @@ class TextField(
     override fun updateStructure() {
         reassemble()
         if (font != null) {
-            fontRenderer = font?.fontRenderer {
-                fontWeight = this@TextField.fontWeight
+            fontRenderer = font?.fontRenderer(
+                fontWeight = this@TextField.fontWeight,
                 size = fontSize.toInt()
-            } ?: fontRenderer
+            ) ?: fontRenderer
         }
 
-        val lines = fontRenderer.listFormattedStringToWidth(currentText(), width.toInt())
+        val maxAmount = floor((height - padding * 2) / fontRenderer.height).toInt()
+        val lines = fontRenderer.listFormattedStringToWidth(currentText(), (width - padding * 2).toInt())
+            .let { if (adaptHeight) it else it.take(maxAmount) }
         val size = lines.size * fontRenderer.height
+
+        adaptHeight()
+
         for ((index, line) in lines.withIndex()) {
             val widget = structure["line-$index"] ?: TextRenderer().also { structure["line-$index"] = it }
             (widget as TextRenderer).also {
@@ -93,11 +105,16 @@ class TextField(
                 it.color = color
                 it.x = alignText(textAlignHorizontal, x, width, fontRenderer.getStringWidth(it.text).toDouble())
                 it.y = when (textAlignVertical) {
-                    Alignment.START -> y + index * fontRenderer.height
-                    Alignment.CENTER -> y + (height - size) / 2 + index * fontRenderer.height
-                    Alignment.END -> y + height - size + index * fontRenderer.height
+                    START -> y + index * fontRenderer.height + padding
+                    CENTER -> y + (height - size) / 2 + index * fontRenderer.height
+                    END -> y + height - size + index * fontRenderer.height - padding
                 }
             }
+        }
+
+        structure.forEach { (key, _) ->
+            if (key.startsWith("line-") && key.removePrefix("line-").toInt() >= lines.size)
+                structure.remove(key)
         }
 
         (structure["background"] as Rectangle).also {
@@ -111,10 +128,33 @@ class TextField(
         }
     }
 
+    /**
+     * Performs the height-adaption.
+     */
+    fun adaptHeight() {
+        if (!adaptHeight)
+            return
+
+        val lines = fontRenderer.listFormattedStringToWidth(currentText(), (width - padding * 2).toInt())
+        val size = lines.size * fontRenderer.height
+        val previousHeight = height
+        height = (size + padding * 2)
+
+        if (verticalAlignment == END) {
+            y += previousHeight - height
+        }
+
+        if (textAlignVertical == CENTER || textAlignVertical == END) {
+            LogManager.getLogger().warn(
+                "Using adapted height on a text field with vertical alignment of 'center' or 'end' will remove the effect of the alignment"
+            )
+        }
+    }
+
     override fun update() {
         // update instantly when using dynamic text
         if (dynamicText != null) {
-            (structure["text"] as TextRenderer).text = currentText()
+            updateStructure()
         }
 
         super.update()
@@ -136,16 +176,16 @@ class TextField(
      */
     private fun alignText(alignment: Alignment, coordinate: Double, size: Double, textSize: Double): Double =
         when (alignment) {
-            Alignment.START -> coordinate + padding
-            Alignment.CENTER -> coordinate + (size / 2) - (textSize / 2)
-            Alignment.END -> coordinate + size - textSize - padding
+            START -> coordinate + padding
+            CENTER -> coordinate + (size / 2) - (textSize / 2)
+            END -> coordinate + size - textSize - padding
         }
 
     override fun clone() = TextField(
         staticText, dynamicText, textAlignHorizontal, textAlignVertical,
         fontRenderer, font, fontWeight, fontSize,
         backgroundColor, padding, outlineStroke, outlineColor,
-        x, y, width, height, color, horizontalAlignment, verticalAlignment
+        x, y, width, height, color, horizontalAlignment, verticalAlignment, adaptHeight
     )
 
     override fun newInstance() = TextField()

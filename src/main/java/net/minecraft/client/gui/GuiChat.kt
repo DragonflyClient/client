@@ -1,7 +1,7 @@
 package net.minecraft.client.gui
 
 import com.google.common.collect.Lists
-import net.inceptioncloud.dragonfly.Dragonfly.fontDesign
+import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionChat
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition
 import net.minecraft.client.Minecraft
@@ -64,7 +64,7 @@ open class GuiChat : GuiScreen {
         sentHistoryCursor = mc.ingameGUI.chatGUI.sentMessages.size
 
         inputField = GuiTextField(
-            0, fontDesign.regular, 5,
+            0, fontManager.regular, 5,
             height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth) - 10, 12
         )
         inputField!!.maxStringLength = 100

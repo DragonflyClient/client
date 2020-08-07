@@ -34,7 +34,7 @@ public class ModEventBus extends EventBus
     {
         super.register(object);
 
-        LogManager.getLogger().info("Registered Event Subscriber {}", object.getClass().getSimpleName());
+        LogManager.getLogger().info("Registered Event Subscriber {}", object.getClass().getName());
     }
 
     /**

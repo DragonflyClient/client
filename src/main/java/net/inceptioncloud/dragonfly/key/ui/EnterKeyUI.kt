@@ -16,7 +16,6 @@ import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.input.Keyboard
-import javax.xml.bind.JAXBElement
 
 /**
  * The user interface that forces the user to enter a key to unlock the Dragonfly Client.
@@ -43,7 +42,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
 
     override fun initGui() {
         Keyboard.enableRepeatEvents(true)
-        val headerFR = Dragonfly.fontDesign.defaultFont.fontRenderer { size = 30; fontWeight = FontWeight.MEDIUM }
+        val headerFR = Dragonfly.fontManager.defaultFont.fontRenderer(size = 30, fontWeight = FontWeight.MEDIUM)
 
         val keyImage = +Image(
             x = width / 2 - headerFR.getStringWidth("Activate Dragonfly") / 2 - 15.0,

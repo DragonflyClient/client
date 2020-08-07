@@ -8,10 +8,11 @@ object OptionsManager {
         Options
 
         OptionsSectionClient.init()
-        OptionsSectionUI.init()
-        OptionsSectionPlayer.init()
-        OptionsSectionChat.init()
-        OptionsSectionScoreboard.init()
         OptionsSectionZoom.init()
+        OptionsSectionScoreboard.init()
+        OptionsSectionPlayer.init()
+        OptionsSectionOverlay.init()
+        OptionsSectionChat.init()
+        OptionsSectionPerformance.init()
     }
 }

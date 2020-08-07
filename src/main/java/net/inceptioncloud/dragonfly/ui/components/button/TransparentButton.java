@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.ui.components.button;
 
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.RGB;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
 import net.minecraft.client.Minecraft;
@@ -23,7 +23,7 @@ public class TransparentButton extends GuiButton
     /**
      * The font renderer with which the button text is drawn.
      */
-    private IFontRenderer fontRenderer = Dragonfly.getFontDesign().retrieveOrBuild(" Medium", 22);
+    private IFontRenderer fontRenderer = Dragonfly.getFontManager().retrieveOrBuild(" Medium", 22);
     /**
      * Whether the clean button is highlighted by an underline.
      */

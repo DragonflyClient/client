@@ -3,10 +3,9 @@ package net.inceptioncloud.dragonfly.ui.screens
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
 import net.inceptioncloud.dragonfly.design.color.RGB
-import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.font.FontWeight
-import net.inceptioncloud.dragonfly.engine.font.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
@@ -23,7 +22,6 @@ import net.inceptioncloud.dragonfly.ui.components.list.UIList
 import net.inceptioncloud.dragonfly.ui.components.list.UIListEntry
 import net.inceptioncloud.dragonfly.ui.components.list.UIListFactory.Companion.uiListFactory
 import net.inceptioncloud.dragonfly.utils.TimeUtils
-import net.inceptioncloud.dragonfly.utils.smartLog
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
@@ -62,8 +60,14 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         "dragonflyres/ingame_background_${if (Random().nextBoolean()) 2 else 1}.png"
     )
 
+    /**
+     * The ui list entry that is currently focused (hovered).
+     */
     private var focusedEntry: UIListEntry? = null
 
+    /**
+     * The option entry that the help icon is currently attached to.
+     */
     var helpAttachedEntry: OptionEntry<*>? = null
 
     /**
@@ -137,11 +141,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
 
         val newFocusedEntry = uiList.entries
             .firstOrNull {
-                if (focusedEntry == it) {
-                    mouseX in it.x - 24..it.x + uiList.listWidth
-                } else {
-                    mouseX in it.x..it.x + uiList.listWidth
-                } && mouseY in it.y..it.y + uiList.entryHeight
+                mouseX in it.x - 24..it.x + uiList.listWidth && mouseY in it.y..it.y + uiList.entryHeight
             }
 
         val helpIcon = getWidget<Image>("help-icon")
@@ -211,12 +211,12 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
      * Draws the header with the "Mod Options" title.
      */
     private fun drawHeader() {
-        val font = Dragonfly.fontDesign.defaultFont
+        val font = Dragonfly.fontManager.defaultFont
         val fontSize = 16
         val titleString = "Mod Options"
         val y = 15 - fontSize / 2 + 2
-        val fontRenderer: GlyphFontRenderer? =
-            font.fontRendererAsync { size = fontSize * 2; fontWeight = FontWeight.MEDIUM }
+        val fontRenderer: IFontRenderer? =
+            font.fontRendererAsync(size = fontSize * 2, fontWeight = FontWeight.MEDIUM)
         val stringWidth = fontRenderer?.getStringWidth(titleString)
 
         drawRect(0, 0, width, 30, BluePalette.FOREGROUND.rgb)
@@ -232,7 +232,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
     private fun drawFooter() {
         drawRect(0, height - 18, width, height, BluePalette.FOREGROUND.rgb)
 
-        Dragonfly.fontDesign.defaultFont.fontRendererAsync { size = 15 }
+        Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 15)
             ?.drawString(DragonflyVersion.string, 5, height - 10, Color(0, 0, 0, 50).rgb)
     }
 

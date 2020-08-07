@@ -56,6 +56,15 @@ open class PublishTask : DefaultTask() {
     var patchNotes: String? = null
 
     /**
+     * The link to the patch notes or any other news resource.
+     */
+    @set:Option(
+        option = "title",
+        description = "The title of the update"
+    )
+    var title: String? = null
+
+    /**
      * The directory which the Inception Cloud Secrets are stored in.
      */
     private val secrets = getSecretsDirectory()
@@ -106,24 +115,18 @@ open class PublishTask : DefaultTask() {
             "version" to VersionTask.globalVersion,
             "requiresInstaller" to requiresInstaller,
             "patchNotes" to patchNotes,
+            "title" to title,
             "releaseDate" to System.currentTimeMillis()
         )
 
-        val urls = mutableListOf<String>().apply {
-            if (earlyAccess) add("eap")
-            if (stable) add("stable")
-        }
+        val response = khttp.post(
+            url = "https://api.inceptioncloud.net/publish?eap=$earlyAccess&stable=$stable",
+            auth = BasicAuthorization(readSecret("api_user"), readSecret("api_password")),
+            json = json
+        )
 
-        for (url in urls) {
-            val response = khttp.post(
-                url = "https://api.inceptioncloud.net/publish/$url",
-                auth = BasicAuthorization(readSecret("api_user"), readSecret("api_password")),
-                json = json
-            )
-
-            if (response.statusCode != 200) {
-                throw java.lang.IllegalStateException("Failed to publish update: $response")
-            }
+        if (response.statusCode != 200) {
+            throw java.lang.IllegalStateException("Failed to publish update: $response")
         }
     }
 

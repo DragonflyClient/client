@@ -20,7 +20,7 @@ object OptionsSectionClient {
      */
     @JvmStatic
     val windowedFullscreen = optionEntryBoolean {
-        name = "Windowed Fullscreen"
+        name = "Windowed fullscreen"
         description = "Uses windowed fullscreen instead of the default fullscreen to allow moving " +
                 "the cursor out of the game when in a GUI."
         externalApply = { value, optionKey ->
@@ -41,7 +41,7 @@ object OptionsSectionClient {
      */
     @JvmStatic
     val screenshotUtilities = optionEntryBoolean {
-        name = "Screenshot Utilities"
+        name = "Screenshot utilities"
         description = "Provides additional utility functions to the screenshot system like uploading and " +
                 "copying. Note that this overrides the default screenshot behavior."
         key {

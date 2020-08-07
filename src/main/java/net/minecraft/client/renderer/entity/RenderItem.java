@@ -1,7 +1,7 @@
 package net.minecraft.client.renderer.entity;
 
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -495,7 +495,7 @@ public class RenderItem implements IResourceManagerReloadListener
      */
     public void renderItemOverlayIntoGUI (ItemStack stack, int xPosition, int yPosition, String text)
     {
-        final IFontRenderer fr = Dragonfly.getFontDesign().getRegular();
+        final IFontRenderer fr = Dragonfly.getFontManager().getRegular();
         if (stack != null) {
             if (stack.stackSize != 1 || text != null) {
                 String s = text == null ? String.valueOf(stack.stackSize) : text;

@@ -4,7 +4,7 @@ import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.CloudColor;
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
 import net.inceptioncloud.dragonfly.design.color.RGB;
-import net.inceptioncloud.dragonfly.engine.font.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.transition.color.ColorTransition;
 import net.inceptioncloud.dragonfly.transition.color.ColorTransitionBuilder;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
@@ -79,7 +79,7 @@ public class ConfirmationButton extends SimpleButton
     public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
     {
         if (this.visible) {
-            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getMedium();
+            IFontRenderer fontrenderer = Dragonfly.getFontManager().getMedium();
             final double border = 0.5;
             final double left = this.xPosition + border;
             final double top = this.yPosition + border;

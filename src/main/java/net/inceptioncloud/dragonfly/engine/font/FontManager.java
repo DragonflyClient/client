@@ -1,5 +1,8 @@
 package net.inceptioncloud.dragonfly.engine.font;
 
+import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
+
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.util.HashMap;
@@ -54,7 +57,7 @@ public class FontManager {
             return cache.get(info);
 
         final GlyphFontRenderer fontRenderer =
-                GlyphFontRenderer.create(info.name, info.size, info.letterSpacing, true, true, true);
+                GlyphFontRenderer.create(info.name, info.size, info.letterSpacing);
         cache.put(info, fontRenderer);
 
         return fontRenderer;

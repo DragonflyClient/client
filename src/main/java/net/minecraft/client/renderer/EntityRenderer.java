@@ -1228,7 +1228,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 }
             }
 
-
             // EVENTBUS - PostRenderEvent
             Dragonfly.getEventBus().post(new PostRenderEvent(scaledWidth, scaledHeight, scaledMouseX, scaledMouseY));
         }

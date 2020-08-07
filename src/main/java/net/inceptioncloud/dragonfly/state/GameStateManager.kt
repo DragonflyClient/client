@@ -27,7 +27,6 @@ class GameStateManager {
         // EVENTBUS - Calls the GameStateUpdateEvent when the State is updated
         val event = GameStateUpdateEvent(current, newState)
         eventBus.post(event)
-        LogManager.getLogger().info("[Game State] $newState")
         current = newState
     }
 
