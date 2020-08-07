@@ -1,7 +1,7 @@
 {
   "lastServer": {
-    "serverName": "Inception \u0026 Cloud",
-    "serverIP": "inceptioncloud.net:25565",
+    "serverName": "§9Inception§bCloud",
+    "serverIP": "inceptioncloud.net",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -14,16 +14,8 @@
   "windowedFullscreen": true,
   "zoomFieldOfView": 30,
   "zoomMouseSensitivity": 79,
-  "fontQuality": 1.9836065573770492,
+  "fontQuality": 2.0,
   "messageRestoreMode": 1,
   "renderOwnName": true,
-  "screenshotUtilities": true,
-  "enableHotActions": true,
-  "hotActionsTriggerMode": 0,
-  "hotActionsTriggerKey": 4,
-  "enableToastMessages": true,
-  "chunkUpdateSpeed": 10,
-  "useScaledFontRenderers": true,
-  "saveGlyphs": true,
-  "preloadFontRenderers": true
+  "screenshotUtilities": true
 }

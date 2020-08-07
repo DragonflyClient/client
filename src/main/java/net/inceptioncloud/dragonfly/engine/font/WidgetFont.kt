@@ -59,6 +59,7 @@ class WidgetFont @JvmOverloads constructor(
      * asynchronously, consider using the [fontRendererAsync] function which also allows passing
      * a callback as an additional parameter.
      */
+    @JvmOverloads
     fun fontRenderer(
         fontWeight: FontWeight = FontWeight.REGULAR,
         size: Int = 19,
