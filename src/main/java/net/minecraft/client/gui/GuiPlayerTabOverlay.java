@@ -6,6 +6,7 @@ import com.mojang.authlib.GameProfile;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.engine.font.FontWeight;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
@@ -288,36 +289,64 @@ public class GuiPlayerTabOverlay extends Gui {
     }
 
     protected void drawPing(int param1, int param2, int param3, NetworkPlayerInfo networkPlayerInfoIn) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        IFontRenderer fontRenderer = Dragonfly.getFontManager().getDefaultFont().fontRenderer(FontWeight.REGULAR, 12);
-        this.mc.getTextureManager().bindTexture(icons);
+        if(OptionsSectionOverlay.getShowPingAsNumber().invoke()) {
 
-        String pingText = "";
-        int ping = networkPlayerInfoIn.getResponseTime();
-        int color = -1;
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            IFontRenderer fontRenderer = Dragonfly.getFontManager().getDefaultFont().fontRenderer(FontWeight.REGULAR, 12);
+            this.mc.getTextureManager().bindTexture(icons);
 
-        if (ping <= 0) {
-            color = Color.decode("#a6a6a6").hashCode();
-            pingText = "?";
-        } else if (ping < 50) {
-            color = Color.green.hashCode();
-            pingText = String.valueOf(ping);
-        } else if (ping > 50 && ping < 100) {
-            color = Color.orange.hashCode();
-            pingText = String.valueOf(ping);
-        }else if(ping >= 1000) {
-            ping = 999;
-            color = Color.red.hashCode();
-            pingText = String.valueOf(ping);
+            String pingText = "";
+            int ping = networkPlayerInfoIn.getResponseTime();
+            int color = -1;
+
+            if (ping <= 0) {
+                color = Color.decode("#a6a6a6").hashCode();
+                pingText = "?";
+            } else if (ping < 50) {
+                color = Color.green.hashCode();
+                pingText = String.valueOf(ping);
+            } else if (ping > 50 && ping < 100) {
+                color = Color.orange.hashCode();
+                pingText = String.valueOf(ping);
+            }else if(ping >= 1000) {
+                ping = 999;
+                color = Color.red.hashCode();
+                pingText = String.valueOf(ping);
+            }else {
+                color = Color.red.hashCode();
+                pingText = String.valueOf(ping);
+            }
+
+            this.zLevel += 100.0F;
+            int strWidth = fontRenderer.getStringWidth(pingText);
+            fontRenderer.drawString(pingText, param2 + param1 - strWidth - 3, param3 + 4, color);
+            this.zLevel -= 100.0F;
+
         }else {
-            color = Color.red.hashCode();
-            pingText = String.valueOf(ping);
-        }
 
-        this.zLevel += 100.0F;
-        int strWidth = fontRenderer.getStringWidth(pingText);
-        fontRenderer.drawString(pingText, param2 + param1 - strWidth - 3, param3 + 4, color);
-        this.zLevel -= 100.0F;
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            this.mc.getTextureManager().bindTexture(icons);
+            int pingLevel;
+
+            if (networkPlayerInfoIn.getResponseTime() < 0) {
+                pingLevel = 5;
+            } else if (networkPlayerInfoIn.getResponseTime() < 150) {
+                pingLevel = 0;
+            } else if (networkPlayerInfoIn.getResponseTime() < 300) {
+                pingLevel = 1;
+            } else if (networkPlayerInfoIn.getResponseTime() < 600) {
+                pingLevel = 2;
+            } else if (networkPlayerInfoIn.getResponseTime() < 1000) {
+                pingLevel = 3;
+            } else {
+                pingLevel = 4;
+            }
+
+            this.zLevel += 100.0F;
+            this.drawTexturedModalRect(param2 + param1 - 11, param3, 0, 176 + pingLevel * 8, 10, 8);
+            this.zLevel -= 100.0F;
+
+        }
     }
 
     private void drawScoreboardValues(ScoreObjective objective, int paramInt1, String name, int paramInt2, int paramInt3, NetworkPlayerInfo playerInfo) {
