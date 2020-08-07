@@ -289,15 +289,15 @@ public class GuiPlayerTabOverlay extends Gui {
 
     protected void drawPing(int param1, int param2, int param3, NetworkPlayerInfo networkPlayerInfoIn) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        IFontRenderer fontRenderer = Dragonfly.getFontManager().getDefaultFont().fontRenderer(FontWeight.LIGHT, 10);
+        IFontRenderer fontRenderer = Dragonfly.getFontManager().getDefaultFont().fontRenderer(FontWeight.REGULAR, 12);
         this.mc.getTextureManager().bindTexture(icons);
 
         String pingText = "";
         int ping = networkPlayerInfoIn.getResponseTime();
         int color = -1;
 
-        if (ping == 0) {
-            color = Color.gray.hashCode();
+        if (ping <= 0) {
+            color = Color.decode("#a6a6a6").hashCode();
             pingText = "?";
         } else if (ping < 50) {
             color = Color.green.hashCode();
@@ -305,13 +305,18 @@ public class GuiPlayerTabOverlay extends Gui {
         } else if (ping > 50 && ping < 100) {
             color = Color.orange.hashCode();
             pingText = String.valueOf(ping);
-        } else {
+        }else if(ping >= 1000) {
+            ping = 999;
+            color = Color.red.hashCode();
+            pingText = String.valueOf(ping);
+        }else {
             color = Color.red.hashCode();
             pingText = String.valueOf(ping);
         }
 
         this.zLevel += 100.0F;
-        fontRenderer.drawString(pingText, param2 + param1 - 11, param3 + 1, color);
+        int strWidth = fontRenderer.getStringWidth(pingText);
+        fontRenderer.drawString(pingText, param2 + param1 - strWidth - 3, param3 + 4, color);
         this.zLevel -= 100.0F;
     }
 

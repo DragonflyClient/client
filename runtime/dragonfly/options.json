@@ -1,7 +1,7 @@
 {
   "lastServer": {
-    "serverName": "§9Inception§bCloud",
-    "serverIP": "inceptioncloud.net",
+    "serverName": "GommeHD",
+    "serverIP": "gommehd.net:25565",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -17,5 +17,13 @@
   "fontQuality": 2.0,
   "messageRestoreMode": 1,
   "renderOwnName": true,
-  "screenshotUtilities": true
+  "screenshotUtilities": true,
+  "enableToastMessages": true,
+  "enableHotActions": true,
+  "hotActionsTriggerMode": 0,
+  "hotActionsTriggerKey": 0,
+  "chunkUpdateSpeed": 10,
+  "useScaledFontRenderers": true,
+  "saveGlyphs": true,
+  "preloadFontRenderers": true
 }
