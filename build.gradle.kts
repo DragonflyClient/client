@@ -20,6 +20,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
+    implementation("no.tornado:tornadofx:1.7.20")
 
     implementation(fileTree("libraries"))
     implementation(fileTree("libraries-minecraft"))

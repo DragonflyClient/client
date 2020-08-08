@@ -1,7 +1,7 @@
 {
   "lastServer": {
-    "serverName": "GommeHD",
-    "serverIP": "gommehd.net:25565",
+    "serverName": "§9Inception §8\u0026 §bCloud",
+    "serverIP": "inceptioncloud.net",
     "lan": false
   },
   "enableZoomAnimation": true,
@@ -25,5 +25,6 @@
   "chunkUpdateSpeed": 10,
   "useScaledFontRenderers": true,
   "saveGlyphs": true,
-  "preloadFontRenderers": true
+  "preloadFontRenderers": true,
+  "showPingAsNumber": true
 }
