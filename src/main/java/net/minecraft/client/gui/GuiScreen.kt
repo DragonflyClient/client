@@ -94,7 +94,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     private var clickedLinkURI: URI? = null
 
     @JvmField
-    var buffer = WidgetBuffer()
+    var buffer = WidgetStage()
 
     /**
      * The color that is used in the [drawBackgroundFill] function to color the background.
@@ -691,7 +691,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     }
 
     /**
-     * An operator function that allows adding widgets to the buffer. After providing the widget,
+     * An operator function that allows adding widgets to the stage. After providing the widget,
      * an id for it must be specified with the infix function [WidgetIdBuilder.id].
      */
     operator fun <W : Widget<W>> W.unaryPlus(): WidgetIdBuilder<W> {

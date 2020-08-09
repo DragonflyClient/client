@@ -31,7 +31,7 @@ object Toast {
      * a smooth fly-in animation
      */
     fun displayNext(): Boolean {
-        if (ScreenOverlay.buffer["toast"] != null || queue.isEmpty())
+        if (ScreenOverlay.stage["toast"] != null || queue.isEmpty())
             return false
 
         val next = queue.poll()
@@ -65,7 +65,7 @@ object Toast {
             y = ScreenOverlay.dimensions.height - 45.0
             opacity = 0.0
         }?.post { _, _ ->
-            ScreenOverlay.buffer.content.remove("toast")
+            ScreenOverlay.stage.content.remove("toast")
             displayNext()
         }?.start()
     }

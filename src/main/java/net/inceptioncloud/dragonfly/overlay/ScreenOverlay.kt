@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.overlay
 
 import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
-import net.inceptioncloud.dragonfly.engine.internal.WidgetBuffer
+import net.inceptioncloud.dragonfly.engine.internal.WidgetStage
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
@@ -14,9 +14,9 @@ import java.awt.Dimension
 object ScreenOverlay {
 
     /**
-     * A widget buffer that contains all components.
+     * A widget stage that contains all components.
      */
-    val buffer = WidgetBuffer()
+    val stage = WidgetStage()
 
     /**
      * Getter for conveniently accessing the scaled dimensions of the screen.
@@ -28,19 +28,19 @@ object ScreenOverlay {
         }
 
     /**
-     * Adds a component to the screen [buffer].
+     * Adds a component to the screen [stage].
      */
     @JvmStatic
     fun addComponent(name: String, component: AssembledWidget<*>): AssembledWidget<*> {
-        buffer.add(name to component)
+        stage.add(name to component)
         return component
     }
 
     /**
-     * Renders the buffer on the screen.
+     * Renders the stage on the screen.
      */
     @Subscribe
     fun onPostRender(event: PostRenderEvent) {
-        buffer.render()
+        stage.render()
     }
 }

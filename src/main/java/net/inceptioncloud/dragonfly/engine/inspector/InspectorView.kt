@@ -25,8 +25,8 @@ class InspectorView : View("My View") {
 
             populate {
                 when (val value = it.value) {
-                    root.value -> listOfNotNull(ScreenOverlay.buffer, Minecraft.getMinecraft().currentScreen?.buffer)
-                    is WidgetBuffer -> value.content.toList()
+                    root.value -> listOfNotNull(ScreenOverlay.stage, Minecraft.getMinecraft().currentScreen?.buffer)
+                    is WidgetStage -> value.content.toList()
                     is Pair<*, *> -> (value.second as? AssembledWidget<*>)?.structure?.toList()
                     else -> null
                 }
@@ -37,7 +37,7 @@ class InspectorView : View("My View") {
             cellFormat {
                 text = when (it) {
                     is String -> it
-                    is WidgetBuffer -> it::class.simpleName
+                    is WidgetStage -> it::class.simpleName
                     is Pair<*, *> -> it.first as? String
                     else -> null
                 }

@@ -5,7 +5,7 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
 
 /**
- * ## Widget Buffer
+ * ## Widget Stage
  *
  * This class holds multiple widgets inside of it. The widgets can be dynamically updated during the drawing process.
  * All implemented functions are thread-safe.
@@ -14,21 +14,21 @@ import net.inceptioncloud.dragonfly.engine.structure.IDraw
  * on the widgets. The [update] function updates the widgets' states (using [Widget.update]) on every mod tick.
  * This allows the client to only run the animations for the current screen.
  *
- * A widget can be added to the buffer using [add] and the whole buffer can be cleared with [clear].
- * You cannot directly remove a widget from the buffer, but you can change it's visibility state ([Widget.isVisible]).
+ * A widget can be added to the stage using [add] and the whole stage can be cleared with [clear].
+ * You cannot directly remove a widget from the stage, but you can change it's visibility state ([Widget.isVisible]).
  */
-class WidgetBuffer {
+class WidgetStage {
 
     /**
-     * A mutable map that contains all widgets of the buffer.
+     * A mutable map that contains all widgets of the stage.
      *
-     * Each buffer has a unique id which is the key in the map. When adding a new widget to the
-     * buffer with an already existing id, the widget will be overwritten.
+     * Each widget has a unique id which is the key in the map. When adding a new widget to the
+     * stage with an already existing id, the widget will be overwritten.
      */
     val content = mutableMapOf<String, Widget<*>>()
 
     /**
-     * Renders all [Widget] objects in the buffer.
+     * Renders all [Widget] objects in the stage.
      *
      * This calls the [Widget.drawNative] function on all widgets whose visibility property ([Widget.isVisible]) evaluates
      * to true. If it doesn't, the draw function won't be called.
@@ -44,7 +44,7 @@ class WidgetBuffer {
     }
 
     /**
-     * Adds a [Widget] object to the buffer.
+     * Adds a [Widget] object to the stage.
      *
      * After the widget object has been added, it will automatically be included in the render
      * and update process. To add multiple widgets, use [add].
@@ -54,7 +54,7 @@ class WidgetBuffer {
     }
 
     /**
-     * Adds multiple [Widget] objects to the buffer.
+     * Adds multiple [Widget] objects to the stage.
      *
      * @see add
      */
@@ -63,14 +63,14 @@ class WidgetBuffer {
     }
 
     /**
-     * Clears the buffer by removing all widgets from it.
+     * Clears the stage by removing all widgets from it.
      */
     fun clear() = synchronized(this) {
         content.clear()
     }
 
     /**
-     * Finds a widget in the buffer by searching for its id. Since every id is unique, there
+     * Finds a widget in the stage by searching for its id. Since every id is unique, there
      * will never be more than one result. If no widget was found, this function returns null.
      */
     operator fun get(id: String): Widget<*>? = synchronized(this) {
@@ -131,7 +131,7 @@ class WidgetBuffer {
     //</editor-fold>
 
     override fun toString(): String {
-        val builder = StringBuilder("WidgetBuffer(${content.size})\n{\n")
+        val builder = StringBuilder("WidgetStage(${content.size})\n{\n")
 
         content.forEach {
             builder.append("\t${it.key}")

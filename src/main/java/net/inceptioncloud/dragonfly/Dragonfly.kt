@@ -173,7 +173,7 @@ object Dragonfly {
     private fun tick() {
         synchronized(this) {
             transitions.toTypedArray().forEach { it.tick() }
-            ScreenOverlay.buffer.update()
+            ScreenOverlay.stage.update()
 
             if (Minecraft.getMinecraft().currentScreen != null)
                 Minecraft.getMinecraft().currentScreen.buffer.update()

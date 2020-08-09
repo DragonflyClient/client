@@ -5,8 +5,6 @@ import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.*
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.overlay.hotaction.HotActionWidget
 import java.util.*
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
@@ -51,7 +49,7 @@ abstract class Widget<W : Widget<W>> : IDraw {
 
     /**
      * Whether the widget is currently visible. If this flag is set to false, the [drawNative] method
-     * won't be called by the parent [WidgetBuffer] that contains the widget.
+     * won't be called by the parent [WidgetStage] that contains the widget.
      */
     var isVisible = true
 
