@@ -9,12 +9,12 @@ class EngineTestUI : GuiScreen() {
     override fun initGui() {
         Keyboard.enableRepeatEvents(true)
 
-        +Rectangle(
-            x = 50.0,
-            y = 50.0,
-            width = 85.0,
+        +Rectangle {
+            x = 50.0
+            y = 50.0
+            width = 85.0
             height = 37.0
-        )/* id "test-rectangle"*/
+        } id "test-rectangle"
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {

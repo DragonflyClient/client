@@ -53,10 +53,9 @@ class MorphAnimation(
         } else false
     }
 
-    override fun applyToShape(scratchpad: Widget<*>, base: Widget<*>) {
+    override fun applyToShape(base: Widget<*>) {
         for ((property, sequence) in propertySequences) {
             property.setter.call(base, sequence.current)
-            property.setter.call(scratchpad, sequence.current)
         }
 
         if (propertySequences.values.any { it.isAtEnd }) {

@@ -695,7 +695,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * an id for it must be specified with the infix function [WidgetIdBuilder.id].
      */
     operator fun <W : Widget<W>> W.unaryPlus(): WidgetIdBuilder<W> {
-        return WidgetIdBuilder<W>(buffer, widget = this)
+        return WidgetIdBuilder(buffer, widget = this)
     }
 
     operator fun String.unaryMinus(): Widget<*>? {

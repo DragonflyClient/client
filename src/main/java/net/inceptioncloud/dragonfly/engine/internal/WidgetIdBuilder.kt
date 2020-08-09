@@ -36,6 +36,7 @@ class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> 
      * Build the pair.
      */
     private fun build() {
+        widget.initializerBlock(widget)
         onBuild(id!!, widget)
     }
 }

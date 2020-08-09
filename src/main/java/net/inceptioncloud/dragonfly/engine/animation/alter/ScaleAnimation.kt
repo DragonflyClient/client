@@ -38,9 +38,9 @@ class ScaleAnimation(
         } else false
     }
 
-    override fun applyToShape(scratchpad: Widget<*>, base: Widget<*>) {
-        scratchpad.scaleFactorX = sequenceFactorX.current
-        scratchpad.scaleFactorY = sequenceFactorY.current
+    override fun applyToShape(base: Widget<*>) {
+        base.scaleFactorX = sequenceFactorX.current
+        base.scaleFactorY = sequenceFactorY.current
     }
 
     override fun tick() {

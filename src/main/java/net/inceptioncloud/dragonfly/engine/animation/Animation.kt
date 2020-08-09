@@ -5,7 +5,7 @@ import net.inceptioncloud.dragonfly.transition.Transition
 
 typealias PostAction = (Animation, Widget<*>) -> Unit
 
-typealias Companion = (scratchpad: Widget<*>, base: Widget<*>) -> Unit
+typealias Companion = (base: Widget<*>) -> Unit
 
 /**
  * ## Animation Class
@@ -113,10 +113,9 @@ abstract class Animation {
      * widget to which the changes can be made. For manipulating values relative to a base value,
      * the [base] parameter is passed.
      *
-     * @param scratchpad the version of the widget that should be modified
      * @param base a version of the widget that holds initial values
      */
-    abstract fun applyToShape(scratchpad: Widget<*>, base: Widget<*>)
+    abstract fun applyToShape(base: Widget<*>)
 
     /**
      * Checks if the animation is available for the given widget type.

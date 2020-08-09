@@ -22,11 +22,14 @@ import kotlin.reflect.jvm.isAccessible
  * in the interface. This allows it to return it's instance without forcing the user to use casts.
  *
  * @see IDraw
- *
+ * @param initializerBlock the block that initializes the widget and so replaces the constructor (called in
+ * [WidgetIdBuilder.build])
  * @property W the type of the implementing class
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-abstract class Widget<W : Widget<W>> : IDraw {
+abstract class Widget<W : Widget<W>>(
+    val initializerBlock: W.() -> Unit
+) : IDraw {
 
     /**
      * An object on which some operations are synchronized to provide thread-safety.
@@ -75,19 +78,11 @@ abstract class Widget<W : Widget<W>> : IDraw {
      */
     val animationStack: MutableList<Animation> = Collections.synchronizedList(mutableListOf<Animation>())
 
-    val propertyDelegates = mutableMapOf<String, WidgetPropertyDelegate<*>>()
-
     /**
-     * The animation scratchpad of this object.
-     *
-     * Every widget object that contains animation has a scratchpad. The animations will be applied to
-     * the scratchpad, but the base widget will still be available to support relative value updates.
-     *
-     * The scratchpad is created or deleted in the [update] function depending on whether the
-     * [animationStack] is empty or not. When a scratchpad is available, the [draw]
-     * function will draw it instead.
+     * A map that contains all the names of all properties delegated by a [WidgetPropertyDelegate] and
+     * their corresponding instances.
      */
-    var scratchpad: Widget<*>? = null
+    val propertyDelegates = mutableMapOf<String, WidgetPropertyDelegate<*>>()
 
     /**
      * A simple method that uses the widget as a receiver in order to allow changes to it during lifetime.
@@ -114,30 +109,20 @@ abstract class Widget<W : Widget<W>> : IDraw {
      * It performs things like state- and dynamic updates and allows the use of animations.
      */
     open fun update() {
-        val before = clone()
-
         if (updateDynamic != null) {
             updateDynamic?.invoke(this as W)
         }
 
         if (!animationStack.isNullOrEmpty()) {
-            scratchpad = clone().apply { isInternalClone = true }
             synchronized(mutex) {
                 animationStack.removeAll { it.finished }
                 animationStack.toTypedArray().forEach { it.tick() }
                 animationStack.toTypedArray().forEach {
-                    it.applyToShape(scratchpad = scratchpad!!, base = this)
-                    it.companions.forEach { lambda -> lambda(scratchpad!!, this) }
+                    it.applyToShape(this)
+                    it.companions.forEach { lambda -> lambda(this) }
                 }
             }
 
-            if (!isStateEqual(scratchpad as W)) {
-                stateChanged(scratchpad as W)
-            }
-        } else scratchpad = null
-
-        if (!isStateEqual(before)) {
-            stateChanged(this)
         }
     }
 
@@ -153,13 +138,7 @@ abstract class Widget<W : Widget<W>> : IDraw {
     @Suppress("DEPRECATION")
     fun draw() {
         GraphicsEngine.pushScale(scaleFactorX to scaleFactorY)
-
-        if (scratchpad != null) {
-            scratchpad?.drawNative()
-        } else {
-            drawNative()
-        }
-
+        drawNative()
         GraphicsEngine.popScale()
     }
 
@@ -216,6 +195,14 @@ abstract class Widget<W : Widget<W>> : IDraw {
         .none { it.getter.call(this) != it.getter.call(clone) }
 
     /**
+     * Notifies the widget that its state has been changed by a dynamic update or by an animation.
+     * This is called when [isStateEqual] evaluates to false.
+     */
+    open fun stateChanged() {
+        /* can be implemented by a subclass */
+    }
+
+    /**
      * Creates a new [WidgetPropertyDelegate] using the specified type and [initialValue]
      */
     protected fun <T> property(initialValue: T): WidgetPropertyDelegate<T> = WidgetPropertyDelegate(initialValue)
@@ -232,56 +219,6 @@ abstract class Widget<W : Widget<W>> : IDraw {
      * type. Will return null if the type cast fails. See [getWidgetDelegate] for more information.
      */
     fun <T> KProperty<*>.getTypedWidgetDelegate(): WidgetPropertyDelegate<T>? = propertyDelegates[this.name] as? WidgetPropertyDelegate<T>
-
-    /**
-     * Notifies the widget that its state has been changed by a dynamic update or by an animation.
-     * This is called when [isStateEqual] evaluates to false.
-     */
-    open fun stateChanged(new: Widget<*>) {
-        /* can be implemented by a subclass */
-    }
-
-    /**
-     * Clones the graphics object.
-     *
-     * @return an identical copy of the object that the function was called on
-     */
-    abstract fun clone(): W
-
-    /**
-     * Clones the graphics object and adds a padding.
-     *
-     * By adding a padding, the cloned object will get smaller. It stays in the center of the original
-     * object, and the distance between the outline of the cloned object and the outline of the original
-     * object is equal to the padding size.
-     *
-     * @see cloneWithMargin
-     * @return a congruent copy of the object with the given padding to the original object
-     */
-    open fun cloneWithPadding(amount: Double): W = Defaults.cloneWithPadding(this as W, amount)
-
-    /**
-     * Clones the graphics object and adds a margin.
-     *
-     * By adding a padding, the cloned object will get greater. It stays in the center of the original
-     * object, and the distance between the outline of the original object and the outline of the cloned
-     * object is equal to the padding size.
-     *
-     * @see cloneWithPadding
-     * @return a congruent copy of the object with the given margin to the original object
-     */
-    open fun cloneWithMargin(amount: Double): W = Defaults.cloneWithMargin(this as W, amount)
-
-    /**
-     * Creates a new clone that can be modified with the [block] and will be returned from
-     * the function. This is a shorthand for `clone().apply { ... }`.
-     */
-    fun altered(block: W.() -> Unit): W = clone().apply(block)
-
-    /**
-     * Used to create a new instance of the subclass as [W] is the type of the subclass.
-     */
-    abstract fun newInstance(): W
 
     /**
      * Generates an info string for the widget that is used for debugging.
@@ -342,7 +279,7 @@ abstract class Widget<W : Widget<W>> : IDraw {
     // This function is only implemented to deprecate it in this context.
     @Deprecated(
         "This function won't render animations!",
-        ReplaceWith("draw()", "net.inceptioncloud.minecraftmod.engine.internal.Widget"),
+        ReplaceWith("draw()", "net.inceptioncloud.dragonfly.engine.internal.Widget"),
         DeprecationLevel.WARNING
     )
     override fun drawNative() {

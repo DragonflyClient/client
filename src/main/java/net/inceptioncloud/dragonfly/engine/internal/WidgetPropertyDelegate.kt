@@ -59,6 +59,12 @@ class WidgetPropertyDelegate<T>(
 
         thisRef.propertyDelegates[prop.name] = this
 
+        objectProperty.addListener { _, oldValue, newValue ->
+            if (oldValue != newValue) {
+                thisRef.stateChanged()
+            }
+        }
+
         return this
     }
 }
