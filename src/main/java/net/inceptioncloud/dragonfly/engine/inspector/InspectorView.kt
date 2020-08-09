@@ -22,11 +22,12 @@ class InspectorView : View("My View") {
     override val root = borderpane {
         left = treeview<Any> {
             root = TreeItem("Buffer Hierarchy")
+            root.isExpanded = true
 
             populate {
                 when (val value = it.value) {
                     root.value -> listOfNotNull(ScreenOverlay.stage, Minecraft.getMinecraft().currentScreen?.buffer)
-                    is WidgetStage -> value.content.toList()
+                    is WidgetStage -> value.content.toList().also { _ -> it.isExpanded = true }
                     is Pair<*, *> -> (value.second as? AssembledWidget<*>)?.structure?.toList()
                     else -> null
                 }
@@ -37,7 +38,7 @@ class InspectorView : View("My View") {
             cellFormat {
                 text = when (it) {
                     is String -> it
-                    is WidgetStage -> it::class.simpleName
+                    is WidgetStage -> it.name
                     is Pair<*, *> -> it.first as? String
                     else -> null
                 }

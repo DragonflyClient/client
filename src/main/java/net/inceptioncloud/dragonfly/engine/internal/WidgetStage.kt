@@ -16,8 +16,10 @@ import net.inceptioncloud.dragonfly.engine.structure.IDraw
  *
  * A widget can be added to the stage using [add] and the whole stage can be cleared with [clear].
  * You cannot directly remove a widget from the stage, but you can change it's visibility state ([Widget.isVisible]).
+ *
+ * @param name a name for the stage that is used in the inspector
  */
-class WidgetStage {
+class WidgetStage(val name: String) {
 
     /**
      * A mutable map that contains all widgets of the stage.

@@ -16,7 +16,7 @@ object ScreenOverlay {
     /**
      * A widget stage that contains all components.
      */
-    val stage = WidgetStage()
+    val stage = WidgetStage("Screen Overlay")
 
     /**
      * Getter for conveniently accessing the scaled dimensions of the screen.

@@ -94,7 +94,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     private var clickedLinkURI: URI? = null
 
     @JvmField
-    var buffer = WidgetStage()
+    var buffer = WidgetStage(this::class.simpleName!!)
 
     /**
      * The color that is used in the [drawBackgroundFill] function to color the background.
