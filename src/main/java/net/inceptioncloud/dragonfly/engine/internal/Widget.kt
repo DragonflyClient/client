@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.*
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
 import java.util.*
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -73,6 +74,8 @@ abstract class Widget<W : Widget<W>> : IDraw {
      * [attachAnimation]. Animations in any place of the stack can be removed by calling [detachAnimation].
      */
     val animationStack: MutableList<Animation> = Collections.synchronizedList(mutableListOf<Animation>())
+
+    val propertyDelegates = mutableMapOf<String, WidgetPropertyDelegate<*>>()
 
     /**
      * The animation scratchpad of this object.
@@ -211,6 +214,24 @@ abstract class Widget<W : Widget<W>> : IDraw {
     fun isStateEqual(clone: W) = this::class.memberProperties
         .filter { it.hasAnnotation<Interpolate>() || it.hasAnnotation<State>() }
         .none { it.getter.call(this) != it.getter.call(clone) }
+
+    /**
+     * Creates a new [WidgetPropertyDelegate] using the specified type and [initialValue]
+     */
+    protected fun <T> property(initialValue: T): WidgetPropertyDelegate<T> = WidgetPropertyDelegate(initialValue)
+
+    /**
+     * Convenient function to access the [WidgetPropertyDelegate] of a property. If the receiver
+     * property isn't delegated by the a [WidgetPropertyDelegate] (its name is therefore not in
+     * [propertyDelegates]) this function will return null.
+     */
+    fun KProperty<*>.getWidgetDelegate(): WidgetPropertyDelegate<*>? = propertyDelegates[this.name]
+
+    /**
+     * Convenient function to access the [WidgetPropertyDelegate] of a property with a specified
+     * type. Will return null if the type cast fails. See [getWidgetDelegate] for more information.
+     */
+    fun <T> KProperty<*>.getTypedWidgetDelegate(): WidgetPropertyDelegate<T>? = propertyDelegates[this.name] as? WidgetPropertyDelegate<T>
 
     /**
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.
