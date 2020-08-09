@@ -319,7 +319,7 @@ public class GuiPlayerTabOverlay extends Gui {
 
             this.zLevel += 100.0F;
             int strWidth = fontRenderer.getStringWidth(pingText);
-            fontRenderer.drawString(pingText, param2 + param1 - strWidth - 3, param3 + 4, color);
+            fontRenderer.drawStringWithShadow(pingText, param2 + param1 - strWidth - 3, param3 + 4, color);
             this.zLevel -= 100.0F;
 
         }else {

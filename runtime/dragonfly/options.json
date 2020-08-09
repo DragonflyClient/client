@@ -25,5 +25,6 @@
   "chunkUpdateSpeed": 10,
   "useScaledFontRenderers": true,
   "saveGlyphs": true,
-  "preloadFontRenderers": true
+  "preloadFontRenderers": true,
+  "showPingAsNumber": true
 }
