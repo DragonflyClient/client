@@ -467,16 +467,16 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         buttonList.clear()
 
         backgroundImage?.let {
-            +ResponsiveImage(
-                x = 0.0,
-                y = 0.0,
-                width = width.toDouble(),
-                height = height.toDouble(),
-                originalWidth = it.width,
-                originalHeight = it.height,
-                resourceLocation = ResourceLocation(it.resourceLocation),
+            +ResponsiveImage {
+                x = 0.0
+                y = 0.0
+                this.width = this@GuiScreen.width.toDouble()
+                this.height = this@GuiScreen.height.toDouble()
+                originalWidth = it.width
+                originalHeight = it.height
+                resourceLocation = ResourceLocation(it.resourceLocation)
                 color = backgroundFill ?: WidgetColor.DEFAULT
-            ) id "background"
+            } id "background"
         }
         initGui()
     }

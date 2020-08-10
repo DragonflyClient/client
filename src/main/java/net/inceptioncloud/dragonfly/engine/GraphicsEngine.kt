@@ -81,7 +81,6 @@ object GraphicsEngine {
             val title = "${uppermostWidget.value::class.simpleName} #${widget.key}"
             val info = uppermostWidget.value.toInfo().toMutableList()
                 .apply {
-                    add("scratchpad = ${uppermostWidget.value.scratchpad != null}")
                     add("animations = ${uppermostWidget.value.animationStack.size}")
                 }
             val infoHeight = 2 + titleRenderer.height + (fontRenderer.height + 0.5) * info.size

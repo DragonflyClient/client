@@ -122,7 +122,6 @@ abstract class Widget<W : Widget<W>>(
                     it.companions.forEach { lambda -> lambda(this) }
                 }
             }
-
         }
     }
 

@@ -71,33 +71,37 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             // move the first loading circle to the center
             getWidget<FilledCircle>("loading-circle-1")?.run {
                 detachAnimation<MorphAnimation>()
-                morph(duration = 50, easing = EaseQuad.IN_OUT) {
-                    size = 15.0
-                    x = width / 2 - size / 2
-                    y = height / 2 + 5 - size / 2.0
-                }?.post { _, widget ->
+                morph(
+                    50,
+                    EaseQuad.IN_OUT,
+                    ::size to 15.0,
+                    ::x to width / 2 - size / 2,
+                    ::y to height / 2 + 5 - size / 2.0
+                )?.post { _, widget ->
                     // let it grow until it covers the whole screen
-                    (widget as Widget<FilledCircle>).morph(duration = 130, easing = EaseCubic.IN_OUT) {
-                        color = if (result!!.success) WidgetColor(0x34c464) else WidgetColor(0xff6663)
-                        size = sqrt(width.toDouble().pow(2.0) + height.toDouble().pow(2.0))
-                        x = width / 2 - size / 2
-                        y = height / 2 - size / 2
-                    }?.post { _, _ ->
+                    (widget as Widget<FilledCircle>).morph(
+                        130,
+                        EaseCubic.IN_OUT,
+                        FilledCircle::color to if (result!!.success) WidgetColor(0x34c464) else WidgetColor(0xff6663),
+                        FilledCircle::size to sqrt(width.toDouble().pow(2.0) + height.toDouble().pow(2.0)),
+                        FilledCircle::x to width / 2 - size / 2,
+                        FilledCircle::y to height / 2 - size / 2
+                    )?.post { _, _ ->
                         // create the overlay and the overlay border when the screen is covered
-                        val overlay = Rectangle(
-                            x = 0.0,
-                            y = 0.0,
-                            width = width.toDouble(),
-                            height = height.toDouble(),
+                        val overlay = Rectangle {
+                            x = 0.0
+                            y = 0.0
+                            width = this@AttachingKeyUI.width.toDouble()
+                            height = this@AttachingKeyUI.height.toDouble()
                             color = if (result!!.success) WidgetColor(0x34c464) else WidgetColor(0xff6663)
-                        )
-                        val overlayBorder = Rectangle(
-                            x = -20.0,
-                            y = 0.0,
-                            width = width.toDouble(),
-                            height = height.toDouble(),
+                        }
+                        val overlayBorder = Rectangle {
+                            x = -20.0
+                            y = 0.0
+                            width = this@AttachingKeyUI.width.toDouble()
+                            height = this@AttachingKeyUI.height.toDouble()
                             color = DragonflyPalette.background
-                        )
+                        }
 
                         // add the overlay and remove everything else (but the user won't notice)
                         +overlayBorder id "rectangle-overlay-border"
@@ -106,12 +110,16 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
                         // move the overlay away and switch to the target gui screen
                         runAfter(1000) {
-                            overlay.morph(duration = 150, easing = EaseCubic.IN_OUT) {
-                                x = this@AttachingKeyUI.width.toDouble() + 5.0
-                            }?.start()
-                            overlayBorder.morph(duration = 180, easing = EaseCubic.IN_OUT) {
-                                x = this@AttachingKeyUI.width.toDouble()
-                            }?.post { _, _ ->
+                            overlay.morph(
+                                150,
+                                EaseCubic.IN_OUT,
+                                overlay::x to this@AttachingKeyUI.width.toDouble() + 5.0
+                            )?.start()
+                            overlayBorder.morph(
+                                180,
+                                EaseCubic.IN_OUT,
+                                overlayBorder::x to this@AttachingKeyUI.width.toDouble()
+                            )?.post { _, _ ->
                                 Minecraft.getMinecraft().currentScreen = if (result?.success == true) guiMainMenu else enterKeyUI
                             }?.start()
                         }
@@ -122,45 +130,47 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             // morph the second loading circle to the center and hide it
             getWidget<FilledCircle>("loading-circle-2")?.run {
                 detachAnimation<MorphAnimation>()
-                morph(duration = 50, easing = EaseQuad.IN_OUT) {
-                    size = 15.0
-                    x = width / 2 - size / 2
-                    y = height / 2 + 5 - size / 2.0
-                }?.post { _, widget -> widget.isVisible = false }?.start()
+                morph(
+                    50,
+                    EaseQuad.IN_OUT,
+                    ::size to 15.0,
+                    ::x to width / 2 - size / 2,
+                    ::y to height / 2 + 5 - size / 2.0
+                )?.post { _, widget -> widget.isVisible = false }?.start()
             }
         }
     }
 
     override fun initGui() {
-        val header = TextField(
-            x = width / 2 - 125.0,
-            y = height / 2 - 30.0,
-            width = 250.0,
-            height = 20.0,
-            staticText = "Attaching key to current device...",
-            font = Dragonfly.fontManager.defaultFont,
-            fontSize = 30.0,
-            color = DragonflyPalette.foreground,
-            textAlignVertical = Alignment.START,
+        val header = TextField {
+            x = this@AttachingKeyUI.width / 2 - 125.0
+            y = this@AttachingKeyUI.height / 2 - 30.0
+            width = 250.0
+            height = 20.0
+            staticText = "Attaching key to current device..."
+            font = Dragonfly.fontManager.defaultFont
+            fontSize = 30.0
+            color = DragonflyPalette.foreground
+            textAlignVertical = Alignment.START
             textAlignHorizontal = Alignment.CENTER
-        )
+        }
 
-        +RoundedRectangle(
-            x = header.x - 3,
-            y = header.y - 3,
-            width = 0.0,
-            height = header.height + 6,
-            color = DragonflyPalette.accentBright,
+        +RoundedRectangle {
+            x = header.x - 3
+            y = header.y - 3
+            width = 0.0
+            height = header.height + 6
+            color = DragonflyPalette.accentBright
             arc = 3.0
-        ) id "header-background"
+        } id "header-background"
         +header id "header"
 
-        +FilledCircle(
-            x = width / 2 - 15.0,
-            y = height / 2.0 + 5.0 - 3.5,
-            size = 7.0,
+        +FilledCircle {
+            x = this@AttachingKeyUI.width / 2 - 15.0
+            y = this@AttachingKeyUI.height / 2.0 + 5.0 - 3.5
+            size = 7.0
             color = DragonflyPalette.accentNormal
-        ).apply {
+        }.apply {
             if (result != null) {
                 size = sqrt(width.toDouble().pow(2.0) + height.toDouble().pow(2.0))
                 x = width / 2 - size / 2
@@ -169,12 +179,12 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             }
         } id "loading-circle-1"
 
-        +FilledCircle(
-            size = 7.0,
-            x = width / 2 + 8.0,
-            y = height / 2.0 + 5.0 - 3.5,
+        +FilledCircle {
+            size = 7.0
+            x = this@AttachingKeyUI.width / 2 + 8.0
+            y = this@AttachingKeyUI.height / 2.0 + 5.0 - 3.5
             color = DragonflyPalette.accentNormal
-        ).apply { isVisible = result == null } id "loading-circle-2"
+        }.apply { isVisible = result == null } id "loading-circle-2"
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
@@ -191,12 +201,16 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
             // since this block is called on the first draw, we use it to animate the header background
             runAfter(2000) {
-                getWidget<RoundedRectangle>("header-background")?.morph(duration = 200, easing = EaseCubic.IN_OUT) {
-                    width = this@AttachingKeyUI.getWidget<TextField>("header")!!.width + 6
-                }?.start()
-                getWidget<TextField>("header")?.morph(duration = 200, easing = EaseCubic.IN_OUT) {
-                    color = DragonflyPalette.background
-                }?.start()
+                getWidget<RoundedRectangle>("header-background")?.morph(
+                    200,
+                    EaseCubic.IN_OUT,
+                    RoundedRectangle::width to this@AttachingKeyUI.getWidget<TextField>("header")!!.width + 6
+                )?.start()
+                getWidget<TextField>("header")?.morph(
+                    200,
+                    EaseCubic.IN_OUT,
+                    RoundedRectangle::color to DragonflyPalette.background
+                )?.start()
             }
         }
 
@@ -212,21 +226,24 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
         drawBackgroundFill()
 
+        val loadingCircle1 = getWidget<FilledCircle>("loading-circle-1")
+        val loadingCircle2 = getWidget<FilledCircle>("loading-circle-2")
+
         if (result == null) {
             // loading animation while result is not set
-            getWidget<FilledCircle>("loading-circle-1")?.morphBetween(
+            loadingCircle1?.morphBetween(
                 duration = 150,
                 easing = EaseQuad.IN_OUT,
-                first = { x = width / 2 - 15.0 },
-                second = { x = width / 2 + 15.0 - size }
+                first = listOf(FilledCircle::x to width / 2 - 15.0),
+                second = listOf(FilledCircle::x to width / 2 + 15.0 - loadingCircle1.size)
             )
-            getWidget<FilledCircle>("loading-circle-2")?.morphBetween(
+            loadingCircle2?.morphBetween(
                 duration = 150,
                 easing = EaseQuad.IN_OUT,
-                first = { x = width / 2 + 15.0 - size },
-                second = { x = width / 2 - 15.0 }
+                first = listOf(FilledCircle::x to width / 2 + 15.0 - loadingCircle2.size),
+                second = listOf(FilledCircle::x to width / 2 - 15.0)
             )
-        } else if (getWidget<FilledCircle>("loading-circle-1")?.isVisible == false) {
+        } else if (loadingCircle1?.isVisible == false) {
             if (result?.success == true) {
                 // draw the main menu background to provide a smooth transition
                 guiMainMenu?.drawScreen(mouseX, mouseY, partialTicks)
