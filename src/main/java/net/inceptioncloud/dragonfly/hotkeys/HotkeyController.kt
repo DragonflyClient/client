@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import kotlinx.coroutines.processNextEventInCurrentThread
 import net.inceptioncloud.dragonfly.hotkeys.types.HotkeyTypeChat
 import net.inceptioncloud.dragonfly.hotkeys.types.dataclasses.HotkeyData
 import net.inceptioncloud.dragonfly.hotkeys.types.dataclasses.HotkeyTypeChatData
@@ -43,8 +44,6 @@ object HotkeyController {
 
     init {
 
-        addHotkey(35, 42, 2.0, 1.2, Color.decode("#fff"), "HotkeyTypeChat", HotkeyTypeChatData(false, "General Kenobi"))
-
         LogManager.getLogger().info("Hotkey initializing successful!")
     }
 
@@ -60,6 +59,7 @@ object HotkeyController {
         type: String,
         typeData: HotkeyTypeData
     ): Boolean {
+
         if (!configFile.exists()) {
             configFile.createNewFile()
             configFile.writeText("[]")
@@ -76,10 +76,10 @@ object HotkeyController {
 
             if (key == currentKey) {
                 if (currentModifierKey == null) {
-                    return true
+                    return false
                 } else {
                     if (modifierKey == currentModifierKey.asInt) {
-                        return true
+                        return false
                     }
                 }
             }
@@ -116,52 +116,53 @@ object HotkeyController {
     fun removeHotkey(
         key: Int,
         modifierKey: Int?
-    ) {
+    ): Boolean {
 
         if (configFile.exists()) {
 
-            try {
+            val array = Gson().fromJson(configFile.readText(), JsonArray().javaClass)
+            val newArray = JsonArray()
 
-                val reader = FileReader(configFile)
-                val obj = JSONParser().parse(reader)
-                val hotkeys = obj as JSONArray
+            for (entry in array) {
+                val obj = entry as JsonObject
 
-                for (entry in hotkeys) {
-                    val hotkey = entry as JSONObject
+                val data = obj.get("data") as JsonObject
+                val typeData = obj.get("typeData") as JsonObject
+                val currentKey = data.get("key").asInt
+                val currentModifierKey = data.get("modifierKey")
 
-                    if (modifierKey == null) {
-                        if (hotkey.get("$key") != null) {
-                            hotkeys.remove(hotkey)
-                            (hotkey.get("$key") as JSONObject).getAsHotkey()?.let { this.hotkeys.remove(it) }
-                            break
-                        }
-                    } else {
-                        if (hotkey.get("${modifierKey}_$key") != null) {
-                            hotkeys.remove(hotkey)
-                            (hotkey.get("${modifierKey}_$key") as JSONObject).getAsHotkey()
-                                ?.let { this.hotkeys.remove(it) }
-                            break
+                if (currentKey == key) {
+                    if (currentModifierKey != null) {
+                        if (currentModifierKey.asInt != modifierKey) {
+                            newArray.add(obj)
                         }
                     }
-
+                } else {
+                    newArray.add(obj)
                 }
 
-                try {
-
-                    val writer = FileWriter(configFile)
-                    writer.write(hotkeys.toJSONString())
-                    writer.flush()
-                    writer.close()
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                if (obj.get("type").asString == "HotkeyTypeChat") {
+                    hotkeys.remove(
+                        HotkeyTypeChat(
+                            key,
+                            modifierKey,
+                            data.get("time").asDouble,
+                            data.get("delay").asDouble,
+                            Color.decode(data.get("color").asString),
+                            typeData.get("fadeOut").asBoolean,
+                            typeData.get("message").asString
+                        )
+                    )
                 }
 
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
+
+            configFile.writeText(GsonBuilder().setPrettyPrinting().create().toJson(newArray)).also { return true }
+
+
         }
 
+        return false
     }
 
     /**
