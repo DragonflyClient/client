@@ -21,51 +21,46 @@ import kotlin.properties.Delegates
  * text alignment within the bounds of the field. You are also enabled to set a background rectangle with an outline.
  * The text content can be resolved statically or dynamically while the priority is on the dynamic text.
  *
- * @param staticText a statically way to set the text
- * @param dynamicText the function to be called to dynamically change the text of the field
- * @param textAlignHorizontal the horizontal alignment of the text within the field bounds
- * @param textAlignVertical the vertical alignment of the text within the field bounds
- * @param fontRenderer the font renderer to render the text; this has no effect if a [font] is set
- * @param font the font that the text is rendered with
- * @param fontWeight the weight of the font (has no effect if no [font] is set)
- * @param fontSize the size of the font (has no effect if no [font] is set)
- * @param backgroundColor the color of the background rectangle
- * @param padding a padding between the bounds and the text
- * @param adaptHeight whether the height of the text field should be adapted to its requirements
+ * @property staticText a statically way to set the text
+ * @property dynamicText the function to be called to dynamically change the text of the field
+ * @property textAlignHorizontal the horizontal alignment of the text within the field bounds
+ * @property textAlignVertical the vertical alignment of the text within the field bounds
+ * @property fontRenderer the font renderer to render the text; this has no effect if a [font] is set
+ * @property font the font that the text is rendered with
+ * @property fontWeight the weight of the font (has no effect if no [font] is set)
+ * @property fontSize the size of the font (has no effect if no [font] is set)
+ * @property backgroundColor the color of the background rectangle
+ * @property padding a padding between the bounds and the text
+ * @property adaptHeight whether the height of the text field should be adapted to its requirements
  */
 class TextField(
-    @property:State var staticText: String = "No static text set",
-    @property:State var dynamicText: (() -> String)? = null,
-
-    @property:State var textAlignHorizontal: Alignment = START,
-    @property:State var textAlignVertical: Alignment = START,
-
-    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontManager.regular,
-    @property:State var font: WidgetFont? = null,
-    @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
-    @property:Interpolate var fontSize: Double = 19.0,
-
-    @property:Interpolate var backgroundColor: WidgetColor = WidgetColor(0, 0, 0, 0),
-    @property:Interpolate var padding: Double = 0.0,
-
-    @property:Interpolate override var outlineStroke: Double = 0.0,
-    @property:Interpolate override var outlineColor: WidgetColor = WidgetColor.DEFAULT,
-
-    x: Double = 0.0,
-    y: Double = 0.0,
-    @property:Interpolate override var width: Double = 50.0,
-    @property:Interpolate override var height: Double = 50.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
-    @property:State override var horizontalAlignment: Alignment = START,
-    @property:State override var verticalAlignment: Alignment = START,
-    @property:State var adaptHeight: Boolean = false
 ) : AssembledWidget<TextField>(), IPosition, IDimension, IColor, IAlign, IOutline {
 
-    @Interpolate
-    override var x: Double by Delegates.notNull()
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var width: Double by property(50.0)
+    @Interpolate override var height: Double by property(50.0)
+    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    @State override var horizontalAlignment: Alignment by property(START)
+    @State override var verticalAlignment: Alignment by property(START)
+    @State var adaptHeight: Boolean by property(false)
 
-    @Interpolate
-    override var y: Double by Delegates.notNull()
+    @State var staticText: String by property("No static text set")
+    @State var dynamicText: (() -> String)? by property(null)
+
+    @State var textAlignHorizontal: Alignment by property(START)
+    @State var textAlignVertical: Alignment by property(START)
+
+    @State var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
+    @State var font: WidgetFont? by property(null)
+    @State var fontWeight: FontWeight by property(FontWeight.REGULAR)
+    @Interpolate var fontSize: Double by property(19.0)
+
+    @Interpolate var backgroundColor: WidgetColor by property(WidgetColor(0, 0, 0, 0))
+    @Interpolate var padding: Double by property(0.0)
+
+    @Interpolate override var outlineStroke: Double by property(0.0)
+    @Interpolate override var outlineColor: WidgetColor by property(WidgetColor.DEFAULT)
 
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
@@ -180,13 +175,4 @@ class TextField(
             CENTER -> coordinate + (size / 2) - (textSize / 2)
             END -> coordinate + size - textSize - padding
         }
-
-    override fun clone() = TextField(
-        staticText, dynamicText, textAlignHorizontal, textAlignVertical,
-        fontRenderer, font, fontWeight, fontSize,
-        backgroundColor, padding, outlineStroke, outlineColor,
-        x, y, width, height, color, horizontalAlignment, verticalAlignment, adaptHeight
-    )
-
-    override fun newInstance() = TextField()
 }
