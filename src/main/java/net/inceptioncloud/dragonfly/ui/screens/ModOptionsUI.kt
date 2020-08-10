@@ -74,14 +74,14 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
      * UI Initialization
      */
     override fun initGui() {
-        +Image(
-            resourceLocation = ResourceLocation("dragonflyres/icons/info.png"),
-            x = 0.0,
-            y = 0.0,
-            width = 14.0,
-            height = 14.0,
+        +Image {
+            resourceLocation = ResourceLocation("dragonflyres/icons/info.png")
+            x = 0.0
+            y = 0.0
+            width = 14.0
+            height = 14.0
             color = WidgetColor(255, 255, 255, 0)
-        ) id "help-icon"
+        } id "help-icon"
 
         uiList = uiListFactory {
             dimensions {
@@ -148,9 +148,11 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         if (newFocusedEntry == null && focusedEntry != null) {
             focusedEntry = newFocusedEntry
             helpAttachedEntry = null
-            helpIcon?.morph(50, EaseCubic.IN_OUT) {
-                color = WidgetColor(255, 255, 255, 0)
-            }?.start()
+            helpIcon?.morph(
+                50,
+                EaseCubic.IN_OUT,
+                helpIcon::color to WidgetColor(255, 255, 255, 0)
+            )?.start()
         } else if (newFocusedEntry is OptionEntry<*> && newFocusedEntry != focusedEntry) {
             focusedEntry = newFocusedEntry
             helpAttachedEntry = newFocusedEntry
@@ -158,15 +160,19 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
                 helpIcon?.run {
                     x = focusedEntry!!.x - 19.0
                     y = focusedEntry!!.y + 3.0
-                    morph(50, EaseCubic.IN_OUT) {
-                        color = WidgetColor(255, 255, 255, 255)
-                    }?.start()
+                    morph(
+                        50,
+                        EaseCubic.IN_OUT,
+                        ::color to WidgetColor(255, 255, 255, 255)
+                    )?.start()
                 }
             } else {
-                helpIcon.morph(25, EaseCubic.IN_OUT) {
-                    x = focusedEntry!!.x - 19.0
-                    y = focusedEntry!!.y + 3.0
-                }?.start()
+                helpIcon.morph(
+                    25,
+                    EaseCubic.IN_OUT,
+                    helpIcon::x to focusedEntry!!.x - 19.0,
+                    helpIcon::y to focusedEntry!!.y + 3.0
+                )?.start()
             }
         }
 
