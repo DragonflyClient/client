@@ -21,7 +21,9 @@ private val structureColors = arrayOf(
  * widgets. It has the same features but has more potential when it comes to designing complex UIs.
  */
 @Suppress("LeakingThis")
-abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
+abstract class AssembledWidget<W : AssembledWidget<W>>(
+    initializerBlock: (W.() -> Unit)? = null
+) : Widget<W>(initializerBlock) {
 
     /**
      * Contains the base structure which the widget is assembled with.
@@ -41,16 +43,9 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
         reassemble()
     }
 
-    override fun stateChanged(new: Widget<*>) {
-        if (new is AssembledWidget) {
-            structure.forEach {
-                it.value.stateChanged(
-                    new.structure[it.key] ?: it.value
-                )
-            }
-
-            updateStructure()
-        } else LogManager.getLogger().warn("State changed to not-assembled widget")
+    override fun stateChanged() {
+        structure.forEach { it.value.stateChanged() }
+        updateStructure()
     }
 
     override fun update() {

@@ -31,35 +31,31 @@ val DEFAULT_TEXT_COLOR = WidgetColor(0xababab)
  * A simple text field that the user can write to. Supports common operations like copying, pasting,
  * cutting and selecting with shift + arrow key.
  *
- * @param label a short text that describes what the user should write into the field
- * @param isEnabled if the field is enabled, the user can write text to it
- * @param maxStringLength the maximum amount of characters that fit into the field
- * @param color the color that is used for the cursor and other highlighted parts of the field
+ * @property label a short text that describes what the user should write into the field
+ * @property isEnabled if the field is enabled, the user can write text to it
+ * @property maxStringLength the maximum amount of characters that fit into the field
+ * @property color the color that is used for the cursor and other highlighted parts of the field
  */
 class InputTextField(
-    @property:State var font: WidgetFont = Dragonfly.fontManager.defaultFont,
-    @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
-    @property:Interpolate var fontSize: Double = 18.0,
-    @property:Interpolate var padding: Double = 2.0,
+    initializerBlock: (InputTextField.() -> Unit)? = null
+) : AssembledWidget<InputTextField>(initializerBlock), IPosition, IDimension, IAlign, IColor {
 
-    @property:State var label: String = "Input Label",
-    @property:State var isEnabled: Boolean = true,
-    @property:State var maxStringLength: Int = 200,
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var width: Double by property(100.0)
+    @Interpolate override var height: Double by property(20.0)
+    @Interpolate override var color: WidgetColor by property(WidgetColor(BluePalette.PRIMARY))
+    @State override var horizontalAlignment: Alignment by property(Alignment.START)
+    @State override var verticalAlignment: Alignment by property(Alignment.START)
 
-    x: Double = 0.0,
-    y: Double = 0.0,
-    @property:Interpolate override var width: Double = 100.0,
-    @property:Interpolate override var height: Double = 20.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor(BluePalette.PRIMARY),
-    @property:State override var horizontalAlignment: Alignment = Alignment.START,
-    @property:State override var verticalAlignment: Alignment = Alignment.START
-) : AssembledWidget<InputTextField>(), IPosition, IDimension, IAlign, IColor {
+    @State var font: WidgetFont by property(Dragonfly.fontManager.defaultFont)
+    @State var fontWeight: FontWeight by property(FontWeight.REGULAR)
+    @Interpolate var fontSize: Double by property(18.0)
+    @Interpolate var padding: Double by property(2.0)
 
-    @Interpolate
-    override var x: Double by Delegates.notNull()
-
-    @Interpolate
-    override var y: Double by Delegates.notNull()
+    @State var label: String by property("Input Label")
+    @State var isEnabled: Boolean by property(true)
+    @State var maxStringLength: Int by property(200)
 
     /**
      * Whether the text field is currently focused. If it is, typed keys will be passed on to the input field
