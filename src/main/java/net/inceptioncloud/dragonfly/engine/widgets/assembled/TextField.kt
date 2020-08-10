@@ -92,6 +92,7 @@ class TextField(
 
         for ((index, line) in lines.withIndex()) {
             val widget = structure["line-$index"] ?: TextRenderer().also { structure["line-$index"] = it }
+            widget.id = "$id/line-$index"
             (widget as TextRenderer).also {
                 it.fontRenderer = fontRenderer
                 it.font = font

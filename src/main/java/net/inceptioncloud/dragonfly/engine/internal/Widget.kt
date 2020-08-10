@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
+import com.google.gson.JsonArray
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
@@ -229,7 +230,7 @@ abstract class Widget<W : Widget<W>>(
                     notifyStateChanged()
                     LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: $oldValue -> $newValue")
                 } else {
-                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: Skipped because of state update")
+                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: $oldValue -> $newValue (skipped)")
                 }
             }
         }

@@ -30,6 +30,8 @@ class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> 
      */
     infix fun id(id: String): W {
         this.id = id
+        widget.id = id
+
         build()
         return widget
     }
@@ -38,7 +40,6 @@ class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> 
      * Build the pair.
      */
     private fun build() {
-        widget.id = id!!
         LogManager.getLogger().info("Setting id to $id")
         widget.isInStateUpdate = true
 

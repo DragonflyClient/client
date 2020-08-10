@@ -37,8 +37,8 @@ class TextRenderer(
 
     @Interpolate override var x: Double by property(0.0)
     @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double by property(0.0)
-    @Interpolate override var height: Double by property(0.0)
+    @Interpolate override var width: Double = 0.0
+    @Interpolate override var height: Double = 0.0
     @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
     override fun preRender() {

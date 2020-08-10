@@ -85,7 +85,7 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
     fun reassemble() {
         structure = assemble().toMutableMap().also {
             it.values.forEach { widget -> widget.isInAssembled = true }
-            it.forEach { (id, widget) -> widget.id = id }
+            it.forEach { (id, widget) -> widget.id = "${this.id}/$id" }
         }
     }
 

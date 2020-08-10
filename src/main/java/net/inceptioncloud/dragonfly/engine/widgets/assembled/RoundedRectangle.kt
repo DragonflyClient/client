@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Arc
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import kotlin.properties.Delegates
 
 /**
  * ## Rounded Rectangle Assembled Widget
