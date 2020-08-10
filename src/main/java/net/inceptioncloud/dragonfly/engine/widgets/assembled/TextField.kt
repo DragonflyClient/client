@@ -34,7 +34,8 @@ import kotlin.properties.Delegates
  * @property adaptHeight whether the height of the text field should be adapted to its requirements
  */
 class TextField(
-) : AssembledWidget<TextField>(), IPosition, IDimension, IColor, IAlign, IOutline {
+    initializerBlock: (TextField.() -> Unit)? = null
+) : AssembledWidget<TextField>(initializerBlock), IPosition, IDimension, IColor, IAlign, IOutline {
 
     @Interpolate override var x: Double by property(0.0)
     @Interpolate override var y: Double by property(0.0)
