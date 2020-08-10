@@ -6,6 +6,8 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.internal.*
@@ -116,19 +118,19 @@ class InputTextField(
         val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
             ?: error("Structure should contain bottom line overlay!")
 
-        label.attachAnimation(
-            MorphAnimation(label.clone().also {
-                it.fontSize = if (isLabelRaised) fontSize / 1.8 else fontSize
-                it.height = if (isLabelRaised) height / 2.5 else height
-                it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
-            }, 20)
-        ) { start() }
+        label.morph(
+            20,
+            null,
+            label::fontSize to if (isLabelRaised) fontSize / 1.8 else fontSize,
+            label::height to if (isLabelRaised) height / 2.5 else height,
+            label::color to if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
+        )?.start()
 
-        lineOverlay.attachAnimation(
-            MorphAnimation(lineOverlay.clone().also {
-                it.width = if (focused) width else 0.0
-            }, 60, EaseCubic.IN_OUT)
-        ) { start() }
+        lineOverlay.morph(
+            60,
+            EaseCubic.IN_OUT,
+            lineOverlay::width to if (focused) width else 0.0
+        )?.start()
     }
 
     /**
@@ -252,22 +254,17 @@ class InputTextField(
         cursorX += 0.5
 
         val cursor = (structure["cursor"] as Rectangle)
-        val destinationCursorX = (cursor.findAnimation<MorphAnimation>()?.destination as? Rectangle)?.x
+        val destinationCursorX = cursor.findAnimation<MorphAnimation>()?.updates?.find { it.first == cursor::x }?.second
         cursor.isVisible = cursorVisible
 
         if (cursor.x != cursorX && destinationCursorX != cursorX) {
             timeCursorMoved = System.currentTimeMillis()
             cursor.findAnimation<MorphAnimation>()?.let { cursor.detachAnimation(it) }
-            cursor.attachAnimation(
-                MorphAnimation(
-                    cursor.clone().apply { x = cursorX }, duration = (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20)
-                )
-            ) {
-                start()
-                post { animation: Animation, widget: Widget<*> ->
-                    widget.detachAnimation(animation)
-                }
-            }
+            cursor.morph(
+                (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20),
+                null,
+                cursor::x to cursorX
+            )?.post { animation, widget -> widget.detachAnimation(animation) }?.start()
         }
 
         (structure["input-text"] as TextField).also {
@@ -356,13 +353,6 @@ class InputTextField(
             setCursorPosition(fontRenderer.trimStringToWidth(s, i).length + lineScrollOffset)
         }
     }
-
-    override fun clone() = InputTextField(
-        font, fontWeight, fontSize, padding, label, isEnabled, maxStringLength,
-        x, y, width, height, color, horizontalAlignment, verticalAlignment
-    )
-
-    override fun newInstance() = InputTextField()
 
     /* == Input Text Field Utility */
 

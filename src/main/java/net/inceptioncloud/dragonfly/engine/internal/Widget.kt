@@ -28,7 +28,7 @@ import kotlin.reflect.jvm.isAccessible
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
 abstract class Widget<W : Widget<W>>(
-    val initializerBlock: W.() -> Unit
+    val initializerBlock: (W.() -> Unit)? = null
 ) : IDraw {
 
     /**
