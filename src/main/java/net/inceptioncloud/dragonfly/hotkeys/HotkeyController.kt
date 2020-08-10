@@ -43,7 +43,7 @@ object HotkeyController {
     val configFile = File("dragonfly/hotkeys.json")
 
     init {
-
+        registerHotkeys()
         LogManager.getLogger().info("Hotkey initializing successful!")
     }
 
@@ -170,19 +170,53 @@ object HotkeyController {
      */
     fun registerHotkeys() {
         if (configFile.exists()) {
-            val reader = FileReader(configFile)
-            val obj = JSONParser().parse(reader)
-            val hotkeys = obj as JSONArray
 
-            for (title in hotkeys) {
-                for (key in (title as JSONObject).keys) {
-                    val hotkey = title.get(key) as JSONObject
-                    hotkey.getAsHotkey()?.let { this.hotkeys.add(it) }
+            val array = Gson().fromJson(configFile.readText(), JsonArray().javaClass)
+
+            for(entry in array) {
+                val obj = entry as JsonObject
+
+                val data = obj.get("data") as JsonObject
+                val typeData = obj.get("typeData") as JsonObject
+                val currentModifierKey = data.get("modifierKey")
+                var modifierKey: Int?
+
+                if(currentModifierKey == null) {
+                    modifierKey = null
+                }else {
+                    modifierKey = currentModifierKey.asInt
+                }
+
+                println("-")
+                println(data.get("key").asInt)
+                println(modifierKey)
+                println(currentModifierKey)
+                println("-")
+
+                if (obj.get("type").asString == "HotkeyTypeChat") {
+                    hotkeys.add(
+                        HotkeyTypeChat(
+                            data.get("key").asInt,
+                            modifierKey,
+                            data.get("time").asDouble,
+                            data.get("delay").asDouble,
+                            Color.decode(data.get("color").asString),
+                            typeData.get("fadeOut").asBoolean,
+                            typeData.get("message").asString
+                        )
+                    )
                 }
 
             }
 
+            for(hotkey in hotkeys) {
+                if(hotkey is HotkeyTypeChat) {
+                    println("${hotkey.message} ${hotkey.key} ${hotkey.modifierKey}")
+                }
+            }
+
         } else {
+            configFile.createNewFile()
             configFile.writeText("[]")
         }
     }
