@@ -206,6 +206,9 @@ abstract class Widget<W : Widget<W>>(
         /* can be implemented by a subclass */
     }
 
+    /**
+     * Calls the [stateChanged] function while taking care of setting the [isInStateUpdate] boolean.
+     */
     fun notifyStateChanged() {
         isInStateUpdate = true
         try {

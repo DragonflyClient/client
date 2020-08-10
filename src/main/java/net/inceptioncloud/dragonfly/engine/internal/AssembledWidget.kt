@@ -89,6 +89,9 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
         }
     }
 
+    /**
+     * Calls the [updateStructure] function while taking care of setting the [isInStateUpdate] boolean.
+     */
     fun runStructureUpdate() {
         isInStateUpdate = true
         try {
