@@ -40,9 +40,9 @@ object Toast {
 
         val next = queue.poll()
 
-        next.updateStructure()
+        next.runStructureUpdate()
         next.y = ScreenOverlay.dimensions.height - 45.0
-        next.updateStructure()
+        next.runStructureUpdate()
 
         ScreenOverlay.addComponent("toast", next)
 

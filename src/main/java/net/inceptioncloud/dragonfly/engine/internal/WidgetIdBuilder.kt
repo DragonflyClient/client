@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
+import org.apache.logging.log4j.LogManager
+
 /**
  * A builder for easily creating pairs of a widget and an id.
  *
@@ -36,7 +38,16 @@ class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> 
      * Build the pair.
      */
     private fun build() {
-        widget.initializerBlock?.invoke(widget)
+        widget.id = id!!
+        LogManager.getLogger().info("Setting id to $id")
+        widget.isInStateUpdate = true
+
+        try {
+            widget.initializerBlock?.invoke(widget)
+        } finally {
+            widget.isInStateUpdate = false
+        }
+
         onBuild(id!!, widget)
     }
 }

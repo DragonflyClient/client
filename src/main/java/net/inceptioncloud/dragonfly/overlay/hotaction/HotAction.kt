@@ -32,13 +32,13 @@ object HotAction {
         if (!OptionsSectionOverlay.enableHotActions.getKey().get())
             return
 
-        queue.offer(HotActionWidget().apply {
-            this.title = title
-            this.message = message
-            this.duration = duration
-            this.actions = actions
-            this.allowMultipleActions = allowMultipleActions
-        })
+        queue.offer(HotActionWidget(
+            title,
+            message,
+            duration,
+            actions,
+            allowMultipleActions
+        ))
         displayNext()
     }
 
@@ -52,9 +52,9 @@ object HotAction {
 
         val next = queue.poll()
 
-        next.updateStructure()
+        next.runStructureUpdate()
         next.x = -next.width - 5.0
-        next.updateStructure()
+        next.runStructureUpdate()
 
         ScreenOverlay.addComponent("hot-action", next)
         next.morph(

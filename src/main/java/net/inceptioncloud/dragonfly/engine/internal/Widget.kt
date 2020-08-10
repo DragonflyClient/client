@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.*
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
+import org.apache.logging.log4j.LogManager
 import java.util.*
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.hasAnnotation
@@ -31,6 +32,8 @@ abstract class Widget<W : Widget<W>>(
     val initializerBlock: (W.() -> Unit)? = null
 ) : IDraw {
 
+    var id: String? = null
+
     /**
      * An object on which some operations are synchronized to provide thread-safety.
      */
@@ -56,6 +59,8 @@ abstract class Widget<W : Widget<W>>(
      * won't be called by the parent [WidgetStage] that contains the widget.
      */
     var isVisible = true
+
+    var isInStateUpdate = false
 
     /**
      * The factor with which the widget is scaled when drawing.
@@ -197,14 +202,36 @@ abstract class Widget<W : Widget<W>>(
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.
      * This is called when [isStateEqual] evaluates to false.
      */
-    open fun stateChanged() {
+    protected open fun stateChanged() {
         /* can be implemented by a subclass */
+    }
+
+    fun notifyStateChanged() {
+        isInStateUpdate = true
+        try {
+            stateChanged()
+        } finally {
+            isInStateUpdate = false
+        }
     }
 
     /**
      * Creates a new [WidgetPropertyDelegate] using the specified type and [initialValue]
      */
-    protected fun <T> property(initialValue: T): WidgetPropertyDelegate<T> = WidgetPropertyDelegate(initialValue)
+    protected fun <T> property(initialValue: T): WidgetPropertyDelegate<T> {
+        val delegate = WidgetPropertyDelegate(initialValue)
+        delegate.objectProperty.addListener { _, oldValue, newValue ->
+            if (oldValue != newValue) {
+                if (!isInStateUpdate) {
+                    notifyStateChanged()
+                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: $oldValue -> $newValue")
+                } else {
+                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: Skipped because of state update")
+                }
+            }
+        }
+        return delegate
+    }
 
     /**
      * Convenient function to access the [WidgetPropertyDelegate] of a property. If the receiver

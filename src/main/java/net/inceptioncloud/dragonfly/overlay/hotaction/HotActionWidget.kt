@@ -28,6 +28,11 @@ import kotlin.properties.Delegates
  * @property actions a list of actions that can be executed
  */
 class HotActionWidget(
+    val title: String = "Hot Action",
+    val message: String = "This is a hot action",
+    val duration: Int = 200,
+    val actions: List<Action> = listOf(),
+    val allowMultipleActions: Boolean = false,
     initializerBlock: (HotActionWidget.() -> Unit)? = null
 ) : AssembledWidget<HotActionWidget>(initializerBlock), IPosition, IDimension {
 
@@ -35,24 +40,19 @@ class HotActionWidget(
     @Interpolate override var y: Double by property(15.0)
     @Interpolate override var width: Double by property(-1.0)
     @Interpolate override var height: Double by property(-1.0)
-    
-    @State var title: String by property("Hot Action")
-    @State var message: String by property("This is a hot action")
-    @State var duration: Int by property(200)
-    @State var actions: List<Action> by property(listOf())
-    @State var allowMultipleActions: Boolean by property(false)
 
     /**
      * The function that is used to convert an [Action] to a representing string
      */
     val joinFunc: (action: Action) -> CharSequence = { action ->
-        "§#EF852E${actions.indexOf(action).let { 
-        if (OptionsSectionOverlay.hotActionsTriggerMode.key.get() == 0) {
-            "F${it + 7}"
-        } else {
-            "${it + 1}."
-        }
-    }} §r${action.name}" }
+        "§#EF852E${actions.indexOf(action).let {
+            if (OptionsSectionOverlay.hotActionsTriggerMode.key.get() == 0) {
+                "F${it + 7}"
+            } else {
+                "${it + 1}."
+            }
+        }} §r${action.name}"
+    }
 
     /**
      * The time of initialization that is used for the timer (set when invoking [updateStructure])

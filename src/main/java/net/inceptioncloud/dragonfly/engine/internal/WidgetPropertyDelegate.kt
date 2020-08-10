@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
 import javafx.beans.property.SimpleObjectProperty
+import org.apache.logging.log4j.LogManager
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -58,13 +59,6 @@ class WidgetPropertyDelegate<T>(
         this.property = prop
 
         thisRef.propertyDelegates[prop.name] = this
-
-        objectProperty.addListener { _, oldValue, newValue ->
-            if (oldValue != newValue) {
-                thisRef.stateChanged()
-            }
-        }
-
         return this
     }
 }

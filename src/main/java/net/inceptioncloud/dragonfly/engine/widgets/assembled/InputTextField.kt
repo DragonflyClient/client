@@ -266,7 +266,7 @@ class InputTextField(
         (structure["input-text"] as TextField).also {
             if (it.staticText != visibleText) {
                 it.staticText = visibleText
-                it.updateStructure()
+                it.runStructureUpdate()
             }
         }
 

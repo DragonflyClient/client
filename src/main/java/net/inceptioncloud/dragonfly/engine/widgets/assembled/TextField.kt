@@ -150,7 +150,7 @@ class TextField(
     override fun update() {
         // update instantly when using dynamic text
         if (dynamicText != null) {
-            updateStructure()
+            runStructureUpdate()
         }
 
         super.update()

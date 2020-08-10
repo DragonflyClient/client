@@ -43,8 +43,8 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
     }
 
     override fun stateChanged() {
-        structure.forEach { it.value.stateChanged() }
-        updateStructure()
+        structure.forEach { it.value.notifyStateChanged() }
+        runStructureUpdate()
     }
 
     override fun update() {
@@ -54,7 +54,7 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
 
     override fun render() {
         if (!initialized) {
-            updateStructure()
+            runStructureUpdate()
             initialized = true
         }
 
@@ -85,6 +85,16 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
     fun reassemble() {
         structure = assemble().toMutableMap().also {
             it.values.forEach { widget -> widget.isInAssembled = true }
+            it.forEach { (id, widget) -> widget.id = id }
+        }
+    }
+
+    fun runStructureUpdate() {
+        isInStateUpdate = true
+        try {
+            updateStructure()
+        } finally {
+            isInStateUpdate = false
         }
     }
 
@@ -112,5 +122,5 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
     /**
      * Updates the structure of the assembled widget.
      */
-    abstract fun updateStructure()
+    protected abstract fun updateStructure()
 }
