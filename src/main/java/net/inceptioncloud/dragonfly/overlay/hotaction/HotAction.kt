@@ -32,7 +32,13 @@ object HotAction {
         if (!OptionsSectionOverlay.enableHotActions.getKey().get())
             return
 
-        queue.offer(HotActionWidget(title, message, duration, actions, allowMultipleActions))
+        queue.offer(HotActionWidget().apply {
+            this.title = title
+            this.message = message
+            this.duration = duration
+            this.actions = actions
+            this.allowMultipleActions = allowMultipleActions
+        })
         displayNext()
     }
 
@@ -51,9 +57,11 @@ object HotAction {
         next.updateStructure()
 
         ScreenOverlay.addComponent("hot-action", next)
-        next.morph(duration = 70, easing = EaseCubic.IN_OUT) {
-            x = 0.0
-        }?.start()
+        next.morph(
+            70,
+            EaseCubic.IN_OUT,
+            next::x to 0.0
+        )?.start()
     }
 
     /**
@@ -63,13 +71,14 @@ object HotAction {
     fun finish(hotAction: HotActionWidget): Unit = with(hotAction) {
         expired = true
 
-        morph(duration = 70, easing = EaseCubic.IN_OUT) {
-            x = -width - 5.0
-        }?.post { _, _ ->
+        morph(
+            70,
+            EaseCubic.IN_OUT,
+            ::x to -width - 5.0
+        )?.post { _, _ ->
             ScreenOverlay.stage.content.remove("hot-action")
             displayNext()
-        }?.companion { scratchpad, base ->
-            (scratchpad as AssembledWidget).getWidget<Rectangle>("timer")?.isVisible = false
+        }?.companion { base ->
             (base as AssembledWidget).getWidget<Rectangle>("timer")?.isVisible = false
         }?.start()
     }
