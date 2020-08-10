@@ -16,11 +16,6 @@ import java.lang.management.RuntimeMXBean
 object StartupGuiSubscriber {
     @Subscribe
     fun onStartupGui(event: StartupGuiEvent) {
-        if (Dragonfly.isDeveloperMode) {
-            event.target = EngineTestUI()
-            return
-        }
-
         if (KeyStorage.isKeySaved()) {
             LogManager.getLogger().info("Validating stored key '${KeyStorage.getStoredKey()}'...")
             val result = KeyController.validateStoredKey()

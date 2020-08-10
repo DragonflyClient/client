@@ -51,6 +51,8 @@ class RoundedRectangle(
     }
 
     override fun updateStructure() {
+        structure.forEach { it.value.isVisible = width > arc && height > arc }
+
         val spaceVertical = height - arc * 2
         val spaceHorizontal = width - arc * 2
 
@@ -111,6 +113,5 @@ class RoundedRectangle(
                     height = arc * 2
                 }
             }
-        initialized = true
     }
 }

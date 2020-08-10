@@ -228,9 +228,9 @@ abstract class Widget<W : Widget<W>>(
             if (oldValue != newValue) {
                 if (!isInStateUpdate) {
                     notifyStateChanged()
-                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: $oldValue -> $newValue")
+//                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: $oldValue -> $newValue")
                 } else {
-                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: $oldValue -> $newValue (skipped)")
+//                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: $oldValue -> $newValue (skipped)")
                 }
             }
         }

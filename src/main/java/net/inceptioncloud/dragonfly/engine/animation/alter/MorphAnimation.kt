@@ -34,7 +34,8 @@ class MorphAnimation(
 
     override fun initAnimation(parent: Widget<*>): Boolean {
         return if (super.initAnimation(parent)) {
-            updates.forEach { (prop, destination) ->
+            updates.forEach { (generalProp, destination) ->
+                val prop = getPropertyIn(generalProp, parent)
                 val initialValue = prop.getter.call(parent)
                 val sequence = Sequence.generateSequence(initialValue, destination, duration)
                     .withEasing(easing)
@@ -84,6 +85,7 @@ class MorphAnimation(
             if (!doesModifyState(filteredUpdates))
                 return null
 
+            LogManager.getLogger().info("Starting morph transition on ${this::class.simpleName}")
             return MorphAnimation(filteredUpdates, duration, easing).also { attachAnimation(it) }
         }
 
@@ -114,28 +116,31 @@ class MorphAnimation(
          */
         private fun Widget<*>.doesModifyState(updates: List<PropertyUpdate>) =
             updates.any { (prop, value) ->
-                this::class.declaredMemberProperties.contains(prop)
+                this::class.memberProperties.any { it.name == prop.name }
                         && prop.hasAnnotation<Interpolate>()
-                        && prop.getter.call(this) != value
+                        && getPropertyIn(prop, this).getter.call(this) != value
             }
 
         /**
          * Builds a map out of the given array of [updates] and filters out all unsuitable properties.
          */
         private fun Widget<*>.filter(updates: List<PropertyUpdate>): List<PropertyUpdate> {
-            val unsuitable = updates
+            val suitable = updates
                 .map { it.first }
-                .filter { this::class.declaredMemberProperties.contains(it) }
+                .filter { this::class.memberProperties.any { that -> it.name == that.name } }
                 .filter { it.hasAnnotation<Interpolate>() }
                 .filterIsInstance<KMutableProperty<*>>()
 
-            if (unsuitable.isNotEmpty()) {
+            if (suitable.size != updates.size) {
                 LogManager.getLogger("Morph Transition").warn(
-                    "${unsuitable.size} propert${if(unsuitable.size == 1) "y is" else "ies are"} unsuitable on ${javaClass.simpleName}!"
+                    "${updates.size - suitable.size} propert${if (suitable.size == 1) "y is" else "ies are"} unsuitable on ${javaClass.simpleName}!"
                 )
             }
 
-            return updates.filter { it.first !in unsuitable }
+            return updates.filter { it.first in suitable }
         }
+
+        private fun getPropertyIn(prop: KProperty<*>, obj: Any) =
+            obj::class.memberProperties.first { it.name == prop.name }
     }
 }

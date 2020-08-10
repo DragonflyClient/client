@@ -1,7 +1,5 @@
 package net.inceptioncloud.dragonfly.key.ui
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
@@ -77,17 +75,18 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                     50,
                     EaseQuad.IN_OUT,
                     ::size to 15.0,
-                    ::x to width / 2 - size / 2,
-                    ::y to height / 2 + 5 - size / 2.0
+                    ::x to this@AttachingKeyUI.width / 2 - size / 2,
+                    ::y to this@AttachingKeyUI.height / 2 + 5 - size / 2.0
                 )?.post { _, widget ->
                     // let it grow until it covers the whole screen
+                    val targetSize = sqrt(this@AttachingKeyUI.width.toDouble().pow(2.0) + this@AttachingKeyUI.height.toDouble().pow(2.0))
                     (widget as Widget<FilledCircle>).morph(
                         130,
                         EaseCubic.IN_OUT,
                         FilledCircle::color to if (result!!.success) WidgetColor(0x34c464) else WidgetColor(0xff6663),
-                        FilledCircle::size to sqrt(width.toDouble().pow(2.0) + height.toDouble().pow(2.0)),
-                        FilledCircle::x to width / 2 - size / 2,
-                        FilledCircle::y to height / 2 - size / 2
+                        FilledCircle::size to targetSize,
+                        FilledCircle::x to this@AttachingKeyUI.width / 2 - targetSize / 2,
+                        FilledCircle::y to this@AttachingKeyUI.height / 2 - targetSize / 2
                     )?.post { _, _ ->
                         // create the overlay and the overlay border when the screen is covered
                         val overlay = Rectangle {
@@ -144,7 +143,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
     }
 
     override fun initGui() {
-        val header = TextField {
+        val header = TextField().apply {
             x = this@AttachingKeyUI.width / 2 - 125.0
             y = this@AttachingKeyUI.height / 2 - 30.0
             width = 250.0
@@ -157,7 +156,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             textAlignHorizontal = Alignment.CENTER
         }
 
-        +RoundedRectangle {
+        +RoundedRectangle().apply {
             x = header.x - 3
             y = header.y - 3
             width = 0.0
@@ -174,9 +173,9 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             color = DragonflyPalette.accentNormal
         }.apply {
             if (result != null) {
-                size = sqrt(width.toDouble().pow(2.0) + height.toDouble().pow(2.0))
-                x = width / 2 - size / 2
-                y = height / 2 - size / 2
+                size = sqrt(this@AttachingKeyUI.width.toDouble().pow(2.0) + this@AttachingKeyUI.height.toDouble().pow(2.0))
+                x = this@AttachingKeyUI.width / 2 - size / 2
+                y = this@AttachingKeyUI.height / 2 - size / 2
                 color = if (result?.success == true) WidgetColor(0x34c464) else WidgetColor(0xff6663)
             }
         } id "loading-circle-1"

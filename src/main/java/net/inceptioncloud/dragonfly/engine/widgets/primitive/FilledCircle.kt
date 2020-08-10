@@ -18,8 +18,8 @@ class FilledCircle(
     initializerBlock: (FilledCircle.() -> Unit)? = null
 ) : Widget<FilledCircle>(initializerBlock), IPosition, IColor, IAlign, ISize {
 
-    @Interpolate override var x by Delegates.notNull<Double>()
-    @Interpolate override var y by Delegates.notNull<Double>()
+    @Interpolate override var x by property(0.0)
+    @Interpolate override var y by property(0.0)
     @Interpolate override var size: Double by property(50.0)
     @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
     @State override var horizontalAlignment: Alignment by property(Alignment.START)

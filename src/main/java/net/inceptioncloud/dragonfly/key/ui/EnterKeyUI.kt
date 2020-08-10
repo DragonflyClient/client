@@ -118,8 +118,6 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             1 -> pasteFromClipboard()
             2 -> redeemKey()
         }
-
-        Inspector.launch()
     }
 
     /**
