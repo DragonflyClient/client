@@ -8,17 +8,34 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
 
+/**
+ * ## Responsive Image
+ *
+ * A wrapper around an image which resizes it to keep its aspect ratio in the container.
+ * Acts like `object-fit: cover` in CSS.
+ *
+ * ### MDN web docs
+ * > "The replaced content is sized to maintain its aspect ratio while filling the element’s
+ * entire content box. If the object's aspect ratio does not match the aspect ratio of its
+ * box, then the object will be clipped to fit."
+ *
+ * @property originalWidth the original with of the image
+ * @property originalHeight the original height of the image
+ * @property resourceLocation the resource location of the image
+ */
 class ResponsiveImage(
-    @property:Interpolate override var x: Double = 0.0,
-    @property:Interpolate override var y: Double = 0.0,
-    @property:Interpolate override var width: Double = 50.0,
-    @property:Interpolate override var height: Double = 50.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
+    initializerBlock: (ResponsiveImage.() -> Unit)
+) : AssembledWidget<ResponsiveImage>(initializerBlock), IPosition, IDimension, IColor {
 
-    @property:Interpolate var originalWidth: Double = width,
-    @property:Interpolate var originalHeight: Double = width,
-    @property:State var resourceLocation: ResourceLocation? = null
-) : AssembledWidget<ResponsiveImage>(), IPosition, IDimension, IColor {
+    @property:Interpolate override var x: Double by property(0.0)
+    @property:Interpolate override var y: Double by property(0.0)
+    @property:Interpolate override var width: Double by property(50.0)
+    @property:Interpolate override var height: Double by property(50.0)
+    @property:Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+
+    @property:Interpolate var originalWidth: Double by property(width)
+    @property:Interpolate var originalHeight: Double by property(width)
+    @property:State var resourceLocation: ResourceLocation? by property(null)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "image" to Image()
@@ -56,10 +73,4 @@ class ResponsiveImage(
     override fun postRender() {
         GlStateManager.disableBlend()
     }
-
-    override fun clone(): ResponsiveImage = ResponsiveImage(
-        x, y, width, height, color, originalWidth, originalHeight, resourceLocation
-    )
-
-    override fun newInstance(): ResponsiveImage = ResponsiveImage()
 }

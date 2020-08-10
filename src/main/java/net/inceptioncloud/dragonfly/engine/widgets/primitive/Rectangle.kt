@@ -15,6 +15,7 @@ import kotlin.properties.Delegates
 class Rectangle(
     initializerBlock: (Rectangle.() -> Unit)? = null
 ) : Widget<Rectangle>(initializerBlock), IPosition, IDimension, IColor, IOutline, IAlign {
+
     @Interpolate override var x: Double by property(0.0)
     @Interpolate override var y: Double by property(0.0)
     @Interpolate override var width: Double by property(50.0)
