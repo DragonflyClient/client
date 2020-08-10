@@ -20,7 +20,6 @@ private val structureColors = arrayOf(
  * An assembled widget is a widget that is based on the base of multiple other primitive or assembled
  * widgets. It has the same features but has more potential when it comes to designing complex UIs.
  */
-@Suppress("LeakingThis")
 abstract class AssembledWidget<W : AssembledWidget<W>>(
     initializerBlock: (W.() -> Unit)? = null
 ) : Widget<W>(initializerBlock) {
