@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.*
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import org.apache.logging.log4j.LogManager
 import java.util.*
 import kotlin.reflect.KProperty
@@ -61,6 +62,10 @@ abstract class Widget<W : Widget<W>>(
      */
     var isVisible = true
 
+    /**
+     * Whether the widget is currently in a state update. This means that changes to the properties
+     * will NOT result in the widget's [stateChanged] method being fired.
+     */
     var isInStateUpdate = false
 
     /**

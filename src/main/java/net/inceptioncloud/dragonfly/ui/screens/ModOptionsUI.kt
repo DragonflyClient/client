@@ -150,7 +150,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
             helpAttachedEntry = null
             helpIcon?.morph(
                 50,
-                EaseCubic.IN_OUT,
+                null,
                 helpIcon::color to WidgetColor(255, 255, 255, 0)
             )?.start()
         } else if (newFocusedEntry is OptionEntry<*> && newFocusedEntry != focusedEntry) {
@@ -162,25 +162,17 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
                     y = focusedEntry!!.y + 3.0
                     morph(
                         50,
-                        EaseCubic.IN_OUT,
+                        null,
                         ::color to WidgetColor(255, 255, 255, 255)
                     )?.start()
                 }
             } else {
                 helpIcon.morph(
                     25,
-                    EaseCubic.IN_OUT,
+                    null,
                     helpIcon::x to focusedEntry!!.x - 19.0,
                     helpIcon::y to focusedEntry!!.y + 3.0
                 )?.start()
-            }
-        }
-
-        if (helpAttachedEntry != null) {
-            helpIcon?.apply {
-                isVisible = true
-                x = helpAttachedEntry!!.x - 19.0
-                y = helpAttachedEntry!!.y + 3.0
             }
         }
     }

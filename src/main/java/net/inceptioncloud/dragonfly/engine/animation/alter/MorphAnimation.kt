@@ -82,10 +82,9 @@ class MorphAnimation(
         ): Animation? {
             val filteredUpdates = filter(updates.toList())
 
-            if (!doesModifyState(filteredUpdates))
+            if (findAnimation<MorphAnimation>() != null || !doesModifyState(filteredUpdates))
                 return null
 
-            LogManager.getLogger().info("Starting morph transition on ${this::class.simpleName}")
             return MorphAnimation(filteredUpdates, duration, easing).also { attachAnimation(it) }
         }
 
