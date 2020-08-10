@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.overlay.toast
 
+import kotlinx.coroutines.yield
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
@@ -22,7 +23,10 @@ object Toast {
         if (!OptionsSectionOverlay.enableToastMessages.getKey().get())
             return
 
-        queue.offer(ToastWidget(title, duration))
+        queue.offer(ToastWidget().apply {
+            this.text = title
+            this.duration = duration
+        })
         displayNext()
     }
 
@@ -42,10 +46,12 @@ object Toast {
 
         ScreenOverlay.addComponent("toast", next)
 
-        next.morph(duration = 60, easing = EaseCubic.IN_OUT) {
-            y = ScreenOverlay.dimensions.height - 85.0
-            opacity = 1.0
-        }?.post { _, _ ->
+        next.morph(
+            60,
+            EaseCubic.IN_OUT,
+            next::y to ScreenOverlay.dimensions.height - 85.0,
+            next::opacity to 1.0
+        )?.post { _, _ ->
             GuiIngame.canDisplayActionBar = false
         }?.start()
 
@@ -61,10 +67,12 @@ object Toast {
             GuiIngame.canDisplayActionBar = true
 
         expired = true
-        morph(duration = 60, easing = EaseCubic.IN_OUT) {
-            y = ScreenOverlay.dimensions.height - 45.0
-            opacity = 0.0
-        }?.post { _, _ ->
+        morph(
+            60,
+            EaseCubic.IN_OUT,
+            ::y to ScreenOverlay.dimensions.height - 45.0,
+            ::opacity to 0.0
+        )?.post { _, _ ->
             ScreenOverlay.stage.content.remove("toast")
             displayNext()
         }?.start()

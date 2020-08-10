@@ -9,6 +9,7 @@ import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Circle
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import kotlin.properties.Delegates
 
@@ -18,20 +19,21 @@ import kotlin.properties.Delegates
  * This widget is used to display a toast message at the bottom of the screen. It is created and
  * displayed using the [Toast] object.
  *
- * @param text the text that is displayed
- * @param duration the duration in ticks that the toast message stays on the screen
+ * @property text the text that is displayed
+ * @property duration the duration in ticks that the toast message stays on the screen
  */
 class ToastWidget(
-    @property:State val text: String = "This is a toast message",
-    @property:State val duration: Int = 200,
-    @property:Interpolate var opacity: Double = 0.0,
+    initializerBlock: (ToastWidget.() -> Unit)? = null
+) : AssembledWidget<ToastWidget>(initializerBlock), IPosition, IDimension {
 
-    @property:Interpolate override var x: Double = -1.0,
-    @property:Interpolate override var y: Double = -1.0,
-    @property:Interpolate override var width: Double = -1.0,
-    @property:Interpolate override var height: Double = -1.0
-) : AssembledWidget<ToastWidget>(), IPosition, IDimension {
+    @State var text: String by property("This is a toast message")
+    @State var duration: Int by property(200)
+    @Interpolate var opacity: Double by property(0.0)
 
+    @Interpolate override var x: Double by property(-1.0)
+    @Interpolate override var y: Double by property(-1.0)
+    @Interpolate override var width: Double by property(-1.0)
+    @Interpolate override var height: Double by property(-1.0)
 
     /**
      * The time of initialization that is used for the timer (set when invoking [updateStructure])
@@ -89,8 +91,4 @@ class ToastWidget(
 
         super.update()
     }
-
-    override fun clone(): ToastWidget = ToastWidget(text, duration, opacity, x, y, width, height)
-
-    override fun newInstance(): ToastWidget = ToastWidget()
 }
