@@ -1,8 +1,13 @@
 package net.inceptioncloud.dragonfly.hotkeys
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import net.inceptioncloud.dragonfly.hotkeys.types.HotkeyTypeChat
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiScreen
+import net.inceptioncloud.dragonfly.hotkeys.types.dataclasses.HotkeyData
+import net.inceptioncloud.dragonfly.hotkeys.types.dataclasses.HotkeyTypeChatData
+import net.inceptioncloud.dragonfly.hotkeys.types.dataclasses.HotkeyTypeData
 import org.apache.logging.log4j.LogManager
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
@@ -37,7 +42,9 @@ object HotkeyController {
     val configFile = File("dragonfly/hotkeys.json")
 
     init {
-        registerHotkeys()
+
+        addHotkey(35, 42, 2.0, 1.2, Color.decode("#fff"), "HotkeyTypeChat", HotkeyTypeChatData(false, "General Kenobi"))
+
         LogManager.getLogger().info("Hotkey initializing successful!")
     }
 
@@ -51,76 +58,56 @@ object HotkeyController {
         delay: Double,
         color: Color,
         type: String,
-        extra1: String,
-        extra2: String
+        typeData: HotkeyTypeData
     ): Boolean {
-
         if (!configFile.exists()) {
+            configFile.createNewFile()
             configFile.writeText("[]")
         }
 
-        try {
+        val array = Gson().fromJson(configFile.readText(), JsonArray().javaClass)
 
-            val reader = FileReader(configFile)
-            val obj = JSONParser().parse(reader)
-            val hotkeys = obj as JSONArray
+        for (entry in array) {
+            val obj = entry as JsonObject
 
-            for (entry in hotkeys) {
-                val hotkey = entry as JSONObject
+            val data = obj.get("data") as JsonObject
+            val currentKey = data.get("key").asInt
+            val currentModifierKey = data.get("modifierKey")
 
-                if (modifierKey == null) {
-                    if (hotkey.get("$key") != null) {
-                        return false
-                    }
+            if (key == currentKey) {
+                if (currentModifierKey == null) {
+                    return true
                 } else {
-                    if (hotkey.get("${modifierKey}_$key") != null) {
-                        return false
+                    if (modifierKey == currentModifierKey.asInt) {
+                        return true
                     }
                 }
-
             }
-
-            val details = JSONObject()
-            details.put("key", key.toString())
-            details.put("modifierKey", modifierKey.toString())
-            details.put("time", time.toString())
-            details.put("delay", delay.toString())
-            details.put("color", String.format("#%02x%02x%02x", color.red, color.green, color.blue))
-            details.put("type", type)
-            details.put("extra1", extra1)
-            details.put("extra2", extra2)
-
-            val hotkey = JSONObject()
-            if (modifierKey == null) {
-                hotkey.put(key, details)
-            } else {
-                hotkey.put("${modifierKey}_$key", details)
-            }
-
-            hotkeys.add(hotkey)
-
-            if (type == "HotkeyTypeChat") {
-                this.hotkeys.add(HotkeyTypeChat(key, modifierKey, time, delay, color, extra1.toBoolean(), extra2))
-            }
-
-
-            try {
-
-                val writer = FileWriter(configFile)
-                writer.write(hotkeys.toJSONString())
-                writer.flush()
-                writer.close()
-                return true
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
 
-        return false
+        val data = HotkeyData(
+            key,
+            modifierKey,
+            time,
+            delay,
+            String.format("#%02x%02x%02x", color.red, color.green, color.blue)
+        )
+
+        val dataString = Gson().toJsonTree(data)
+        val typeDataString = Gson().toJsonTree(typeData)
+
+        val obj = JsonObject()
+        obj.addProperty("type", type)
+        obj.add("data", dataString)
+        obj.add("typeData", typeDataString)
+
+        array.add(obj)
+
+        if (typeData is HotkeyTypeChatData) {
+            hotkeys.add(HotkeyTypeChat(key, modifierKey, time, delay, color, typeData.fadeOut, typeData.message))
+        }
+
+        configFile.writeText(GsonBuilder().setPrettyPrinting().create().toJson(array)).also { return true }
     }
 
     /**
@@ -282,5 +269,82 @@ object HotkeyController {
      * Function which is used to check if the key (Key index as Int) is pressed
      */
     private fun Int.isKeyPressed(): Boolean = Keyboard.isKeyDown(this)
+
+}
+
+fun main() {
+
+    val file = File("runtime/dragonfly/hotkeys2.json")
+
+    val array = Gson().fromJson(file.readText(), JsonArray().javaClass)
+
+    val data = HotkeyData(
+        34,
+        null,
+        1.0,
+        1.0,
+        String.format("#%02x%02x%02x", Color.BLUE.red, Color.BLUE.green, Color.BLUE.blue)
+    )
+    val typeData = HotkeyTypeChatData(true, "Hello there!")
+
+    val dataString = Gson().toJsonTree(data)
+    val typeDataString = Gson().toJsonTree(typeData)
+
+    val obj1 = JsonObject()
+    obj1.addProperty("type", "HotkeyTypeChat")
+    obj1.add("data", dataString)
+    obj1.add("typeData", typeDataString)
+
+    array.add(obj1)
+
+    file.writeText(GsonBuilder().setPrettyPrinting().create().toJson(array))
+
+    /*val array = Gson().fromJson(file.readText(), JsonArray().javaClass)
+
+    for (entry in array) {
+        val obj = entry as JsonObject
+
+        val type = obj.get("type")
+        val data = obj.get("data") as JsonObject
+        val typeData = obj.get("typeData") as JsonObject
+
+        println(
+            "The Hotkey with the type $type has the key \"${data.get("key")}\" and the following message: ${typeData.get(
+                "message"
+            )}!"
+        )
+    }*/
+
+    /*val data = HotkeyData(
+        34,
+        null,
+        1.0,
+        1.0,
+        String.format("#%02x%02x%02x", Color.BLUE.red, Color.BLUE.green, Color.BLUE.blue)
+    )
+    val typeData = HotkeyTypeChatData(true, "Hello there!")
+
+    val dataString = Gson().toJsonTree(data)
+    val typeDataString = Gson().toJsonTree(typeData)
+
+    val obj1 = JsonObject()
+    obj1.addProperty("type", "HotkeyTypeChat")
+    obj1.add("data", dataString)
+    obj1.add("typeData", typeDataString)
+
+    val obj2 = JsonObject()
+    obj2.addProperty("type", "HotkeyTypeChat")
+    obj2.add("data", dataString)
+    obj2.add("typeData", typeDataString)
+
+    val array = JsonArray()
+    array.add(obj1)
+    array.add(obj2)
+
+    if (!file.exists()) {
+        file.createNewFile()
+    }
+
+    file.writeText(GsonBuilder().setPrettyPrinting().create().toJson(array))*/
 
 }

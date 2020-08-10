@@ -37,7 +37,7 @@ public class AuthenticationSubscriber
     private void authenticateWithFile ()
     {
         try {
-            final File credentials = new File("authetication.txt");
+            final File credentials = new File("authentication.txt");
 
             if (!credentials.exists())
                 return;
