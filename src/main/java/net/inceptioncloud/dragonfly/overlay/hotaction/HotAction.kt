@@ -76,7 +76,7 @@ object HotAction {
             EaseCubic.IN_OUT,
             ::x to -width - 5.0
         )?.post { _, _ ->
-            ScreenOverlay.stage.content.remove("hot-action")
+            ScreenOverlay.stage.remove("hot-action")
             displayNext()
         }?.companion { base ->
             (base as AssembledWidget).getWidget<Rectangle>("timer")?.isVisible = false
@@ -84,7 +84,7 @@ object HotAction {
     }
 
     /**
-     * Listens to the [KeyDispatchEvent] to execute the actions when the dedicated trigger
+     * Listens to the [KeyInputEvent] to execute the actions when the dedicated trigger
      * is activated
      */
     @Subscribe

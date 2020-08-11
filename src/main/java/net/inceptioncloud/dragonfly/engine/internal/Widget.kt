@@ -5,8 +5,9 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.*
-import net.inceptioncloud.dragonfly.engine.structure.IDraw
+import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.minecraft.client.gui.Gui
 import org.apache.logging.log4j.LogManager
 import java.util.*
 import kotlin.reflect.KProperty
@@ -67,6 +68,11 @@ abstract class Widget<W : Widget<W>>(
      * will NOT result in the widget's [stateChanged] method being fired.
      */
     var isInStateUpdate = false
+
+    /**
+     * Whether the widget is currently being inspected.
+     */
+    var isInspected = false
 
     /**
      * The factor with which the widget is scaled when drawing.
@@ -148,7 +154,14 @@ abstract class Widget<W : Widget<W>>(
     @Suppress("DEPRECATION")
     fun draw() {
         GraphicsEngine.pushScale(scaleFactorX to scaleFactorY)
+
         drawNative()
+
+        if (isInspected && this is IPosition && (this is IDimension || this is ISize)) {
+            val (width, height) = Defaults.getSizeOrDimension(this)
+            Gui.drawRect(x, y, x + width, y + height, WidgetColor(0x1abc9c).apply { alphaDouble = 0.5 }.rgb)
+        }
+
         GraphicsEngine.popScale()
     }
 

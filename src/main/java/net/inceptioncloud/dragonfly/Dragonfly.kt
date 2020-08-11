@@ -176,7 +176,7 @@ object Dragonfly {
             ScreenOverlay.stage.update()
 
             if (Minecraft.getMinecraft().currentScreen != null)
-                Minecraft.getMinecraft().currentScreen.buffer.update()
+                Minecraft.getMinecraft().currentScreen.stage.update()
 
             val tickEvent = ClientTickEvent()
             eventBus.post(tickEvent)

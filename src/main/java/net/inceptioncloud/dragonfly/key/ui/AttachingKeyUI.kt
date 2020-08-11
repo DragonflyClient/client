@@ -107,7 +107,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                         // add the overlay and remove everything else (but the user won't notice)
                         +overlayBorder id "rectangle-overlay-border"
                         +overlay id "rectangle-overlay"
-                        buffer.content.filter { !it.key.startsWith("rectangle-overlay") }.forEach { it.value.isVisible = false }
+                        stage.content.filter { !it.key.startsWith("rectangle-overlay") }.forEach { it.value.isVisible = false }
 
                         // move the overlay away and switch to the target gui screen
                         runAfter(1000) {

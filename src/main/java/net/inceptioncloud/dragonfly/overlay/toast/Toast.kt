@@ -73,7 +73,7 @@ object Toast {
             ::y to ScreenOverlay.dimensions.height - 45.0,
             ::opacity to 0.0
         )?.post { _, _ ->
-            ScreenOverlay.stage.content.remove("toast")
+            ScreenOverlay.stage.remove("toast")
             displayNext()
         }?.start()
     }
