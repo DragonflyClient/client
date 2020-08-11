@@ -13,20 +13,33 @@ import org.reflections.util.ConfigurationBuilder
 import tornadofx.*
 import java.lang.reflect.Constructor
 
+/**
+ * A view that allows the user to select available gui screens of the client.
+ *
+ * The view is opened as an [internal window][openInternalWindow] of the [InspectorView]
+ * when the user clicks `Gui > Open gui selector` in the menu bar.
+ */
 class GuiSelectorView : View("GUI selector") {
 
+    /**
+     * The instance of `org.reflections` that is used to scan the classpath for subtypes
+     * of the [GuiScreen] class.
+     */
     private val reflections = Reflections(ConfigurationBuilder().setUrls(
         ClasspathHelper.forPackage("net.inceptioncloud.dragonfly") + ClasspathHelper.forPackage("net.minecraft.client.gui")
     ))
 
+    /**
+     * A set of all subtypes of the [GuiScreen] class found using the [reflections].
+     */
     private val classes: Set<Class<out GuiScreen>> = reflections.getSubTypesOf(GuiScreen::class.java)
+
+    /**
+     * A distinct list of the package's names of the found [classes].
+     */
     private val packages = classes.map { it.`package`.name }.distinct()
 
-    var treeView: TreeView<Any> by singleAssign()
-
     override val root = treeview<Any> {
-        treeView = this
-
         prefWidth = 400.0
         prefHeight = 600.0
 
@@ -112,5 +125,18 @@ class GuiSelectorView : View("GUI selector") {
     }
 }
 
+/**
+ * A node that represents a package in the package explorer of the selector.
+ *
+ * @param shortName The part of the name of the package that is displayed by the node (e.g. "net", "minecraft", "client", ...)
+ * @param fullName The full name of the package so far (eg. "net", "net.minecraft", "net.minecraft.client", ...)
+ * @param splitIndex The last index of the package name split by dots that was appended to the [fullName] and that is equal to the [shortName]
+ */
 class PackageNode(val shortName: String, val fullName: String, val splitIndex: Int)
+
+/**
+ * A node that represents a class in the package explorer of the selector.
+ *
+ * @param clazz The class that is represented by this node
+ */
 class ClassNode(val clazz: Class<*>)
