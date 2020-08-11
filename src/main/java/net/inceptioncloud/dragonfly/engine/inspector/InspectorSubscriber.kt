@@ -8,7 +8,7 @@ import org.lwjgl.input.Keyboard
 object InspectorSubscriber {
     @Subscribe
     fun onKeyType(event: KeyInputEvent) {
-        if (event.key == Keyboard.KEY_I && GuiScreen.isCtrlKeyDown && GuiScreen.isShiftKeyDown) {
+        if (event.press && event.key == Keyboard.KEY_I && GuiScreen.isCtrlKeyDown && GuiScreen.isShiftKeyDown) {
             Inspector.launch()
         }
     }
