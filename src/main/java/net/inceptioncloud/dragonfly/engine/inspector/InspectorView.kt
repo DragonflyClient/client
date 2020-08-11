@@ -5,7 +5,10 @@ import javafx.application.Platform
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
+import javafx.embed.swing.SwingFXUtils
 import javafx.scene.control.*
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -19,8 +22,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
-
-class InspectorView : View("My View") {
+class InspectorView : View("Dragonfly Inspector") {
 
     val selectedWidgetProperty = SimpleObjectProperty<Any>()
     private val highlightSelectedWidgetProperty = SimpleBooleanProperty(true)
