@@ -17,8 +17,9 @@ class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> 
     /**
      * A convenient constructor for directly adding the widget to a [WidgetStage].
      */
-    constructor(stage: WidgetStage, widget: W)
-            : this(widget, { id, _ -> stage.add(id to widget) })
+    constructor(stage: WidgetStage, widget: W) : this(widget, { id, _ ->
+        stage.add(id to widget)
+    })
 
     /**
      * The id to identify the widget.
@@ -30,8 +31,6 @@ class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> 
      */
     infix fun id(id: String): W {
         this.id = id
-        widget.id = id
-
         build()
         return widget
     }

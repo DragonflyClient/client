@@ -64,6 +64,7 @@ class WidgetStage(val name: String) {
      */
     fun add(widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
         contentPrivate += widgetWithId
+        widgetWithId.second.parentStage = this
         platform { observableContent += widgetWithId }
     }
 
@@ -74,6 +75,7 @@ class WidgetStage(val name: String) {
      */
     fun add(vararg widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
         contentPrivate += widgetWithId
+        widgetWithId.forEach { it.second.parentStage = this }
         platform { observableContent += widgetWithId }
     }
 
@@ -82,6 +84,7 @@ class WidgetStage(val name: String) {
      */
     fun clear() = synchronized(this) {
         contentPrivate.clear()
+        contentPrivate.forEach { it.value.parentStage = null }
         platform { observableContent.clear() }
     }
 
@@ -90,6 +93,7 @@ class WidgetStage(val name: String) {
      */
     fun remove(id: String) = synchronized(this) {
         val widget = contentPrivate.remove(id)
+        widget?.parentStage = null
         platform { observableContent.remove(id to widget) }
     }
 

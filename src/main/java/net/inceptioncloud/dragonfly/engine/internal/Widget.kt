@@ -35,8 +35,6 @@ abstract class Widget<W : Widget<W>>(
     val initializerBlock: (W.() -> Unit)? = null
 ) : IDraw {
 
-    var id: String? = null
-
     /**
      * An object on which some operations are synchronized to provide thread-safety.
      */
@@ -51,6 +49,18 @@ abstract class Widget<W : Widget<W>>(
      * Whether this widget is part of an assembled widget.
      */
     var isInAssembled = false
+
+    /**
+     * The assembled widget that this widget is part of. This value is only non-null if the widget is
+     * part of an assembled widget and thus if [isInAssembled] is true.
+     */
+    var parentAssembled: AssembledWidget<*>? = null
+
+    /**
+     * The buffer that this widget is rendered with. This value is only non-null if the widget is directly
+     * rendered by a stage and not by an assembled widget (if [isInAssembled] is false).
+     */
+    var parentStage: WidgetStage? = null
 
     /**
      * Whether the widget is currently hovered by the mouse.
@@ -246,9 +256,6 @@ abstract class Widget<W : Widget<W>>(
             if (oldValue != newValue) {
                 if (!isInStateUpdate) {
                     notifyStateChanged()
-//                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: $oldValue -> $newValue")
-                } else {
-//                    LogManager.getLogger().info("[$id/${javaClass.simpleName}] ${delegate.property.name}: $oldValue -> $newValue (skipped)")
                 }
             }
         }

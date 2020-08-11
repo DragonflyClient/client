@@ -11,6 +11,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.minecraft.client.Minecraft
+import org.apache.logging.log4j.LogManager
 import tornadofx.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -22,7 +23,7 @@ import kotlin.reflect.jvm.isAccessible
 class InspectorView : View("My View") {
 
     val selectedWidgetProperty = SimpleObjectProperty<Any>()
-    val highlightSelectedWidgetProperty = SimpleBooleanProperty(true)
+    private val highlightSelectedWidgetProperty = SimpleBooleanProperty(true)
 
     var inspectedWidget: Widget<*>? = null
 
@@ -43,12 +44,24 @@ class InspectorView : View("My View") {
     override val root = borderpane {
         menuBar = menubar {
             menu("Widget") {
-                checkmenuitem("Highlight selected widget", selected = highlightSelectedWidgetProperty) {
+                checkmenuitem("Highlight selected on stage", selected = highlightSelectedWidgetProperty) {
                     action {
                         if (!isSelected) {
                             inspectedWidget?.isInspected = false
                             inspectedWidget = null
                         }
+                    }
+                }
+                item("Remove selected from parent", "Ctrl+D").action {
+                    val pair = getSelectedWidget() ?: return@action
+                    val (id, widget) = pair
+
+                    if (widget.parentAssembled != null) {
+                        widget.parentAssembled?.structure?.remove(id, widget)
+                        LogManager.getLogger().info("Removed $id from parent assembled ${widget.parentAssembled}")
+                    } else if(widget.parentStage != null) {
+                        widget.parentStage?.remove(id)
+                        LogManager.getLogger().info("Removed $id from parent stage ${widget.parentStage}")
                     }
                 }
             }
@@ -226,4 +239,10 @@ class InspectorView : View("My View") {
     }
 
     private fun List<String>.addTo(list: MutableList<String>) = list.addAll(this)
+
+    private fun getSelectedWidget(): Pair<String, Widget<*>>? {
+        val value = selectedWidgetProperty.value ?: return null
+        @Suppress("UNCHECKED_CAST")
+        return value as? Pair<String, Widget<*>>
+    }
 }

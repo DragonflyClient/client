@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.engine.internal
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.minecraft.client.gui.Gui
-import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 
 /**
@@ -84,8 +83,10 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
      */
     fun reassemble() {
         structure = assemble().toMutableMap().also {
-            it.values.forEach { widget -> widget.isInAssembled = true }
-            it.forEach { (id, widget) -> widget.id = "${this.id}/$id" }
+            it.values.forEach { widget ->
+                widget.isInAssembled = true
+                widget.parentAssembled = this
+            }
         }
     }
 
