@@ -74,9 +74,10 @@ class InspectorView : View("Dragonfly Inspector") {
             }
             menu("Stage") {
                 item("Clear", "Ctrl+G").action { getSelectedStage()?.clear() }
+                item("Refresh", "Ctrl+R").action { repopulate() }
             }
             menu("GUI") {
-                item("Open GUI selector").action { openInternalWindow<GuiSelectionView>() }
+                item("Open gui selector").action { openInternalWindow<GuiSelectionView>() }
             }
         }
         treeView = treeview {
