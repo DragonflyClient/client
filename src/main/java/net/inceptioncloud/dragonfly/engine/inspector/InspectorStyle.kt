@@ -1,11 +1,16 @@
 package net.inceptioncloud.dragonfly.engine.inspector
 
-import javafx.scene.paint.Color
-import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
 import tornadofx.*
 
+/**
+ * The default stylesheet for the [InspectorApp].
+ *
+ * This stylesheet only changes the appearance of the form that displays
+ * information about the widget.
+ */
 class InspectorStyle : Stylesheet() {
+
     init {
         root {
             fontSize = 16.px
