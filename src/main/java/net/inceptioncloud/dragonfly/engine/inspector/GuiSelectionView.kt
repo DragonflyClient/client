@@ -1,30 +1,42 @@
 package net.inceptioncloud.dragonfly.engine.inspector
 
 import javafx.scene.control.TreeItem
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
-import net.minecraft.client.gui.*
+import javafx.scene.control.TreeView
+import net.minecraft.client.gui.GuiScreen
+import org.reflections.Reflections
+import org.reflections.util.ClasspathHelper
+import org.reflections.util.ConfigurationBuilder
 import tornadofx.*
 
 class GuiSelectionView : View("Dragonfly Inspector | GUI Selection") {
 
-    val classes = listOf(GuiMainMenu::class.java, GuiIngameMenu::class.java, ModOptionsUI::class.java)
+    val reflections = Reflections(ConfigurationBuilder().setUrls(
+        ClasspathHelper.forPackage("net.inceptioncloud.dragonfly") + ClasspathHelper.forPackage("net.minecraft.client.gui")
+    ))
+
+    var classes = reflections.getSubTypesOf(GuiScreen::class.java)
+    var treeView: TreeView<Any> by singleAssign()
 
     override val root = treeview<Any> {
         val packages = classes.map { it.`package`.name }.distinct()
+        treeView = this
 
-        root = TreeItem("Available GUIs")
+        root = TreeItem("${classes.size} available gui screens")
         root.isExpanded = true
         isShowRoot = false
 
         populate { parent ->
             when {
-                parent == root -> packages
-                    .map { it.split(".")[0] }
-                    .distinct()
-                    .map { PackageNode(it, it, 0) }
+                parent == root -> {
+                    packages
+                        .map {
+                            val shortName = it.split(".")[0]
+                            PackageNode(shortName, shortName, 0)
+                        }
+                        .distinctBy { it.shortName }
+                }
                 parent.value is PackageNode -> {
                     val packageNode = parent.value as PackageNode
-                    println("--- " + packageNode.fullName)
                     val childPackages = packages
                         .filter { it.split(".").size > packageNode.splitIndex + 1 && it.startsWith(packageNode.fullName) }
                         .map {
@@ -34,13 +46,10 @@ class GuiSelectionView : View("Dragonfly Inspector | GUI Selection") {
                                 packageNode.fullName + "." + shortName,
                                 packageNode.splitIndex + 1
                             )
-                        }
+                        }.distinctBy { it.shortName }
                     val childClasses = classes
                         .filter { it.`package`.name == packageNode.fullName }
-                        .map {
-                            println("Class: ${it.simpleName}")
-                            ClassNode(it)
-                        }
+                        .map { ClassNode(it) }
 
                     childPackages + childClasses
                 }
@@ -57,8 +66,7 @@ class GuiSelectionView : View("Dragonfly Inspector | GUI Selection") {
             }
         }
     }
-
-    class PackageNode(val shortName: String, val fullName: String, val splitIndex: Int)
-
-    class ClassNode(val clazz: Class<*>)
 }
+
+class PackageNode(val shortName: String, val fullName: String, val splitIndex: Int)
+class ClassNode(val clazz: Class<*>)
