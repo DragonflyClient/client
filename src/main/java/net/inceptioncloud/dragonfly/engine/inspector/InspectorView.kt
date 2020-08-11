@@ -52,7 +52,7 @@ class InspectorView : View("My View") {
                         }
                     }
                 }
-                item("Remove selected from parent", "Ctrl+D").action {
+                item("Remove from parent", "Ctrl+D").action {
                     val pair = getSelectedWidget() ?: return@action
                     val (id, widget) = pair
 
@@ -64,6 +64,13 @@ class InspectorView : View("My View") {
                         LogManager.getLogger().info("Removed $id from parent stage ${widget.parentStage}")
                     }
                 }
+                item("Toggle visibility", "Ctrl+F").action {
+                    val widget = getSelectedWidget()?.second ?: return@action
+                    widget.isVisible = !widget.isVisible
+                }
+            }
+            menu("Stage") {
+                item("Clear", "Ctrl+G").action { getSelectedStage()?.clear() }
             }
         }
         treeView = treeview {
@@ -244,5 +251,10 @@ class InspectorView : View("My View") {
         val value = selectedWidgetProperty.value ?: return null
         @Suppress("UNCHECKED_CAST")
         return value as? Pair<String, Widget<*>>
+    }
+
+    private fun getSelectedStage(): WidgetStage? {
+        val value = selectedWidgetProperty.value ?: return null
+        return value as? WidgetStage
     }
 }
