@@ -13,6 +13,7 @@ import javafx.scene.paint.Color
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
+import net.inceptioncloud.dragonfly.ui.playerlist.indicators.find
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import tornadofx.*
@@ -74,9 +75,12 @@ class InspectorView : View("Dragonfly Inspector") {
             menu("Stage") {
                 item("Clear", "Ctrl+G").action { getSelectedStage()?.clear() }
             }
+            menu("GUI") {
+                item("Open GUI selector").action { openInternalWindow<GuiSelectionView>() }
+            }
         }
         treeView = treeview {
-            root = TreeItem("Buffer Hierarchy")
+            root = TreeItem("Stage Hierarchy")
             root.isExpanded = true
 
             onUserSelect { selectedValue ->
