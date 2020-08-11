@@ -13,7 +13,7 @@ import org.reflections.util.ConfigurationBuilder
 import tornadofx.*
 import java.lang.reflect.Constructor
 
-class GuiSelectionView : View("GUI selector") {
+class GuiSelectorView : View("GUI selector") {
 
     private val reflections = Reflections(ConfigurationBuilder().setUrls(
         ClasspathHelper.forPackage("net.inceptioncloud.dragonfly") + ClasspathHelper.forPackage("net.minecraft.client.gui")
