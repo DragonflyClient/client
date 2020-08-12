@@ -4,6 +4,7 @@ import javafx.application.Platform
 import javafx.scene.input.*
 import javafx.scene.text.Font
 import javafx.stage.Stage
+import net.inceptioncloud.dragonfly.Dragonfly
 import org.apache.logging.log4j.LogManager
 import net.minecraft.client.Minecraft
 import tornadofx.*
@@ -61,6 +62,11 @@ object Inspector {
      * usually only when pressing Ctrl+Shift+I (which the [InspectorSubscriber] listens for).
      */
     fun launch() {
+        if (!Dragonfly.isDeveloperMode) {
+            LogManager.getLogger().info("The inspector is only available in development mode!")
+            return
+        }
+
         if (isLaunched) {
             Platform.runLater {
                 if (::stage.isInitialized && !stage.isShowing) {
