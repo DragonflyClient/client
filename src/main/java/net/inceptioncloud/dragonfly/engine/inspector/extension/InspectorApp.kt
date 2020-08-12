@@ -15,8 +15,7 @@ import tornadofx.*
  * than initializing the stage and setting the [Inspector.stage] property in the
  * [start] function.
  */
-class InspectorApp : App(
-    InspectorView::class, InspectorStyle::class) {
+class InspectorApp : App(InspectorView::class, InspectorStyle::class) {
 
     override fun start(stage: Stage) {
         Inspector.stage = stage
