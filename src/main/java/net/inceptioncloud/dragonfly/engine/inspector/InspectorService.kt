@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.inspector
 
+import net.inceptioncloud.dragonfly.engine.internal.Widget
 import org.apache.logging.log4j.LogManager
 
 /**

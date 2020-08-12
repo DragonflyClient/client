@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import javafx.application.Platform
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService.platform
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -39,7 +40,7 @@ class WidgetStage(val name: String) {
     /**
      * An observable variant of the [content] as a list of pairs.
      */
-    val observableContent = observableListOf<Pair<String, Widget<*>>>()
+    val observableContent: ObservableList<Pair<String, Widget<*>>> = FXCollections.observableArrayList<Pair<String, Widget<*>>>()
 
     /**
      * Renders all [Widget] objects in the stage.

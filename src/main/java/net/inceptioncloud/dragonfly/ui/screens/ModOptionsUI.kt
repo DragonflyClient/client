@@ -103,6 +103,16 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
                     }
                 }
             }
+
+            scrollHook {
+                if (helpAttachedEntry != null) {
+                    getWidget<Image>("help-icon")?.apply {
+                        isVisible = true
+                        x = helpAttachedEntry!!.x - 19.0
+                        y = helpAttachedEntry!!.y + 3.0
+                    }
+                }
+            }
         }
 
         buttonList.add(

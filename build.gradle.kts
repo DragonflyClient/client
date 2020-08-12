@@ -20,10 +20,10 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
+    implementation("org.reflections:reflections:0.9.12")
 
     // only required for inspector extension
-    compileOnly("org.reflections:reflections:0.9.12")
-    compileOnly("no.tornado:tornadofx:1.7.20")
+    implementation("no.tornado:tornadofx:1.7.20")
 
     implementation(fileTree("libraries"))
     implementation(fileTree("libraries-minecraft"))
@@ -92,6 +92,7 @@ tasks {
         }
         from(configurations.runtimeClasspath.get()
             .filter { !it.absolutePath.contains("libraries-minecraft") || it.absolutePath.contains("netty-all") }
+            .filter { "tornadofx" !in it.absolutePath }
             .map { if (it.isDirectory) it else zipTree(it) }
         )
         with(jar.get() as CopySpec)
