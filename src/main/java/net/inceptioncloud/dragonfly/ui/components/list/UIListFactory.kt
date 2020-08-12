@@ -18,6 +18,11 @@ class UIListFactory
     val entries = Entries()
 
     /**
+     * The value for the [UIList.scrollHook] parameter.
+     */
+    var scrollHook: () -> Unit = {  }
+
+    /**
      * Companion Object for static access on [uiListFactory].
      */
     companion object
@@ -50,6 +55,13 @@ class UIListFactory
     {
         entries.init()
         return entries
+    }
+
+    /**
+     * Type-Safe builder for the scroll hook.
+     */
+    fun scrollHook(newScrollHook: () -> Unit) {
+        scrollHook = newScrollHook
     }
 
     /**
@@ -112,6 +124,6 @@ class UIListFactory
      */
     private fun finish(): UIList
     {
-        return UIList(Minecraft.getMinecraft(), dimensions.widthIn, dimensions.heightIn, dimensions.xIn, dimensions.yIn, dimensions.slots.heightIn, dimensions.slots.widthIn, entries.list)
+        return UIList(Minecraft.getMinecraft(), dimensions.widthIn, dimensions.heightIn, dimensions.xIn, dimensions.yIn, dimensions.slots.heightIn, dimensions.slots.widthIn, entries.list, scrollHook)
     }
 }

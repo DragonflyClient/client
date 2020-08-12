@@ -79,6 +79,19 @@ object OptionsSectionOverlay {
     }
 
     /**
+     * Whether the ping is shown as number in the tablist or not
+     */
+    @JvmStatic
+    val showPingAsNumber = optionEntryBoolean {
+        name = "Show ping as number"
+        description = "Turning this on the ping is shown as number in the tablist."
+        key {
+            fileKey = "showPingAsNumber"
+            default = { true }
+        }
+    }
+
+    /**
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
@@ -90,6 +103,7 @@ object OptionsSectionOverlay {
             +enableHotActions
             +hotActionsTriggerMode
             +hotActionsTriggerKey
+            +showPingAsNumber
         }
     }
 }

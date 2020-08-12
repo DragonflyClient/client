@@ -23,44 +23,27 @@ import java.awt.image.BufferedImage
  *
  * This widget draws an image at the given position with the dimensions that were set.
  *
- * @param x the x-location of the top-left-corner of the image
- * @param y the y-location of the top-left-corner of the image
- * @param width the width of the image
- * @param height the height of the image
- * @param color a color filter that will be applied to the image
+ * @property x the x-location of the top-left-corner of the image
+ * @property y the y-location of the top-left-corner of the image
+ * @property color a color filter that will be applied to the image
  *
- * @param image a buffered image that will be converted to the [dynamicTexture] on set
- * @param dynamicTexture a dynamic texture that can be manually set or that will be set
- * when via the [image] setter
- * @param resourceLocation the location of the resource that will be drawn (has a lower
+ * @property dynamicTexture a dynamic texture that can be manually set
+ * @property resourceLocation the location of the resource that will be drawn (has a lower
  * priority than the [dynamicTexture])
  */
 class Image(
-    @property:Interpolate override var x: Double = 0.0,
-    @property:Interpolate override var y: Double = 0.0,
-    @property:Interpolate override var width: Double = -1.0,
-    @property:Interpolate override var height: Double = -1.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
+    initializerBlock: (Image.() -> Unit)? = null
+) : AssembledWidget<Image>(initializerBlock), IPosition, IDimension, IColor {
 
-    @property:Interpolate var scale: Double = 1.0,
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var width: Double by property(-1.0)
+    @Interpolate override var height: Double by property(-1.0)
+    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
-    image: BufferedImage? = null,
-    @property:Info var dynamicTexture: DynamicTexture? = null,
-    @property:Info var resourceLocation: ResourceLocation? = null
-) : AssembledWidget<Image>(), IPosition, IDimension, IColor {
-
-    /**
-     * The property that corresponds to the `image` parameter in the constructor.
-     */
-    @Info
-    var image: BufferedImage? = image
-        set(value) {
-            if (value != null) {
-                dynamicTexture = DynamicTexture(value)
-            }
-
-            field = value
-        }
+    @Interpolate var scale: Double by property(1.0)
+    @Info var dynamicTexture: DynamicTexture? by property(null)
+    @Info var resourceLocation: ResourceLocation? by property(null)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "placeholder" to RoundedRectangle()
@@ -117,8 +100,8 @@ class Image(
                 morphBetween(
                     duration = 200,
                     easing = EaseCubic.IN_OUT,
-                    first = { color = WidgetColor(0xDFE4EA) },
-                    second = { color = WidgetColor(0xCED6E0) }
+                    first = listOf(::color to WidgetColor(0xDFE4EA)),
+                    second = listOf(::color to WidgetColor(0xCED6E0))
                 )
             }
         }
@@ -138,12 +121,4 @@ class Image(
         }
         return true
     }
-
-    override fun clone(): Image = Image(
-        x, y, width, height, color, scale, image, dynamicTexture, resourceLocation
-    )
-
-    override fun newInstance(): Image = Image()
-
-    companion object
 }

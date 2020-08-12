@@ -1,11 +1,14 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import net.inceptioncloud.dragonfly.Dragonfly
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
-import net.inceptioncloud.dragonfly.engine.structure.IDraw
+import net.inceptioncloud.dragonfly.engine.inspector.InspectorService.platform
+import net.inceptioncloud.dragonfly.engine.structure.*
+import tornadofx.*
 
 /**
- * ## Widget Buffer
+ * ## Widget Stage
  *
  * This class holds multiple widgets inside of it. The widgets can be dynamically updated during the drawing process.
  * All implemented functions are thread-safe.
@@ -14,21 +17,33 @@ import net.inceptioncloud.dragonfly.engine.structure.IDraw
  * on the widgets. The [update] function updates the widgets' states (using [Widget.update]) on every mod tick.
  * This allows the client to only run the animations for the current screen.
  *
- * A widget can be added to the buffer using [add] and the whole buffer can be cleared with [clear].
- * You cannot directly remove a widget from the buffer, but you can change it's visibility state ([Widget.isVisible]).
+ * A widget can be added to the stage using [add] and the whole stage can be cleared with [clear].
+ * You cannot directly remove a widget from the stage, but you can change it's visibility state ([Widget.isVisible]).
+ *
+ * @param name a name for the stage that is used in the inspector
  */
-class WidgetBuffer {
+class WidgetStage(val name: String) {
 
     /**
-     * A mutable map that contains all widgets of the buffer.
+     * A mutable map that contains all widgets of the stage.
      *
-     * Each buffer has a unique id which is the key in the map. When adding a new widget to the
-     * buffer with an already existing id, the widget will be overwritten.
+     * Each widget has a unique id which is the key in the map. When adding a new widget to the
+     * stage with an already existing id, the widget will be overwritten.
      */
-    val content = mutableMapOf<String, Widget<*>>()
+    private val contentPrivate = mutableMapOf<String, Widget<*>>()
 
     /**
-     * Renders all [Widget] objects in the buffer.
+     * An immutable version of [contentPrivate] that is exposed publicly.
+     */
+    val content get() = contentPrivate.toMap()
+
+    /**
+     * An observable variant of the [content] as a list of pairs.
+     */
+    val observableContent: ObservableList<Pair<String, Widget<*>>> = FXCollections.observableArrayList<Pair<String, Widget<*>>>()
+
+    /**
+     * Renders all [Widget] objects in the stage.
      *
      * This calls the [Widget.drawNative] function on all widgets whose visibility property ([Widget.isVisible]) evaluates
      * to true. If it doesn't, the draw function won't be called.
@@ -37,44 +52,55 @@ class WidgetBuffer {
         content.values.toTypedArray().filter { it.isVisible }.forEach {
             it.draw()
         }
-
-        if (Dragonfly.isDeveloperMode) {
-            GraphicsEngine.renderDebugOverlay(content.filter { it.key != "background" }) // don't show debug overlay for background!
-        }
     }
 
     /**
-     * Adds a [Widget] object to the buffer.
+     * Adds a [Widget] object to the stage.
      *
      * After the widget object has been added, it will automatically be included in the render
      * and update process. To add multiple widgets, use [add].
      */
     fun add(widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
-        content += widgetWithId
+        contentPrivate += widgetWithId
+        widgetWithId.second.parentStage = this
+        platform { observableContent += widgetWithId }
     }
 
     /**
-     * Adds multiple [Widget] objects to the buffer.
+     * Adds multiple [Widget] objects to the stage.
      *
      * @see add
      */
     fun add(vararg widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
-        content += widgetWithId
+        contentPrivate += widgetWithId
+        widgetWithId.forEach { it.second.parentStage = this }
+        platform { observableContent += widgetWithId }
     }
 
     /**
-     * Clears the buffer by removing all widgets from it.
+     * Clears the stage by removing all widgets from it.
      */
     fun clear() = synchronized(this) {
-        content.clear()
+        contentPrivate.clear()
+        contentPrivate.forEach { it.value.parentStage = null }
+        platform { observableContent.clear() }
     }
 
     /**
-     * Finds a widget in the buffer by searching for its id. Since every id is unique, there
+     * Removes the widget with the specified [id] from the stage.
+     */
+    fun remove(id: String) = synchronized(this) {
+        val widget = contentPrivate.remove(id)
+        widget?.parentStage = null
+        platform { observableContent.remove(id to widget) }
+    }
+
+    /**
+     * Finds a widget in the stage by searching for its id. Since every id is unique, there
      * will never be more than one result. If no widget was found, this function returns null.
      */
     operator fun get(id: String): Widget<*>? = synchronized(this) {
-        return content.getOrDefault(id, null)
+        return contentPrivate.getOrDefault(id, null)
     }
 
     /**
@@ -89,7 +115,7 @@ class WidgetBuffer {
             handleMouseMove(MouseData(mouseX, mouseY))
         }
 
-        content.values.toTypedArray().forEach { it.update() }
+        contentPrivate.values.toTypedArray().forEach { it.update() }
     }
 
     //<editor-fold desc="Mouse Events">
@@ -99,41 +125,41 @@ class WidgetBuffer {
     /**
      * Called when the mouse was moved.
      */
-    private fun handleMouseMove(data: MouseData) = Defaults.handleMouseMove(content.values, data)
+    private fun handleMouseMove(data: MouseData) = Defaults.handleMouseMove(contentPrivate.values, data)
 
     /**
      * Called when a mouse button is pressed.
      */
     fun handleMousePress(data: MouseData) {
-        content.values.forEach { it.handleMousePress(data) }
+        contentPrivate.values.forEach { it.handleMousePress(data) }
     }
 
     /**
      * Called when a mouse button is released.
      */
     fun handleMouseRelease(data: MouseData) {
-        content.values.forEach { it.handleMouseRelease(data) }
+        contentPrivate.values.forEach { it.handleMouseRelease(data) }
     }
 
     /**
      * Called when the mouse is moved while a button is holt down.
      */
     fun handleMouseDrag(data: MouseData) {
-        content.values.forEach { it.handleMouseDrag(data) }
+        contentPrivate.values.forEach { it.handleMouseDrag(data) }
     }
 
     /**
      * Called when a key on the keyboard is typed.
      */
     fun handleKeyTyped(char: Char, keyCode: Int) {
-        content.values.forEach { it.handleKeyTyped(char, keyCode) }
+        contentPrivate.values.forEach { it.handleKeyTyped(char, keyCode) }
     }
     //</editor-fold>
 
     override fun toString(): String {
-        val builder = StringBuilder("WidgetBuffer(${content.size})\n{\n")
+        val builder = StringBuilder("WidgetStage(${contentPrivate.size})\n{\n")
 
-        content.forEach {
+        contentPrivate.forEach {
             builder.append("\t${it.key}")
             if (!it.value.isVisible)
                 builder.append(" (invisible)")

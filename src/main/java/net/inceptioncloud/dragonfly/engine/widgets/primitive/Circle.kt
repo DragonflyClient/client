@@ -16,30 +16,31 @@ import kotlin.properties.Delegates
  * Note that this circle is not filled but only consists of an outline. The width of
  * this outline can be changed using the [lineWidth] property.
  *
- * @param x X position of the circle. Can be aligned.
- * @param y Y position of the circle. Can be aligned.
- * @param size Width and Height of the circle.
- * @param lineWidth Width of the circle's outline.
- * @param color Color of the circle.
- * @param horizontalAlignment Function to align the circle on the x-axis.
- * @param verticalAlignment Function to align the circle on the y-axis.
+ * @property size Width and Height of the circle.
+ * @property lineWidth Width of the circle's outline.
+ * @property lineWidth The width of the outline of the circle. This value is set during the rendering process
+ * using the OpenGL [glLineWidth] function. Notice that high-values can result in errors
+ * or ignorance.
  */
 @Suppress("LeakingThis")
 open class Circle(
-    x: Double = 0.0,
-    y: Double = 0.0,
-    @property:Interpolate override var size: Double = 50.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
-    @property:State override var horizontalAlignment: Alignment = Alignment.START,
-    @property:State override var verticalAlignment: Alignment = Alignment.START,
+    initializerBlock: (Circle.() -> Unit)? = null
+) : Widget<Circle>(initializerBlock), IPosition, ISize, IColor, IAlign {
 
-    /**
-     * The width of the outline of the circle. This value is set during the rendering process
-     * using the OpenGL [glLineWidth] function. Notice that high-values can result in errors
-     * or ignorance.
-     */
-    @property:Interpolate var lineWidth: Float = 2F
-) : Widget<Circle>(), IPosition, ISize, IColor, IAlign {
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var size: Double by property(50.0)
+    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    @State override var horizontalAlignment: Alignment by property(Alignment.START)
+    @State override var verticalAlignment: Alignment by property(Alignment.START)
+    @Interpolate var lineWidth: Float by property(2F)
+
+    init {
+        val (alignedX, alignedY) = align(x, y, size, size)
+        this.x = alignedX
+        this.y = alignedY
+    }
+
     override fun render() {
         color.glBindColor()
 
@@ -55,31 +56,5 @@ open class Circle(
 
         glEnd()
         glDisable(GL_LINE_SMOOTH)
-    }
-
-    override fun clone(): Circle {
-        return Circle(
-            horizontalAlignment.reverse(x, size),
-            verticalAlignment.reverse(y, size),
-            size,
-            color.clone(),
-            horizontalAlignment,
-            verticalAlignment,
-            lineWidth
-        )
-    }
-
-    override fun newInstance(): Circle = Circle()
-
-    @Interpolate
-    override var x by Delegates.notNull<Double>()
-
-    @Interpolate
-    override var y by Delegates.notNull<Double>()
-
-    init {
-        val (alignedX, alignedY) = align(x, y, size, size)
-        this.x = alignedX
-        this.y = alignedY
     }
 }

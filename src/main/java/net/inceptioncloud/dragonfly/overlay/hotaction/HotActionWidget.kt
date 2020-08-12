@@ -22,34 +22,37 @@ import kotlin.properties.Delegates
  * It displays the [title] and [message] above all available [actions] in a container while being
  * fully responsive and adapting to the length of the [title], [message] and the amount of [actions].
  *
- * @param title the title of the hot action
- * @param message an additional message that describes the reason for the hot action's appearance
- * @param duration how many ticks the hot action will remain on the screen
- * @param actions a list of actions that can be executed
+ * @property title the title of the hot action
+ * @property message an additional message that describes the reason for the hot action's appearance
+ * @property duration how many ticks the hot action will remain on the screen
+ * @property actions a list of actions that can be executed
  */
 class HotActionWidget(
-    @property:State val title: String = "Hot Action",
-    @property:State val message: String = "This is a hot action",
-    @property:State val duration: Int = 200,
-    @property:State val actions: List<Action> = listOf(),
-    @property:State val allowMultipleActions: Boolean = false,
+    val title: String = "Hot Action",
+    val message: String = "This is a hot action",
+    val duration: Int = 200,
+    val actions: List<Action> = listOf(),
+    val allowMultipleActions: Boolean = false,
+    initializerBlock: (HotActionWidget.() -> Unit)? = null
+) : AssembledWidget<HotActionWidget>(initializerBlock), IPosition, IDimension {
 
-    @property:Interpolate override var x: Double = 0.0,
-    @property:Interpolate override var y: Double = 15.0,
-    @property:Interpolate override var width: Double = -1.0,
-    @property:Interpolate override var height: Double = -1.0
-) : AssembledWidget<HotActionWidget>(), IPosition, IDimension {
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(15.0)
+    @Interpolate override var width: Double by property(-1.0)
+    @Interpolate override var height: Double by property(-1.0)
 
     /**
      * The function that is used to convert an [Action] to a representing string
      */
-    val joinFunc: (action: Action) -> CharSequence = { "§#EF852E${actions.indexOf(it).let { 
-        if (OptionsSectionOverlay.hotActionsTriggerMode.key.get() == 0) {
-            "F${it + 7}"
-        } else {
-            "${it + 1}."
-        }
-    }} §r${it.name}" }
+    val joinFunc: (action: Action) -> CharSequence = { action ->
+        "§#EF852E${actions.indexOf(action).let {
+            if (OptionsSectionOverlay.hotActionsTriggerMode.key.get() == 0) {
+                "F${it + 7}"
+            } else {
+                "${it + 1}."
+            }
+        }} §r${action.name}"
+    }
 
     /**
      * The time of initialization that is used for the timer (set when invoking [updateStructure])
@@ -175,12 +178,6 @@ class HotActionWidget(
             }
         }
     }
-
-    override fun clone(): HotActionWidget = HotActionWidget(
-        title, message, duration, actions, allowMultipleActions, x, y, width, height
-    )
-
-    override fun newInstance(): HotActionWidget = HotActionWidget()
 }
 
 /**

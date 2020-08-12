@@ -1,11 +1,14 @@
 package net.inceptioncloud.dragonfly.key
 
 import com.google.common.eventbus.Subscribe
+import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.engine.EngineTestUI
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent
 import net.inceptioncloud.dragonfly.key.ui.AttachingKeyUI
 import net.inceptioncloud.dragonfly.key.ui.EnterKeyUI
 import net.minecraft.client.gui.GuiMainMenu
 import org.apache.logging.log4j.LogManager
+import java.lang.management.RuntimeMXBean
 
 /**
  * Listens to the [StartupGuiEvent] and changes the target gui to the [AttachingKeyUI].

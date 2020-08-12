@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.engine.internal
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.minecraft.client.gui.Gui
-import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 
 /**
@@ -20,8 +19,9 @@ private val structureColors = arrayOf(
  * An assembled widget is a widget that is based on the base of multiple other primitive or assembled
  * widgets. It has the same features but has more potential when it comes to designing complex UIs.
  */
-@Suppress("LeakingThis")
-abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
+abstract class AssembledWidget<W : AssembledWidget<W>>(
+    initializerBlock: (W.() -> Unit)? = null
+) : Widget<W>(initializerBlock) {
 
     /**
      * Contains the base structure which the widget is assembled with.
@@ -41,16 +41,9 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
         reassemble()
     }
 
-    override fun stateChanged(new: Widget<*>) {
-        if (new is AssembledWidget) {
-            structure.forEach {
-                it.value.stateChanged(
-                    new.structure[it.key] ?: it.value
-                )
-            }
-
-            updateStructure()
-        } else LogManager.getLogger().warn("State changed to not-assembled widget")
+    override fun stateChanged() {
+        structure.forEach { it.value.notifyStateChanged() }
+        runStructureUpdate()
     }
 
     override fun update() {
@@ -60,27 +53,25 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
 
     override fun render() {
         if (!initialized) {
-            updateStructure()
+            runStructureUpdate()
             initialized = true
         }
 
         structure.values.filter { it.isVisible }.forEach { it.draw() }
 
-        if (Dragonfly.isDeveloperMode && !isInAssembled) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                var index = 0
-                structure.values.forEach { widget ->
-                    val x = (widget as IPosition).x
-                    val y = (widget as IPosition).y
-                    val (width, height) = Defaults.getSizeOrDimension(widget)
+        if (Dragonfly.isDeveloperMode && !isInAssembled && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+            var index = 0
+            structure.values.forEach { widget ->
+                val x = (widget as IPosition).x
+                val y = (widget as IPosition).y
+                val (width, height) = Defaults.getSizeOrDimension(widget)
 
-                    Gui.drawRect(
-                        x, y, x + width, y + height,
-                        WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb
-                    )
+                Gui.drawRect(
+                    x, y, x + width, y + height,
+                    WidgetColor(structureColors[index % (structureColors.size)]).apply { alpha = 200 }.rgb
+                )
 
-                    index++
-                }
+                index++
             }
         }
     }
@@ -92,7 +83,22 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
      */
     fun reassemble() {
         structure = assemble().toMutableMap().also {
-            it.values.forEach { widget -> widget.isInAssembled = true }
+            it.values.forEach { widget ->
+                widget.isInAssembled = true
+                widget.parentAssembled = this
+            }
+        }
+    }
+
+    /**
+     * Calls the [updateStructure] function while taking care of setting the [isInStateUpdate] boolean.
+     */
+    fun runStructureUpdate() {
+        isInStateUpdate = true
+        try {
+            updateStructure()
+        } finally {
+            isInStateUpdate = false
         }
     }
 
@@ -120,5 +126,5 @@ abstract class AssembledWidget<W : AssembledWidget<W>> : Widget<W>() {
     /**
      * Updates the structure of the assembled widget.
      */
-    abstract fun updateStructure()
+    protected abstract fun updateStructure()
 }
