@@ -27,4 +27,5 @@ gradle.properties
 
 # Runtime Dragonfly
 /runtime/dragonfly/options.json
+/runtime/dragonfly/alpha.key
 /runtime/dragonfly/glyphs
