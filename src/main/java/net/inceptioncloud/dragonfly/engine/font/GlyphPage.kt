@@ -31,7 +31,7 @@ class GlyphPage(
 
     private var bufferedImage: BufferedImage? = null
 
-    private val loadedTexture by lazy { DynamicTexture(bufferedImage) }
+    private val loadedTexture by lazy { bufferedImage?.let { DynamicTexture(it) } }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -145,7 +145,7 @@ class GlyphPage(
     }
 
     fun bindTexture() {
-        GlStateManager.bindTexture(loadedTexture.glTextureId)
+        loadedTexture?.let { GlStateManager.bindTexture(it.glTextureId) }
     }
 
     fun unbindTexture() {
