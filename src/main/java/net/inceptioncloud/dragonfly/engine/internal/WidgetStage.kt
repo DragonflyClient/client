@@ -1,13 +1,10 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
 import javafx.application.Platform
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
-import net.inceptioncloud.dragonfly.engine.inspector.Inspector
+import net.inceptioncloud.dragonfly.engine.inspector.InspectorService.platform
 import net.inceptioncloud.dragonfly.engine.structure.*
-import net.minecraft.client.gui.Gui
 import tornadofx.*
-import java.awt.Color
 
 /**
  * ## Widget Stage
@@ -169,14 +166,5 @@ class WidgetStage(val name: String) {
         }
 
         return builder.append("}").toString()
-    }
-
-    /**
-     * Runs the [block] on the JavaFx platform if the [Inspector] is [launched][Inspector.isLaunched].
-     */
-    private fun platform(block: () -> Unit) {
-        if (Inspector.isLaunched) {
-            Platform.runLater(block)
-        }
     }
 }

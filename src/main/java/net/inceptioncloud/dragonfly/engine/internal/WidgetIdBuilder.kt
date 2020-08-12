@@ -39,7 +39,6 @@ class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> 
      * Build the pair.
      */
     private fun build() {
-        LogManager.getLogger().info("Setting id to $id")
         widget.isInStateUpdate = true
 
         try {

@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.engine.inspector
+package net.inceptioncloud.dragonfly.engine.inspector.extension
 
 import javafx.scene.text.FontWeight
 import tornadofx.*

@@ -12,7 +12,7 @@ import org.lwjgl.input.Keyboard.KEY_I
  * inspector when the dedicated key combination is pressed.
  *
  * The default key combination (known from browsers) is `Ctrl+Shift+I`. As soon as the `I`
- * key is pressed while the two modifiers are hold down, [Inspector.launch] is called to
+ * key is pressed while the two modifiers are hold down, [InspectorService.launch] is called to
  * launch or re-open the inspector.
  */
 object InspectorSubscriber {
@@ -21,7 +21,7 @@ object InspectorSubscriber {
     fun onKeyType(event: KeyInputEvent) {
         with(event) {
             if (press && key == KEY_I && isCtrlKeyDown && isShiftKeyDown) {
-                Inspector.launch()
+                InspectorService.launch()
             }
         }
     }

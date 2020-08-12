@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.engine.inspector
+package net.inceptioncloud.dragonfly.engine.inspector.extension
 
 import javafx.animation.Transition
 import javafx.application.Platform

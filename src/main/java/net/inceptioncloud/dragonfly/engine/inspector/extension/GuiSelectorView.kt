@@ -1,8 +1,7 @@
-package net.inceptioncloud.dragonfly.engine.inspector
+package net.inceptioncloud.dragonfly.engine.inspector.extension
 
 import javafx.application.Platform
 import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeView
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiScreen

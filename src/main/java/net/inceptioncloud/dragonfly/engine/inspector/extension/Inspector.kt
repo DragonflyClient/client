@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.engine.inspector
+package net.inceptioncloud.dragonfly.engine.inspector.extension
 
 import javafx.application.Platform
 import javafx.scene.input.*
@@ -15,8 +15,9 @@ import kotlin.concurrent.thread
  * ## Inspector
  *
  * This class is the core of the graphics engine inspector. It represents the interface between
- * the JavaFx (TornadoFx) application and the Minecraft client. No "internal" classes of the
- * inspector are referenced outside of this package.
+ * the JavaFx (TornadoFx) application and the [Inspector]. No "extension" classes of the
+ * inspector are referenced outside of the "extension" package since they should not be available
+ * to the user.
  */
 object Inspector {
 
@@ -61,6 +62,7 @@ object Inspector {
      * This function can be called safely whenever the user wants to launch the inspector, which is
      * usually only when pressing Ctrl+Shift+I (which the [InspectorSubscriber] listens for).
      */
+    @JvmStatic
     fun launch() {
         if (!Dragonfly.isDeveloperMode) {
             LogManager.getLogger().info("The inspector is only available in development mode!")
@@ -69,7 +71,7 @@ object Inspector {
 
         if (isLaunched) {
             Platform.runLater {
-                if (::stage.isInitialized && !stage.isShowing) {
+                if (Inspector::stage.isInitialized && !stage.isShowing) {
                     LogManager.getLogger().info("Re-opening inspector stage")
                     stage.show()
                 } else LogManager.getLogger().warn("Cannot re-open inspector stage!")
@@ -109,6 +111,16 @@ object Inspector {
             Platform.runLater {
                 inspectorView.repopulate()
             }
+        }
+    }
+
+    /**
+     * Runs the [block] on the JavaFx platform if the [Inspector] is [launched][Inspector.isLaunched].
+     */
+    @JvmStatic
+    fun platform(block: () -> Unit) {
+        if (isLaunched) {
+            Platform.runLater(block)
         }
     }
 }
