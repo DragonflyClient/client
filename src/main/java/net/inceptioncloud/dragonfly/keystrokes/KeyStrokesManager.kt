@@ -10,8 +10,8 @@ object KeyStrokesManager {
     lateinit var right: KeyStroke
     lateinit var jump: KeyStroke
     lateinit var sprint: KeyStroke
-    lateinit var lmb: KeyStroke
-    lateinit var rmb: KeyStroke
+    lateinit var attack: KeyStroke
+    lateinit var use: KeyStroke
 
     @JvmStatic
     fun registerKeyStrokes(keyDesc: String, keyCode: Int) {
@@ -23,8 +23,8 @@ object KeyStrokesManager {
             "key.right" -> right = keyStroke
             "key.jump" -> jump = keyStroke
             "key.sprint" -> sprint = keyStroke
-            "key.attack" -> lmb = keyStroke
-            "key.use" -> rmb = keyStroke
+            "key.attack" -> attack = keyStroke
+            "key.use" -> use = keyStroke
             else -> return
         }
         keystrokes.add(keyStroke)
