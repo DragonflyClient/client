@@ -43,9 +43,8 @@ object GraphicsEngine {
      */
     @JvmStatic
     fun getScaleFactor(): Double {
-        val scaleStackClone = scaleStack.toList()
-        return (Minecraft.getMinecraft().currentScreen?.scaleFactor ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor) *
-                if (scaleStackClone.isEmpty()) 1.0 else scaleStackClone.reduce(Double::times)
+        return (Minecraft.getMinecraft().currentScreen?.scaleFactor
+            ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor).toDouble()
     }
 
     /**
