@@ -17,6 +17,7 @@ import net.inceptioncloud.dragonfly.event.control.KeyInputEvent;
 import net.inceptioncloud.dragonfly.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
+import net.inceptioncloud.dragonfly.keystrokes.KeyStokesManager;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
 import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction;
 import net.inceptioncloud.dragonfly.overlay.toast.Toast;
@@ -1955,6 +1956,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.mcProfiler.endStartSection("pendingConnection");
             this.myNetworkManager.processReceivedPackets();
         }
+
+        // ICMM - KeyStrokes Update
+
+        KeyStokesManager.updateKeyStrokes();
 
         this.mcProfiler.endSection();
         this.systemTime = getSystemTime();

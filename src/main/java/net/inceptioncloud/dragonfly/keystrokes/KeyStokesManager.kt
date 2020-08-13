@@ -9,8 +9,15 @@ object KeyStokesManager {
     lateinit var jump: KeyStroke
     lateinit var sprint: KeyStroke
 
-    fun keyPressed() {
-
+    @JvmStatic
+    fun updateKeyStrokes() {
+        println("Forward: ${forward.isPressed()}")
+        println("Backward: ${backward.isPressed()}")
+        println("Left: ${left.isPressed()}")
+        println("Right: ${right.isPressed()}")
+        println("Jump: ${jump.isPressed()}")
+        println("Sprint: ${sprint.isPressed()}")
     }
+
 
 }

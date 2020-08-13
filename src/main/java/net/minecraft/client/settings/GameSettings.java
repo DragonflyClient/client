@@ -985,7 +985,7 @@ public class GameSettings {
                         if (astring[0].equals("key_" + keybinding.getKeyDescription())) {
                             keybinding.setKeyCode(Integer.parseInt(astring[1]));
 
-                            //ICMM - KeyStroke Keys
+                            //ICMM - KeyStrokes Register
 
                             KeyStokesManager.forward = new KeyStroke(keyBindForward.getKeyCode());
                             KeyStokesManager.backward = new KeyStroke(keyBindBack.getKeyCode());
