@@ -7,6 +7,8 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.Dragonfly.eventBus
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.structure.IDimension
+import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton
@@ -699,16 +701,25 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         return WidgetIdBuilder(stage, widget = this)
     }
 
-    operator fun String.unaryMinus(): Widget<*>? {
-        return stage[this]
-    }
-
     /**
      * Tries to get a widget and additionally cast it to the specified type. This will return
      * null if the widget was not found or cannot be cast.
      */
     @Suppress("UNCHECKED_CAST")
     fun <W : Widget<W>> getWidget(identifier: String): W? = stage[identifier] as? W
+
+    /**
+     * Positions the widget below another widget that is retrieved by its [id][thatId] while
+     * leaving the given [amount of vertical space][margin] between them.
+     */
+    fun <W> W.positionBelow(thatId: String, margin: Double) where W : IPosition, W : IDimension {
+        val that = stage[thatId] ?: return
+        if (that !is IPosition) return
+        if (that !is IDimension) return
+
+        this.x = that.x
+        this.y = that.y + that.height + margin
+    }
 
     companion object {
         private val LOGGER = LogManager.getLogger()

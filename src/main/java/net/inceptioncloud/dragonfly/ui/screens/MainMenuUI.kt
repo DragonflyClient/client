@@ -1,8 +1,7 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
 import com.google.gson.JsonParser
-import net.inceptioncloud.dragonfly.engine.internal.ImageResource
-import net.inceptioncloud.dragonfly.engine.internal.SizedImage
+import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
 import net.minecraft.client.gui.GuiScreen
@@ -26,25 +25,25 @@ class MainMenuUI : GuiScreen() {
             y = 10.0
         } id "brand-icon"
 
+        val buttonsY = (height / 2.0 - 40.0).coerceAtLeast(100.0)
+
         +DragonflyButton {
             x = this@MainMenuUI.width / 2.0 - 100.0
-            y = 100.0
+            y = buttonsY
             text = "Singleplayer"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/singleplayer.png"))
         } id "singleplayer-button"
 
         +DragonflyButton {
-            x = this@MainMenuUI.width / 2.0 - 100.0
-            y = 130.0
+            positionBelow("singleplayer-button", 5.0)
             text = "Multiplayer"
-            icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/singleplayer.png"))
+            icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/multiplayer.png"))
         } id "multiplayer-button"
 
         +DragonflyButton {
-            x = this@MainMenuUI.width / 2.0 - 100.0
-            y = 160.0
+            positionBelow("multiplayer-button", 5.0)
             text = "Options"
-            icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/singleplayer.png"))
+            icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/options.png"))
         } id "options-button"
     }
 
