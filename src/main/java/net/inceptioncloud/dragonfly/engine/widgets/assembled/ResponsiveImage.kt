@@ -28,16 +28,16 @@ class ResponsiveImage(
     initializerBlock: (ResponsiveImage.() -> Unit)
 ) : AssembledWidget<ResponsiveImage>(initializerBlock), IPosition, IDimension, IColor {
 
-    @property:Interpolate override var x: Double by property(0.0)
-    @property:Interpolate override var y: Double by property(0.0)
-    @property:Interpolate override var width: Double by property(50.0)
-    @property:Interpolate override var height: Double by property(50.0)
-    @property:Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var width: Double by property(50.0)
+    @Interpolate override var height: Double by property(50.0)
+    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
-    @property:Interpolate var originalWidth: Double by property(width)
-    @property:Interpolate var originalHeight: Double by property(width)
-    @property:State var resourceLocation: ResourceLocation? by property(null)
-    @property:State var dynamicTexture: DynamicTexture? by property(null)
+    @Interpolate var originalWidth: Double by property(width)
+    @Interpolate var originalHeight: Double by property(width)
+    @State var resourceLocation: ResourceLocation? by property(null)
+    @State var dynamicTexture: DynamicTexture? by property(null)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "image" to Image()
