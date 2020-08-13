@@ -21,7 +21,7 @@ class MainMenuUI : GuiScreen() {
             originalHeight = 211.0
             width = 140.0
             height = 60.0
-            x = width / 2.0 - 70.0
+            x = this@MainMenuUI.width / 2.0 - 70.0
             y = 10.0
         } id "brand-icon"
     }

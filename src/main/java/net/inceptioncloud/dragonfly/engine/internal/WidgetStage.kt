@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.engine.internal
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
+import net.inceptioncloud.dragonfly.engine.inspector.InspectorService
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService.platform
 import net.inceptioncloud.dragonfly.engine.structure.*
 import tornadofx.*
@@ -63,7 +64,7 @@ class WidgetStage(val name: String) {
     fun add(widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
         contentPrivate += widgetWithId
         widgetWithId.second.parentStage = this
-        platform { observableContent += widgetWithId }
+        inspector { observableContent += widgetWithId }
     }
 
     /**
@@ -74,7 +75,7 @@ class WidgetStage(val name: String) {
     fun add(vararg widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
         contentPrivate += widgetWithId
         widgetWithId.forEach { it.second.parentStage = this }
-        platform { observableContent += widgetWithId }
+        inspector { observableContent += widgetWithId }
     }
 
     /**
@@ -83,7 +84,7 @@ class WidgetStage(val name: String) {
     fun clear() = synchronized(this) {
         contentPrivate.clear()
         contentPrivate.forEach { it.value.parentStage = null }
-        platform { observableContent.clear() }
+        inspector { observableContent.clear() }
     }
 
     /**
@@ -92,7 +93,7 @@ class WidgetStage(val name: String) {
     fun remove(id: String) = synchronized(this) {
         val widget = contentPrivate.remove(id)
         widget?.parentStage = null
-        platform { observableContent.remove(id to widget) }
+        inspector { observableContent.remove(id to widget) }
     }
 
     /**
@@ -116,6 +117,18 @@ class WidgetStage(val name: String) {
         }
 
         contentPrivate.values.toTypedArray().forEach { it.update() }
+    }
+
+    /**
+     * Calls the given [block] on the JavaFx platform if the inspector is launched or in the
+     * current thread if it isn't.
+     */
+    private fun inspector(block: () -> Unit) {
+        if (InspectorService.isLaunched() == true) {
+            platform(block)
+        } else {
+            block()
+        }
     }
 
     //<editor-fold desc="Mouse Events">

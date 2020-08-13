@@ -46,6 +46,7 @@ object Inspector {
      * will only re-populate the hierarchy in the [inspectorView] if the app has been launched
      * since [inspectorView] would otherwise not be initialized.
      */
+    @JvmStatic
     var isLaunched = false
         private set
 

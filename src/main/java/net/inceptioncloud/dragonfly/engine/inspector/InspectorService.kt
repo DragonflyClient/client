@@ -52,6 +52,14 @@ object InspectorService {
     }
 
     /**
+     * Calls the `isLaunched()` getter function on the inspector core class if it is available.
+     */
+    @JvmStatic
+    fun isLaunched(): Boolean? {
+        return clazz?.getMethod("isLaunched")?.invoke(null) as? Boolean
+    }
+
+    /**
      * Calls the `platform()` function on the inspector core class if it is available.
      */
     @JvmStatic
