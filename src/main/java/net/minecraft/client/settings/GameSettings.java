@@ -2,8 +2,7 @@ package net.minecraft.client.settings;
 
 import com.google.common.collect.*;
 import com.google.gson.Gson;
-import kotlin.Pair;
-import net.inceptioncloud.dragonfly.keystrokes.KeyStokesManager;
+import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager;
 import net.inceptioncloud.dragonfly.keystrokes.KeyStroke;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
@@ -985,14 +984,8 @@ public class GameSettings {
                         if (astring[0].equals("key_" + keybinding.getKeyDescription())) {
                             keybinding.setKeyCode(Integer.parseInt(astring[1]));
 
-                            //ICMM - KeyStrokes Register
-
-                            KeyStokesManager.forward = new KeyStroke(keyBindForward.getKeyCode());
-                            KeyStokesManager.backward = new KeyStroke(keyBindBack.getKeyCode());
-                            KeyStokesManager.left = new KeyStroke(keyBindLeft.getKeyCode());
-                            KeyStokesManager.right = new KeyStroke(keyBindRight.getKeyCode());
-                            KeyStokesManager.jump = new KeyStroke(keyBindJump.getKeyCode());
-                            KeyStokesManager.sprint = new KeyStroke(keyBindSprint.getKeyCode());
+                            // ICMM - KeyStrokes Register
+                            KeyStrokesManager.registerKeyStrokes(keybinding.getKeyDescription(), keybinding.getKeyCode());
 
                         }
                     }
