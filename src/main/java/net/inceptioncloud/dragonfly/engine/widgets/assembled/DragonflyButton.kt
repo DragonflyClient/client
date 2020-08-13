@@ -25,6 +25,8 @@ class DragonflyButton(
     var text: String by property("Button")
     var icon: ImageResource? by property(null)
 
+    var isHovered: Boolean = false
+
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "background" to Rectangle(),
         "overlay" to Rectangle(),
@@ -93,19 +95,27 @@ class DragonflyButton(
         val overlayWidget = getWidget<Rectangle>("overlay")
 
         if (mouseX in x..x + width && mouseY in y..y + height) {
+            if (isHovered)
+                return
+
             overlayWidget?.detachAnimation<MorphAnimation>()
             overlayWidget?.morph(
-                80,
+                60,
                 EaseQuad.IN_OUT,
                 Rectangle::width to width
             )?.start()
+            isHovered = true
         } else {
+            if (!isHovered)
+                return
+
             overlayWidget?.detachAnimation<MorphAnimation>()
             overlayWidget?.morph(
-                80,
+                60,
                 EaseQuad.IN_OUT,
                 Rectangle::width to 5.0
             )?.start()
+            isHovered = false
         }
     }
 }
