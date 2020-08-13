@@ -248,7 +248,9 @@ class InspectorView : View("Dragonfly Inspector") {
      * stages to the inspector. All null values are filtered out since the current gui screen
      * could be null and thus there is no stage for it.
      */
-    private fun getAvailableStages() = listOfNotNull(ScreenOverlay.stage, Minecraft.getMinecraft().currentScreen?.stage)
+    private fun getAvailableStages() = listOfNotNull(
+        ScreenOverlay.stage, Minecraft.getMinecraft().currentScreen?.stage, Minecraft.getMinecraft().ingameGUI?.stage
+    )
 
     /**
      * Creates the fieldset for all properties of the [widget] defined in the given [supertype].

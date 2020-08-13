@@ -6,6 +6,9 @@ import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
+import net.inceptioncloud.dragonfly.engine.internal.Widget
+import net.inceptioncloud.dragonfly.engine.internal.WidgetIdBuilder
+import net.inceptioncloud.dragonfly.engine.internal.WidgetStage
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardTitle
@@ -121,6 +124,8 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     private val actionBar =
         DoubleTransition.builder().start(0.0).end(1.0).amountOfSteps(20).autoTransformator(ForwardBackward{ recordPlayingUpFor > 0 })
             .reachStart { actionBarDisplayed = false }.build()
+
+    val stage = WidgetStage("Ingame Overlay")
 
     fun func_175177_a() {
         title_fadeIn = 10
@@ -315,6 +320,9 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
         GlStateManager.disableLighting()
         GlStateManager.enableAlpha()
+
+        // ICMM Render Stage
+        stage.render()
     }
 
     protected fun renderTooltip(sr: ScaledResolution, partialTicks: Float) {
@@ -996,6 +1004,25 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
     fun func_181029_i() {
         tabList.func_181030_a()
+    }
+
+    /**
+     * An operator function that allows adding widgets to the stage. After providing the widget,
+     * an id for it must be specified with the infix function [WidgetIdBuilder.id].
+     */
+    operator fun <W : Widget<W>> W.unaryPlus(): WidgetIdBuilder<W> {
+        return WidgetIdBuilder(stage, widget = this)
+    }
+
+    /**
+     * Tries to get a widget and additionally cast it to the specified type. This will return
+     * null if the widget was not found or cannot be cast.
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <W : Widget<W>> getWidget(identifier: String): W? = stage[identifier] as? W
+
+    fun initKeyStrokes() {
+
     }
 
     companion object {
