@@ -83,7 +83,7 @@ class Image(
 
             color.glBindColor()
 
-            pushScale(scale to scale)
+            pushScale(scale)
             drawModalRectWithCustomSizedTexture(
                 (x / scale).toInt(), (y / scale).toInt(), 0f, 0f,
                 (width / scale).toInt(), (height / scale).toInt(), (width / scale).toFloat(), (height / scale).toFloat()

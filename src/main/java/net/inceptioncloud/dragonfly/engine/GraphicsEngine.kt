@@ -28,13 +28,7 @@ object GraphicsEngine {
     /**
      * A stack that contains all currently applied scale factors.
      */
-    private val scaleStack: Stack<Pair<Double, Double>> = Stack()
-
-    /**
-     * The colors used by the debug overlays. The first color has the highest priority while the last
-     * one has the least priority. If all colors are used, it starts all over again.
-     */
-    private val debugColors = arrayOf(0x27ae60, 0xf39c12, 0x2980b9)
+    private val scaleStack: Stack<Double> = Stack()
 
     /**
      * All characters that can be rendered by the [GlyphFontRenderer].
@@ -48,18 +42,19 @@ object GraphicsEngine {
      * is read from it.
      */
     @JvmStatic
-    fun getScaleFactor(): Int {
-        return Minecraft.getMinecraft().currentScreen?.scaleFactor
-            ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor
+    fun getScaleFactor(): Double {
+        val scaleStackClone = scaleStack.toList()
+        return (Minecraft.getMinecraft().currentScreen?.scaleFactor ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor) *
+                if (scaleStackClone.isEmpty()) 1.0 else scaleStackClone.reduce(Double::times)
     }
 
     /**
      * Pushes a scale to the [scaleStack] and applies it using [GlStateManager.scale].
      */
     @JvmStatic
-    fun pushScale(factor: Pair<Double, Double>) {
+    fun pushScale(factor: Double) {
         scaleStack.push(factor)
-        GlStateManager.scale(factor.first, factor.second, 1.0)
+        GlStateManager.scale(factor, factor, 1.0)
     }
 
     /**
@@ -68,15 +63,15 @@ object GraphicsEngine {
     @JvmStatic
     fun popScale() {
         val factor = scaleStack.pop()
-        GlStateManager.scale(1 / factor.first, 1 / factor.second, 1.0)
+        GlStateManager.scale(1 / factor, 1 / factor, 1.0)
     }
 
     /**
      * Gets the current mouse x position or 0, if the [Minecraft.currentScreen] is null.
      */
     @JvmStatic
-    fun getMouseX(): Int {
-        if (Minecraft.getMinecraft().currentScreen == null) return 0
+    fun getMouseX(): Double {
+        if (Minecraft.getMinecraft().currentScreen == null) return 0.0
         return Mouse.getX() / getScaleFactor()
     }
 
@@ -84,8 +79,8 @@ object GraphicsEngine {
      * Gets the current mouse y position or 0, if the [Minecraft.currentScreen] is null.
      */
     @JvmStatic
-    fun getMouseY(): Int {
-        if (Minecraft.getMinecraft().currentScreen == null) return 0
+    fun getMouseY(): Double {
+        if (Minecraft.getMinecraft().currentScreen == null) return 0.0
         return Minecraft.getMinecraft().currentScreen.height - Mouse.getY() / getScaleFactor()
     }
 
@@ -96,10 +91,10 @@ object GraphicsEngine {
     @JvmStatic
     fun readPixelColor(xIn: Int, yIn: Int): WidgetColor {
         val sf = getScaleFactor()
-        val x = xIn * sf
-        val y = yIn * sf
+        val x = (xIn * sf * sf).toInt()
+        val y = (yIn * sf * sf).toInt()
         val buffer = (BufferUtils.createByteBuffer(2196).position(0).limit(64) as ByteBuffer).asFloatBuffer()
-        GL11.glReadPixels(x * sf, y * sf, 1, 1, GL11.GL_RGBA, GL11.GL_FLOAT, buffer)
+        GL11.glReadPixels(x, y, 1, 1, GL11.GL_RGBA, GL11.GL_FLOAT, buffer)
 
         return WidgetColor(buffer.get(0), buffer.get(1), buffer.get(2), buffer.get(3))
     }
@@ -111,10 +106,10 @@ object GraphicsEngine {
     @JvmStatic
     fun readAveragePixelColor(xIn: Int, yIn: Int, widthIn: Int, heightIn: Int): WidgetColor {
         val sf = getScaleFactor()
-        val x = xIn * sf
-        val y = yIn * sf
-        val width = widthIn * sf
-        val height = heightIn * sf
+        val x = (xIn * sf).toInt()
+        val y = (yIn * sf).toInt()
+        val width = (widthIn * sf).toInt()
+        val height = (heightIn * sf).toInt()
         val buffer = (BufferUtils.createByteBuffer(width * height * 4 * 4).position(0).limit(width * height * 4 * 4) as ByteBuffer).asFloatBuffer()
 
         GL11.glReadPixels(x, y, width, height, GL11.GL_RGBA, GL11.GL_FLOAT, buffer)

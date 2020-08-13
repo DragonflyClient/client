@@ -113,7 +113,7 @@ class WidgetStage(val name: String) {
         if (GraphicsEngine.getMouseX() != mouseX && GraphicsEngine.getMouseY() != mouseY) {
             mouseX = GraphicsEngine.getMouseX()
             mouseY = GraphicsEngine.getMouseY()
-            handleMouseMove(MouseData(mouseX, mouseY))
+            handleMouseMove(MouseData(mouseX.toInt(), mouseY.toInt()))
         }
 
         contentPrivate.values.toTypedArray().forEach { it.update() }
@@ -132,8 +132,8 @@ class WidgetStage(val name: String) {
     }
 
     //<editor-fold desc="Mouse Events">
-    var mouseX: Int = 0
-    var mouseY: Int = 0
+    var mouseX: Double = 0.0
+    var mouseY: Double = 0.0
 
     /**
      * Called when the mouse was moved.

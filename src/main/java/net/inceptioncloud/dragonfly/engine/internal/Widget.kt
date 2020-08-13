@@ -1,14 +1,11 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import com.google.gson.JsonArray
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.*
 import net.inceptioncloud.dragonfly.engine.structure.*
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.minecraft.client.gui.Gui
-import org.apache.logging.log4j.LogManager
 import java.util.*
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.hasAnnotation
@@ -83,13 +80,7 @@ abstract class Widget<W : Widget<W>>(
      * The factor with which the widget is scaled when drawing.
      */
     @Interpolate
-    var scaleFactorX: Double = 1.0
-
-    /**
-     * The factor with which the widget is scaled when drawing.
-     */
-    @Interpolate
-    var scaleFactorY: Double = 1.0
+    var scaleFactor: Double = 1.0
 
     /**
      * A stacking list with all animations that are currently being applied to the widget.
@@ -158,7 +149,7 @@ abstract class Widget<W : Widget<W>>(
      */
     @Suppress("DEPRECATION")
     fun draw() {
-        GraphicsEngine.pushScale(scaleFactorX to scaleFactorY)
+        GraphicsEngine.pushScale(scaleFactor)
 
         drawNative()
 
