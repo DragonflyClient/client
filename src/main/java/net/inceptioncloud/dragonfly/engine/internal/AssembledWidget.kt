@@ -100,6 +100,11 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
     fun <W : Widget<W>> updateWidget(identifier: String, block: W.() -> Unit): W? = getWidget<W>(identifier)?.apply(block)
 
     /**
+     * Convenient function for accessing [updateWidget].
+     */
+    operator fun <W : Widget<W>> String.invoke(block: W.() -> Unit): W? = updateWidget(this, block)
+
+    /**
      * Assembles the widget by initializing the base widgets.
      *
      * Returns all widgets mapped to a string identifier so they can be accessed in the

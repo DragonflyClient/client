@@ -37,8 +37,8 @@ class Image(
 
     @Interpolate override var x: Double by property(0.0)
     @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double by property(-1.0)
-    @Interpolate override var height: Double by property(-1.0)
+    @Interpolate override var width: Double by property(50.0)
+    @Interpolate override var height: Double by property(50.0)
     @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
     @Interpolate var scale: Double by property(1.0)
@@ -100,8 +100,8 @@ class Image(
                 morphBetween(
                     duration = 200,
                     easing = EaseCubic.IN_OUT,
-                    first = listOf(::color to WidgetColor(0xDFE4EA)),
-                    second = listOf(::color to WidgetColor(0xCED6E0))
+                    first = listOf(::color to WidgetColor(0xECECEC)),
+                    second = listOf(::color to WidgetColor(0xF8F8F8))
                 )
             }
         }
