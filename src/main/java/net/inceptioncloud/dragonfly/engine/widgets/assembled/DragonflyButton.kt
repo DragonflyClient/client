@@ -6,9 +6,12 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.sequence.easing.*
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
+import net.minecraft.client.Minecraft
+import net.minecraft.client.audio.PositionedSoundRecord
+import net.minecraft.util.ResourceLocation
 
 class DragonflyButton(
     initializerBlock: (DragonflyButton.() -> Unit)? = null
@@ -26,6 +29,12 @@ class DragonflyButton(
     var icon: ImageResource? by property(null)
 
     var isHovered: Boolean = false
+    var enableClickSound: Boolean = true
+    private var onClick: () -> Unit = {}
+
+    fun onClick(block: () -> Unit) {
+        onClick = block
+    }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "background" to Rectangle(),
@@ -102,7 +111,7 @@ class DragonflyButton(
             overlayWidget?.morph(
                 60,
                 EaseQuad.IN_OUT,
-                Rectangle::width to width
+                Rectangle::width to width - 5.0
             )?.start()
             isHovered = true
         } else {
@@ -116,6 +125,15 @@ class DragonflyButton(
                 Rectangle::width to 5.0
             )?.start()
             isHovered = false
+        }
+    }
+
+    override fun handleMousePress(data: MouseData) {
+        if (isHovered) {
+            if (enableClickSound) {
+                Minecraft.getMinecraft().soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("gui.button.press"), 1.0f))
+            }
+            onClick()
         }
     }
 }

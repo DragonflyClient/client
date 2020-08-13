@@ -702,6 +702,14 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     }
 
     /**
+     * An operator function that allows adding widgets to the stage of the gui screen from outside
+     * of the screen class.
+     */
+    operator fun <W : Widget<W>> plus(widget: W): WidgetIdBuilder<W> {
+        return WidgetIdBuilder(stage, widget)
+    }
+
+    /**
      * Tries to get a widget and additionally cast it to the specified type. This will return
      * null if the widget was not found or cannot be cast.
      */

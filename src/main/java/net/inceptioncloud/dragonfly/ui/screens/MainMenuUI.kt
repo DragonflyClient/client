@@ -4,7 +4,8 @@ import com.google.gson.JsonParser
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
-import net.minecraft.client.gui.GuiScreen
+import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
+import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
 import java.net.URL
@@ -32,19 +33,35 @@ class MainMenuUI : GuiScreen() {
             y = buttonsY
             text = "Singleplayer"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/singleplayer.png"))
+
+            onClick {
+                mc.displayGuiScreen(GuiSelectWorld(this@MainMenuUI))
+            }
         } id "singleplayer-button"
 
         +DragonflyButton {
             positionBelow("singleplayer-button", 5.0)
+
             text = "Multiplayer"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/multiplayer.png"))
+
+            onClick {
+                mc.displayGuiScreen(GuiMultiplayer(this@MainMenuUI))
+            }
         } id "multiplayer-button"
 
         +DragonflyButton {
             positionBelow("multiplayer-button", 5.0)
+
             text = "Options"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/options.png"))
+
+            onClick {
+                mc.displayGuiScreen(GuiOptions(this@MainMenuUI, mc.gameSettings))
+            }
         } id "options-button"
+
+        Taskbar.initializeTaskbar(this)
     }
 
     /**
