@@ -3,8 +3,8 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.*
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -29,6 +29,7 @@ class DragonflyButton(
         "background" to Rectangle(),
         "overlay" to Rectangle(),
         "text" to TextRenderer(),
+        "icon-shadow" to Image(),
         "icon" to Image()
     )
 
@@ -56,12 +57,23 @@ class DragonflyButton(
             resourceLocation = icon?.resourceLocation
         }!!
 
+        "icon-shadow"<Image> {
+            x = iconWidget.x + 1.0
+            y = iconWidget.y + 1.0
+            width = iconSize
+            height = iconSize
+            dynamicTexture = icon?.dynamicTexture
+            resourceLocation = icon?.resourceLocation
+            color = WidgetColor(0, 0, 0, 100)
+        }
+
         "text"<TextRenderer> {
             x = iconWidget.x + iconSize + iconMarginRight
             y = this@DragonflyButton.y + (this@DragonflyButton.height - buttonFontRenderer.height) / 2.0 - 1.0
             text = this@DragonflyButton.text
             color = this@DragonflyButton.foregroundColor
             fontRenderer = buttonFontRenderer
+            dropShadow = true
         }
 
         "overlay"<Rectangle> {
@@ -81,12 +93,14 @@ class DragonflyButton(
         val overlayWidget = getWidget<Rectangle>("overlay")
 
         if (mouseX in x..x + width && mouseY in y..y + height) {
+            overlayWidget?.detachAnimation<MorphAnimation>()
             overlayWidget?.morph(
                 80,
                 EaseQuad.IN_OUT,
                 Rectangle::width to width
             )?.start()
         } else {
+            overlayWidget?.detachAnimation<MorphAnimation>()
             overlayWidget?.morph(
                 80,
                 EaseQuad.IN_OUT,

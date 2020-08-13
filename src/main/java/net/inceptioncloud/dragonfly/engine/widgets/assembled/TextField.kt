@@ -59,6 +59,7 @@ class TextField(
 
     @Interpolate var backgroundColor: WidgetColor by property(WidgetColor(0, 0, 0, 0))
     @Interpolate var padding: Double by property(0.0)
+    @State var dropShadow: Boolean by property(false)
 
     @Interpolate override var outlineStroke: Double by property(0.0)
     @Interpolate override var outlineColor: WidgetColor by property(WidgetColor.DEFAULT)
@@ -100,6 +101,7 @@ class TextField(
                 it.fontWeight = fontWeight
                 it.text = line
                 it.color = color
+                it.dropShadow = dropShadow
                 it.x = alignText(textAlignHorizontal, x, width, fontRenderer.getStringWidth(it.text).toDouble())
                 it.y = when (textAlignVertical) {
                     START -> y + index * fontRenderer.height + padding

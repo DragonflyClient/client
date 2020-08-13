@@ -53,15 +53,5 @@ object Defaults {
      */
     fun handleMouseMove(widgets: Collection<Widget<*>>, data: MouseData) {
         widgets.forEach { it.handleMouseMove(data) }
-        widgets.filter { it is IPosition && (it is IDimension || it is ISize) }
-            .forEach {
-                it as IPosition
-                val x = it.x
-                val y = it.y
-                val (width, height) = getSizeOrDimension(it)
-
-                it.isHovered = data.mouseX.toDouble() in x..x + width
-                        && data.mouseY.toDouble() in y..y + height
-            }
     }
 }

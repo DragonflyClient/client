@@ -63,11 +63,6 @@ abstract class Widget<W : Widget<W>>(
     var parentStage: WidgetStage? = null
 
     /**
-     * Whether the widget is currently hovered by the mouse.
-     */
-    var isHovered = false
-
-    /**
      * Whether the widget is currently visible. If this flag is set to false, the [drawNative] method
      * won't be called by the parent [WidgetStage] that contains the widget.
      */

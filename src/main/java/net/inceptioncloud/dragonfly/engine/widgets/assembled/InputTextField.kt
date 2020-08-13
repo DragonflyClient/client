@@ -340,7 +340,7 @@ class InputTextField(
     }
 
     override fun handleMousePress(data: MouseData) {
-        isFocused = isHovered
+        isFocused = data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
 
         if (isFocused && data.button == 0) {
             val fontRenderer = getFontRenderer()
