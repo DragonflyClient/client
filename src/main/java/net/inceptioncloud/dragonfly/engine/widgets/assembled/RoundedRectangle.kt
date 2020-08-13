@@ -6,33 +6,36 @@ import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Arc
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import kotlin.properties.Delegates
 
 /**
  * ## Rounded Rectangle Assembled Widget
  *
  * A simple rectangle with rounded corners.
  *
- * @param x X position of the rectangle. Can be aligned.
- * @param y Y position of the rectangle. Can be aligned.
- * @param width Width (horizontal size) of the rectangle.
- * @param height Height (vertical size) of the rectangle.
- * @param color Color of the rectangle.
- * @param horizontalAlignment Function to align the rectangle on the x-axis.
- * @param verticalAlignment Function to align the rectangle on the y-axis.
- * @param arc the size of the corner arc, specifies how rounded the corners are
+ * @property arc the size of the corner arc, specifies how rounded the corners are
  */
 class RoundedRectangle(
-    x: Double = 0.0,
-    y: Double = 0.0,
-    @property:Interpolate override var width: Double = 50.0,
-    @property:Interpolate override var height: Double = 50.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
-    @property:State override var horizontalAlignment: Alignment = Alignment.START,
-    @property:State override var verticalAlignment: Alignment = Alignment.START,
+    initializerBlock: (RoundedRectangle.() -> Unit)? = null
+) : AssembledWidget<RoundedRectangle>(initializerBlock), IPosition, IDimension, IColor, IAlign {
 
-    arc: Double = 5.0
-) : AssembledWidget<RoundedRectangle>(), IPosition, IDimension, IColor, IAlign {
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var width: Double by property(50.0)
+    @Interpolate override var height: Double by property(50.0)
+    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    @State override var horizontalAlignment: Alignment by property(Alignment.START)
+    @State override var verticalAlignment: Alignment by property(Alignment.START)
+
+    @Interpolate var arc: Double by property(0.0)
+
+    init {
+        val (alignedX, alignedY) = align(x, y, width, height)
+        this.x = alignedX
+        this.y = alignedY
+
+        val smallest = width.coerceAtMost(height) / 2
+        this.arc = arc.coerceAtMost(smallest)
+    }
 
     override fun assemble(): Map<String, Widget<*>> {
         return mapOf(
@@ -48,6 +51,8 @@ class RoundedRectangle(
     }
 
     override fun updateStructure() {
+        structure.forEach { it.value.isVisible = width > arc && height > arc }
+
         val spaceVertical = height - arc * 2
         val spaceHorizontal = width - arc * 2
 
@@ -108,39 +113,5 @@ class RoundedRectangle(
                     height = arc * 2
                 }
             }
-        initialized = true
-    }
-
-    override fun clone(): RoundedRectangle {
-        return RoundedRectangle(
-            x = horizontalAlignment.reverse(x, width),
-            y = verticalAlignment.reverse(y, height),
-            width = width,
-            height = height,
-            color = color.clone(),
-            horizontalAlignment = horizontalAlignment,
-            verticalAlignment = verticalAlignment,
-            arc = arc
-        )
-    }
-
-    override fun newInstance(): RoundedRectangle = RoundedRectangle()
-
-    @Interpolate
-    override var x: Double by Delegates.notNull()
-
-    @Interpolate
-    override var y: Double by Delegates.notNull()
-
-    @Interpolate
-    var arc: Double by Delegates.notNull()
-
-    init {
-        val (alignedX, alignedY) = align(x, y, width, height)
-        this.x = alignedX
-        this.y = alignedY
-
-        val smallest = width.coerceAtMost(height) / 2
-        this.arc = arc.coerceAtMost(smallest)
     }
 }

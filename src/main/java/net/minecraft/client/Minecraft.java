@@ -9,6 +9,7 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.engine.inspector.InspectorService;
 import net.inceptioncloud.dragonfly.event.client.ClientStartupEvent;
 import net.inceptioncloud.dragonfly.event.client.GraphicsInitializedEvent;
 import net.inceptioncloud.dragonfly.event.client.ResizeEvent;
@@ -20,6 +21,7 @@ import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
 import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker;
+import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -582,7 +584,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
         final GuiScreen targetStartupGui = this.serverName != null
                 ? new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort)
-                : new GuiMainMenu();
+                : new MainMenuUI();
 
         final StartupGuiEvent event = new StartupGuiEvent(targetStartupGui);
         Dragonfly.getEventBus().post(event);
@@ -937,6 +939,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.mcSoundHandler.resumeSounds();
             this.setIngameFocus();
         }
+
+        InspectorService.stageUpdated();
     }
 
     /**

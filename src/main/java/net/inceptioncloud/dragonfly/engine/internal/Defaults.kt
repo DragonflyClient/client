@@ -8,74 +8,7 @@ import net.inceptioncloud.dragonfly.engine.structure.*
  * Contains default methods that can be applied on a wide range of widgets
  * that should simplify the widget's code.
  */
-object Defaults
-{
-    /**
-     * Uses the default method to clone the widget and applies a padding.
-     *
-     * This method can handle both widget based on [dimensions][IDimension] and [sizes][ISize]
-     * and pays attention to the alignment of the object.
-     */
-    fun <Type : Widget<Type>> cloneWithPadding(widget: Type, amount: Double): Type
-    {
-        val clone = widget.clone()
-        clone as IPosition
-
-        var (width, height) = getSizeOrDimension(widget)
-
-        width -= amount * 2
-        height -= amount * 2
-
-        if (clone is IAlign)
-        {
-            clone.align(
-                clone.horizontalAlignment.reverse(clone.x + amount, width),
-                clone.verticalAlignment.reverse(clone.y + amount, height),
-                width, height
-            )
-        } else
-        {
-            clone.x += amount
-            clone.y += amount
-            setSizeOrDimension(widget, width, height)
-        }
-
-        return clone
-    }
-
-    /**
-     * Uses the default method to clone the widget and applies a margin.
-     *
-     * This method can handle both widget based on [dimensions][IDimension] and [sizes][ISize]
-     * and pays attention to the alignment of the object.
-     */
-    fun <Type : Widget<Type>> cloneWithMargin(widget: Type, amount: Double): Type
-    {
-        val clone = widget.clone()
-        clone as IPosition
-
-        var (width, height) = getSizeOrDimension(widget)
-
-        width += amount * 2
-        height += amount * 2
-
-        if (clone is IAlign)
-        {
-            clone.align(
-                clone.horizontalAlignment.reverse(clone.x - amount, width),
-                clone.verticalAlignment.reverse(clone.y - amount, height),
-                width, height
-            )
-        } else
-        {
-            clone.x -= amount
-            clone.y -= amount
-            setSizeOrDimension(widget, width, height)
-        }
-
-        return clone
-    }
-
+object Defaults {
     /**
      * Changes the width and the height of the widget based on its structure.
      *

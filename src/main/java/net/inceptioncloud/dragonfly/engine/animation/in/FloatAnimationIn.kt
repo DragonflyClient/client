@@ -24,19 +24,17 @@ open class FloatAnimationIn(val duration: Int, val distance: Double = 40.0, val 
         .withEasing(easing)
         .withEndHook { finish() }
 
-    override fun applyToShape(scratchpad: Widget<*>, base: Widget<*>)
+    override fun applyToShape(base: Widget<*>)
     {
-        scratchpad as IColor
-        scratchpad as IPosition
         base as IColor
         base as IPosition
 
-        scratchpad.color.alphaDouble = base.color.alphaDouble * sequence.current
-        scratchpad.y = base.y + distance - (distance * sequence.current)
+        base.color.alphaDouble = base.color.alphaDouble * sequence.current
+        base.y = base.y + distance - (distance * sequence.current)
 
-        if (scratchpad is IOutline && base is IOutline)
+        if (base is IOutline)
         {
-            scratchpad.outlineColor.alphaDouble = base.outlineColor.alphaDouble * sequence.current
+            base.outlineColor.alphaDouble = base.outlineColor.alphaDouble * sequence.current
         }
     }
 

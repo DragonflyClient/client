@@ -11,28 +11,26 @@ import kotlin.properties.Delegates
  * ## Rectangle Primitive Widget
  *
  * A simple rectangle widget.
- *
- * @param x X position of the rectangle. Can be aligned.
- * @param y Y position of the rectangle. Can be aligned.
- * @param width Width (horizontal size) of the rectangle.
- * @param height Height (vertical size) of the rectangle.
- * @param color Color of the rectangle.
- * @param outlineStroke Width of the outline of the rectangle. Default value is 0 what makes it have no outline.
- * @param outlineColor Color of the outline. Only needed if an outline is set.
- * @param horizontalAlignment Function to align the rectangle on the x-axis.
- * @param verticalAlignment Function to align the rectangle on the y-axis.
  */
 class Rectangle(
-    x: Double = 0.0,
-    y: Double = 0.0,
-    @property:Interpolate override var width: Double = 50.0,
-    @property:Interpolate override var height: Double = 50.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
-    @property:Interpolate override var outlineStroke: Double = 0.0,
-    @property:Interpolate override var outlineColor: WidgetColor = WidgetColor.DEFAULT,
-    @property:State override var horizontalAlignment: Alignment = Alignment.START,
-    @property:State override var verticalAlignment: Alignment = Alignment.START
-) : Widget<Rectangle>(), IPosition, IDimension, IColor, IOutline, IAlign {
+    initializerBlock: (Rectangle.() -> Unit)? = null
+) : Widget<Rectangle>(initializerBlock), IPosition, IDimension, IColor, IOutline, IAlign {
+
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var width: Double by property(50.0)
+    @Interpolate override var height: Double by property(50.0)
+    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    @Interpolate override var outlineStroke: Double by property(0.0)
+    @Interpolate override var outlineColor: WidgetColor by property(WidgetColor.DEFAULT)
+    @State override var horizontalAlignment: Alignment by property(Alignment.START)
+    @State override var verticalAlignment: Alignment by property(Alignment.START)
+
+    init {
+        val (alignedX, alignedY) = align(x, y, width, height)
+        this.x = alignedX
+        this.y = alignedY
+    }
 
     override fun render() {
         if (outlineStroke > 0.0) {
@@ -71,31 +69,5 @@ class Rectangle(
 
             glEnd()
         }
-    }
-
-    override fun clone() = Rectangle(
-        x = horizontalAlignment.reverse(x, width),
-        y = verticalAlignment.reverse(y, height),
-        width = width,
-        height = height,
-        color = color.clone(),
-        outlineStroke = outlineStroke,
-        outlineColor = outlineColor.clone(),
-        horizontalAlignment = horizontalAlignment,
-        verticalAlignment = verticalAlignment
-    )
-
-    override fun newInstance(): Rectangle = Rectangle()
-
-    @Interpolate
-    override var x: Double by Delegates.notNull()
-
-    @Interpolate
-    override var y: Double by Delegates.notNull()
-
-    init {
-        val (alignedX, alignedY) = align(x, y, width, height)
-        this.x = alignedX
-        this.y = alignedY
     }
 }

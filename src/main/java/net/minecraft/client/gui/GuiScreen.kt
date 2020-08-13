@@ -94,7 +94,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     private var clickedLinkURI: URI? = null
 
     @JvmField
-    var buffer = WidgetBuffer()
+    var stage = WidgetStage(this::class.simpleName!!)
 
     /**
      * The color that is used in the [drawBackgroundFill] function to color the background.
@@ -131,7 +131,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
     open fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        buffer.render()
+        stage.render()
         for (guiButton in ArrayList(buttonList)) {
             guiButton.drawButton(mc, mouseX, mouseY)
         }
@@ -147,7 +147,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     @Throws(IOException::class)
     protected open fun keyTyped(typedChar: Char, keyCode: Int) {
 
-        buffer.handleKeyTyped(typedChar, keyCode)
+        stage.handleKeyTyped(typedChar, keyCode)
 
         if (keyCode == 1 && canManuallyClose) {
             mc.displayGuiScreen(null)
@@ -165,7 +165,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                     val scaledHeight = scaledResolution.scaledHeight
 
                     buttonList.clear()
-                    buffer.clear()
+                    stage.clear()
                     onGuiClosed()
                     setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
                 }
@@ -467,16 +467,17 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         buttonList.clear()
 
         backgroundImage?.let {
-            +ResponsiveImage(
-                x = 0.0,
-                y = 0.0,
-                width = width.toDouble(),
-                height = height.toDouble(),
-                originalWidth = it.width,
-                originalHeight = it.height,
-                resourceLocation = ResourceLocation(it.resourceLocation),
+            +ResponsiveImage {
+                x = 0.0
+                y = 0.0
+                this.width = this@GuiScreen.width.toDouble()
+                this.height = this@GuiScreen.height.toDouble()
+                originalWidth = it.width
+                originalHeight = it.height
+                resourceLocation = it.image.resourceLocation
+                dynamicTexture = it.image.dynamicTexture
                 color = backgroundFill ?: WidgetColor.DEFAULT
-            ) id "background"
+            } id "background"
         }
         initGui()
     }
@@ -577,18 +578,18 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             eventButton = k
             lastMouseEvent = Minecraft.getSystemTime()
             mouseClicked(mouseX, mouseY, eventButton)
-            buffer.handleMousePress(MouseData(mouseX, mouseY, button = eventButton))
+            stage.handleMousePress(MouseData(mouseX, mouseY, button = eventButton))
         } else if (k != -1) {
             if (mc.gameSettings.touchscreen && --touchValue > 0) {
                 return
             }
             eventButton = -1
             mouseReleased(mouseX, mouseY, k)
-            buffer.handleMouseRelease(MouseData(mouseX, mouseY, button = k))
+            stage.handleMouseRelease(MouseData(mouseX, mouseY, button = k))
         } else if (eventButton != -1 && lastMouseEvent > 0L) {
             val timeSinceLastClick = Minecraft.getSystemTime() - lastMouseEvent
             mouseClickMove(mouseX, mouseY, eventButton, timeSinceLastClick)
-            buffer.handleMouseDrag(MouseData(mouseX, mouseY, button = k, draggingDuration = timeSinceLastClick))
+            stage.handleMouseDrag(MouseData(mouseX, mouseY, button = k, draggingDuration = timeSinceLastClick))
         }
     }
 
@@ -691,15 +692,15 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     }
 
     /**
-     * An operator function that allows adding widgets to the buffer. After providing the widget,
+     * An operator function that allows adding widgets to the stage. After providing the widget,
      * an id for it must be specified with the infix function [WidgetIdBuilder.id].
      */
     operator fun <W : Widget<W>> W.unaryPlus(): WidgetIdBuilder<W> {
-        return WidgetIdBuilder<W>(buffer, widget = this)
+        return WidgetIdBuilder(stage, widget = this)
     }
 
     operator fun String.unaryMinus(): Widget<*>? {
-        return buffer[this]
+        return stage[this]
     }
 
     /**
@@ -707,7 +708,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * null if the widget was not found or cannot be cast.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <W : Widget<W>> getWidget(identifier: String): W? = buffer[identifier] as? W
+    fun <W : Widget<W>> getWidget(identifier: String): W? = stage[identifier] as? W
 
     companion object {
         private val LOGGER = LogManager.getLogger()

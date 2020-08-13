@@ -1,11 +1,13 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
+import org.apache.logging.log4j.LogManager
+
 /**
  * A builder for easily creating pairs of a widget and an id.
  *
  * It is initialized when calling the unary plus function on a string with the
  * widget set. After that, you can specify the id by using the infix function `id`.
- * When it is called, the pair will automatically be built and added to the buffer.
+ * When it is called, the pair will automatically be built and added to the stage.
  *
  * @property onBuild a lambda that is executed when the builder is being built
  * @property widget the widget that is mapped to the id
@@ -13,10 +15,11 @@ package net.inceptioncloud.dragonfly.engine.internal
 class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> Unit) {
 
     /**
-     * A convenient constructor for directly adding the widget to a [WidgetBuffer].
+     * A convenient constructor for directly adding the widget to a [WidgetStage].
      */
-    constructor(buffer: WidgetBuffer, widget: W)
-            : this(widget, { id, _ -> buffer.add(id to widget) })
+    constructor(stage: WidgetStage, widget: W) : this(widget, { id, _ ->
+        stage.add(id to widget)
+    })
 
     /**
      * The id to identify the widget.
@@ -36,6 +39,14 @@ class WidgetIdBuilder<W : Widget<W>>(val widget: W, val onBuild: (String, W) -> 
      * Build the pair.
      */
     private fun build() {
+        widget.isInStateUpdate = true
+
+        try {
+            widget.initializerBlock?.invoke(widget)
+        } finally {
+            widget.isInStateUpdate = false
+        }
+
         onBuild(id!!, widget)
     }
 }
