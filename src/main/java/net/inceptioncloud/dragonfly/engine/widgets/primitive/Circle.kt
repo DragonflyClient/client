@@ -22,8 +22,7 @@ import kotlin.properties.Delegates
  * using the OpenGL [glLineWidth] function. Notice that high-values can result in errors
  * or ignorance.
  */
-@Suppress("LeakingThis")
-open class Circle(
+class Circle(
     initializerBlock: (Circle.() -> Unit)? = null
 ) : Widget<Circle>(initializerBlock), IPosition, ISize, IColor, IAlign {
 
