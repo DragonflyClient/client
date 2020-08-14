@@ -53,7 +53,6 @@ public class ScaledResolution
         return this.scaledWidthD;
     }
 
-
     public double getScaledHeight_double ()
     {
         return this.scaledHeightD;

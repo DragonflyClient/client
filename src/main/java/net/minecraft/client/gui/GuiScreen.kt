@@ -114,6 +114,11 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     open var canManuallyClose: Boolean = true
 
     /**
+     * A custom scale factor that is only applied to this gui.
+     */
+    open var customScaleFactor: Double? = null
+
+    /**
      * Draws a gradient background with the default colors.
      */
     fun drawGradientBackground() {
@@ -460,13 +465,21 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      */
     open fun setWorldAndResolution(mc: Minecraft, width: Int, height: Int) {
         this.mc = mc
-        this.width = width
-        this.height = height
+
+        if (customScaleFactor != null) {
+            this.scaleFactor = customScaleFactor!!
+            this.width = (mc.displayWidth / customScaleFactor!!).toInt()
+            this.height = (mc.displayHeight / customScaleFactor!!).toInt()
+        } else {
+            this.width = width
+            this.height = height
+            this.scaleFactor = ScaledResolution(mc).scaleFactor.toDouble()
+        }
 
         itemRender = mc.renderItem
         fontRendererObj = mc.fontRendererObj
-        scaleFactor = ScaledResolution(mc).scaleFactor
         buttonList.clear()
+        stage.clear()
 
         backgroundImage?.let {
             +ResponsiveImage {
@@ -481,10 +494,14 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                 color = backgroundFill ?: WidgetColor.DEFAULT
             } id "background"
         }
+
         initGui()
     }
 
-    var scaleFactor = 0
+    /**
+     * Cache for the scale factor that is used in this gui screen.
+     */
+    var scaleFactor = 0.0
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
@@ -710,6 +727,20 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     }
 
     /**
+     * Calculate a relative position for based on the [width] of the gui screen. The [good] parameter
+     * represents a value that fits good with the [total] screen width. The relative relationship between
+     * these two values is then applied to the current [width] of the gui screen.
+     */
+    fun relativeH(good: Number, total: Number = 1920.0): Double = width * (good.toDouble() / total.toDouble())
+
+    /**
+     * Calculate a relative position for based on the [height] of the gui screen. The [good] parameter
+     * represents a value that fits good with the [total] screen height. The relative relationship between
+     * these two values is then applied to the current [height] of the gui screen.
+     */
+    fun relativeV(good: Number, total: Number = 1080.0): Double = height * (good.toDouble() / total.toDouble())
+
+    /**
      * Tries to get a widget and additionally cast it to the specified type. This will return
      * null if the widget was not found or cannot be cast.
      */
@@ -727,6 +758,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
 
         this.x = that.x
         this.y = that.y + that.height + margin
+        this.width = that.width
+        this.height = that.height
     }
 
     companion object {

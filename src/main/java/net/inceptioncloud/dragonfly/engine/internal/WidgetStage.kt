@@ -5,7 +5,10 @@ import javafx.collections.ObservableList
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService.platform
-import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.structure.IDraw
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.ScaledResolution
+import net.minecraft.client.renderer.GlStateManager
 import tornadofx.*
 
 /**
@@ -168,17 +171,4 @@ class WidgetStage(val name: String) {
         contentPrivate.values.forEach { it.handleKeyTyped(char, keyCode) }
     }
     //</editor-fold>
-
-    override fun toString(): String {
-        val builder = StringBuilder("WidgetStage(${contentPrivate.size})\n{\n")
-
-        contentPrivate.forEach {
-            builder.append("\t${it.key}")
-            if (!it.value.isVisible)
-                builder.append(" (invisible)")
-            builder.append(": ${it.value}\n")
-        }
-
-        return builder.append("}").toString()
-    }
 }

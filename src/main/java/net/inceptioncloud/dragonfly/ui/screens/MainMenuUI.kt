@@ -1,9 +1,13 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
 import com.google.gson.JsonParser
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -15,21 +19,25 @@ class MainMenuUI : GuiScreen() {
 
     override var backgroundImage: SizedImage? = loadSplashImage()
 
+    override var customScaleFactor: Double? = 1.0
+
     override fun initGui() {
-        +ResponsiveImage {
+        +Image {
+            val aspectRatio = 1118.0 / 406.0
+
             resourceLocation = ResourceLocation("dragonflyres/logos/branded-name.png")
-            originalWidth = 1118.0
-            originalHeight = 406.0
-            width = 140.0
-            height = 60.0
-            x = this@MainMenuUI.width / 2.0 - 70.0
-            y = 10.0
+            height = relativeV(200)
+            width = height * aspectRatio
+            x = this@MainMenuUI.width / 2.0 - width / 2.0
+            y = relativeV(50)
         } id "brand-icon"
 
         val buttonsY = (height / 2.0 - 40.0).coerceAtLeast(100.0)
 
         +DragonflyButton {
-            x = this@MainMenuUI.width / 2.0 - 100.0
+            width = relativeH(450)
+            height = relativeV(55)
+            x = this@MainMenuUI.width / 2.0 - width / 2.0
             y = buttonsY
             text = "Singleplayer"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/singleplayer.png"))

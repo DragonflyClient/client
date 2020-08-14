@@ -157,7 +157,7 @@ public class GuiIngame extends Gui {
         ScaledResolution scaledresolution = new ScaledResolution(this.mc);
         int scaledWidth = scaledresolution.getScaledWidth();
         int scaledHeight = scaledresolution.getScaledHeight();
-        this.mc.entityRenderer.setupOverlayRendering();
+        this.mc.entityRenderer.setupOverlayRendering(false);
         GlStateManager.enableBlend();
 
         if (Config.isVignetteEnabled()) {

@@ -44,7 +44,7 @@ object GraphicsEngine {
     @JvmStatic
     fun getScaleFactor(): Double {
         return (Minecraft.getMinecraft().currentScreen?.scaleFactor
-            ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor).toDouble()
+            ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor.toDouble())
     }
 
     /**
