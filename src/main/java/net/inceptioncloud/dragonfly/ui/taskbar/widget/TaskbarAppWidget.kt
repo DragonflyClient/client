@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.ui.taskbar.widget
 
-import kotlinx.coroutines.yield
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
@@ -12,6 +11,7 @@ import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
+import kotlin.properties.Delegates
 
 class TaskbarAppWidget(
     private val app: TaskbarApp,
@@ -23,10 +23,10 @@ class TaskbarAppWidget(
     @Interpolate override var width: Double by property(200.0)
     @Interpolate override var height: Double by property(20.0)
 
-    val originX = x
-    val originY = y
-    val originWidth = width
-    val originHeight = height
+    var originX by Delegates.notNull<Double>()
+    var originY by Delegates.notNull<Double>()
+    var originWidth by Delegates.notNull<Double>()
+    var originHeight by Delegates.notNull<Double>()
 
     var isHovered: Boolean = false
 
@@ -38,6 +38,7 @@ class TaskbarAppWidget(
 
     override fun updateStructure() {
         val shadowOffset = 2.0
+        val iconOffset = 6.0
 
         "shadow"<FilledCircle> {
             x = this@TaskbarAppWidget.x - shadowOffset
@@ -56,18 +57,20 @@ class TaskbarAppWidget(
         }
 
         "icon"<Image> {
-            x = this@TaskbarAppWidget.x + 3.0
-            y = this@TaskbarAppWidget.y + 3.0
-            width = this@TaskbarAppWidget.width - 6.0
-            height = this@TaskbarAppWidget.height - 6.0
+            x = this@TaskbarAppWidget.x + iconOffset
+            y = this@TaskbarAppWidget.y + iconOffset
+            width = this@TaskbarAppWidget.width - iconOffset * 2
+            height = this@TaskbarAppWidget.height - iconOffset * 2
             resourceLocation = app.resourceLocation
         }
     }
 
-    override fun handleMouseMove(data: MouseData) {
+    override fun render() {
+        super.render()
+
         val mouseX = GraphicsEngine.getMouseX()
         val mouseY = GraphicsEngine.getMouseY()
-        val grow = 3.0
+        val grow = 5.0
 
         if (mouseX in x..x + width && mouseY in y..y + height) {
             if (isHovered)
@@ -75,7 +78,7 @@ class TaskbarAppWidget(
 
             detachAnimation<MorphAnimation>()
             morph(
-                60, EaseQuad.IN_OUT,
+                20, EaseQuad.IN_OUT,
                 TaskbarAppWidget::x to x - grow,
                 TaskbarAppWidget::y to y - grow,
                 TaskbarAppWidget::width to width + grow * 2,
@@ -88,7 +91,7 @@ class TaskbarAppWidget(
 
             detachAnimation<MorphAnimation>()
             morph(
-                60, EaseQuad.IN_OUT,
+                20, EaseQuad.IN_OUT,
                 TaskbarAppWidget::x to originX,
                 TaskbarAppWidget::y to originY,
                 TaskbarAppWidget::width to originWidth,
@@ -96,5 +99,12 @@ class TaskbarAppWidget(
             )?.start()
             isHovered = false
         }
+    }
+
+    override fun handleStageAdd(stage: WidgetStage) {
+        originX = x
+        originY = y
+        originWidth = width
+        originHeight = height
     }
 }

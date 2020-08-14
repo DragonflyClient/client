@@ -10,13 +10,18 @@ object Taskbar {
     private val taskbarApps = mutableListOf(
         TaskbarApp("Account Manager", "account-manager"),
         TaskbarApp("Mod Options", "mod-options"),
-        TaskbarApp("Color Scheme", "color-scheme")
-    )
+        TaskbarApp("Home", "home"),
+        TaskbarApp("Ideas Platform", "ideas"),
+        TaskbarApp("Plugins Marketplace", "plugins"),
+        TaskbarApp("Search", "search"),
+        TaskbarApp("Cloud Sync", "synchronize"),
+        TaskbarApp("Trash", "trash")
+    ).also { it.shuffle() }
 
     fun initializeTaskbar(gui: GuiScreen): Unit = with(gui) {
-        val size = 50.0
-        val space = 12.0
-        val taskbarHeight = 70.0
+        val size = 52.0
+        val space = 20.0
+        val taskbarHeight = 72.0
 
         +Rectangle {
             x = 0.0

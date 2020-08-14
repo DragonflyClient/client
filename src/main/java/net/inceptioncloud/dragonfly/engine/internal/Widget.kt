@@ -58,6 +58,12 @@ abstract class Widget<W : Widget<W>>(
      * rendered by a stage and not by an assembled widget (if [isInAssembled] is false).
      */
     var parentStage: WidgetStage? = null
+        set(value) {
+            if (value != null) {
+                handleStageAdd(value)
+            }
+            field = value
+        }
 
     /**
      * Whether the widget is currently visible. If this flag is set to false, the [drawNative] method
@@ -314,6 +320,13 @@ abstract class Widget<W : Widget<W>>(
      * Notifies the widget when a key on the keyboard is typed.
      */
     open fun handleKeyTyped(char: Char, keyCode: Int) {
+        /* can be implemented by a subclass */
+    }
+
+    /**
+     * Notifies the widget when it is added to a stage after the [initializerBlock] has been called.
+     */
+    open fun handleStageAdd(stage: WidgetStage) {
         /* can be implemented by a subclass */
     }
 

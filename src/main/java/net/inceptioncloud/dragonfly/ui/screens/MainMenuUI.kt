@@ -71,6 +71,10 @@ class MainMenuUI : GuiScreen() {
         Taskbar.initializeTaskbar(this)
     }
 
+    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        super.drawScreen(mouseX, mouseY, partialTicks)
+    }
+
     /**
      * Load the splash image and its properties from the Dragonfly webserver and creates a [SizedImage]
      * based on them.
