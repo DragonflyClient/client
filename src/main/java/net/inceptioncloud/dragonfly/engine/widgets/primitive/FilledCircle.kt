@@ -34,7 +34,7 @@ class FilledCircle(
     override fun render() {
         color.glBindColor()
 
-        val sections = 50
+        val sections = 150
         val radius = size / 2
         val angle = 2 * Math.PI / sections
         var circleX: Float
@@ -44,6 +44,7 @@ class FilledCircle(
         glEnable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_POLYGON_SMOOTH)
         glEnable(GL_LINE_SMOOTH)
         glBegin(GL_TRIANGLE_FAN)
 
@@ -58,6 +59,7 @@ class FilledCircle(
         glEnable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
         glDisable(GL_LINE_SMOOTH)
+        glDisable(GL_POLYGON_SMOOTH)
         glPopMatrix()
     }
 }
