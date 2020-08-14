@@ -116,7 +116,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     /**
      * A custom scale factor that is only applied to this gui.
      */
-    open var customScaleFactor: Double? = null
+    open var customScaleFactor: () -> Double? = { null }
 
     /**
      * Draws a gradient background with the default colors.
@@ -466,10 +466,10 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     open fun setWorldAndResolution(mc: Minecraft, width: Int, height: Int) {
         this.mc = mc
 
-        if (customScaleFactor != null) {
-            this.scaleFactor = customScaleFactor!!
-            this.width = (mc.displayWidth / customScaleFactor!!).toInt()
-            this.height = (mc.displayHeight / customScaleFactor!!).toInt()
+        if (customScaleFactor() != null) {
+            this.scaleFactor = customScaleFactor()!!
+            this.width = (mc.displayWidth / customScaleFactor()!!).toInt()
+            this.height = (mc.displayHeight / customScaleFactor()!!).toInt()
         } else {
             this.width = width
             this.height = height

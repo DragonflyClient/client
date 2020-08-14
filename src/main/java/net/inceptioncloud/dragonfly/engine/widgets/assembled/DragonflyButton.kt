@@ -53,10 +53,10 @@ class DragonflyButton(
             color = this@DragonflyButton.backgroundColor
         }
 
-        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 20)
+        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt())
         val stringWidth = buttonFontRenderer.getStringWidth(text)
-        val iconSize = 14.0
-        val iconMarginRight = 4.0
+        val iconSize = height - 6.0
+        val iconMarginRight = height / 5.0
         val totalWidth = stringWidth + iconSize + iconMarginRight
 
         val iconWidget = "icon"<Image> {
@@ -90,7 +90,7 @@ class DragonflyButton(
         "overlay"<Rectangle> {
             x = this@DragonflyButton.x
             y = this@DragonflyButton.y
-            width = 5.0
+            width = this@DragonflyButton.width / 40.0
             height = this@DragonflyButton.height
             color = this@DragonflyButton.color
         }
@@ -99,8 +99,9 @@ class DragonflyButton(
     override fun update() {
         super.update()
 
-        val mouseX = GraphicsEngine.getMouseX().toDouble()
-        val mouseY = GraphicsEngine.getMouseY().toDouble()
+        val mouseX = GraphicsEngine.getMouseX()
+        val mouseY = GraphicsEngine.getMouseY()
+        val offset = width / 40.0
         val overlayWidget = getWidget<Rectangle>("overlay")
 
         if (mouseX in x..x + width && mouseY in y..y + height) {
@@ -111,7 +112,7 @@ class DragonflyButton(
             overlayWidget?.morph(
                 60,
                 EaseQuad.IN_OUT,
-                Rectangle::width to width - 5.0
+                Rectangle::width to width - offset
             )?.start()
             isHovered = true
         } else {
@@ -122,7 +123,7 @@ class DragonflyButton(
             overlayWidget?.morph(
                 60,
                 EaseQuad.IN_OUT,
-                Rectangle::width to 5.0
+                Rectangle::width to offset
             )?.start()
             isHovered = false
         }

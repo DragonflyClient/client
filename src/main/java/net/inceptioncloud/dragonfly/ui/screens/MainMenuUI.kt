@@ -12,6 +12,7 @@ import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
+import java.lang.Double.min
 import java.net.URL
 import javax.imageio.ImageIO
 
@@ -19,26 +20,24 @@ class MainMenuUI : GuiScreen() {
 
     override var backgroundImage: SizedImage? = loadSplashImage()
 
-    override var customScaleFactor: Double? = 1.0
+    override var customScaleFactor: () -> Double? = { min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
 
     override fun initGui() {
         +Image {
             val aspectRatio = 1118.0 / 406.0
 
             resourceLocation = ResourceLocation("dragonflyres/logos/branded-name.png")
-            height = relativeV(200)
+            height = 200.0
             width = height * aspectRatio
             x = this@MainMenuUI.width / 2.0 - width / 2.0
-            y = relativeV(50)
+            y = 50.0
         } id "brand-icon"
 
-        val buttonsY = (height / 2.0 - 40.0).coerceAtLeast(100.0)
-
         +DragonflyButton {
-            width = relativeH(450)
-            height = relativeV(55)
+            width = 470.0
+            height = 50.0
             x = this@MainMenuUI.width / 2.0 - width / 2.0
-            y = buttonsY
+            y = 500.0
             text = "Singleplayer"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/singleplayer.png"))
 

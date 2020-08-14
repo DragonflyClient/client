@@ -1912,7 +1912,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
         double scaledHeight = scaledresolution.getScaledHeight_double();
 
         if (mc.currentScreen != null && useCustomScale) {
-            Double customScaleFactor = mc.currentScreen.getCustomScaleFactor();
+            Double customScaleFactor = mc.currentScreen.getCustomScaleFactor().invoke();
             if (customScaleFactor != null) {
                 scaledWidth = mc.displayWidth / customScaleFactor;
                 scaledHeight = mc.displayHeight / customScaleFactor;
