@@ -51,7 +51,7 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
     }
 
     override fun update() {
-        structure.values.forEach { it.update() }
+        structure.values.toList().forEach { it.update() }
         super.update()
     }
 
