@@ -69,9 +69,10 @@ class TaskbarAppWidget(
         "tooltip"<TooltipWidget> {
             text = app.name
             x = this@TaskbarAppWidget.originX + this@TaskbarAppWidget.originWidth / 2
-            y = this@TaskbarAppWidget.originY - 60.0
+            y = this@TaskbarAppWidget.originY - 50.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
-            padding = 4.0
+            padding = 3.0
+            arc = 7.0
         }
     }
 
@@ -117,9 +118,9 @@ class TaskbarAppWidget(
 
         tooltip.detachAnimation<MorphAnimation>()
         tooltip.morph(
-            30, EaseQuad.IN_OUT,
+            40, EaseQuad.IN_OUT,
             tooltip::opacity to opacity,
-            tooltip::verticalOffset to (offset * opacity)
+            tooltip::verticalOffset to (-offset * opacity)
         )?.start()
     }
 

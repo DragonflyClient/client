@@ -119,7 +119,6 @@ class GlyphPage(
             glyph.height = bounds.height.toInt()
             check(posY + glyph.height < imgSize) { "Not all characters will fit" }
 
-            if (ch == 'j') glyph.width += 4
             if (posX + glyph.width >= imgSize) {
                 posX = 0
                 posY += currentCharHeight
@@ -136,8 +135,8 @@ class GlyphPage(
                 currentCharHeight = glyph.height
             }
 
-            graphics.drawString(ch.toString(), posX + if (ch == 'j') 5 else 2, posY + fontMetrics.ascent)
-            posX += glyph.width
+            graphics.drawString(ch.toString(), posX, posY + fontMetrics.ascent)
+            posX += glyph.width + 4
             glyphCharacterMap[ch] = glyph
         }
 

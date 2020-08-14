@@ -38,7 +38,7 @@ class TooltipWidget(
 
         val background = "background"<RoundedRectangle> {
             arc = this@TooltipWidget.arc
-            width = textWidth + 2 * padding
+            width = textWidth + 4 * padding
             height = fontRenderer!!.height + 2 * padding
             x = this@TooltipWidget.x - width / 2
             y = this@TooltipWidget.y + verticalOffset
@@ -61,7 +61,7 @@ class TooltipWidget(
 
         "text"<TextRenderer> {
             text = this@TooltipWidget.text
-            x = background.x + padding
+            x = background.x + padding * 2
             y = background.y + padding
             color = DragonflyPalette.background.altered { alphaDouble = opacity }
             fontRenderer = this@TooltipWidget.fontRenderer!!

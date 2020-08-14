@@ -20,9 +20,9 @@ object Taskbar {
     ).also { it.shuffle() }
 
     fun initializeTaskbar(gui: GuiScreen): Unit = with(gui) {
-        val size = 49.0
+        val size = 55.0
         val space = 20.0
-        val taskbarHeight = 72.0
+        val taskbarHeight = 80.0
 
         +Rectangle {
             x = 0.0
