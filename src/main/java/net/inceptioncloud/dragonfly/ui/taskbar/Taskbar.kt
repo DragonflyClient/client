@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.ui.taskbar
 
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
 import net.minecraft.client.gui.GuiScreen
@@ -39,6 +40,7 @@ object Taskbar {
                 width = size
                 height = size
             } id "app-${app.name.toLowerCase().replace(" ", "-")}"
+
             currentX += size + space
         }
     }

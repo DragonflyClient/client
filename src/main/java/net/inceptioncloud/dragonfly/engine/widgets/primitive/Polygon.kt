@@ -21,25 +21,33 @@ open class Polygon(
 ) : Widget<Polygon>(initializerBlock), IColor {
 
     @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
-    @Interpolate var lineWidth: Float by property(2F)
 
-    val points = listOf<Point>()
+    var smooth: Boolean by property(false)
+    val points = mutableListOf<Point>()
 
     override fun render() {
         color.glBindColor()
 
-        glEnable(GL_LINE_SMOOTH)
-        glEnable(GL_POLYGON_SMOOTH)
-        glLineWidth(lineWidth)
+        glPushMatrix()
 
-        glBegin(GL_LINE_STRIP)
+        glEnable(GL_BLEND)
+        glDisable(GL_TEXTURE_2D)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_LINE_SMOOTH)
+        if (smooth) glEnable(GL_POLYGON_SMOOTH)
+
+        glBegin(GL_TRIANGLE_FAN)
 
         for (point in points)
             glVertex2d(point.x.toDouble(), point.y.toDouble())
 
         glEnd()
 
-        glDisable(GL_POLYGON_SMOOTH)
+        glEnable(GL_TEXTURE_2D)
+        glDisable(GL_BLEND)
         glDisable(GL_LINE_SMOOTH)
+        if (smooth) glDisable(GL_POLYGON_SMOOTH)
+
+        glPopMatrix()
     }
 }

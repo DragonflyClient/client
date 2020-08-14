@@ -3,7 +3,11 @@ package net.inceptioncloud.dragonfly.engine.internal
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.minecraft.client.gui.Gui
+import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * The colors that are used to separate the individual structure widgets when
@@ -98,6 +102,20 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
      * [block] to it.
      */
     fun <W : Widget<W>> updateWidget(identifier: String, block: W.() -> Unit): W? = getWidget<W>(identifier)?.apply(block)
+
+    fun inherit(identifier: String) {
+        val that = structure[identifier] ?: return
+
+        that::class.memberProperties
+            .forEach { thatProp ->
+                val thisProp = this::class.memberProperties.find {
+                    it.isAccessible && it.name == thatProp.name && it.returnType == thatProp.returnType
+                } as? KMutableProperty<*> ?: return
+
+                thisProp.setter.call(this, thatProp.getter.call(that))
+                LogManager.getLogger().info("${this::class.simpleName} inherited ${thisProp.name} from ${that::class.simpleName}")
+            }
+    }
 
     /**
      * Convenient function for accessing [updateWidget].

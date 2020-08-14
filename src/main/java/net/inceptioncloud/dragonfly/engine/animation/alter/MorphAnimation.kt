@@ -75,7 +75,7 @@ class MorphAnimation(
          * A convenient function for morphing from one widget. This function alters the original widget
          * instead of accepting a destination widget for the animation.
          */
-        fun <W : Widget<W>> Widget<W>.morph(
+        fun Widget<*>.morph(
             duration: Int = 100,
             easing: ((Double) -> Double)? = null,
             vararg updates: PropertyUpdate
@@ -91,7 +91,7 @@ class MorphAnimation(
         /**
          * A convenient function for morphing between multiple states of a widget.
          */
-        fun <W : Widget<W>> Widget<W>.morphBetween(
+        fun Widget<*>.morphBetween(
             duration: Int = 100,
             easing: ((Double) -> Double)? = null,
             first: List<PropertyUpdate>,
