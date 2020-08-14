@@ -10,7 +10,6 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import kotlin.properties.Delegates
@@ -32,15 +31,11 @@ class TaskbarAppWidget(
 
     var isHovered: Boolean = false
 
-    private val contentOffset = 3.0
-
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "shadow" to FilledCircle(),
         "background" to FilledCircle(),
         "icon" to Image(),
-        "tooltip-rectangle" to RoundedRectangle(),
-        "tooltip-triangle" to Polygon(),
-        "tooltip-text" to TextRenderer()
+        "tooltip" to TooltipWidget()
     )
 
     override fun updateStructure() {
@@ -71,39 +66,12 @@ class TaskbarAppWidget(
             resourceLocation = app.resourceLocation
         }
 
-        val tooltipFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
-        val tooltipWidth = tooltipFontRenderer.getStringWidth(app.name)
-
-        val tooltipRectangle = "tooltip-rectangle"<RoundedRectangle> {
-            arc = 10.0
-            width = tooltipWidth + 2 * contentOffset
-            height = tooltipFontRenderer.height + 2 * contentOffset
-            x = this@TaskbarAppWidget.originX + this@TaskbarAppWidget.originWidth / 2 - width / 2
-            y = this@TaskbarAppWidget.originY - 50.0
-            color = DragonflyPalette.foreground.altered { alphaDouble = 0.0 }
-        } ?: return
-
-        "tooltip-triangle"<Polygon> {
-            smooth = true
-            color = DragonflyPalette.foreground.altered { alphaDouble = 0.0 }
-
-            val centerX = tooltipRectangle.x + tooltipRectangle.width / 2.0
-            val endY = tooltipRectangle.y + tooltipRectangle.height
-
-            with(points) {
-                clear()
-                add(Point(centerX - 6.0, endY))
-                add(Point(centerX + 6.0, endY))
-                add(Point(centerX, endY + 6.0))
-            }
-        }
-
-        "tooltip-text"<TextRenderer> {
+        "tooltip"<TooltipWidget> {
             text = app.name
-            x = tooltipRectangle.x + contentOffset
-            y = tooltipRectangle.y + contentOffset
-            fontRenderer = tooltipFontRenderer
-            color = DragonflyPalette.background.altered { alphaDouble = 0.0 }
+            x = this@TaskbarAppWidget.originX + this@TaskbarAppWidget.originWidth / 2
+            y = this@TaskbarAppWidget.originY - 60.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
+            padding = 4.0
         }
     }
 
@@ -144,32 +112,14 @@ class TaskbarAppWidget(
     }
 
     private fun morphTooltip(opacity: Double) {
-        val rectangle = getWidget<RoundedRectangle>("tooltip-rectangle")!!
-        val triangle = getWidget<Polygon>("tooltip-triangle")!!
-        val text = getWidget<TextRenderer>("tooltip-text")!!
+        val tooltip = getWidget<TooltipWidget>("tooltip") ?: return
+        val offset = 10.0
 
-        val duration = 60
-        val easing = EaseQuad.IN_OUT
-        val animationOffset = 100.0
-
-        rectangle.detachAnimation<MorphAnimation>()
-        rectangle.morph(
-            duration, easing,
-            rectangle::color to DragonflyPalette.foreground.altered { alphaDouble = opacity },
-            rectangle::y to originY - 50.0 - animationOffset + (opacity * animationOffset)
-        )?.start()
-
-        triangle.detachAnimation<MorphAnimation>()
-        triangle.morph(
-            duration, easing,
-            triangle::color to DragonflyPalette.foreground.altered { alphaDouble = opacity }
-        )?.start()
-
-        text.detachAnimation<MorphAnimation>()
-        text.morph(
-            duration, easing,
-            text::color to DragonflyPalette.background.altered { alphaDouble = opacity },
-            text::y to originY - 50.0 - animationOffset + (opacity * animationOffset) + contentOffset
+        tooltip.detachAnimation<MorphAnimation>()
+        tooltip.morph(
+            30, EaseQuad.IN_OUT,
+            tooltip::opacity to opacity,
+            tooltip::verticalOffset to (offset * opacity)
         )?.start()
     }
 
