@@ -2,7 +2,6 @@ package net.minecraft.client.gui
 
 import com.google.common.collect.Iterables
 import com.google.common.collect.Lists
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor
@@ -10,6 +9,7 @@ import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionKeystrokes
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardTitle
@@ -1028,72 +1028,73 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     var keyStrokesTextColor = WidgetColor(1.0, 1.0, 1.0, 1.0)
     var keyStrokesBackgroundColor = WidgetColor(0.5, 0.5, 0.5, 0.2)
 
-    private fun initKeyStrokes() {
+    var keyStrokesScale = 15.0/*OptionsSectionKeystrokes.scale.invoke()!!*/
+    var keyStrokesSpace = 3.0/*OptionsSectionKeystrokes.space.invoke()!!*/
+    var keyStrokesStart = 10.0
+    var keyStrokesFontSize = 15.0/*OptionsSectionKeystrokes.fontSize.invoke()!!*/
+
+    var keyStrokesScaleW = 15.0/*OptionsSectionKeystrokes.scale.invoke()!!*/
+    var keyStrokesScaleH = 15.0/*OptionsSectionKeystrokes.scale.invoke()!!*/
+
+    fun initKeyStrokes() {
         var posX: Double
         var posY: Double
 
         stage.clear()
         for(keyStroke in KeyStrokesManager.keystrokes) {
-            val scale = 15.0
-            val space = 3.0
-            val start = 10.0
-            val fontSize = 15.0
-
-            var scaleW = 15.0
-            var scaleH = 15.0
             var name = ""
 
             when(keyStroke.keyDesc) {
                 "key.forward" -> {
-                    posX = start + scaleW + space
-                    posY = start
-                    scaleW = scale
-                    scaleH = scale
+                    posX = keyStrokesStart + keyStrokesScaleW + keyStrokesSpace
+                    posY = keyStrokesStart
+                    keyStrokesScaleW = keyStrokesScale
+                    keyStrokesScaleH = keyStrokesScale
                     name = Keyboard.getKeyName(keyStroke.keyCode)
                 }
                 "key.left" -> {
-                    posX = start
-                    posY = start + scaleW + space
-                    scaleW = scale
-                    scaleH = scale
+                    posX = keyStrokesStart
+                    posY = keyStrokesStart + keyStrokesScaleW + keyStrokesSpace
+                    keyStrokesScaleW = keyStrokesScale
+                    keyStrokesScaleH = keyStrokesScale
                     name = Keyboard.getKeyName(keyStroke.keyCode)
                 }
                 "key.back" -> {
-                    posX = start + scaleW + space
-                    posY = start + scaleW + space
-                    scaleW = scale
-                    scaleH = scale
+                    posX = keyStrokesStart + keyStrokesScaleW + keyStrokesSpace
+                    posY = keyStrokesStart + keyStrokesScaleW + keyStrokesSpace
+                    keyStrokesScaleW = keyStrokesScale
+                    keyStrokesScaleH = keyStrokesScale
                     name = Keyboard.getKeyName(keyStroke.keyCode)
                 }
                 "key.right" -> {
-                    posX = start + (2 * scaleW) + (2 * space)
-                    posY = start + scaleW + space
-                    scaleW = scale
-                    scaleH = scale
+                    posX = keyStrokesStart + (2 * keyStrokesScaleW) + (2 * keyStrokesSpace)
+                    posY = keyStrokesStart + keyStrokesScaleW + keyStrokesSpace
+                    keyStrokesScaleW = keyStrokesScale
+                    keyStrokesScaleH = keyStrokesScale
                     name = Keyboard.getKeyName(keyStroke.keyCode)
                 }
                 "key.jump" -> {
-                    posX = start
-                    posY = start + (2 * scaleW) + (2 * space)
-                    scaleW = (3 * scale) + (2 * space)
-                    scaleH = scale
+                    posX = keyStrokesStart
+                    posY = keyStrokesStart + (2 * keyStrokesScaleW) + (2 * keyStrokesSpace)
+                    keyStrokesScaleW = (3 * keyStrokesScale) + (2 * keyStrokesSpace)
+                    keyStrokesScaleH = keyStrokesScale
                     name = Keyboard.getKeyName(keyStroke.keyCode)
                 }
                 "key.attack" -> {
-                    posX = start
-                    posY = start + (3 * scaleW) + (3 * space)
-                    scaleW = (1.5 * scale) + (0.65 * space)
-                    scaleH = scale
+                    posX = keyStrokesStart
+                    posY = keyStrokesStart + (3 * keyStrokesScaleW) + (3 * keyStrokesSpace)
+                    keyStrokesScaleW = (1.5 * keyStrokesScale) + (0.65 * keyStrokesSpace)
+                    keyStrokesScaleH = keyStrokesScale
                     name = Mouse.getButtonName(keyStroke.keyCode + 100)
                         .replace("BUTTON0", "LMB")
                         .replace("BUTTON1", "RMB")
                         .replace("BUTTON2", "MMB")
                 }
                 "key.use" -> {
-                    posX = start + (1.5 * scale) + (1.7 * space)
-                    posY = start + (3 * scaleW) + (3 * space)
-                    scaleW = (1.55 * scale)
-                    scaleH = scale
+                    posX = keyStrokesStart + (1.5 * keyStrokesScale) + (1.7 * keyStrokesSpace)
+                    posY = keyStrokesStart + (3 * keyStrokesScaleW) + (3 * keyStrokesSpace)
+                    keyStrokesScaleW = (1.55 * keyStrokesScale)
+                    keyStrokesScaleH = keyStrokesScale
                     name = Mouse.getButtonName(keyStroke.keyCode + 100)
                         .replace("BUTTON0", "LMB")
                         .replace("BUTTON1", "RMB")
@@ -1108,15 +1109,15 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             +TextField {
                 x = posX
                 y = posY
-                width = scaleW
-                height = scaleH
+                width = keyStrokesScaleW
+                height = keyStrokesScaleH
                 backgroundColor = keyStrokesBackgroundColor
                 color = keyStrokesTextColor
                 textAlignHorizontal = Alignment.CENTER
                 textAlignVertical = Alignment.CENTER
                 staticText = name
                 font = fontManager.defaultFont
-                this.fontSize = fontSize
+                this.fontSize = keyStrokesFontSize
             } id "keystrokes-${keyStroke.keyDesc}"
         }
 
