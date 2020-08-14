@@ -382,10 +382,10 @@ public class GlyphFontRenderer implements IFontRenderer {
         GlyphPage.Glyph glyph = unscaledPageRegular.glyphCharacterMap.get(ch == '▏' ? '|' : ch);
 
         if (glyph == null) {
-            return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch);
+            return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch) * 2;
         }
 
-        return (float) ((pageRegular.getWidth(ch) - 8) / getFontQualityScale());
+        return (float) ((pageRegular.getWidth(ch) - 8) / (2.0F * getFontQualityScale()));
     }
 
     /**
@@ -412,11 +412,11 @@ public class GlyphFontRenderer implements IFontRenderer {
             this.blue = (float) (color & 255) / 255.0F;
             this.alpha = (float) (color >> 24 & 255) / 255.0F;
             GlStateManager.color(this.red, this.green, this.blue, this.alpha);
-            this.posX = x;
-            this.posY = y;
+            this.posX = x * 2.0f;
+            this.posY = y * 2.0f;
             this.renderStringAtPos(text, dropShadow);
             GlStateManager.scale(getFontQualityScale(), getFontQualityScale(), getFontQualityScale());
-            return (int) (this.posX / getFontQualityScale()); /* NOTE: This was originally 4.0F */
+            return (int) (this.posX / (2.0f * getFontQualityScale())); /* NOTE: This was originally 4.0F */
         }
     }
 
@@ -425,6 +425,9 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     private void renderStringAtPos(String text, boolean shadow) {
         GlyphPage glyphPage = getCurrentGlyphPage();
+
+        glPushMatrix();
+        glScaled(0.5, 0.5, 0.5);
 
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -539,7 +542,7 @@ public class GlyphFontRenderer implements IFontRenderer {
                     finishDraw(f, glyphPage, currentRed, currentGreen, currentBlue);
                 } else {
                     final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-                    final float factor = (float) getFontQualityScale();
+                    final float factor = (float) (2F * getFontQualityScale());
 
                     glScaled(factor, factor, factor);
 
@@ -552,6 +555,8 @@ public class GlyphFontRenderer implements IFontRenderer {
         }
 
         glyphPage.unbindTexture();
+
+        glPopMatrix();
     }
 
     private void finishDraw(float f, GlyphPage glyphPage, float r, float g, float b) {
@@ -561,10 +566,10 @@ public class GlyphFontRenderer implements IFontRenderer {
             GlStateManager.disableTexture2D();
             GlStateManager.color(r, g, b, alpha);
             worldRenderer.begin(7, DefaultVertexFormats.POSITION);
-            worldRenderer.pos(this.posX, this.posY + (float) (glyphPage.getMaxFontHeight()) + 3, 0.0D).endVertex();
-            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight()) + 3, 0.0D).endVertex();
-            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight()) - 2, 0.0D).endVertex();
-            worldRenderer.pos(this.posX, this.posY + (float) (glyphPage.getMaxFontHeight()) - 2, 0.0D).endVertex();
+            worldRenderer.pos(this.posX, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) + 3, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) + 3, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + f, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) - 2, 0.0D).endVertex();
+            worldRenderer.pos(this.posX, this.posY + (float) (glyphPage.getMaxFontHeight() / 2) - 2, 0.0D).endVertex();
             tessellator.draw();
             GlStateManager.enableTexture2D();
         }
