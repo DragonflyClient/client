@@ -45,23 +45,22 @@ class InputTextField(
     @Interpolate override var width: Double by property(100.0)
     @Interpolate override var height: Double by property(20.0)
     @Interpolate override var color: WidgetColor by property(WidgetColor(BluePalette.PRIMARY))
-    @State override var horizontalAlignment: Alignment by property(Alignment.START)
-    @State override var verticalAlignment: Alignment by property(Alignment.START)
+    override var horizontalAlignment: Alignment by property(Alignment.START)
+    override var verticalAlignment: Alignment by property(Alignment.START)
 
-    @State var font: WidgetFont by property(Dragonfly.fontManager.defaultFont)
-    @State var fontWeight: FontWeight by property(FontWeight.REGULAR)
+    var font: WidgetFont by property(Dragonfly.fontManager.defaultFont)
+    var fontWeight: FontWeight by property(FontWeight.REGULAR)
     @Interpolate var fontSize: Double by property(18.0)
     @Interpolate var padding: Double by property(2.0)
 
-    @State var label: String by property("Input Label")
-    @State var isEnabled: Boolean by property(true)
-    @State var maxStringLength: Int by property(200)
+    var label: String by property("Input Label")
+    var isEnabled: Boolean by property(true)
+    var maxStringLength: Int by property(200)
 
     /**
      * Whether the text field is currently focused. If it is, typed keys will be passed on to the input field
      * and a cursor will be active. When this property changes, the [focusedStateChanged] function will be called.
      */
-    @Info
     var isFocused = false
         set(value) {
             if (field == value)
@@ -72,7 +71,6 @@ class InputTextField(
         }
 
     /** The currently entered input text. */
-    @Info
     var inputText: String = ""
 
     /** Whether the text label is raised due to present input text or focus state. */

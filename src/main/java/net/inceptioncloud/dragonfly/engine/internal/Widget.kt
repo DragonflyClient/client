@@ -208,20 +208,7 @@ abstract class Widget<W : Widget<W>>(
     }
 
     /**
-     * Returns whether the state of the widget has been changed by a dynamic update or by an animation.
-     *
-     * Every widget should implement this function and adjust it to its structure, in particular the
-     * properties annotated with @[Interpolate].
-     *
-     * @param clone the clone which the base widget should be compared to
-     */
-    fun isStateEqual(clone: W) = this::class.memberProperties
-        .filter { it.hasAnnotation<Interpolate>() || it.hasAnnotation<State>() }
-        .none { it.getter.call(this) != it.getter.call(clone) }
-
-    /**
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.
-     * This is called when [isStateEqual] evaluates to false.
      */
     protected open fun stateChanged() {
         /* can be implemented by a subclass */
@@ -266,27 +253,6 @@ abstract class Widget<W : Widget<W>>(
      * type. Will return null if the type cast fails. See [getWidgetDelegate] for more information.
      */
     fun <T> KProperty<*>.getTypedWidgetDelegate(): WidgetPropertyDelegate<T>? = propertyDelegates[this.name] as? WidgetPropertyDelegate<T>
-
-    /**
-     * Generates an info string for the widget that is used for debugging.
-     */
-    open fun toInfo(): List<String> = this::class.memberProperties
-        .filter { it.hasAnnotation<State>() || it.hasAnnotation<Interpolate>() || it.hasAnnotation<Info>() }
-        .sortedByDescending { if (it.hasAnnotation<State>()) 3 else if (it.hasAnnotation<Interpolate>()) 2 else 1 }
-        .joinToString("\n") {
-            it.isAccessible = true
-            val name = it.name
-            var value = it.getter.call(this).toString()
-
-            if (value.length > 40) {
-                value = "${value.substring(0, 40)}..."
-            }
-
-            if (it.hasAnnotation<State>())
-                "--state$name = $value"
-            else
-                "$name = $value"
-        }.split("\n")
 
     /**
      * Notifies the widget when the mouse is moved.

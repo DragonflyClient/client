@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.Alignment.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
-import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
@@ -42,24 +41,24 @@ class TextField(
     @Interpolate override var width: Double by property(50.0)
     @Interpolate override var height: Double by property(50.0)
     @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
-    @State override var horizontalAlignment: Alignment by property(START)
-    @State override var verticalAlignment: Alignment by property(START)
-    @State var adaptHeight: Boolean by property(false)
+    override var horizontalAlignment: Alignment by property(START)
+    override var verticalAlignment: Alignment by property(START)
+    var adaptHeight: Boolean by property(false)
 
-    @State var staticText: String by property("No static text set")
-    @State var dynamicText: (() -> String)? by property(null)
+    var staticText: String by property("No static text set")
+    var dynamicText: (() -> String)? by property(null)
 
-    @State var textAlignHorizontal: Alignment by property(START)
-    @State var textAlignVertical: Alignment by property(START)
+    var textAlignHorizontal: Alignment by property(START)
+    var textAlignVertical: Alignment by property(START)
 
-    @State var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
-    @State var font: WidgetFont? by property(null)
-    @State var fontWeight: FontWeight by property(FontWeight.REGULAR)
+    var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
+    var font: WidgetFont? by property(null)
+    var fontWeight: FontWeight by property(FontWeight.REGULAR)
     @Interpolate var fontSize: Double by property(19.0)
 
     @Interpolate var backgroundColor: WidgetColor by property(WidgetColor(0, 0, 0, 0))
     @Interpolate var padding: Double by property(0.0)
-    @State var dropShadow: Boolean by property(false)
+    var dropShadow: Boolean by property(false)
 
     @Interpolate override var outlineStroke: Double by property(0.0)
     @Interpolate override var outlineColor: WidgetColor by property(WidgetColor.DEFAULT)

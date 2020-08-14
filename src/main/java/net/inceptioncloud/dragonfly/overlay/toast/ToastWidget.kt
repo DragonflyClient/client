@@ -4,7 +4,6 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
-import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
@@ -26,8 +25,8 @@ class ToastWidget(
     initializerBlock: (ToastWidget.() -> Unit)? = null
 ) : AssembledWidget<ToastWidget>(initializerBlock), IPosition, IDimension {
 
-    @State var text: String by property("This is a toast message")
-    @State var duration: Int by property(200)
+    var text: String by property("This is a toast message")
+    var duration: Int by property(200)
     @Interpolate var opacity: Double by property(0.0)
 
     @Interpolate override var x: Double by property(-1.0)

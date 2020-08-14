@@ -4,7 +4,6 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine.popScale
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine.pushScale
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morphBetween
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Info
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -42,8 +41,8 @@ class Image(
     @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
     @Interpolate var scale: Double by property(1.0)
-    @Info var dynamicTexture: DynamicTexture? by property(null)
-    @Info var resourceLocation: ResourceLocation? by property(null)
+    var dynamicTexture: DynamicTexture? by property(null)
+    var resourceLocation: ResourceLocation? by property(null)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "placeholder" to RoundedRectangle()

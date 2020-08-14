@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
-import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.minecraft.client.gui.Gui
 import java.awt.Color
@@ -28,12 +27,12 @@ class TextRenderer(
     @Interpolate var text: String by property("Default Text")
     @Interpolate var dropShadow: Boolean by property(false)
 
-    @State var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
-    @State var font: WidgetFont? by property(null)
-    @State var fontWeight: FontWeight by property(FontWeight.REGULAR)
+    var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
+    var font: WidgetFont? by property(null)
+    var fontWeight: FontWeight by property(FontWeight.REGULAR)
     @Interpolate var fontSize: Double by property(19.0)
 
-    @State var showBounds: Boolean by property(false)
+    var showBounds: Boolean by property(false)
 
     @Interpolate override var x: Double by property(0.0)
     @Interpolate override var y: Double by property(0.0)

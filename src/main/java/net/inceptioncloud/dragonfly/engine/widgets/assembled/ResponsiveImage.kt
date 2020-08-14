@@ -2,7 +2,6 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
-import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.minecraft.client.renderer.GlStateManager
@@ -36,8 +35,8 @@ class ResponsiveImage(
 
     @Interpolate var originalWidth: Double by property(width)
     @Interpolate var originalHeight: Double by property(width)
-    @State var resourceLocation: ResourceLocation? by property(null)
-    @State var dynamicTexture: DynamicTexture? by property(null)
+    var resourceLocation: ResourceLocation? by property(null)
+    var dynamicTexture: DynamicTexture? by property(null)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "image" to Image()
