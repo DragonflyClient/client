@@ -4,7 +4,6 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
 import net.minecraft.client.gui.GuiScreen
-import tornadofx.*
 
 object Taskbar {
 
@@ -15,9 +14,9 @@ object Taskbar {
     )
 
     fun initializeTaskbar(gui: GuiScreen): Unit = with(gui) {
-        val size = 18.0 * 2
-        val space = 4.0 * 2
-        val taskbarHeight = 25.0 * 2
+        val size = 50.0
+        val space = 12.0
+        val taskbarHeight = 70.0
 
         +Rectangle {
             x = 0.0

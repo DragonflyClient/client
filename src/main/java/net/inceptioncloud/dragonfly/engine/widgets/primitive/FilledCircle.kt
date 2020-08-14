@@ -25,6 +25,8 @@ class FilledCircle(
     @State override var horizontalAlignment: Alignment by property(Alignment.START)
     @State override var verticalAlignment: Alignment by property(Alignment.START)
 
+    @State var smooth: Boolean by property(false)
+
     init {
         val (alignedX, alignedY) = align(x, y, size, size)
         this.x = alignedX
@@ -44,7 +46,7 @@ class FilledCircle(
         glEnable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_POLYGON_SMOOTH)
+        if (smooth) glEnable(GL_POLYGON_SMOOTH)
         glEnable(GL_LINE_SMOOTH)
         glBegin(GL_TRIANGLE_FAN)
 
@@ -59,7 +61,7 @@ class FilledCircle(
         glEnable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
         glDisable(GL_LINE_SMOOTH)
-        glDisable(GL_POLYGON_SMOOTH)
+        if (smooth) glDisable(GL_POLYGON_SMOOTH)
         glPopMatrix()
     }
 }
