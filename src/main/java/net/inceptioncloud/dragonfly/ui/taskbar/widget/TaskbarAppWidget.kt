@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
@@ -70,7 +71,7 @@ class TaskbarAppWidget(
 
         val mouseX = GraphicsEngine.getMouseX()
         val mouseY = GraphicsEngine.getMouseY()
-        val grow = 5.0
+        val grow = 8.0
 
         if (mouseX in x..x + width && mouseY in y..y + height) {
             if (isHovered)
@@ -78,7 +79,7 @@ class TaskbarAppWidget(
 
             detachAnimation<MorphAnimation>()
             morph(
-                20, EaseQuad.IN_OUT,
+                30, EaseQuad.IN_OUT,
                 TaskbarAppWidget::x to x - grow,
                 TaskbarAppWidget::y to y - grow,
                 TaskbarAppWidget::width to width + grow * 2,
@@ -91,7 +92,7 @@ class TaskbarAppWidget(
 
             detachAnimation<MorphAnimation>()
             morph(
-                20, EaseQuad.IN_OUT,
+                30, EaseQuad.IN_OUT,
                 TaskbarAppWidget::x to originX,
                 TaskbarAppWidget::y to originY,
                 TaskbarAppWidget::width to originWidth,
