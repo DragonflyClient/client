@@ -9,10 +9,14 @@ import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
-import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.structure.IDimension
+import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TooltipWidget
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
+import net.minecraft.client.Minecraft
+import kotlin.math.*
 import kotlin.properties.Delegates
 
 /**
@@ -44,6 +48,9 @@ class TaskbarAppWidget(
 
     var isHovered: Boolean = false
 
+    val shadowOffset = 2.0
+    val iconMargin = 6.0
+
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "shadow" to FilledCircle(),
         "background" to FilledCircle(),
@@ -52,9 +59,6 @@ class TaskbarAppWidget(
     )
 
     override fun updateStructure() {
-        val shadowOffset = 2.0
-        val iconOffset = 6.0
-
         "shadow"<FilledCircle> {
             x = this@TaskbarAppWidget.x - shadowOffset
             y = this@TaskbarAppWidget.y - shadowOffset
@@ -72,10 +76,10 @@ class TaskbarAppWidget(
         }
 
         "icon"<Image> {
-            x = this@TaskbarAppWidget.x + iconOffset
-            y = this@TaskbarAppWidget.y + iconOffset
-            width = this@TaskbarAppWidget.width - iconOffset * 2
-            height = this@TaskbarAppWidget.height - iconOffset * 2
+            x = this@TaskbarAppWidget.x + iconMargin
+            y = this@TaskbarAppWidget.y + iconMargin
+            width = this@TaskbarAppWidget.width - iconMargin * 2
+            height = this@TaskbarAppWidget.height - iconMargin * 2
             resourceLocation = app.resourceLocation
         }
 
@@ -134,7 +138,38 @@ class TaskbarAppWidget(
 
     override fun handleMousePress(data: MouseData) {
         if (isHovered) {
-            app.open()
+            val screen = Minecraft.getMinecraft().currentScreen
+            val centerX = x + width / 2
+            val centerY = y + height / 2
+            val distanceLeft = sqrt(centerX.pow(2) + centerY.pow(2))
+            val distanceRight = sqrt((screen.width - centerX).pow(2) + centerY.pow(2))
+            val targetSize = max(distanceLeft, distanceRight) * 2
+
+            parentStage?.content
+                ?.filterKeys { it.startsWith("app-") }
+                ?.filterValues { it != this && it is TaskbarAppWidget }
+                ?.forEach { (_, widget) -> widget.isVisible = false }
+
+            morphTooltip(false)
+            listOf("shadow", "background")
+                .mapNotNull { getWidget<FilledCircle>(it) }
+                .forEach {
+                    it.morph(
+                        50, EaseQuad.IN_OUT,
+                        FilledCircle::size to targetSize,
+                        FilledCircle::x to it.x - (targetSize / 2),
+                        FilledCircle::y to it.y - (targetSize / 2)
+                    )?.start()
+                }
+            getWidget<Image>("icon")?.let {
+                it.morph(
+                    35, EaseQuad.IN_OUT,
+                    Image::width to it.width * 1.5,
+                    Image::height to it.height * 1.5,
+                    Image::x to screen.width / 2.0 - it.width * 0.75,
+                    Image::y to screen.height - it.height - 50.0
+                )?.start()
+            }
         }
     }
 

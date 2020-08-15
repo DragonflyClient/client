@@ -132,7 +132,7 @@ class MorphAnimation(
 
             if (suitable.size != updates.size) {
                 LogManager.getLogger("Morph Transition").warn(
-                    "${updates.size - suitable.size} propert${if (suitable.size == 1) "y is" else "ies are"} unsuitable on ${javaClass.simpleName}!"
+                    "${updates.size - suitable.size} propert${if (updates.size - suitable.size == 1) "y is" else "ies are"} unsuitable on ${javaClass.simpleName}!"
                 )
             }
 

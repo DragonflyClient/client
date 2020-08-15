@@ -1,8 +1,7 @@
 package net.inceptioncloud.dragonfly.overlay
 
 import com.google.common.eventbus.Subscribe
-import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
-import net.inceptioncloud.dragonfly.engine.internal.WidgetStage
+import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
@@ -34,6 +33,11 @@ object ScreenOverlay {
     fun addComponent(name: String, component: AssembledWidget<*>): AssembledWidget<*> {
         stage.add(name to component)
         return component
+    }
+
+    @JvmStatic
+    fun setColorOverlay(color: WidgetColor) {
+
     }
 
     /**
