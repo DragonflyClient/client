@@ -80,6 +80,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                 )?.post { _, widget ->
                     // let it grow until it covers the whole screen
                     val targetSize = sqrt(this@AttachingKeyUI.width.toDouble().pow(2.0) + this@AttachingKeyUI.height.toDouble().pow(2.0))
+                    detachAnimation<MorphAnimation>()
                     (widget as Widget<FilledCircle>).morph(
                         130,
                         EaseCubic.IN_OUT,
