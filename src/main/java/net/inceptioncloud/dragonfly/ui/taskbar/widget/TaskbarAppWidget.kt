@@ -132,6 +132,12 @@ class TaskbarAppWidget(
         originHeight = height
     }
 
+    override fun handleMousePress(data: MouseData) {
+        if (isHovered) {
+            app.open()
+        }
+    }
+
     /**
      * Animates the tooltip of the app depending on whether it should be [shown][show].
      */

@@ -3,21 +3,17 @@ package net.inceptioncloud.dragonfly.ui.taskbar
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.ui.taskbar.apps.*
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
 import net.minecraft.client.gui.GuiScreen
 
 object Taskbar {
 
-    private val taskbarApps = mutableListOf(
-        TaskbarApp("Account Manager", "account-manager"),
-        TaskbarApp("Mod Options", "mod-options"),
-        TaskbarApp("Home", "home"),
-        TaskbarApp("Ideas Platform", "ideas"),
-        TaskbarApp("Plugins Marketplace", "plugins"),
-        TaskbarApp("Search", "search"),
-        TaskbarApp("Cloud Sync", "synchronize"),
-        TaskbarApp("Trash", "trash")
-    ).also { it.shuffle() }
+    private val taskbarApps = listOf(
+        DragonflySettingsApp,
+        IdeasPlatformApp,
+        AboutDragonflyApp
+    )
 
     fun initializeTaskbar(gui: GuiScreen): Unit = with(gui) {
         val size = 55.0

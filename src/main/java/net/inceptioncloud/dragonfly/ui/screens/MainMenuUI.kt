@@ -7,6 +7,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
@@ -20,8 +21,13 @@ class MainMenuUI : GuiScreen() {
      * An image of the player's skull fetched using the crafatar API or null, if an error occurred.
      */
     val playerSkullTexture = try {
-        DynamicTexture(ImageIO.read(URL("https://crafatar.com/avatars/" + mc.session.playerID + "?size=200&default=MHF_Steve")))
-    } catch (e: Exception) { null }
+        DynamicTexture(ImageIO.read(
+            URL("https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve")
+        ))
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 
     override var backgroundImage: SizedImage? = loadSplashImage()
 
