@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.overlay
 
 import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
@@ -37,8 +38,27 @@ object ScreenOverlay {
 
     @JvmStatic
     fun setColorOverlay(color: WidgetColor) {
+        var colorOverlay = getColorOverlay()
 
+        if (colorOverlay != null) {
+            colorOverlay.color = color
+        } else {
+            colorOverlay = Rectangle().apply {
+                stagePriority = -100
+                x = 0.0
+                y = 0.0
+                width = dimensions.width.toDouble()
+                height = dimensions.height.toDouble()
+                this.color = color
+            }
+
+            stage.add("color-overlay" to colorOverlay)
+        }
     }
+
+    fun getColorOverlay(): Rectangle? = stage["color-overlay"] as? Rectangle
+
+    fun removeColorOverlay() = stage.remove("color-overlay")
 
     /**
      * Renders the stage on the screen.

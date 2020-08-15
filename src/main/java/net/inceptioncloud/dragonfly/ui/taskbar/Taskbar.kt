@@ -29,6 +29,7 @@ object Taskbar {
         } id "taskbar-background"
 
         var currentX = width / 2.0 - (taskbarApps.size * size + (taskbarApps.size - 1) * space) / 2.0
+
         for (app in taskbarApps) {
             +TaskbarAppWidget(app) {
                 x = currentX

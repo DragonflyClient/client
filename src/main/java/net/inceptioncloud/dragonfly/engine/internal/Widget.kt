@@ -83,6 +83,12 @@ abstract class Widget<W : Widget<W>>(
     var isInspected = false
 
     /**
+     * The priority of the widget on the stage. Defines the order in which the widgets are drawn
+     * and in which events are passed to them. Ascending order.
+     */
+    var stagePriority: Int = 0
+
+    /**
      * The factor with which the widget is scaled when drawing.
      */
     @Interpolate

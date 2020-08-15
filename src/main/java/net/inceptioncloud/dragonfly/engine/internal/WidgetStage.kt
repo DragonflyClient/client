@@ -6,9 +6,6 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService.platform
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.client.renderer.GlStateManager
 import tornadofx.*
 
 /**
@@ -53,9 +50,11 @@ class WidgetStage(val name: String) {
      * to true. If it doesn't, the draw function won't be called.
      */
     fun render() = synchronized(this) {
-        content.values.toTypedArray().filter { it.isVisible }.forEach {
-            it.draw()
-        }
+        content.values.toTypedArray()
+            .sortedBy { it.stagePriority }
+            .filter { it.isVisible }.forEach {
+                it.draw()
+            }
     }
 
     /**
@@ -119,7 +118,9 @@ class WidgetStage(val name: String) {
             handleMouseMove(MouseData(mouseX.toInt(), mouseY.toInt()))
         }
 
-        contentPrivate.values.toTypedArray().forEach { it.update() }
+        contentPrivate.values.toTypedArray()
+            .sortedBy { it.stagePriority }
+            .forEach { it.update() }
     }
 
     /**
@@ -141,34 +142,44 @@ class WidgetStage(val name: String) {
     /**
      * Called when the mouse was moved.
      */
-    private fun handleMouseMove(data: MouseData) = Defaults.handleMouseMove(contentPrivate.values, data)
+    private fun handleMouseMove(data: MouseData) = Defaults.handleMouseMove(
+        contentPrivate.values.sortedBy { it.stagePriority }, data
+    )
 
     /**
      * Called when a mouse button is pressed.
      */
     fun handleMousePress(data: MouseData) {
-        contentPrivate.values.forEach { it.handleMousePress(data) }
+        contentPrivate.values
+            .sortedBy { it.stagePriority }
+            .forEach { it.handleMousePress(data) }
     }
 
     /**
      * Called when a mouse button is released.
      */
     fun handleMouseRelease(data: MouseData) {
-        contentPrivate.values.forEach { it.handleMouseRelease(data) }
+        contentPrivate.values
+            .sortedBy { it.stagePriority }
+            .forEach { it.handleMouseRelease(data) }
     }
 
     /**
      * Called when the mouse is moved while a button is holt down.
      */
     fun handleMouseDrag(data: MouseData) {
-        contentPrivate.values.forEach { it.handleMouseDrag(data) }
+        contentPrivate.values
+            .sortedBy { it.stagePriority }
+            .forEach { it.handleMouseDrag(data) }
     }
 
     /**
      * Called when a key on the keyboard is typed.
      */
     fun handleKeyTyped(char: Char, keyCode: Int) {
-        contentPrivate.values.forEach { it.handleKeyTyped(char, keyCode) }
+        contentPrivate.values
+            .sortedBy { it.stagePriority }
+            .forEach { it.handleKeyTyped(char, keyCode) }
     }
     //</editor-fold>
 }

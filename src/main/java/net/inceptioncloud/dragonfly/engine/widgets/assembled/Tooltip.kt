@@ -25,9 +25,9 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
  * @property text the text that the tooltip shows
  * @property fontRenderer the font renderer that is used to render the tooltip text
  */
-class TooltipWidget(
-    initializerBlock: (TooltipWidget.() -> Unit)? = null
-) : AssembledWidget<TooltipWidget>(initializerBlock), IPosition {
+class Tooltip(
+    initializerBlock: (Tooltip.() -> Unit)? = null
+) : AssembledWidget<Tooltip>(initializerBlock), IPosition {
 
     @Interpolate override var x: Double by property(0.0)
     @Interpolate override var y: Double by property(0.0)
@@ -52,11 +52,11 @@ class TooltipWidget(
         val textWidth = fontRenderer?.getStringWidth(text) ?: return
 
         val background = "background"<RoundedRectangle> {
-            arc = this@TooltipWidget.arc
+            arc = this@Tooltip.arc
             width = textWidth + 4 * padding
             height = fontRenderer!!.height + 2 * padding
-            x = this@TooltipWidget.x - width / 2
-            y = this@TooltipWidget.y + verticalOffset
+            x = this@Tooltip.x - width / 2
+            y = this@Tooltip.y + verticalOffset
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
         } ?: return
 
@@ -75,11 +75,11 @@ class TooltipWidget(
         }
 
         "text"<TextRenderer> {
-            text = this@TooltipWidget.text
+            text = this@Tooltip.text
             x = background.x + padding * 2
             y = background.y + padding
             color = DragonflyPalette.background.altered { alphaDouble = opacity }
-            fontRenderer = this@TooltipWidget.fontRenderer!!
+            fontRenderer = this@Tooltip.fontRenderer!!
         }
     }
 }

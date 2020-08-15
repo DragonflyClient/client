@@ -167,14 +167,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             // ICMM: Developer Mode Hotkeys
             when (keyCode) {
                 Keyboard.KEY_F5 -> {
-                    val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
-                    val scaledWidth = scaledResolution.scaledWidth
-                    val scaledHeight = scaledResolution.scaledHeight
-
-                    buttonList.clear()
-                    stage.clear()
-                    onGuiClosed()
-                    setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
+                    refresh()
                 }
                 Keyboard.KEY_F7 -> {
                     val input = JOptionPane.showInputDialog("Enter the full qualified name of the GUI.")
@@ -188,6 +181,20 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                 }
             }
         }
+    }
+
+    /**
+     * Refreshes the gui screen.
+     */
+    fun refresh() {
+        val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
+        val scaledWidth = scaledResolution.scaledWidth
+        val scaledHeight = scaledResolution.scaledHeight
+
+        buttonList.clear()
+        stage.clear()
+        onGuiClosed()
+        setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
     }
 
     protected open fun renderToolTip(stack: ItemStack, x: Int, y: Int) {
