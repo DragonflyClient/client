@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
 import com.google.gson.JsonParser
+import kotlinx.coroutines.newSingleThreadContext
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
@@ -23,22 +24,33 @@ class MainMenuUI : GuiScreen() {
     override var customScaleFactor: () -> Double? = { min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
 
     override fun initGui() {
-//        val newsBar = +TextField {
-//            x = 0.0
-//            y = 0.0
-//            width = this@MainMenuUI.width.toDouble()
-//            adaptHeight = true
-//            backgroundColor = DragonflyPalette.background
-//            color = DragonflyPalette.foreground
-//            padding = 15.0
-//            font = Dragonfly.fontManager.defaultFont
-//            fontSize = 50.0
-//            staticText = " voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-//            textAlignHorizontal = Alignment.CENTER
-//            dropShadow = true
-//        } id "news-bar"
+        val playerSkullTexture = try {
+            DynamicTexture(ImageIO.read(URL("https://crafatar.com/avatars/" + mc.session.playerID + "a?size=200&default=MHF_Steve")))
+        } catch (e: Exception) {
+            null
+        }
 
-        val image = +Image {
+        +Image {
+            x = 10.0
+            y = 10.0
+            width = 50.0
+            height = 50.0
+            dynamicTexture = playerSkullTexture
+            resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/steve-skull.png")
+        } id "player-skull"
+
+        +TextField {
+            x = 75.0
+            y = 10.0
+            width = 200.0
+            height = 50.0
+            staticText = mc.session.username
+            font = Dragonfly.fontManager.defaultFont
+            fontSize = 50.0
+            textAlignVertical = Alignment.CENTER
+        } id "player-name"
+
+        +Image {
             val aspectRatio = 1118.0 / 406.0
 
             resourceLocation = ResourceLocation("dragonflyres/logos/branded-name.png")
