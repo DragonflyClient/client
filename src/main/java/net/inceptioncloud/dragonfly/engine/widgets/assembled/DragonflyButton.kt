@@ -13,6 +13,21 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.util.ResourceLocation
 
+/**
+ * ## Dragonfly Button Assembled Widget
+ *
+ * A button in the default "Dragonfly style" built as an assembled widget.
+ *
+ * @property color the accent color of the button that indicates that it is hovered
+ * @property backgroundColor the color for the button's background
+ * @property foregroundColor the color for the button's text
+ * @property text the text that is displayed by the button
+ * @property icon an icon that is displayed on the left side of the text
+ * @property isHovered whether the button is currently hovered
+ * @property enableClickSound whether the default Minecraft click sound should be
+ * played when the button is pressed
+ * @property onClick the action that is performed when the button is clicked
+ */
 class DragonflyButton(
     initializerBlock: (DragonflyButton.() -> Unit)? = null
 ) : AssembledWidget<DragonflyButton>(initializerBlock), IPosition, IDimension, IColor {
@@ -31,10 +46,6 @@ class DragonflyButton(
     var isHovered: Boolean = false
     var enableClickSound: Boolean = true
     private var onClick: () -> Unit = {}
-
-    fun onClick(block: () -> Unit) {
-        onClick = block
-    }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "background" to Rectangle(),
@@ -137,5 +148,12 @@ class DragonflyButton(
             }
             onClick()
         }
+    }
+
+    /**
+     * Type safe builder to set the value for the [onClick] function.
+     */
+    fun onClick(block: () -> Unit) {
+        onClick = block
     }
 }
