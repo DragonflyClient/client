@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.ui.taskbar
 
+import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.minecraft.util.ResourceLocation
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
 import net.minecraft.client.Minecraft
@@ -36,9 +37,11 @@ abstract class TaskbarApp(val name: String, val icon: String = name.toLowerCase(
     }
 
     /**
-     * Convenient function for opening a gui screen.
+     * Convenient function for opening a gui screen with a switch overlay.
      */
     protected fun gui(gui: GuiScreen) {
-        Minecraft.getMinecraft().displayGuiScreen(gui)
+        ScreenOverlay.withSwitchOverlay {
+            Minecraft.getMinecraft().displayGuiScreen(gui)
+        }
     }
 }

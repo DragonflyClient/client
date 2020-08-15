@@ -8,6 +8,7 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseBack
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
@@ -16,7 +17,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import net.minecraft.client.Minecraft
-import kotlin.math.*
+import java.awt.Color
 import kotlin.properties.Delegates
 
 /**
@@ -30,7 +31,7 @@ import kotlin.properties.Delegates
  * @property originWidth see [originX]
  * @property originHeight see [originX]
  * @property isHovered whether the widget is currently hovered
- * @property isOpening whether the app is currently opening
+ * @property isPressed whether the app is currently opening
  */
 class TaskbarAppWidget(
     private val app: TaskbarApp,
@@ -42,13 +43,18 @@ class TaskbarAppWidget(
     @Interpolate override var width: Double by property(200.0)
     @Interpolate override var height: Double by property(20.0)
 
+    @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
+
     var originX by Delegates.notNull<Double>()
     var originY by Delegates.notNull<Double>()
     var originWidth by Delegates.notNull<Double>()
     var originHeight by Delegates.notNull<Double>()
 
     var isHovered: Boolean = false
-    var isOpening: Boolean = false
+    val hoverGrow = 6.0
+
+    var isPressed: Boolean = false
+    val pressGrow = 8.0
 
     val shadowOffset = 2.0
     val iconMargin = 6.0
@@ -65,7 +71,7 @@ class TaskbarAppWidget(
             x = this@TaskbarAppWidget.x - shadowOffset
             y = this@TaskbarAppWidget.y - shadowOffset
             size = this@TaskbarAppWidget.width + shadowOffset * 2
-            color = DragonflyPalette.background.altered { alphaDouble = 0.9 }
+            color = backgroundColor.altered { alphaDouble = 0.9 }
             smooth = true
         }
 
@@ -73,7 +79,7 @@ class TaskbarAppWidget(
             x = this@TaskbarAppWidget.x
             y = this@TaskbarAppWidget.y
             size = this@TaskbarAppWidget.width
-            color = DragonflyPalette.background
+            color = backgroundColor
             smooth = true
         }
 
@@ -98,12 +104,11 @@ class TaskbarAppWidget(
     override fun render() {
         super.render()
 
-        if (isOpening || !isVisible)
+        if (isPressed || !isVisible)
             return
 
         val mouseX = GraphicsEngine.getMouseX()
         val mouseY = GraphicsEngine.getMouseY()
-        val grow = 8.0
 
         if (mouseX in x..x + width && mouseY in y..y + height) {
             if (isHovered)
@@ -112,10 +117,10 @@ class TaskbarAppWidget(
             detachAnimation<MorphAnimation>()
             morph(
                 30, EaseQuad.IN_OUT,
-                TaskbarAppWidget::x to x - grow,
-                TaskbarAppWidget::y to y - grow,
-                TaskbarAppWidget::width to width + grow * 2,
-                TaskbarAppWidget::height to height + grow * 2
+                TaskbarAppWidget::x to x - hoverGrow,
+                TaskbarAppWidget::y to y - hoverGrow,
+                TaskbarAppWidget::width to width + hoverGrow * 2,
+                TaskbarAppWidget::height to height + hoverGrow * 2
             )?.post { _, _ -> morphTooltip(true) }?.start()
             isHovered = true
         } else {
@@ -142,65 +147,31 @@ class TaskbarAppWidget(
     }
 
     override fun handleMousePress(data: MouseData) {
-        if (isHovered && !isOpening && isVisible) {
-            isOpening = true
-            val screen = Minecraft.getMinecraft().currentScreen
-            val centerX = x + width / 2
-            val centerY = y + height / 2
-            val distanceLeft = sqrt(centerX.pow(2) + centerY.pow(2))
-            val distanceRight = sqrt((screen.width - centerX).pow(2) + centerY.pow(2))
-            val targetSize = max(distanceLeft, distanceRight) * 2
+        if (isHovered && !isPressed && isVisible) {
+            isPressed = true
 
-            parentStage?.content
-                ?.filterKeys { it.startsWith("app-") }
-                ?.filterValues { it != this && it is TaskbarAppWidget }
-                ?.forEach { (_, widget) -> widget.isVisible = false }
-
-            morphTooltip(false)
-            listOf("shadow", "background")
-                .mapNotNull { getWidget<FilledCircle>(it) }
-                .forEachIndexed { index, widget ->
-                    widget.morph(
-                        35, EaseQuad.IN_OUT,
-                        FilledCircle::size to targetSize,
-                        FilledCircle::x to widget.x - (targetSize / 2),
-                        FilledCircle::y to widget.y - (targetSize / 2)
-                    )?.post { _, _ ->
-                        if (index != 0)
-                            return@post
-
-                        GraphicsEngine.runAfter(500) {
-                            getWidget<Image>("icon")?.let { icon ->
-                                icon.morph(
-                                    50, EaseQuad.IN_OUT,
-                                    Image::y to screen.height + 50.0
-                                )?.start()
-                            }?.post { _, _ ->
-                                ScreenOverlay.setColorOverlay(DragonflyPalette.background)
-                                Minecraft.getMinecraft().currentScreen.refresh()
-                                app.open()
-                                ScreenOverlay.getColorOverlay()?.morph(
-                                    150, EaseQuad.IN_OUT,
-                                    Rectangle::y to screen.height.toDouble(),
-                                    Rectangle::height to 0.0
-                                )?.post { _, _ ->
-                                    ScreenOverlay.removeColorOverlay()
-                                }?.start()
-                            }?.start()
-                        }
-                    }?.start()
-                }
-            getWidget<Image>("icon")?.let {
-                it.morph(
-                    35, EaseQuad.IN_OUT,
-                    Image::width to it.width * 1.5,
-                    Image::height to it.height * 1.5,
-                    Image::x to screen.width / 2.0 - it.width * 0.75,
-                    Image::y to screen.height - it.height - 90.0
+            detachAnimation<MorphAnimation>()
+            morph(
+                35, EaseQuad.OUT,
+                TaskbarAppWidget::x to x + pressGrow,
+                TaskbarAppWidget::y to y + pressGrow,
+                TaskbarAppWidget::width to width - pressGrow * 2,
+                TaskbarAppWidget::height to height - pressGrow * 2,
+                TaskbarAppWidget::backgroundColor to DragonflyPalette.foreground
+            )?.post { _, _ ->
+                detachAnimation<MorphAnimation>()
+                morph(
+                    35, EaseQuad.IN,
+                    TaskbarAppWidget::x to originX - hoverGrow,
+                    TaskbarAppWidget::y to originY - hoverGrow,
+                    TaskbarAppWidget::width to originWidth + hoverGrow * 2,
+                    TaskbarAppWidget::height to originHeight + hoverGrow * 2,
+                    TaskbarAppWidget::backgroundColor to DragonflyPalette.background
                 )?.post { _, _ ->
-                    getWidget<Tooltip>("tooltip")?.isVisible = false
+                    app.open()
+                    isPressed = false
                 }?.start()
-            }
+            }?.start()
         }
     }
 
