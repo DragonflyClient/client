@@ -63,9 +63,9 @@ class GlyphPage(
         // Leave some additional space
         maxWidth += 2.0
         maxHeight += 2.0
-        imgSize = ceil(ceil(sqrt(maxWidth * maxWidth * chars.size) / maxWidth)
+        imgSize = (ceil(ceil(sqrt(maxWidth * maxWidth * chars.size) / maxWidth)
             .coerceAtLeast(ceil(sqrt(maxHeight * maxHeight * chars.size) / maxHeight)) * maxWidth.coerceAtLeast(maxHeight)
-        ).toInt() + 1
+        ) * 1.2).toInt() // make sure there is enough space
 
         val cached = getCachedGlyph()
 
