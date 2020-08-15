@@ -15,6 +15,18 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import kotlin.properties.Delegates
 
+/**
+ * ## Taskbar App Widget
+ *
+ * A widget that is used to render a taskbar app in the taskbar.
+ *
+ * @param app the app that this widget represents
+ * @property originX the original x-coordinate of the widget that is saved for animation purposes
+ * @property originY see [originX]
+ * @property originWidth see [originX]
+ * @property originHeight see [originX]
+ * @property isHovered whether the widget is currently hovered
+ */
 class TaskbarAppWidget(
     private val app: TaskbarApp,
     initializerBlock: (TaskbarAppWidget.() -> Unit)? = null
@@ -95,7 +107,7 @@ class TaskbarAppWidget(
                 TaskbarAppWidget::y to y - grow,
                 TaskbarAppWidget::width to width + grow * 2,
                 TaskbarAppWidget::height to height + grow * 2
-            )?.post { _, _ -> morphTooltip(1.0) }?.start()
+            )?.post { _, _ -> morphTooltip(true) }?.start()
             isHovered = true
         } else {
             if (!isHovered)
@@ -108,21 +120,9 @@ class TaskbarAppWidget(
                 TaskbarAppWidget::y to originY,
                 TaskbarAppWidget::width to originWidth,
                 TaskbarAppWidget::height to originHeight
-            )?.post { _, _ -> morphTooltip(0.0) }?.start()
+            )?.post { _, _ -> morphTooltip(false) }?.start()
             isHovered = false
         }
-    }
-
-    private fun morphTooltip(opacity: Double) {
-        val tooltip = getWidget<TooltipWidget>("tooltip") ?: return
-        val offset = 10.0
-
-        tooltip.detachAnimation<MorphAnimation>()
-        tooltip.morph(
-            40, EaseQuad.IN_OUT,
-            tooltip::opacity to opacity,
-            tooltip::verticalOffset to (-offset * opacity)
-        )?.start()
     }
 
     override fun handleStageAdd(stage: WidgetStage) {
@@ -130,5 +130,20 @@ class TaskbarAppWidget(
         originY = y
         originWidth = width
         originHeight = height
+    }
+
+    /**
+     * Animates the tooltip of the app depending on whether it should be [shown][show].
+     */
+    private fun morphTooltip(show: Boolean) {
+        val tooltip = getWidget<TooltipWidget>("tooltip") ?: return
+        val offset = 10.0
+
+        tooltip.detachAnimation<MorphAnimation>()
+        tooltip.morph(
+            40, EaseQuad.IN_OUT,
+            tooltip::opacity to if (show) 1.0 else 0.0,
+            tooltip::verticalOffset to if (show) -offset else 0.0
+        )?.start()
     }
 }
