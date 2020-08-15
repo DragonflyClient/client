@@ -10,10 +10,12 @@ import kotlin.properties.Delegates
 /**
  * ## Polygon Primitive Widget
  *
- * Draws a simple polygon with an unlimited number of points. Applies the [lineWidth] and the [color] while
+ * Draws a simple polygon with an unlimited number of points. Applies the [color] while
  * rendering.
  *
  * @property points The points of the polygon
+ * @property smooth whether the flag [GL_POLYGON_SMOOTH] should be enabled while rendering
+ * which makes the polygon look smoother but can lead to issues with the alpha channel
  */
 open class Polygon(
     initializerBlock: (Polygon.() -> Unit)? = null

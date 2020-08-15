@@ -10,6 +10,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TooltipWidget
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import kotlin.properties.Delegates
