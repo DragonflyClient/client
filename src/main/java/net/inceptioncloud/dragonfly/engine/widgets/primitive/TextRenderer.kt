@@ -24,15 +24,16 @@ class TextRenderer(
     initializerBlock: (TextRenderer.() -> Unit)? = null
 ) : Widget<TextRenderer>(initializerBlock), IPosition, IColor, IDimension {
 
-    @Interpolate var text: String by property("Default Text")
-    @Interpolate var dropShadow: Boolean by property(false)
+    var text: String by property("Default Text")
+    var showBounds: Boolean by property(false)
+    var dropShadow: Boolean by property(false)
+    var shadowColor: WidgetColor? by property(null)
+    var shadowDistance: Double? by property(null)
 
     var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
     var font: WidgetFont? by property(null)
     var fontWeight: FontWeight by property(FontWeight.REGULAR)
     @Interpolate var fontSize: Double by property(19.0)
-
-    var showBounds: Boolean by property(false)
 
     @Interpolate override var x: Double by property(0.0)
     @Interpolate override var y: Double by property(0.0)
@@ -64,7 +65,15 @@ class TextRenderer(
 
         color.glBindColor()
         height = fontRenderer.height.toDouble()
-        width = fontRenderer.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
+        width = if (dropShadow) {
+            fontRenderer.drawStringWithCustomShadow(
+                text, posX.toInt(), posY.toInt(), color.rgb,
+                shadowColor?.rgb ?: WidgetColor(0.0, 0.0, 0.0, 0.5).rgb,
+                shadowDistance?.toFloat() ?: 1F
+            ).toDouble() - posX
+        } else {
+            fontRenderer.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
+        }
 
         if (showBounds) {
             Gui.drawRect(posX.toInt(), posY.toInt(), (posX + width).toInt(), (posY + height).toInt(), Color(0, 0, 0, 50).rgb)

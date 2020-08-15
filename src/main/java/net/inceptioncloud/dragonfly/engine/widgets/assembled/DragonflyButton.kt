@@ -69,8 +69,8 @@ class DragonflyButton(
         }!!
 
         "icon-shadow"<Image> {
-            x = iconWidget.x + 1.0
-            y = iconWidget.y + 1.0
+            x = iconWidget.x + 2.0
+            y = iconWidget.y + 2.0
             width = iconSize
             height = iconSize
             dynamicTexture = icon?.dynamicTexture
@@ -85,6 +85,7 @@ class DragonflyButton(
             color = this@DragonflyButton.foregroundColor
             fontRenderer = buttonFontRenderer
             dropShadow = true
+            shadowDistance = 2.0
         }
 
         "overlay"<Rectangle> {
