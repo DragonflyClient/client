@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.ui.screens
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.ui.components.button.ImageButton
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
@@ -43,7 +44,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
      */
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         if (mc.displayWidth >= 400 && mc.displayHeight >= 400) {
-            drawRect(0, 0, width, height, BluePalette.BACKGROUND.rgb)
+            drawRect(0, 0, width, height, DragonflyPalette.background.rgb)
 
             val wHeight = (height / 1.3).toInt()
             val wWidth = (wHeight / 1.2).toInt()
@@ -58,17 +59,17 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
             )
 
             // Header
-            RenderUtils.drawRoundRect(wX, wY, wWidth, header, 100, BluePalette.PRIMARY)
-            drawRect(wX, wY + header / 2, wX + wWidth, wY + header, BluePalette.PRIMARY.rgb)
+            RenderUtils.drawRoundRect(wX, wY, wWidth, header, 100, DragonflyPalette.accentNormal.base)
+            drawRect(wX, wY + header / 2, wX + wWidth, wY + header, DragonflyPalette.accentNormal.rgb)
 
             fontRenderer?.drawCenteredString(
                 "About", wX + wWidth / 2, wY + header / 2 - fontRenderer.height / 4,
-                BluePalette.FOREGROUND.rgb, false
+                DragonflyPalette.foreground.rgb, false
             )
 
             // Body
-            RenderUtils.drawRoundRect(wX, wY + body, wWidth, header, 100, BluePalette.FOREGROUND)
-            drawRect(wX, wY + header, wX + wWidth, wY + wHeight - header / 2, BluePalette.FOREGROUND.rgb)
+            RenderUtils.drawRoundRect(wX, wY + body, wWidth, header, 100, DragonflyPalette.foreground.base)
+            drawRect(wX, wY + header, wX + wWidth, wY + wHeight - header / 2, DragonflyPalette.foreground.rgb)
 
             //region Content
             val titleFont = Dragonfly.fontManager.defaultFont.fontRendererAsync(size = (header * 1.15).toInt())
