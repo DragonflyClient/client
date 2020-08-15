@@ -3,8 +3,7 @@ package net.inceptioncloud.dragonfly.transition.color;
 import java.awt.*;
 import java.util.function.IntSupplier;
 
-public class FloatingColorTransitionBuilder
-{
+public class FloatingColorTransitionBuilder {
     private Color start;
     private Color end;
     private int amountOfSteps;
@@ -12,44 +11,37 @@ public class FloatingColorTransitionBuilder
     private Runnable reachStart;
     private IntSupplier autoTransformator;
 
-    public FloatingColorTransitionBuilder start (final Color start)
-    {
+    public FloatingColorTransitionBuilder start(final Color start) {
         this.start = start;
         return this;
     }
 
-    public FloatingColorTransitionBuilder end (final Color end)
-    {
+    public FloatingColorTransitionBuilder end(final Color end) {
         this.end = end;
         return this;
     }
 
-    public FloatingColorTransitionBuilder amountOfSteps (final int amountOfSteps)
-    {
+    public FloatingColorTransitionBuilder amountOfSteps(final int amountOfSteps) {
         this.amountOfSteps = amountOfSteps;
         return this;
     }
 
-    public FloatingColorTransitionBuilder reachEnd (final Runnable reachEnd)
-    {
+    public FloatingColorTransitionBuilder reachEnd(final Runnable reachEnd) {
         this.reachEnd = reachEnd;
         return this;
     }
 
-    public FloatingColorTransitionBuilder reachStart (final Runnable reachStart)
-    {
+    public FloatingColorTransitionBuilder reachStart(final Runnable reachStart) {
         this.reachStart = reachStart;
         return this;
     }
 
-    public FloatingColorTransitionBuilder autoTransformator (final IntSupplier autoTransformator)
-    {
+    public FloatingColorTransitionBuilder autoTransformator(final IntSupplier autoTransformator) {
         this.autoTransformator = autoTransformator;
         return this;
     }
 
-    public FloatingColorTransition createFloatingColorTransition ()
-    {
+    public FloatingColorTransition createFloatingColorTransition() {
         return new FloatingColorTransition(start, end, amountOfSteps, reachEnd, reachStart, autoTransformator);
     }
 }

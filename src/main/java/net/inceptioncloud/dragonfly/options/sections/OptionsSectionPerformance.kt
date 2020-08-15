@@ -3,13 +3,13 @@
 package net.inceptioncloud.dragonfly.options.sections
 
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryBooleanFactory.Companion.optionEntryBoolean
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryMultipleChoiceFactory.Companion.optionEntryMultipleChoice
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryRangeDoubleFactory.Companion.optionEntryRangeDouble
 import net.inceptioncloud.dragonfly.options.entries.util.OptionChoice
 import net.inceptioncloud.dragonfly.options.sections.OptionSectionFactory.Companion.optionSection
-import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.minecraft.client.renderer.chunk.ChunkRenderWorker
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -21,8 +21,7 @@ import kotlin.math.roundToInt
  *
  * This object contains all options that have an impact on the performance of the client.
  */
-object OptionsSectionPerformance
-{
+object OptionsSectionPerformance {
     /**
      * ## Font Quality
      * The factor that is applied on the original resolution to improve the font quality.
@@ -126,8 +125,7 @@ object OptionsSectionPerformance
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
-    fun init()
-    {
+    fun init() {
         optionSection {
             title = "Performance"
 

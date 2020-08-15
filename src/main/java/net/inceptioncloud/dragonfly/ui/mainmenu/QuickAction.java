@@ -8,8 +8,7 @@ import net.minecraft.client.gui.GuiMainMenu;
  * Every category (Singleplayer, Multiplayer, Options, Quit Game) has two quick actions.
  * The Button ID that is used for the category can be found {@link GuiMainMenu#addButtons() here}.
  */
-public class QuickAction
-{
+public class QuickAction {
     /**
      * Simple reference to the Minecraft instance.
      */
@@ -38,31 +37,26 @@ public class QuickAction
     /**
      * Required Arguments Constructor
      */
-    public QuickAction (final int headButtonId, final int ownButtonId, final String display, final Runnable handleClick)
-    {
+    public QuickAction(final int headButtonId, final int ownButtonId, final String display, final Runnable handleClick) {
         this.headButtonId = headButtonId;
         this.ownButtonId = ownButtonId;
         this.display = display;
         this.handleClick = handleClick;
     }
 
-    public int getHeadButtonId ()
-    {
+    public int getHeadButtonId() {
         return headButtonId;
     }
 
-    public int getOwnButtonId ()
-    {
+    public int getOwnButtonId() {
         return ownButtonId;
     }
 
-    public String getDisplay ()
-    {
+    public String getDisplay() {
         return display;
     }
 
-    public Runnable getHandleClick ()
-    {
+    public Runnable getHandleClick() {
         return handleClick;
     }
 }

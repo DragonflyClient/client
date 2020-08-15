@@ -1,16 +1,13 @@
 package net.inceptioncloud.dragonfly.engine
 
 import kotlinx.coroutines.*
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
-import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.structure.IPosition
-import net.inceptioncloud.dragonfly.ui.renderer.RectangleRenderer
+import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.*
+import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.BufferUtils
-import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.awt.Color

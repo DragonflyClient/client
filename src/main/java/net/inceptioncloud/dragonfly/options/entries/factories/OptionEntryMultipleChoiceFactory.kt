@@ -8,8 +8,7 @@ import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
 /**
  * A factory class for the [OptionEntryMultipleChoice].
  */
-class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>()
-{
+class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>() {
     /**
      * The formatter that is used to display the current value.
      *
@@ -44,8 +43,7 @@ class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>()
      * A companion object that makes the function [optionEntryMultipleChoice] available for
      * static access.
      */
-    companion object
-    {
+    companion object {
         /**
          * The initialization function of the [OptionEntryMultipleChoiceFactory].
          *
@@ -54,8 +52,7 @@ class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>()
          * to build an [OptionEntryMultipleChoice].
          */
         @JvmStatic
-        fun optionEntryMultipleChoice(init: OptionEntryMultipleChoiceFactory.() -> Unit): OptionEntryMultipleChoice
-        {
+        fun optionEntryMultipleChoice(init: OptionEntryMultipleChoiceFactory.() -> Unit): OptionEntryMultipleChoice {
             val factory = OptionEntryMultipleChoiceFactory()
             factory.init()
             return factory.finish()
@@ -68,30 +65,28 @@ class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>()
      * This method is called after function in [optionEntryMultipleChoice] was executed, so
      * you don't need to call it explicitly.
      */
-    private fun finish(): OptionEntryMultipleChoice
-    {
+    private fun finish(): OptionEntryMultipleChoice {
         val key = OptionKey(
-                Int::class.java,
-                keyFactory.fileKey,
-                keyFactory.validator ?: { value -> value in choices.map { it.identifier } },
-                keyFactory.default
+            Int::class.java,
+            keyFactory.fileKey,
+            keyFactory.validator ?: { value -> value in choices.map { it.identifier } },
+            keyFactory.default
         )
 
         return OptionEntryMultipleChoice(
-                name ?: "boolean value",
-                description ?: "description not set",
-                key,
-                choices,
-                keyFactory.default!!.invoke(),
-                externalApply
+            name ?: "boolean value",
+            description ?: "description not set",
+            key,
+            choices,
+            keyFactory.default!!.invoke(),
+            externalApply
         )
     }
 
     /**
      * Makes it possible to add an [OptionChoice] using + before the initialization.
      */
-    operator fun OptionChoice.unaryPlus()
-    {
+    operator fun OptionChoice.unaryPlus() {
         choices.add(this)
     }
 }

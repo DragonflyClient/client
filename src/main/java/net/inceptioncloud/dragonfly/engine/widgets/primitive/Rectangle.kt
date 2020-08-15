@@ -4,7 +4,6 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import org.lwjgl.opengl.GL11.*
-import kotlin.properties.Delegates
 
 /**
  * ## Rectangle Primitive Widget

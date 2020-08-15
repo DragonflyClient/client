@@ -1,7 +1,8 @@
 package net.inceptioncloud.dragonfly.engine.widgets.primitive
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.FontWeight
+import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*

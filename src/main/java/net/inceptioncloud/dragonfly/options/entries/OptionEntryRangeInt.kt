@@ -14,8 +14,7 @@ import kotlin.math.roundToInt
 class OptionEntryRangeInt(name: String, description: String, private val typeKey: OptionKey<Int>,
                           minValue: Int, maxValue: Int,
                           formatterIn: ((Double) -> String)?)
-    : OptionEntry<Int>(name, description)
-{
+    : OptionEntry<Int>(name, description) {
     /**
      * The non-nullable version of the formatter constructor parameter.
      *
@@ -28,8 +27,7 @@ class OptionEntryRangeInt(name: String, description: String, private val typeKey
      *
      * If the input formatter is null, a default one will be used.
      */
-    init
-    {
+    init {
         formatter = formatterIn ?: { value ->
             val round = value.roundToInt()
             round.toString()
@@ -44,13 +42,12 @@ class OptionEntryRangeInt(name: String, description: String, private val typeKey
      * the slider.
      */
     private val slider: UISlider = UISlider(0, 0, 0, minValue.toDouble(), maxValue.toDouble(),
-            typeKey.get().toDouble(), { value -> typeKey.set(value.roundToInt()) }, formatter)
+        typeKey.get().toDouble(), { value -> typeKey.set(value.roundToInt()) }, formatter)
 
     /**
      * Called when the entry is drawn at a certain position with the given height and with.
      */
-    override fun drawContent(x: Int, y: Int, height: Int, width: Int)
-    {
+    override fun drawContent(x: Int, y: Int, height: Int, width: Int) {
         slider.width = 61
         slider.x = x + width - 7 - slider.width
         slider.y = y + height / 2
@@ -61,8 +58,7 @@ class OptionEntryRangeInt(name: String, description: String, private val typeKey
     /**
      * Called when the entry is (double-) clicked.
      */
-    override fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int, entryHeight: Int)
-    {
+    override fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int, entryHeight: Int) {
     }
 
     /**
@@ -73,10 +69,8 @@ class OptionEntryRangeInt(name: String, description: String, private val typeKey
      * @see UISlider.isMouseDown
      * @see UISlider.sliderPosition
      */
-    override fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int)
-    {
-        if (eventButton == 0)
-        {
+    override fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int) {
+        if (eventButton == 0) {
             slider.mousePressed(mouseX, mouseY)
         }
     }
@@ -90,10 +84,8 @@ class OptionEntryRangeInt(name: String, description: String, private val typeKey
      * @see UISlider.isMouseDown
      * @see UISlider.changeResponder
      */
-    override fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int)
-    {
-        if (eventButton == 0)
-        {
+    override fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int) {
+        if (eventButton == 0) {
             slider.mouseReleased(mouseX, mouseY)
         }
     }
@@ -101,16 +93,14 @@ class OptionEntryRangeInt(name: String, description: String, private val typeKey
     /**
      * Called by the list when a key is pressed.
      */
-    override fun keyTyped(typedChar: Char, keyCode: Int)
-    {
+    override fun keyTyped(typedChar: Char, keyCode: Int) {
         slider.keyTyped(typedChar, keyCode)
     }
 
     /**
      * Function to be overridden in order to return the key.
      */
-    fun getKey(): OptionKey<Int>
-    {
+    fun getKey(): OptionKey<Int> {
         return typeKey
     }
 

@@ -7,8 +7,7 @@ import kotlin.math.*
  *
  * Provides easing functions using the sine and cosine functions.
  */
-object EaseSine
-{
+object EaseSine {
     /**
      * ## Ease In Sine
      * Calculates the easing the following way:

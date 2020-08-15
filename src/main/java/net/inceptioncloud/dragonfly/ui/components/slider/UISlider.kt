@@ -30,8 +30,7 @@ import kotlin.math.pow
  */
 class UISlider(var x: Int, var y: Int, var width: Int,
                private val min: Double, private val max: Double, private val default: Double,
-               private val changeResponder: (Double) -> Unit, private val formatter: (Double) -> String)
-{
+               private val changeResponder: (Double) -> Unit, private val formatter: (Double) -> String) {
     /**
      * The current position of the slider, **not the current value**!
      *
@@ -101,19 +100,15 @@ class UISlider(var x: Int, var y: Int, var width: Int,
      *
      * @see isMouseDown
      */
-    fun draw()
-    {
+    fun draw() {
         val mouseX = Mouse.getX() / ScaledResolution(Minecraft.getMinecraft()).scaleFactor
 
-        if (isMouseDown)
-        {
+        if (isMouseDown) {
             sliderPosition = (mouseX - x) / width.toDouble()
 
-            if (sliderPosition < 0.0)
-            {
+            if (sliderPosition < 0.0) {
                 sliderPosition = 0.0
-            } else if (sliderPosition > 1.0)
-            {
+            } else if (sliderPosition > 1.0) {
                 sliderPosition = 1.0
             }
 
@@ -159,25 +154,20 @@ class UISlider(var x: Int, var y: Int, var width: Int,
      * @see sliderPosition
      * @see isMouseDown
      */
-    fun mousePressed(mouseX: Int, mouseY: Int)
-    {
-        if (mouseX in (x - 3)..(x + width + 3) && mouseY in (y - 4)..(y + 4))
-        {
+    fun mousePressed(mouseX: Int, mouseY: Int) {
+        if (mouseX in (x - 3)..(x + width + 3) && mouseY in (y - 4)..(y + 4)) {
             sliderPosition = (mouseX - x) / width.toDouble()
 
-            if (sliderPosition < 0.0)
-            {
+            if (sliderPosition < 0.0) {
                 sliderPosition = 0.0
-            } else if (sliderPosition > 1.0)
-            {
+            } else if (sliderPosition > 1.0) {
                 sliderPosition = 1.0
             }
 
             displayString = formatDisplayString()
             isMouseDown = true
             focused = true
-        } else
-        {
+        } else {
             focused = false
         }
     }
@@ -190,10 +180,8 @@ class UISlider(var x: Int, var y: Int, var width: Int,
      * @see isMouseDown
      * @see changeResponder
      */
-    fun mouseReleased(mouseX: Int, mouseY: Int)
-    {
-        if (isMouseDown)
-        {
+    fun mouseReleased(mouseX: Int, mouseY: Int) {
+        if (isMouseDown) {
             isMouseDown = false
             changeResponder.invoke(getSliderValue())
         }
@@ -205,18 +193,13 @@ class UISlider(var x: Int, var y: Int, var width: Int,
      * This method must be called from the parent object that is holding the slider.
      * When the arrow-left or arrow-right key is pressed, the value will be updated.
      */
-    fun keyTyped(typedChar: Char, keyCode: Int)
-    {
-        if (focused)
-        {
-            val newValue: Double = when (keyCode)
-            {
-                Keyboard.KEY_RIGHT ->
-                {
+    fun keyTyped(typedChar: Char, keyCode: Int) {
+        if (focused) {
+            val newValue: Double = when (keyCode) {
+                Keyboard.KEY_RIGHT -> {
                     getSliderValue() + getStepAccuracy()
                 }
-                Keyboard.KEY_LEFT ->
-                {
+                Keyboard.KEY_LEFT -> {
                     getSliderValue() - getStepAccuracy()
                 }
                 else -> return
@@ -234,30 +217,23 @@ class UISlider(var x: Int, var y: Int, var width: Int,
      * According to this amount, the value that should be added/removed when using the arrow
      * keys to control to slider is calculated.
      */
-    private fun getStepAccuracy(): Double
-    {
+    private fun getStepAccuracy(): Double {
         val string = formatDisplayString()
 
-        return if (string.endsWith("%") || !string.contains("."))
-        {
+        return if (string.endsWith("%") || !string.contains(".")) {
             1.0
-        } else
-        {
-            try
-            {
+        } else {
+            try {
                 val decimalString = string.split(".")[1]
                 val decimalDigits = decimalString.length
                 1 / 10.0.pow(decimalDigits.toDouble())
-            }
-            catch (e: NumberFormatException)
-            {
+            } catch (e: NumberFormatException) {
                 1.0
             }
         }
     }
 
-    override fun equals(other: Any?): Boolean
-    {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
@@ -279,8 +255,7 @@ class UISlider(var x: Int, var y: Int, var width: Int,
         return true
     }
 
-    override fun hashCode(): Int
-    {
+    override fun hashCode(): Int {
         var result = x
         result = 31 * result + y
         result = 31 * result + width

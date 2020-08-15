@@ -5,8 +5,7 @@ import net.inceptioncloud.dragonfly.event.Cancellable;
 /**
  * When a player is trying to connect to a server.
  */
-public class ServerConnectingEvent extends Cancellable
-{
+public class ServerConnectingEvent extends Cancellable {
     /**
      * The IP address of the server.
      */
@@ -17,19 +16,16 @@ public class ServerConnectingEvent extends Cancellable
      */
     private final int port;
 
-    public ServerConnectingEvent (final String ipAddress, final int port)
-    {
+    public ServerConnectingEvent(final String ipAddress, final int port) {
         this.ipAddress = ipAddress;
         this.port = port;
     }
 
-    public String getIpAddress ()
-    {
+    public String getIpAddress() {
         return ipAddress;
     }
 
-    public int getPort ()
-    {
+    public int getPort() {
         return port;
     }
 }

@@ -3,8 +3,7 @@ package net.inceptioncloud.dragonfly.event;
 /**
  * Superclass of every event that can be cancelled when being called.
  */
-public class Cancellable
-{
+public class Cancellable {
     /**
      * Whether the event is currently cancelled.
      */
@@ -13,8 +12,7 @@ public class Cancellable
     /**
      * @return The current cancel state of the event
      */
-    public boolean isCancelled ()
-    {
+    public boolean isCancelled() {
         return cancelled;
     }
 
@@ -23,8 +21,7 @@ public class Cancellable
      *
      * @param cancelledIn The new state
      */
-    public void setCancelled (boolean cancelledIn)
-    {
+    public void setCancelled(boolean cancelledIn) {
         this.cancelled = cancelledIn;
     }
 }

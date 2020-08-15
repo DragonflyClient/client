@@ -4,14 +4,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
-import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.*
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.sequence.types.DoubleSequence
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -23,7 +22,6 @@ import net.minecraft.util.ChatAllowedCharacters
 import org.lwjgl.input.Keyboard.*
 import java.awt.Color
 import kotlin.math.abs
-import kotlin.properties.Delegates
 
 val DEFAULT_TEXT_COLOR = WidgetColor(0xababab)
 

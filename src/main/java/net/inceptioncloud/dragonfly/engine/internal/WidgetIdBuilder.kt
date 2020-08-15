@@ -1,7 +1,5 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import org.apache.logging.log4j.LogManager
-
 /**
  * A builder for easily creating pairs of a widget and an id.
  *

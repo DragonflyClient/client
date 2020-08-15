@@ -2,7 +2,6 @@ package net.inceptioncloud.dragonfly.options
 
 import com.google.gson.*
 import net.inceptioncloud.dragonfly.Dragonfly.eventBus
-import org.apache.commons.lang3.Validate
 import org.apache.logging.log4j.LogManager
 import java.io.*
 

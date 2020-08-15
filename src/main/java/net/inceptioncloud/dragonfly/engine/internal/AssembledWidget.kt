@@ -1,10 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.engine.structure.IPosition
-import net.minecraft.client.gui.Gui
 import org.apache.logging.log4j.LogManager
-import org.lwjgl.input.Keyboard
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible

@@ -13,8 +13,7 @@ import java.util.function.IntSupplier;
  *
  * <b>Note:</b> This type of transition does not differentiate between {@link #setForward()} and {@link #setBackward()}.
  */
-public class FloatingColorTransition extends TransitionTypeColor
-{
+public class FloatingColorTransition extends TransitionTypeColor {
     /**
      * A simple object that the constructor and non-thread-safe methods are synchronized on.
      * The content of this object is never used and it is never updated or accessed.
@@ -38,26 +37,26 @@ public class FloatingColorTransition extends TransitionTypeColor
      *
      * @see ColorTransition Parameter Documentation
      */
-    public FloatingColorTransition (final Color start, final Color end, final int amountOfSteps,
-                                    final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
-    {
+    public FloatingColorTransition(
+            final Color start, final Color end, final int amountOfSteps,
+            final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator
+    ) {
         super(null, null, autoTransformator);
 
         synchronized (threadLock) {
-            this.base = new ColorTransitionBuilder().start(start).end(end).amountOfSteps(amountOfSteps).reachStart(reachStart).reachEnd(reachEnd).build();
+            this.base =
+                    new ColorTransitionBuilder().start(start).end(end).amountOfSteps(amountOfSteps).reachStart(reachStart).reachEnd(reachEnd).build();
         }
     }
 
-    public static FloatingColorTransitionBuilder builder ()
-    {
+    public static FloatingColorTransitionBuilder builder() {
         return new FloatingColorTransitionBuilder();
     }
 
     /**
      * Performs either {@link #setForward()} or {@link #setBackward()} based on the {@link #direction}.
      */
-    public void next ()
-    {
+    public void next() {
         synchronized (threadLock) {
             if (direction == FloatingDirection.FORWARD) {
                 this.base.setForward();
@@ -77,8 +76,7 @@ public class FloatingColorTransition extends TransitionTypeColor
      * @return The current color value
      */
     @Override
-    public Color get ()
-    {
+    public Color get() {
         return this.base.get();
     }
 
@@ -86,8 +84,7 @@ public class FloatingColorTransition extends TransitionTypeColor
      * @return Whether the current value is at the end.
      */
     @Override
-    public boolean isAtEnd ()
-    {
+    public boolean isAtEnd() {
         return this.base.isAtEnd();
     }
 
@@ -95,8 +92,7 @@ public class FloatingColorTransition extends TransitionTypeColor
      * @return Whether the current value is at the start.
      */
     @Override
-    public boolean isAtStart ()
-    {
+    public boolean isAtStart() {
         return this.base.isAtStart();
     }
 
@@ -104,8 +100,7 @@ public class FloatingColorTransition extends TransitionTypeColor
      * The step-forward method for the transition.
      */
     @Override
-    public void doForward ()
-    {
+    public void doForward() {
         this.next();
     }
 
@@ -113,24 +108,21 @@ public class FloatingColorTransition extends TransitionTypeColor
      * The step-backward method for the transition.
      */
     @Override
-    public void doBackward ()
-    {
+    public void doBackward() {
         this.next();
     }
 
     @Override
-    public void destroy ()
-    {
+    public void destroy() {
         base.destroy();
 
         super.destroy();
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "FloatingColorTransition{" +
-               "originStackTrace=" + originStackTrace +
-               '}';
+                "originStackTrace=" + originStackTrace +
+                '}';
     }
 }

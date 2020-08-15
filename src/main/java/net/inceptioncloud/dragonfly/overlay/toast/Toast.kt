@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.overlay.toast
 
-import kotlinx.coroutines.yield
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic

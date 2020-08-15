@@ -4,7 +4,8 @@ import com.google.gson.JsonParser
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft

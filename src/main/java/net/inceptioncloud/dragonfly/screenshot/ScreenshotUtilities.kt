@@ -6,10 +6,6 @@ import net.inceptioncloud.dragonfly.overlay.hotaction.Action
 import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiNewChat
-import net.minecraft.event.ClickEvent
-import net.minecraft.util.ChatComponentText
-import net.minecraft.util.ChatStyle
 import java.awt.Desktop
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard

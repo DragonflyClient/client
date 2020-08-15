@@ -1,13 +1,10 @@
 package net.inceptioncloud.dragonfly.engine.font;
 
-import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer;
-import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.*;
 
 import java.awt.*;
 import java.awt.font.TextAttribute;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * This class is used to build new Font Renderers or use the already created ones.

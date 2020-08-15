@@ -5,8 +5,7 @@ import java.awt.Color
 /**
  * A blue palette for the client design.
  */
-object BluePalette
-{
+object BluePalette {
     /**
      * For writing text on either the background or the primary color.
      */

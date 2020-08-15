@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.design.color.BluePalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.ui.components.button.ImageButton

@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.engine
 
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
 import java.awt.Color

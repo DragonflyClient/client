@@ -1,7 +1,8 @@
 package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.FontWeight
+import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.Alignment.*
@@ -11,7 +12,6 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
 import org.apache.logging.log4j.LogManager
 import kotlin.math.floor
-import kotlin.properties.Delegates
 
 /**
  * ## Text Field Assembled Widget

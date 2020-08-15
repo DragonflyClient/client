@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.ui.taskbar
 
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.ui.taskbar.apps.*
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget

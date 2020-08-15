@@ -1,12 +1,12 @@
 package net.inceptioncloud.dragonfly.engine.inspector.extension
 
 import javafx.application.Platform
-import javafx.scene.input.*
+import javafx.scene.input.KeyCodeCombination
 import javafx.scene.text.Font
 import javafx.stage.Stage
 import net.inceptioncloud.dragonfly.Dragonfly
-import org.apache.logging.log4j.LogManager
 import net.minecraft.client.Minecraft
+import org.apache.logging.log4j.LogManager
 import tornadofx.*
 import java.io.File
 import kotlin.concurrent.thread
@@ -83,7 +83,7 @@ object Inspector {
         thread {
             isLaunched = true
 
-            Platform.setImplicitExit(false);
+            Platform.setImplicitExit(false)
             FX.layoutDebuggerShortcut = KeyCodeCombination.valueOf("Ctrl+Shift+I") as KeyCodeCombination?
 
             System.setProperty("prism.lcdtext", "false")

@@ -25,6 +25,7 @@ object OptionsSectionOverlay {
             default = { true }
         }
     }
+
     /**
      * Whether hot actions should be enabled or not
      */

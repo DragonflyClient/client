@@ -8,16 +8,13 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
-import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseBack
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.Tooltip
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
-import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
-import net.minecraft.client.Minecraft
-import java.awt.Color
 import kotlin.properties.Delegates
 
 /**

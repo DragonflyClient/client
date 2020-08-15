@@ -5,7 +5,8 @@ import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.engine.font.renderer.*
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
-import net.minecraft.client.gui.*
+import net.minecraft.client.gui.GuiMainMenu
+import net.minecraft.client.gui.GuiScreen
 import org.apache.logging.log4j.LogManager
 
 /**

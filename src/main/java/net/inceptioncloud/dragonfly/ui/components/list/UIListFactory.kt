@@ -5,8 +5,7 @@ import net.minecraft.client.Minecraft
 /**
  * A type-safe factory for creating a [UIList]. Supports only Kotlin.
  */
-class UIListFactory
-{
+class UIListFactory {
     /**
      * Dimensions Instance
      */
@@ -20,19 +19,17 @@ class UIListFactory
     /**
      * The value for the [UIList.scrollHook] parameter.
      */
-    var scrollHook: () -> Unit = {  }
+    var scrollHook: () -> Unit = { }
 
     /**
      * Companion Object for static access on [uiListFactory].
      */
-    companion object
-    {
+    companion object {
         /**
          * Type-Safe Builder Method.
          */
         @JvmStatic
-        fun uiListFactory(init: UIListFactory.() -> Unit): UIList
-        {
+        fun uiListFactory(init: UIListFactory.() -> Unit): UIList {
             val factory = UIListFactory()
             factory.init()
             return factory.finish()
@@ -42,8 +39,7 @@ class UIListFactory
     /**
      * Type-Safe Builder Method.
      */
-    fun dimensions (init: Dimensions.() -> Unit): Dimensions
-    {
+    fun dimensions(init: Dimensions.() -> Unit): Dimensions {
         dimensions.init()
         return dimensions
     }
@@ -51,8 +47,7 @@ class UIListFactory
     /**
      * Type-Safe Builder Method.
      */
-    fun entries (init: Entries.() -> Unit): Entries
-    {
+    fun entries(init: Entries.() -> Unit): Entries {
         entries.init()
         return entries
     }
@@ -67,8 +62,7 @@ class UIListFactory
     /**
      * Contains a list of all [UIListEntry] instances.
      */
-    class Entries
-    {
+    class Entries {
         /**
          * List with all entries.
          */
@@ -77,8 +71,7 @@ class UIListFactory
         /**
          * Makes it possible to add a [UIListEntry] using + before the initialization.
          */
-        operator fun UIListEntry.unaryPlus()
-        {
+        operator fun UIListEntry.unaryPlus() {
             list.add(this)
         }
     }
@@ -87,8 +80,7 @@ class UIListFactory
      * Contains information about the dimensions of the list.
      * (width, height, x-location, y-location)
      */
-    class Dimensions
-    {
+    class Dimensions {
         /**
          * Slots Instance
          */
@@ -102,8 +94,7 @@ class UIListFactory
         /**
          * Type-Safe Builder Method.
          */
-        fun slots (init: Slots.() -> Unit): Slots
-        {
+        fun slots(init: Slots.() -> Unit): Slots {
             slots.init()
             return slots
         }
@@ -112,8 +103,7 @@ class UIListFactory
          * Contains information about the dimensions of the slots.
          * (width, height)
          */
-        class Slots
-        {
+        class Slots {
             var widthIn: Int = 100
             var heightIn: Int = 100
         }
@@ -122,8 +112,8 @@ class UIListFactory
     /**
      * Finishes the building of the [UIList] by instantiating it.
      */
-    private fun finish(): UIList
-    {
-        return UIList(Minecraft.getMinecraft(), dimensions.widthIn, dimensions.heightIn, dimensions.xIn, dimensions.yIn, dimensions.slots.heightIn, dimensions.slots.widthIn, entries.list, scrollHook)
+    private fun finish(): UIList {
+        return UIList(Minecraft.getMinecraft(), dimensions.widthIn, dimensions.heightIn, dimensions.xIn, dimensions.yIn, dimensions.slots.heightIn,
+            dimensions.slots.widthIn, entries.list, scrollHook)
     }
 }

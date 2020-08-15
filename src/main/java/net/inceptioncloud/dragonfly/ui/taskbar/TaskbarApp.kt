@@ -1,10 +1,10 @@
 package net.inceptioncloud.dragonfly.ui.taskbar
 
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
-import net.minecraft.util.ResourceLocation
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
+import net.minecraft.util.ResourceLocation
 import java.net.URL
 
 /**

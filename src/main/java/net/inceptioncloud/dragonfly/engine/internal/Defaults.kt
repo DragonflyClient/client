@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.structure.IDimension
+import net.inceptioncloud.dragonfly.engine.structure.ISize
 
 /**
  * ## Defaults
@@ -15,17 +16,13 @@ object Defaults {
      * - If the widget is based on a [size][ISize], the size will be set to the width.
      * - If the widget is based on a [dimension][IDimension], the width and height will be set to the parameters.
      */
-    fun <Type : Widget<Type>> setSizeOrDimension(widget: Type, width: Double, height: Double): Type
-    {
-        when (widget)
-        {
-            is IDimension ->
-            {
+    fun <Type : Widget<Type>> setSizeOrDimension(widget: Type, width: Double, height: Double): Type {
+        when (widget) {
+            is IDimension -> {
                 widget.width = width
                 widget.height = height
             }
-            is ISize ->
-            {
+            is ISize -> {
                 require(width == height)
                 widget.size = width
             }

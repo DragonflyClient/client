@@ -8,7 +8,6 @@ import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.Circle
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import kotlin.properties.Delegates
 

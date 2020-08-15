@@ -1,23 +1,17 @@
 package net.inceptioncloud.dragonfly.event;
 
-import com.google.common.eventbus.DeadEvent;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.SubscriberExceptionHandler;
-import net.inceptioncloud.dragonfly.design.DesignSubscribers;
-import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers;
+import com.google.common.eventbus.*;
 import net.inceptioncloud.dragonfly.versioning.updater.ApplicationStartSubscriber;
 import org.apache.logging.log4j.LogManager;
 
 /**
  * A custom {@link EventBus} for the InceptionCloud Mod Events.
  */
-public class ModEventBus extends EventBus
-{
+public class ModEventBus extends EventBus {
     /**
      * Creates a new EventBus with the given {@link SubscriberExceptionHandler}.
      */
-    public ModEventBus ()
-    {
+    public ModEventBus() {
         super(new ModSubscriberExceptionHandler());
 
         register(new ApplicationStartSubscriber());
@@ -30,8 +24,7 @@ public class ModEventBus extends EventBus
      *
      * @param object object whose subscriber methods should be registered.
      */
-    public void register (final Object object)
-    {
+    public void register(final Object object) {
         super.register(object);
 
         LogManager.getLogger().info("Registered Event Subscriber {}", object.getClass().getName());
@@ -41,12 +34,10 @@ public class ModEventBus extends EventBus
      * Unregisters all subscriber methods on a registered {@code object}.
      *
      * @param object object whose subscriber methods should be unregistered.
-     *
      * @throws IllegalArgumentException if the object was not previously registered.
      */
     @Override
-    public void unregister (final Object object)
-    {
+    public void unregister(final Object object) {
         super.unregister(object);
     }
 
@@ -62,8 +53,7 @@ public class ModEventBus extends EventBus
      * @param event event to post.
      */
     @Override
-    public void post (final Object event)
-    {
+    public void post(final Object event) {
         super.post(event);
     }
 }

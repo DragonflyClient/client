@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.scene.control.*
+import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -18,7 +19,6 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
-import javafx.scene.layout.BorderPane
 
 /**
  * The main view of the [InspectorApp].
@@ -101,7 +101,7 @@ class InspectorView : View("Dragonfly Inspector") {
                     if (widget.parentAssembled != null) {
                         widget.parentAssembled?.structure?.remove(id, widget)
                         LogManager.getLogger().info("Removed $id from parent assembled ${widget.parentAssembled}")
-                    } else if(widget.parentStage != null) {
+                    } else if (widget.parentStage != null) {
                         widget.parentStage?.remove(id)
                         LogManager.getLogger().info("Removed $id from parent stage ${widget.parentStage}")
                     }

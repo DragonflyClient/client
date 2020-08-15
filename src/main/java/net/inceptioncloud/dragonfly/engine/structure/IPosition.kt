@@ -6,8 +6,7 @@ package net.inceptioncloud.dragonfly.engine.structure
  * The Position Interface lets the inheriting class define a value for the x and y position.
  * Every object that has a position should implement this interface.
  */
-interface IPosition
-{
+interface IPosition {
     /**
      * The x-position of the object on the screen.
      *

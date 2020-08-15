@@ -5,7 +5,6 @@ import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.*
-import kotlin.properties.Delegates
 
 /**
  * ## Circle Primitive Widget

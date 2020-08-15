@@ -1,15 +1,12 @@
 package net.inceptioncloud.dragonfly.discord;
 
-import net.arikia.dev.drpc.DiscordEventHandlers;
-import net.arikia.dev.drpc.DiscordRPC;
-import net.arikia.dev.drpc.DiscordRichPresence;
+import net.arikia.dev.drpc.*;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.discord.custom.MenuRPC;
 import net.inceptioncloud.dragonfly.discord.subscriber.RichPresenceSubscriber;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Manages the updating and displaying of the Discord Rich Presence.
@@ -28,8 +25,7 @@ public class RichPresenceManager {
     /**
      * Initialized when loading the {@link Dragonfly}.
      */
-    public RichPresenceManager ()
-    {
+    public RichPresenceManager() {
         LogManager.getLogger().info("Enabling Discord Rich Presence...");
         Dragonfly.getEventBus().register(new RichPresenceSubscriber());
 
@@ -59,8 +55,7 @@ public class RichPresenceManager {
      *
      * @param status The status
      */
-    public void update (RichPresenceAdapter status)
-    {
+    public void update(RichPresenceAdapter status) {
         this.status = status;
         update(status.buildRichPresence());
     }
@@ -70,27 +65,23 @@ public class RichPresenceManager {
      *
      * @param richPresence The Rich Presence instance
      */
-    public void update (DiscordRichPresence richPresence)
-    {
+    public void update(DiscordRichPresence richPresence) {
         DiscordRPC.discordUpdatePresence(richPresence);
     }
 
     /**
      * End the connection to Discord and remove the Rich Presence.
      */
-    public void close ()
-    {
+    public void close() {
         open = false;
         DiscordRPC.discordShutdown();
     }
 
-    public boolean isOpen ()
-    {
+    public boolean isOpen() {
         return open;
     }
 
-    public RichPresenceAdapter getStatus ()
-    {
+    public RichPresenceAdapter getStatus() {
         return status;
     }
 }

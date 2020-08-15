@@ -7,12 +7,10 @@ import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import org.lwjgl.input.Keyboard
-import java.lang.IllegalStateException
 import java.util.concurrent.LinkedBlockingQueue
 
 /**

@@ -4,7 +4,7 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
 import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image

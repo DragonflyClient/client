@@ -10,8 +10,7 @@ import java.util.Objects;
 /**
  * When the player is in a singleplayer world.
  */
-public class SingleplayerState extends PlayingState
-{
+public class SingleplayerState extends PlayingState {
     /**
      * The integrated server on which the singleplayer world runs on.
      * Equal to {@link Minecraft#getIntegratedServer()}.
@@ -23,8 +22,7 @@ public class SingleplayerState extends PlayingState
      *
      * @param integratedServer The running integrated server
      */
-    public SingleplayerState (final boolean paused, final long joinTime, final IntegratedServer integratedServer)
-    {
+    public SingleplayerState(final boolean paused, final long joinTime, final IntegratedServer integratedServer) {
         super(paused, joinTime);
         this.integratedServer = integratedServer;
     }
@@ -33,14 +31,12 @@ public class SingleplayerState extends PlayingState
      * @return The {@link RichPresenceAdapter} that belongs to this Game State.
      */
     @Override
-    public RichPresenceAdapter getBelongingRichPresence ()
-    {
+    public RichPresenceAdapter getBelongingRichPresence() {
         return new SingleplayerRPC(integratedServer.getWorldName(), isPaused(), getJoinTime());
     }
 
     @Override
-    public boolean equals (final Object o)
-    {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
@@ -49,21 +45,18 @@ public class SingleplayerState extends PlayingState
     }
 
     @Override
-    public int hashCode ()
-    {
+    public int hashCode() {
         return Objects.hash(super.hashCode(), integratedServer);
     }
 
-    public IntegratedServer getIntegratedServer ()
-    {
+    public IntegratedServer getIntegratedServer() {
         return integratedServer;
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "SingleplayerState{" +
-               "integratedServer=" + integratedServer +
-               '}';
+                "integratedServer=" + integratedServer +
+                '}';
     }
 }

@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.versioning.updater
 
 import com.google.common.eventbus.Subscribe
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.event.client.ApplicationStartEvent
 import org.apache.logging.log4j.LogManager
 

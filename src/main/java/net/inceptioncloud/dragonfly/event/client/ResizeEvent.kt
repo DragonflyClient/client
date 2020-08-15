@@ -1,8 +1,6 @@
 package net.inceptioncloud.dragonfly.event.client
 
 import net.inceptioncloud.dragonfly.event.Cancellable
-import java.awt.image.BufferedImage
-import java.io.File
 
 /**
  * Called whenever the game window is resized.

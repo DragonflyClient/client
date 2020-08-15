@@ -12,8 +12,7 @@ import java.util.function.IntSupplier;
  *
  * <b>Note:</b> This type of transition does not differentiate between {@link #setForward()} and {@link #setBackward()}.
  */
-public class FloatingDoubleTransition extends TransitionTypeNumber
-{
+public class FloatingDoubleTransition extends TransitionTypeNumber {
     /**
      * A simple object that the constructor and non-thread-safe methods are synchronized on.
      * The content of this object is never used and it is never updated or accessed.
@@ -37,20 +36,26 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
      *
      * @see DoubleTransition Parameter Documentation
      */
-    FloatingDoubleTransition (final double start, final double end, final int amountOfSteps, final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
-    {
+    FloatingDoubleTransition(
+            final double start,
+            final double end,
+            final int amountOfSteps,
+            final Runnable reachEnd,
+            final Runnable reachStart,
+            final IntSupplier autoTransformator
+    ) {
         super(null, null, autoTransformator);
 
         synchronized (threadLock) {
-            this.base = DoubleTransition.builder().start(start).end(end).amountOfSteps(amountOfSteps).reachEnd(reachEnd).reachStart(reachStart).build();
+            this.base =
+                    DoubleTransition.builder().start(start).end(end).amountOfSteps(amountOfSteps).reachEnd(reachEnd).reachStart(reachStart).build();
         }
     }
 
     /**
      * Performs either {@link #setForward()} or {@link #setBackward()} based on the {@link #direction}.
      */
-    public void next ()
-    {
+    public void next() {
         synchronized (threadLock) {
             if (direction == FloatingDirection.FORWARD) {
                 this.base.setForward();
@@ -70,8 +75,7 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
      * @return The current double value
      */
     @Override
-    public double get ()
-    {
+    public double get() {
         return this.base.get();
     }
 
@@ -79,17 +83,15 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
      * @return The current double value casted to an integer.
      */
     @Override
-    public int castToInt ()
-    {
-        return ( int ) get();
+    public int castToInt() {
+        return (int) get();
     }
 
     /**
      * @return Whether the current value is at the end.
      */
     @Override
-    public boolean isAtEnd ()
-    {
+    public boolean isAtEnd() {
         return this.base.isAtEnd();
     }
 
@@ -97,8 +99,7 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
      * @return Whether the current value is at the start.
      */
     @Override
-    public boolean isAtStart ()
-    {
+    public boolean isAtStart() {
         return this.base.isAtStart();
     }
 
@@ -106,8 +107,7 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
      * The step-forward method for the transition.
      */
     @Override
-    public void doForward ()
-    {
+    public void doForward() {
         this.next();
     }
 
@@ -115,28 +115,24 @@ public class FloatingDoubleTransition extends TransitionTypeNumber
      * The step-backward method for the transition.
      */
     @Override
-    public void doBackward ()
-    {
+    public void doBackward() {
         this.next();
     }
 
     @Override
-    public void destroy ()
-    {
+    public void destroy() {
         base.destroy();
         super.destroy();
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "FloatingDoubleTransition{" +
-               "originStackTrace=" + originStackTrace +
-               '}';
+                "originStackTrace=" + originStackTrace +
+                '}';
     }
 
-    public static FloatingDoubleTransitionBuilder builder ()
-    {
+    public static FloatingDoubleTransitionBuilder builder() {
         return new FloatingDoubleTransitionBuilder();
     }
 }

@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.engine.structure.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.properties.Delegates
 
 /**
  * ## Filled Circle Primitive Widget
@@ -49,8 +48,7 @@ class FilledCircle(
         glEnable(GL_LINE_SMOOTH)
         glBegin(GL_TRIANGLE_FAN)
 
-        for (i in 0 until sections)
-        {
+        for (i in 0 until sections) {
             circleX = (radius * sin(i * angle)).toFloat()
             circleY = (radius * cos(i * angle)).toFloat()
             glVertex2d(x + circleX + radius, y + circleY + radius)

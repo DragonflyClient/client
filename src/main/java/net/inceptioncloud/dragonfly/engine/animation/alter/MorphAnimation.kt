@@ -5,8 +5,10 @@ import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.Sequence
 import org.apache.logging.log4j.LogManager
-import kotlin.reflect.*
-import kotlin.reflect.full.*
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KProperty
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
 
 typealias PropertyUpdate = Pair<KProperty<*>, Any?>
 

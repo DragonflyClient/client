@@ -3,14 +3,11 @@ package net.inceptioncloud.dragonfly.engine.internal
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
-import net.inceptioncloud.dragonfly.engine.internal.annotations.*
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.minecraft.client.gui.Gui
 import java.util.*
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
 
 /**
  * ## Widget
