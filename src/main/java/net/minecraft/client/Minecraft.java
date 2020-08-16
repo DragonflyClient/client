@@ -603,7 +603,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         final StartupGuiEvent event = new StartupGuiEvent(targetStartupGui);
         Dragonfly.getEventBus().post(event);
 
-        Dragonfly.getFontManager().getDefaultFont().preload(event.getTarget());
+        Dragonfly.getFontManager().getDefaultFont().preload();
 
         this.displayGuiScreen(event.getTarget());
         this.setPostInitialDisplayMode();

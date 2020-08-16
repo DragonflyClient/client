@@ -5,8 +5,6 @@ import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.engine.font.renderer.*
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
-import net.minecraft.client.gui.GuiMainMenu
-import net.minecraft.client.gui.GuiScreen
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -135,7 +133,7 @@ class WidgetFont @JvmOverloads constructor(
     /**
      * Preloads some commonly used font renderers for this font.
      */
-    fun preload(screen: GuiScreen) {
+    fun preload() {
         splashScreen.update()
 
         if (OptionsSectionPerformance.preloadFontRenderers() != true)
