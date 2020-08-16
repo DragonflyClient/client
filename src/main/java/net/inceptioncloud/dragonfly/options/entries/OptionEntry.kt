@@ -7,7 +7,7 @@ import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward
 import net.inceptioncloud.dragonfly.ui.components.list.UIListEntry
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui.*
 
@@ -88,7 +88,7 @@ abstract class OptionEntry<T>(val name: String, val description: String) : UILis
     private fun isTriggerHovered() =
         getMouseX() in (x - 19)..(x - 5)
                 && getMouseY() in (y + 3)..(y + height - 3)
-                && (Minecraft.getMinecraft().currentScreen as? ModOptionsUI)?.helpAttachedEntry == this
+                && (Minecraft.getMinecraft().currentScreen as? DragonflySettingsUI)?.helpAttachedEntry == this
 
     /**
      * Extension to [drawEntry].

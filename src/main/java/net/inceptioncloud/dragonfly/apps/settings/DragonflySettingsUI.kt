@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.ui.screens
+package net.inceptioncloud.dragonfly.apps.settings
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
@@ -43,7 +43,7 @@ import java.util.*
  *
  * @property previousScreen the screen which this ui was opened from
  */
-class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
+class DragonflySettingsUI(private val previousScreen: GuiScreen) : GuiScreen() {
 
     /**
      * List with all setting elements.

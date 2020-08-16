@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.options.entries.factories
 
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.entries.OptionEntryBoolean
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI
 
 /**
  * A factory class for the [OptionEntryBoolean].
@@ -17,7 +17,7 @@ class OptionEntryBooleanFactory : OptionEntryFactory<Boolean>() {
      * entry value is modified. Instead, it will be saved when the "Save and Exit" button
      * in the options screen is pressed.
      *
-     * @see ModOptionsUI
+     * @see DragonflySettingsUI
      */
     var externalApply: ((Boolean, OptionKey<Boolean>) -> Unit)? = null
 

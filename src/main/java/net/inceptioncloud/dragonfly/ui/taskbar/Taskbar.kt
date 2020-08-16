@@ -2,7 +2,9 @@ package net.inceptioncloud.dragonfly.ui.taskbar
 
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.ui.taskbar.apps.*
+import net.inceptioncloud.dragonfly.apps.*
+import net.inceptioncloud.dragonfly.apps.about.AboutDragonflyApp
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsApp
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
 import net.minecraft.client.gui.GuiScreen
 

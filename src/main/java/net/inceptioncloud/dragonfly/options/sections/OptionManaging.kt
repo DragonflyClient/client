@@ -4,7 +4,7 @@ import net.inceptioncloud.dragonfly.options.entries.OptionEntry
 import net.inceptioncloud.dragonfly.options.entries.TitleEntry
 import net.inceptioncloud.dragonfly.options.sections.OptionList.all
 import net.inceptioncloud.dragonfly.options.sections.OptionSectionFactory.Companion.optionSection
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI
 
 /**
  * A static accessible object that keeps all created option sections.
@@ -28,7 +28,7 @@ object OptionList {
  * These sections are displayed in the options menu and start with a title under which all
  * option entries are rendered.
  *
- * @see ModOptionsUI
+ * @see DragonflySettingsUI
  * @see TitleEntry
  *
  * @property title the title of the section that should describe the area to which the options apply

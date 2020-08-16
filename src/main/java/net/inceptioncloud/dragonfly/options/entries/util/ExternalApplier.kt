@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.options.entries.util
 
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
@@ -19,7 +19,7 @@ interface ExternalApplier<T> {
      * entry value is modified. Instead, it will be saved when the "Save and Exit" button
      * in the options screen is pressed.
      *
-     * @see ModOptionsUI
+     * @see DragonflySettingsUI
      */
     var externalApplier: ((T, OptionKey<T>) -> Unit)?
 

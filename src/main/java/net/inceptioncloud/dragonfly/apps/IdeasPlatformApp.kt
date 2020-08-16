@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.ui.taskbar.apps
+package net.inceptioncloud.dragonfly.apps
 
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 

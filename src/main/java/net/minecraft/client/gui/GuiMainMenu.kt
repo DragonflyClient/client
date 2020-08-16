@@ -17,7 +17,7 @@ import net.inceptioncloud.dragonfly.ui.mainmenu.quit.RestartAction
 import net.inceptioncloud.dragonfly.ui.mainmenu.singleplayer.CreateMapAction
 import net.inceptioncloud.dragonfly.ui.mainmenu.singleplayer.LastMapAction
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
-import net.inceptioncloud.dragonfly.ui.screens.AboutUI
+import net.inceptioncloud.dragonfly.apps.about.AboutDragonflyUI
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.resources.I18n
@@ -367,7 +367,7 @@ class GuiMainMenu : GuiScreen(), GuiYesNoCallback {
         val fontRenderer = fontManager.defaultFont.fontRendererAsync()
         if (mouseY in 5..5 + (fontRenderer?.height ?: 0)) {
             if (mouseX in 5..5 + (fontRenderer?.getStringWidth(aboutString) ?: 0)) {
-                mc.displayGuiScreen(AboutUI(this))
+                mc.displayGuiScreen(AboutDragonflyUI(this))
             } else {
                 val s = "What's new?"
                 val sWidth = fontRenderer?.getStringWidth(s) ?: 0

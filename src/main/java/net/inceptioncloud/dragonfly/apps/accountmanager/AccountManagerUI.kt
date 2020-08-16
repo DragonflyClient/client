@@ -1,6 +1,7 @@
-package net.inceptioncloud.dragonfly.ui.screens
+package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import net.inceptioncloud.dragonfly.engine.internal.SizedImage
+import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI
 import net.minecraft.client.gui.GuiScreen
 import java.lang.Double.min
 

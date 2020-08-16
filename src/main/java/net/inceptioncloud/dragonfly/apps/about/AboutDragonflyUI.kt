@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.ui.screens
+package net.inceptioncloud.dragonfly.apps.about
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
@@ -19,7 +19,7 @@ import net.minecraft.util.ResourceLocation
  *
  * @property parentScreen the screen from which the UI was opened
  */
-class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
+class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
      * window resizes, the buttonList is cleared beforehand.
@@ -62,7 +62,7 @@ class AboutUI(val parentScreen: GuiScreen) : GuiScreen() {
             drawRect(wX, wY + header / 2, wX + wWidth, wY + header, DragonflyPalette.accentNormal.rgb)
 
             fontRenderer?.drawCenteredString(
-                "About", wX + wWidth / 2, wY + header / 2 - fontRenderer.height / 4,
+                "About Dragonfly", wX + wWidth / 2, wY + header / 2 - fontRenderer.height / 4,
                 DragonflyPalette.foreground.rgb, false
             )
 

@@ -10,8 +10,8 @@ import net.inceptioncloud.dragonfly.transition.supplier.ForwardNothing;
 import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton;
 import net.inceptioncloud.dragonfly.ui.components.button.SimpleButton;
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils;
-import net.inceptioncloud.dragonfly.ui.screens.AboutUI;
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI;
+import net.inceptioncloud.dragonfly.apps.about.AboutDragonflyUI;
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.renderer.GlStateManager;
@@ -155,7 +155,7 @@ public class GuiIngameMenu extends GuiScreen
                 break;
 
             case 7:
-                mc.displayGuiScreen(new ModOptionsUI(this));
+                mc.displayGuiScreen(new DragonflySettingsUI(this));
                 break;
 
             case 9:
@@ -264,7 +264,7 @@ public class GuiIngameMenu extends GuiScreen
         final IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
         if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString)
             && mouseY >= 5 && mouseY <= 5 + fontRenderer.getHeight()) {
-            this.mc.displayGuiScreen(new AboutUI(this));
+            this.mc.displayGuiScreen(new AboutDragonflyUI(this));
         }
 
         super.mouseClicked(mouseX, mouseY, mouseButton);

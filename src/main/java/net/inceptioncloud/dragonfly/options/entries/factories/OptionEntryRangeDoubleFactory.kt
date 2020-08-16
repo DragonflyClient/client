@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.options.entries.factories
 
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.entries.OptionEntryRangeDouble
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI
 
 /**
  * A factory class for the [OptionEntryRangeDouble].
@@ -42,7 +42,7 @@ class OptionEntryRangeDoubleFactory : OptionEntryFactory<Double>() {
      * entry value is modified. Instead, it will be saved when the "Save and Exit" button
      * in the options screen is pressed.
      *
-     * @see ModOptionsUI
+     * @see DragonflySettingsUI
      */
     var externalApply: ((Double, OptionKey<Double>) -> Unit)? = null
 
