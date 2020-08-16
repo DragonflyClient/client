@@ -41,7 +41,9 @@ abstract class TaskbarApp(val name: String, val icon: String = name.toLowerCase(
      */
     protected fun gui(gui: GuiScreen) {
         ScreenOverlay.withSwitchOverlay {
-            Minecraft.getMinecraft().displayGuiScreen(gui)
+            Minecraft.getMinecraft().addScheduledTask {
+                Minecraft.getMinecraft().displayGuiScreen(gui)
+            }
         }
     }
 }
