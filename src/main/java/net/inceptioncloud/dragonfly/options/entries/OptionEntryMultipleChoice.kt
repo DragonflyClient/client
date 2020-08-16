@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.options.entries
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.entries.util.ExternalApplier
 import net.inceptioncloud.dragonfly.options.entries.util.OptionChoice
@@ -34,7 +35,6 @@ class OptionEntryMultipleChoice(
     description: String,
     val key: OptionKey<Int>,
     private val choices: List<OptionChoice>,
-    default: Int,
     override var externalApplier: ((Int, OptionKey<Int>) -> Unit)? = null
 ) : OptionEntry<Int>(name, description), ExternalApplier<Int> {
     /**
@@ -60,7 +60,7 @@ class OptionEntryMultipleChoice(
      * @see enableLeftArrow
      */
     private val leftArrowHoverColor = ColorTransition.builder()
-        .start(Color(0x355571)).end(BluePalette.FOREGROUND)
+        .start(Color(0x75673E)).end(BluePalette.FOREGROUND)
         .autoTransformator(ForwardBackward { enableLeftArrow })
         .amountOfSteps(15).build()
 
@@ -71,7 +71,7 @@ class OptionEntryMultipleChoice(
      * @see enableRightArrow
      */
     private val rightArrowHoverColor = ColorTransition.builder()
-        .start(Color(0x355571)).end(BluePalette.FOREGROUND)
+        .start(Color(0x75673E)).end(BluePalette.FOREGROUND)
         .autoTransformator(ForwardBackward { enableRightArrow })
         .amountOfSteps(15).build()
 
@@ -110,7 +110,7 @@ class OptionEntryMultipleChoice(
         fontRenderer.drawCenteredString(
             selectedChoice.displayString,
             viewX + viewWidth / 2, viewY + height / 2 - fontRenderer.height / 2,
-            BluePalette.PRIMARY.rgb, false
+            DragonflyPalette.accentBright.rgb, false
         )
 
         val viewXD = viewX.toDouble()

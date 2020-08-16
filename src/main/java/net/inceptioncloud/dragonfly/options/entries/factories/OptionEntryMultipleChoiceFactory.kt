@@ -78,7 +78,6 @@ class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>() {
             description ?: "description not set",
             key,
             choices,
-            keyFactory.default!!.invoke(),
             externalApply
         )
     }

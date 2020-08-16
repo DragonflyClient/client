@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.ui.components.toggle
 
 import net.inceptioncloud.dragonfly.design.color.BluePalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.transition.color.ColorTransition
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward
@@ -84,7 +85,7 @@ class UISwitch(var x: Int, var y: Int, var width: Int, var height: Int,
      * Provides the transition between **green** (value is `true`) and **red** (value is `false`).
      */
     private val transitionColor = ColorTransition.builder()
-        .start(Color(0x34c464)).end(Color(0xff6663))
+        .start(DragonflyPalette.accentBright.base).end(DragonflyPalette.accentDark.base)
         .amountOfSteps(50)
         .autoTransformator(ForwardBackward { !valueGetter.invoke() }).build()
 
