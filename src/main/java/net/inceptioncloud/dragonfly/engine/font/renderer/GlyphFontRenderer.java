@@ -48,8 +48,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     private final GlyphPage pageRegular, pageBold, pageItalic, pageBoldItalic;
 
-    private final GlyphPage unscaledPageRegular, unscaledPageBold, unscaledPageItalic, unscaledPageBoldItalic;
-
     /**
      * Random used for generating chars when the {@link #randomStyle} is enabled.
      */
@@ -117,21 +115,12 @@ public class GlyphFontRenderer implements IFontRenderer {
             GlyphPage pageRegular,
             GlyphPage pageBold,
             GlyphPage pageItalic,
-            GlyphPage pageBoldItalic,
-            GlyphPage unscaledPageRegular,
-            GlyphPage unscaledPageBold,
-            GlyphPage unscaledPageItalic,
-            GlyphPage unscaledPageBoldItalic
+            GlyphPage pageBoldItalic
     ) {
         this.pageRegular = pageRegular;
         this.pageBold = pageBold;
         this.pageItalic = pageItalic;
         this.pageBoldItalic = pageBoldItalic;
-
-        this.unscaledPageRegular = unscaledPageRegular;
-        this.unscaledPageBold = unscaledPageBold;
-        this.unscaledPageItalic = unscaledPageItalic;
-        this.unscaledPageBoldItalic = unscaledPageBoldItalic;
 
         for (int i = 0; i < 32; ++i) {
             int j = (i >> 3 & 1) * 85;
@@ -181,30 +170,17 @@ public class GlyphFontRenderer implements IFontRenderer {
         GlyphPage regularPage = new GlyphPage(makeFont(fontName, Font.PLAIN, scaledSize, letterSpacing));
         regularPage.generateGlyphPage(chars);
 
-        GlyphPage unscaledRegular = new GlyphPage(makeFont(fontName, Font.PLAIN, size, letterSpacing));
-        unscaledRegular.generateGlyphPage(chars);
-
         GlyphPage boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, scaledSize, letterSpacing));
         boldPage.generateGlyphPage(chars);
-
-        GlyphPage unscaledBold = new GlyphPage(makeFont(fontName, Font.BOLD, size, letterSpacing));
-        unscaledBold.generateGlyphPage(chars);
 
         GlyphPage italicPage = new GlyphPage(makeFont(fontName, Font.ITALIC, scaledSize, letterSpacing));
         italicPage.generateGlyphPage(chars);
 
-        GlyphPage unscaledItalic = new GlyphPage(makeFont(fontName, Font.ITALIC, size, letterSpacing));
-        unscaledItalic.generateGlyphPage(chars);
-
         GlyphPage boldItalicPage = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, scaledSize, letterSpacing));
         boldItalicPage.generateGlyphPage(chars);
 
-        GlyphPage unscaledBoldItalic = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing));
-        unscaledBoldItalic.generateGlyphPage(chars);
-
         return new GlyphFontRenderer(
-                regularPage, boldPage, italicPage, boldItalicPage,
-                unscaledRegular, unscaledBold, unscaledItalic, unscaledBoldItalic
+                regularPage, boldPage, italicPage, boldItalicPage
         );
     }
 
@@ -371,7 +347,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     @Override
     public int getHeight() {
-        return (int) (unscaledPageRegular.getMaxFontHeight() / 2.2D);
+        return (int) (pageRegular.getMaxFontHeight() / (getFontQualityScale() * 2.2D));
     }
 
     /**
@@ -382,7 +358,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     @Override
     public float getCharWidthFloat(final char ch) {
-        GlyphPage.Glyph glyph = unscaledPageRegular.glyphCharacterMap.get(ch == '▏' ? '|' : ch);
+        GlyphPage.Glyph glyph = pageRegular.glyphCharacterMap.get(ch == '▏' ? '|' : ch);
 
         if (glyph == null) {
             return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch) * 2;
