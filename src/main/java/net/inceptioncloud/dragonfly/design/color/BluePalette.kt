@@ -1,7 +1,5 @@
 package net.inceptioncloud.dragonfly.design.color
 
-import java.awt.Color
-
 /**
  * A blue palette for the client design.
  */

@@ -141,17 +141,9 @@ class WidgetFont @JvmOverloads constructor(
         if (OptionsSectionPerformance.preloadFontRenderers() != true)
             return
 
-        fontRenderer(fontWeight = FontWeight.REGULAR, size = 16)
-        fontRenderer(fontWeight = FontWeight.MEDIUM, size = 20)
-        fontRenderer()
-
-        if (screen is GuiMainMenu) {
-            val percent = (screen.height / 3).coerceAtMost(300) / 280.0
-
-            fontRenderer(fontWeight = FontWeight.MEDIUM, size = (25 + percent * 60).toInt())
-            fontRenderer(fontWeight = FontWeight.REGULAR, size = (15 + percent * 40).toInt())
-            fontRenderer(fontWeight = FontWeight.REGULAR, size = (10 + percent * 30).toInt())
-        }
+        fontRenderer(fontWeight = FontWeight.REGULAR, size = 30)
+        fontRenderer(fontWeight = FontWeight.MEDIUM, size = 30)
+        fontRenderer(fontWeight = FontWeight.LIGHT, size = 30)
     }
 
     /**
