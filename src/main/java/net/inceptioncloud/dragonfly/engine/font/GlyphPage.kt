@@ -14,7 +14,6 @@ import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
-import kotlin.collections.HashMap
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
@@ -31,7 +30,7 @@ class GlyphPage(
 
     private var bufferedImage: BufferedImage? = null
 
-    private val loadedTexture by lazy { DynamicTexture(bufferedImage) }
+    private val loadedTexture by lazy { bufferedImage?.let { DynamicTexture(it) } }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -63,9 +62,9 @@ class GlyphPage(
         // Leave some additional space
         maxWidth += 2.0
         maxHeight += 2.0
-        imgSize = ceil(ceil(sqrt(maxWidth * maxWidth * chars.size) / maxWidth)
+        imgSize = (ceil(ceil(sqrt(maxWidth * maxWidth * chars.size) / maxWidth)
             .coerceAtLeast(ceil(sqrt(maxHeight * maxHeight * chars.size) / maxHeight)) * maxWidth.coerceAtLeast(maxHeight)
-        ).toInt() + 1
+        ) * 1.2).toInt() // make sure there is enough space
 
         val cached = getCachedGlyph()
 
@@ -119,7 +118,6 @@ class GlyphPage(
             glyph.height = bounds.height.toInt()
             check(posY + glyph.height < imgSize) { "Not all characters will fit" }
 
-            if (ch == 'j') glyph.width += 4
             if (posX + glyph.width >= imgSize) {
                 posX = 0
                 posY += currentCharHeight
@@ -136,8 +134,8 @@ class GlyphPage(
                 currentCharHeight = glyph.height
             }
 
-            graphics.drawString(ch.toString(), posX + if (ch == 'j') 5 else 2, posY + fontMetrics.ascent)
-            posX += glyph.width
+            graphics.drawString(ch.toString(), posX, posY + fontMetrics.ascent)
+            posX += glyph.width + 4
             glyphCharacterMap[ch] = glyph
         }
 
@@ -145,7 +143,7 @@ class GlyphPage(
     }
 
     fun bindTexture() {
-        GlStateManager.bindTexture(loadedTexture.glTextureId)
+        loadedTexture?.let { GlStateManager.bindTexture(it.glTextureId) }
     }
 
     fun unbindTexture() {

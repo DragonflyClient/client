@@ -14,12 +14,12 @@ import java.awt.*;
 /**
  * A {@link GuiButton} with custom font and transparent background!
  */
-public class TransparentButton extends GuiButton
-{
+public class TransparentButton extends GuiButton {
     /**
      * Transition increases the opacity up to 1.0F when the button is hovered.
      */
-    private final DoubleTransition hoverIncreaseOpacity = DoubleTransition.builder().start(0).end(1).autoTransformator((ForwardBackward) () -> hovered).amountOfSteps(20).build();
+    private final DoubleTransition hoverIncreaseOpacity =
+            DoubleTransition.builder().start(0).end(1).autoTransformator((ForwardBackward) () -> hovered).amountOfSteps(20).build();
     /**
      * The font renderer with which the button text is drawn.
      */
@@ -31,7 +31,8 @@ public class TransparentButton extends GuiButton
     /**
      * The transition that animates the underline.
      */
-    private final DoubleTransition underline = DoubleTransition.builder().start(0).end(1).autoTransformator((ForwardBackward) this::isHighlighted).amountOfSteps(40).build();
+    private final DoubleTransition underline =
+            DoubleTransition.builder().start(0).end(1).autoTransformator((ForwardBackward) this::isHighlighted).amountOfSteps(40).build();
     /**
      * The opacity of the text.
      */
@@ -40,26 +41,22 @@ public class TransparentButton extends GuiButton
     /**
      * Super-Constructor
      */
-    public TransparentButton (final int buttonId, final int x, final int y, final String buttonText)
-    {
+    public TransparentButton(final int buttonId, final int x, final int y, final String buttonText) {
         this(buttonId, x, y, 200, 20, buttonText);
     }
 
     /**
      * Super-Constructor
      */
-    public TransparentButton (final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText)
-    {
+    public TransparentButton(final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText) {
         super(buttonId, x, y, widthIn, heightIn, buttonText);
     }
 
-    public boolean isHighlighted ()
-    {
+    public boolean isHighlighted() {
         return highlighted;
     }
 
-    public void setHighlighted (final boolean highlighted)
-    {
+    public void setHighlighted(final boolean highlighted) {
         this.highlighted = highlighted;
     }
 
@@ -67,20 +64,22 @@ public class TransparentButton extends GuiButton
      * Draws this button on the screen.
      */
     @Override
-    public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
-    {
+    public void drawButton(final Minecraft mc, final int mouseX, final int mouseY) {
         if (this.visible) {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+            this.hovered =
+                    mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
             this.mouseDragged(mc, mouseX, mouseY);
 
             final float tempOpacity = (float) (this.opacity + (0.85F - opacity) * hoverIncreaseOpacity.get());
             final int i = Math.max(2, (this.height - fontRenderer.getHeight()) / 2);
-            fontRenderer.drawCenteredString(this.displayString,
-                this.xPosition + this.width / 2,
-                this.yPosition + i,
-                RGB.of(0xFFFFFF).alpha(highlighted ? opacity : tempOpacity).rgb(),
-                true);
+            fontRenderer.drawCenteredString(
+                    this.displayString,
+                    this.xPosition + this.width / 2,
+                    this.yPosition + i,
+                    RGB.of(0xFFFFFF).alpha(highlighted ? opacity : tempOpacity).rgb(),
+                    true
+            );
 
             int centerX = xPosition + (width / 2);
             int underlineWidth = (int) ((fontRenderer.getStringWidth(this.displayString) / 2) * underline.get());
@@ -92,8 +91,7 @@ public class TransparentButton extends GuiButton
      * Destroys the Button by removing all transitions.
      */
     @Override
-    public void destroy ()
-    {
+    public void destroy() {
         underline.destroy();
         hoverIncreaseOpacity.destroy();
     }
@@ -101,8 +99,7 @@ public class TransparentButton extends GuiButton
     /**
      * Changes the font renderer of the button.
      */
-    public void setFontRenderer (final IFontRenderer fontRenderer)
-    {
+    public void setFontRenderer(final IFontRenderer fontRenderer) {
         if (fontRenderer != null)
             this.fontRenderer = fontRenderer;
     }
@@ -112,8 +109,7 @@ public class TransparentButton extends GuiButton
      *
      * @return The button instance
      */
-    public TransparentButton setOpacity (final float opacity)
-    {
+    public TransparentButton setOpacity(final float opacity) {
         this.opacity = opacity;
         return this;
     }

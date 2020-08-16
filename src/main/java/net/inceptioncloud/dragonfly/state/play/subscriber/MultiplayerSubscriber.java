@@ -10,14 +10,12 @@ import net.minecraft.client.gui.GuiIngameMenu;
 /**
  * The subscriber that performs the changing to the {@link MultiplayerState}.
  */
-public class MultiplayerSubscriber
-{
+public class MultiplayerSubscriber {
     /**
      * Updates the Game State to {@link MultiplayerState} when the user was logged in to an external server.
      */
     @Subscribe
-    public void serverLoggedIn (ServerLoggedInEvent event)
-    {
+    public void serverLoggedIn(ServerLoggedInEvent event) {
         Dragonfly.getGameStateManager().updateState(new MultiplayerState(false, System.currentTimeMillis(), event.getServerData()));
     }
 
@@ -26,8 +24,7 @@ public class MultiplayerSubscriber
      * new screen is <code>null</code> or not.
      */
     @Subscribe
-    public void guiScreenDisplay (GuiScreenDisplayEvent event)
-    {
+    public void guiScreenDisplay(GuiScreenDisplayEvent event) {
         if (event.isCancelled()) return;
         boolean paused = event.getNewScreen() instanceof GuiIngameMenu;
 

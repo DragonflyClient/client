@@ -1,13 +1,11 @@
 package net.inceptioncloud.dragonfly.event.client;
 
-import net.inceptioncloud.dragonfly.state.GameState;
-import net.inceptioncloud.dragonfly.state.GameStateManager;
+import net.inceptioncloud.dragonfly.state.*;
 
 /**
  * When the current Game State is changed via {@link GameStateManager#updateState(GameState)}.
  */
-public class GameStateUpdateEvent
-{
+public class GameStateUpdateEvent {
     /**
      * The previously selected Game State.
      */
@@ -18,19 +16,16 @@ public class GameStateUpdateEvent
      */
     private final GameState next;
 
-    public GameStateUpdateEvent (final GameState previous, final GameState next)
-    {
+    public GameStateUpdateEvent(final GameState previous, final GameState next) {
         this.previous = previous;
         this.next = next;
     }
 
-    public GameState getPrevious ()
-    {
+    public GameState getPrevious() {
         return previous;
     }
 
-    public GameState getNext ()
-    {
+    public GameState getNext() {
         return next;
     }
 }

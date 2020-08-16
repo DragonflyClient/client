@@ -9,8 +9,7 @@ import net.inceptioncloud.dragonfly.options.entries.OptionEntryRangeInt
  * It extends the [OptionEntryFactory] by adding the [minValue] and [maxValue] and automatically builds the
  * [OptionEntryFactory.KeyFactory.validator] to match the min- and max-value.
  */
-class OptionEntryRangeIntFactory : OptionEntryFactory<Int>()
-{
+class OptionEntryRangeIntFactory : OptionEntryFactory<Int>() {
     /**
      * The smallest value that the range can have.
      *
@@ -38,8 +37,7 @@ class OptionEntryRangeIntFactory : OptionEntryFactory<Int>()
     /**
      * A companion object that makes the function [optionEntryRangeInt] available for static access.
      */
-    companion object
-    {
+    companion object {
         /**
          * The initialization function of the [OptionEntryRangeIntFactory].
          *
@@ -47,8 +45,7 @@ class OptionEntryRangeIntFactory : OptionEntryFactory<Int>()
          * In that function, more steps can be made and values can be assigned to build an [OptionEntryRangeInt].
          */
         @JvmStatic
-        fun optionEntryRangeInt(init: OptionEntryRangeIntFactory.() -> Unit): OptionEntryRangeInt
-        {
+        fun optionEntryRangeInt(init: OptionEntryRangeIntFactory.() -> Unit): OptionEntryRangeInt {
             val factory = OptionEntryRangeIntFactory()
             factory.init()
             return factory.finish()
@@ -60,8 +57,7 @@ class OptionEntryRangeIntFactory : OptionEntryFactory<Int>()
      *
      * This method is called after function in [optionEntryRangeInt] was executed, so you don't need to call it explicitly.
      */
-    private fun finish(): OptionEntryRangeInt
-    {
+    private fun finish(): OptionEntryRangeInt {
         return OptionEntryRangeInt(
             name ?: "boolean value",
             description ?: "description not set",

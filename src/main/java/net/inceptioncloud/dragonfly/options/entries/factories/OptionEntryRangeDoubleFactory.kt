@@ -10,8 +10,7 @@ import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
  * It extends the [OptionEntryFactory] by adding the [minValue] and [maxValue] and automatically
  * builds the [OptionEntryFactory.KeyFactory.validator] to match the min- and max-value.
  */
-class OptionEntryRangeDoubleFactory : OptionEntryFactory<Double>()
-{
+class OptionEntryRangeDoubleFactory : OptionEntryFactory<Double>() {
     /**
      * The smallest value that the range can have.
      *
@@ -51,8 +50,7 @@ class OptionEntryRangeDoubleFactory : OptionEntryFactory<Double>()
      * A companion object that makes the function [optionEntryRangeDouble] available for
      * static access.
      */
-    companion object
-    {
+    companion object {
         /**
          * The initialization function of the [OptionEntryRangeDoubleFactory].
          *
@@ -61,8 +59,7 @@ class OptionEntryRangeDoubleFactory : OptionEntryFactory<Double>()
          * to build an [OptionEntryRangeDouble].
          */
         @JvmStatic
-        fun optionEntryRangeDouble(init: OptionEntryRangeDoubleFactory.() -> Unit): OptionEntryRangeDouble
-        {
+        fun optionEntryRangeDouble(init: OptionEntryRangeDoubleFactory.() -> Unit): OptionEntryRangeDouble {
             val factory = OptionEntryRangeDoubleFactory()
             factory.init()
             return factory.finish()
@@ -75,23 +72,22 @@ class OptionEntryRangeDoubleFactory : OptionEntryFactory<Double>()
      * This method is called after function in [optionEntryRangeDouble] was executed, so
      * you don't need to call it explicitly.
      */
-    private fun finish(): OptionEntryRangeDouble
-    {
+    private fun finish(): OptionEntryRangeDouble {
         val key = OptionKey(
-                Double::class.java,
-                keyFactory.fileKey,
-                keyFactory.validator ?: { value -> value in minValue!!..maxValue!! },
-                keyFactory.default
+            Double::class.java,
+            keyFactory.fileKey,
+            keyFactory.validator ?: { value -> value in minValue!!..maxValue!! },
+            keyFactory.default
         )
 
         return OptionEntryRangeDouble(
-                name ?: "boolean value",
-                description ?: "description not set",
-                key,
-                minValue!!,
-                maxValue!!,
-                formatter,
-                externalApply
+            name ?: "boolean value",
+            description ?: "description not set",
+            key,
+            minValue!!,
+            maxValue!!,
+            formatter,
+            externalApply
         )
     }
 }

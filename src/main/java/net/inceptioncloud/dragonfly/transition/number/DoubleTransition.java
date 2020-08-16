@@ -8,8 +8,7 @@ import java.util.function.IntSupplier;
  * The transition that supplies a double value that transforms from the start value to the end value
  * in only that direction.
  */
-public class DoubleTransition extends TransitionTypeNumber
-{
+public class DoubleTransition extends TransitionTypeNumber {
     /**
      * A simple object that the constructor and non-thread-safe methods are synchronized on.
      * The content of this object is never used and it is never updated or accessed.
@@ -62,8 +61,14 @@ public class DoubleTransition extends TransitionTypeNumber
      * @param reachEnd      {@link #reachEnd}
      * @param reachStart    {@link #reachStart}
      */
-    DoubleTransition (final double start, final double end, final int amountOfSteps, final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
-    {
+    DoubleTransition(
+            final double start,
+            final double end,
+            final int amountOfSteps,
+            final Runnable reachEnd,
+            final Runnable reachStart,
+            final IntSupplier autoTransformator
+    ) {
         super(reachEnd, reachStart, autoTransformator);
 
 //        Validate.isTrue(start >= 0, "The start value has to be positive");
@@ -75,7 +80,8 @@ public class DoubleTransition extends TransitionTypeNumber
             this.end = end; // Pass the end value
             this.current = start; // Set the current value to the start value
             this.amountOfSteps = amountOfSteps;
-            this.perStep = (Math.max(start, end) - Math.min(start, end)) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
+            this.perStep = (Math.max(start, end) - Math
+                    .min(start, end)) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
         }
     }
 
@@ -83,8 +89,7 @@ public class DoubleTransition extends TransitionTypeNumber
      * The step-forward method for the double transition.
      */
     @Override
-    public void doForward ()
-    {
+    public void doForward() {
         synchronized (threadLock) {
             // If the value is already at the end, interrupt the step
             if (isAtEnd())
@@ -112,8 +117,7 @@ public class DoubleTransition extends TransitionTypeNumber
      * The step-backward method for the double transition.
      */
     @Override
-    public void doBackward ()
-    {
+    public void doBackward() {
         synchronized (threadLock) {
             // If the value is already at the start, interrupt the step
             if (isAtStart())
@@ -141,8 +145,7 @@ public class DoubleTransition extends TransitionTypeNumber
      * @return Whether the current value is at the end.
      */
     @Override
-    public boolean isAtEnd ()
-    {
+    public boolean isAtEnd() {
         return negative ? current <= end : current >= end;
     }
 
@@ -150,8 +153,7 @@ public class DoubleTransition extends TransitionTypeNumber
      * @return Whether the current value is at the start.
      */
     @Override
-    public boolean isAtStart ()
-    {
+    public boolean isAtStart() {
         return negative ? current >= start : current <= start;
     }
 
@@ -159,8 +161,7 @@ public class DoubleTransition extends TransitionTypeNumber
      * @return The current double value
      */
     @Override
-    public double get ()
-    {
+    public double get() {
         return current;
     }
 
@@ -168,13 +169,11 @@ public class DoubleTransition extends TransitionTypeNumber
      * @return The current double value casted to an integer.
      */
     @Override
-    public int castToInt ()
-    {
+    public int castToInt() {
         return (int) get();
     }
 
-    public static DoubleTransitionBuilder builder ()
-    {
+    public static DoubleTransitionBuilder builder() {
         return new DoubleTransitionBuilder();
     }
 
@@ -183,18 +182,17 @@ public class DoubleTransition extends TransitionTypeNumber
      *
      * @param end The end value
      */
-    public void setEnd (final double end)
-    {
+    public void setEnd(final double end) {
         this.end = end;
-        this.perStep = (Math.max(start, end) - Math.min(start, end)) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
+        this.perStep = (Math.max(start, end) - Math
+                .min(start, end)) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "DoubleTransition{" +
-               "originStackTrace=" + originStackTrace +
-               '}';
+                "originStackTrace=" + originStackTrace +
+                '}';
 
     }
 }

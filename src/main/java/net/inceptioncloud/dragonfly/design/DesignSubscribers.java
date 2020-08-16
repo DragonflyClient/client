@@ -6,13 +6,11 @@ import net.inceptioncloud.dragonfly.event.ModEventBus;
 /**
  * This class registers all events for the custom client design.
  */
-public class DesignSubscribers
-{
+public class DesignSubscribers {
     /**
      * Registers the events on the given Event Bus.
      */
-    public static void register (ModEventBus modEventBus)
-    {
+    public static void register(ModEventBus modEventBus) {
         modEventBus.register(new ZoomSubscriber());
     }
 }

@@ -1,11 +1,9 @@
 package net.inceptioncloud.dragonfly.ui.components.button;
 
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
-import net.inceptioncloud.dragonfly.design.color.RGB;
+import net.inceptioncloud.dragonfly.design.color.*;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
-import net.inceptioncloud.dragonfly.transition.color.ColorTransition;
-import net.inceptioncloud.dragonfly.transition.color.ColorTransitionBuilder;
+import net.inceptioncloud.dragonfly.transition.color.*;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
 import net.inceptioncloud.dragonfly.ui.renderer.RectangleRenderer;
@@ -17,25 +15,25 @@ import java.awt.*;
 /**
  * A Simple UI Button that has a {@link GreyToneColor#LIGHT_WHITE white} outline and a {@link GreyToneColor#DARK_GREY grey} background.
  */
-public class OutlineButton extends GuiButton
-{
+public class OutlineButton extends GuiButton {
     /**
      * Transition manages the Hover Effect
      */
-    protected DoubleTransition hoverTransition = DoubleTransition.builder().start(0.0).end(1.0).amountOfSteps(35).autoTransformator(( ForwardBackward ) () -> hovered).build();
+    protected DoubleTransition hoverTransition =
+            DoubleTransition.builder().start(0.0).end(1.0).amountOfSteps(35).autoTransformator((ForwardBackward) () -> hovered).build();
 
     /**
      * Transition manages the Button Fill Color
      */
-    protected ColorTransition fillTransition = new ColorTransitionBuilder().start(GreyToneColor.DARK_GREY).end(new Color(0x25ccf7)).amountOfSteps(25).autoTransformator((ForwardBackward) () -> hovered).build();
+    protected ColorTransition fillTransition = new ColorTransitionBuilder().start(GreyToneColor.DARK_GREY).end(new Color(0x25ccf7)).amountOfSteps(25)
+            .autoTransformator((ForwardBackward) () -> hovered).build();
 
     /**
      * Inherit Constructor
      *
      * @see GuiButton#GuiButton(int, int, int, String) Original Constructor
      */
-    public OutlineButton (final int buttonId, final int x, final int y, final String buttonText)
-    {
+    public OutlineButton(final int buttonId, final int x, final int y, final String buttonText) {
         super(buttonId, x, y, buttonText);
     }
 
@@ -44,8 +42,7 @@ public class OutlineButton extends GuiButton
      *
      * @see GuiButton#GuiButton(int, int, int, String) Original Constructor
      */
-    public OutlineButton (final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText)
-    {
+    public OutlineButton(final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText) {
         super(buttonId, x, y, widthIn, heightIn, buttonText);
     }
 
@@ -53,14 +50,13 @@ public class OutlineButton extends GuiButton
      * Draws this button on the screen.
      */
     @Override
-    public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
-    {
+    public void drawButton(final Minecraft mc, final int mouseX, final int mouseY) {
         if (this.visible) {
             IFontRenderer fontRenderer = Dragonfly.getFontManager().getMedium();
 
             double transition = 1 - hoverTransition.get();
-            int offset = ( int ) ( 7 * transition );
-            int opacity = ( int ) ( 255 * hoverTransition.get());
+            int offset = (int) (7 * transition);
+            int opacity = (int) (255 * hoverTransition.get());
 
             double left = this.xPosition;
             double top = this.yPosition;
@@ -74,12 +70,18 @@ public class OutlineButton extends GuiButton
 
             final int textX = (int) left + this.width / 2;
             final int textY = (int) top + (this.height - 6) / 2;
-            fontRenderer.drawCenteredString(this.displayString, textX + 1, textY + 1, new Color(0F, 0F, 0F, (float) (0.05F + hoverTransition.get() / 2F)).getRGB(), false);
+            fontRenderer.drawCenteredString(this.displayString,
+                    textX + 1,
+                    textY + 1,
+                    new Color(0F, 0F, 0F, (float) (0.05F + hoverTransition.get() / 2F)).getRGB(),
+                    false
+            );
             fontRenderer.drawCenteredString(this.displayString, textX, textY, -1, false);
 
             RectangleRenderer.drawOutline(left, top, right, bottom, GreyToneColor.DARK_WHITE);
             RectangleRenderer.renderInline(left - offset, top - offset, right + offset, bottom + offset,
-                RGB.of(GreyToneColor.LIGHT_WHITE).alpha(opacity).toColor(), 1);
+                    RGB.of(GreyToneColor.LIGHT_WHITE).alpha(opacity).toColor(), 1
+            );
         }
     }
 
@@ -87,8 +89,7 @@ public class OutlineButton extends GuiButton
      * Destroys the Button by removing all transitions.
      */
     @Override
-    public void destroy ()
-    {
+    public void destroy() {
         Dragonfly.stopTransition(hoverTransition);
     }
 }

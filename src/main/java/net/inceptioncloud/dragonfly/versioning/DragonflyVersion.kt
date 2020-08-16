@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import khttp.get
 import java.io.File
-import java.lang.IllegalStateException
 
 /**
  * Stores the local and remote version of Dragonfly and compares them considering the selected

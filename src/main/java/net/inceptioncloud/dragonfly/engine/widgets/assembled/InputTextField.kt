@@ -4,12 +4,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
-import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.*
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.sequence.types.DoubleSequence
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -21,7 +22,6 @@ import net.minecraft.util.ChatAllowedCharacters
 import org.lwjgl.input.Keyboard.*
 import java.awt.Color
 import kotlin.math.abs
-import kotlin.properties.Delegates
 
 val DEFAULT_TEXT_COLOR = WidgetColor(0xababab)
 
@@ -29,41 +29,36 @@ val DEFAULT_TEXT_COLOR = WidgetColor(0xababab)
  * A simple text field that the user can write to. Supports common operations like copying, pasting,
  * cutting and selecting with shift + arrow key.
  *
- * @param label a short text that describes what the user should write into the field
- * @param isEnabled if the field is enabled, the user can write text to it
- * @param maxStringLength the maximum amount of characters that fit into the field
- * @param color the color that is used for the cursor and other highlighted parts of the field
+ * @property label a short text that describes what the user should write into the field
+ * @property isEnabled if the field is enabled, the user can write text to it
+ * @property maxStringLength the maximum amount of characters that fit into the field
+ * @property color the color that is used for the cursor and other highlighted parts of the field
  */
 class InputTextField(
-    @property:State var font: WidgetFont = Dragonfly.fontManager.defaultFont,
-    @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
-    @property:Interpolate var fontSize: Double = 18.0,
-    @property:Interpolate var padding: Double = 2.0,
+    initializerBlock: (InputTextField.() -> Unit)? = null
+) : AssembledWidget<InputTextField>(initializerBlock), IPosition, IDimension, IAlign, IColor {
 
-    @property:State var label: String = "Input Label",
-    @property:State var isEnabled: Boolean = true,
-    @property:State var maxStringLength: Int = 200,
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var width: Double by property(100.0)
+    @Interpolate override var height: Double by property(20.0)
+    @Interpolate override var color: WidgetColor by property(WidgetColor(BluePalette.PRIMARY))
+    override var horizontalAlignment: Alignment by property(Alignment.START)
+    override var verticalAlignment: Alignment by property(Alignment.START)
 
-    x: Double = 0.0,
-    y: Double = 0.0,
-    @property:Interpolate override var width: Double = 100.0,
-    @property:Interpolate override var height: Double = 20.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor(BluePalette.PRIMARY),
-    @property:State override var horizontalAlignment: Alignment = Alignment.START,
-    @property:State override var verticalAlignment: Alignment = Alignment.START
-) : AssembledWidget<InputTextField>(), IPosition, IDimension, IAlign, IColor {
+    var font: WidgetFont by property(Dragonfly.fontManager.defaultFont)
+    var fontWeight: FontWeight by property(FontWeight.REGULAR)
+    @Interpolate var fontSize: Double by property(18.0)
+    @Interpolate var padding: Double by property(2.0)
 
-    @Interpolate
-    override var x: Double by Delegates.notNull()
-
-    @Interpolate
-    override var y: Double by Delegates.notNull()
+    var label: String by property("Input Label")
+    var isEnabled: Boolean by property(true)
+    var maxStringLength: Int by property(200)
 
     /**
      * Whether the text field is currently focused. If it is, typed keys will be passed on to the input field
      * and a cursor will be active. When this property changes, the [focusedStateChanged] function will be called.
      */
-    @Info
     var isFocused = false
         set(value) {
             if (field == value)
@@ -74,7 +69,6 @@ class InputTextField(
         }
 
     /** The currently entered input text. */
-    @Info
     var inputText: String = ""
 
     /** Whether the text label is raised due to present input text or focus state. */
@@ -116,19 +110,19 @@ class InputTextField(
         val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
             ?: error("Structure should contain bottom line overlay!")
 
-        label.attachAnimation(
-            MorphAnimation(label.clone().also {
-                it.fontSize = if (isLabelRaised) fontSize / 1.8 else fontSize
-                it.height = if (isLabelRaised) height / 2.5 else height
-                it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
-            }, 20)
-        ) { start() }
+        label.morph(
+            20,
+            null,
+            label::fontSize to if (isLabelRaised) fontSize / 1.8 else fontSize,
+            label::height to if (isLabelRaised) height / 2.5 else height,
+            label::color to if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
+        )?.start()
 
-        lineOverlay.attachAnimation(
-            MorphAnimation(lineOverlay.clone().also {
-                it.width = if (focused) width else 0.0
-            }, 60, EaseCubic.IN_OUT)
-        ) { start() }
+        lineOverlay.morph(
+            60,
+            EaseCubic.IN_OUT,
+            lineOverlay::width to if (focused) width else 0.0
+        )?.start()
     }
 
     /**
@@ -252,28 +246,23 @@ class InputTextField(
         cursorX += 0.5
 
         val cursor = (structure["cursor"] as Rectangle)
-        val destinationCursorX = (cursor.findAnimation<MorphAnimation>()?.destination as? Rectangle)?.x
+        val destinationCursorX = cursor.findAnimation<MorphAnimation>()?.updates?.find { it.first == cursor::x }?.second
         cursor.isVisible = cursorVisible
 
         if (cursor.x != cursorX && destinationCursorX != cursorX) {
             timeCursorMoved = System.currentTimeMillis()
             cursor.findAnimation<MorphAnimation>()?.let { cursor.detachAnimation(it) }
-            cursor.attachAnimation(
-                MorphAnimation(
-                    cursor.clone().apply { x = cursorX }, duration = (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20)
-                )
-            ) {
-                start()
-                post { animation: Animation, widget: Widget<*> ->
-                    widget.detachAnimation(animation)
-                }
-            }
+            cursor.morph(
+                (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20),
+                null,
+                cursor::x to cursorX
+            )?.post { animation, widget -> widget.detachAnimation(animation) }?.start()
         }
 
         (structure["input-text"] as TextField).also {
             if (it.staticText != visibleText) {
                 it.staticText = visibleText
-                it.updateStructure()
+                it.runStructureUpdate()
             }
         }
 
@@ -347,7 +336,7 @@ class InputTextField(
     }
 
     override fun handleMousePress(data: MouseData) {
-        isFocused = isHovered
+        isFocused = data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
 
         if (isFocused && data.button == 0) {
             val fontRenderer = getFontRenderer()
@@ -356,13 +345,6 @@ class InputTextField(
             setCursorPosition(fontRenderer.trimStringToWidth(s, i).length + lineScrollOffset)
         }
     }
-
-    override fun clone() = InputTextField(
-        font, fontWeight, fontSize, padding, label, isEnabled, maxStringLength,
-        x, y, width, height, color, horizontalAlignment, verticalAlignment
-    )
-
-    override fun newInstance() = InputTextField()
 
     /* == Input Text Field Utility */
 

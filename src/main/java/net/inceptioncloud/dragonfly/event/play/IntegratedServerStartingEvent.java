@@ -7,8 +7,7 @@ import net.minecraft.world.WorldSettings;
 /**
  * When the player joins a singleplayer world and the client launches an integrated server via {@link Minecraft#launchIntegratedServer(String, String, WorldSettings)}.
  */
-public class IntegratedServerStartingEvent extends Cancellable
-{
+public class IntegratedServerStartingEvent extends Cancellable {
     /**
      * The current name of the world.
      */
@@ -25,25 +24,21 @@ public class IntegratedServerStartingEvent extends Cancellable
      */
     private final WorldSettings settings;
 
-    public IntegratedServerStartingEvent (final String worldName, final String folderName, final WorldSettings settings)
-    {
+    public IntegratedServerStartingEvent(final String worldName, final String folderName, final WorldSettings settings) {
         this.worldName = worldName;
         this.folderName = folderName;
         this.settings = settings;
     }
 
-    public String getWorldName ()
-    {
+    public String getWorldName() {
         return worldName;
     }
 
-    public String getFolderName ()
-    {
+    public String getFolderName() {
         return folderName;
     }
 
-    public WorldSettings getSettings ()
-    {
+    public WorldSettings getSettings() {
         return settings;
     }
 }

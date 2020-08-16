@@ -5,8 +5,7 @@ import java.awt.*;
 /**
  * All available flat colors.
  */
-public class FlatColor
-{
+public class FlatColor {
     /**
      * The normal red.
      */

@@ -9,8 +9,7 @@ import java.util.Objects;
 /**
  * When the player is in a singleplayer world.
  */
-public class MultiplayerState extends PlayingState
-{
+public class MultiplayerState extends PlayingState {
     /**
      * The data of the server to which the user is connected.
      */
@@ -21,23 +20,20 @@ public class MultiplayerState extends PlayingState
      *
      * @param serverData The data of the server on which the user is playing
      */
-    public MultiplayerState (final boolean paused, final long joinTime, final ServerData serverData)
-    {
+    public MultiplayerState(final boolean paused, final long joinTime, final ServerData serverData) {
         super(paused, joinTime);
         this.serverData = serverData;
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "MultiplayerState{" +
-               "serverData=" + serverData +
-               '}';
+                "serverData=" + serverData +
+                '}';
     }
 
     @Override
-    public boolean equals (final Object o)
-    {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
@@ -46,13 +42,11 @@ public class MultiplayerState extends PlayingState
     }
 
     @Override
-    public int hashCode ()
-    {
+    public int hashCode() {
         return Objects.hash(super.hashCode(), serverData);
     }
 
-    public ServerData getServerData ()
-    {
+    public ServerData getServerData() {
         return serverData;
     }
 
@@ -60,8 +54,7 @@ public class MultiplayerState extends PlayingState
      * @return The {@link RichPresenceAdapter} that belongs to this Game State.
      */
     @Override
-    public RichPresenceAdapter getBelongingRichPresence ()
-    {
+    public RichPresenceAdapter getBelongingRichPresence() {
         return new MultiplayerRPC(serverData.serverIP, isPaused(), getJoinTime());
     }
 }

@@ -10,8 +10,7 @@ import java.util.function.IntSupplier;
  * <p>
  * The transition that builds up a string letter by letter.
  */
-public class SubstringTransition extends TransitionTypeString
-{
+public class SubstringTransition extends TransitionTypeString {
     /**
      * A simple object that the constructor and non-thread-safe methods are synchronized on.
      * The content of this object is never used and it is never updated or accessed.
@@ -33,14 +32,19 @@ public class SubstringTransition extends TransitionTypeString
     /**
      * Create a new substring transition instance.
      *
-     * @param content              {@link #content}
-     * @param amountOfSteps        The amount of steps for the {@link #base}
-     * @param reachEnd             {@link #reachEnd}
-     * @param reachStart           {@link #reachStart}
+     * @param content           {@link #content}
+     * @param amountOfSteps     The amount of steps for the {@link #base}
+     * @param reachEnd          {@link #reachEnd}
+     * @param reachStart        {@link #reachStart}
      * @param autoTransformator {@link #autoTransformator}
      */
-    public SubstringTransition (final String content, final int amountOfSteps, final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
-    {
+    public SubstringTransition(
+            final String content,
+            final int amountOfSteps,
+            final Runnable reachEnd,
+            final Runnable reachStart,
+            final IntSupplier autoTransformator
+    ) {
         super(reachEnd, reachStart, autoTransformator);
 
         synchronized (threadLock) {
@@ -49,10 +53,10 @@ public class SubstringTransition extends TransitionTypeString
 
             this.content = content;
             this.base = DoubleTransition.builder()
-                .start(0)
-                .end(this.content.length())
-                .amountOfSteps(amountOfSteps)
-                .build();
+                    .start(0)
+                    .end(this.content.length())
+                    .amountOfSteps(amountOfSteps)
+                    .build();
         }
     }
 
@@ -60,8 +64,7 @@ public class SubstringTransition extends TransitionTypeString
      * @return The current value.
      */
     @Override
-    public String get ()
-    {
+    public String get() {
         return content.substring(0, base.castToInt());
     }
 
@@ -69,8 +72,7 @@ public class SubstringTransition extends TransitionTypeString
      * @return Whether the current value is at the end.
      */
     @Override
-    public boolean isAtEnd ()
-    {
+    public boolean isAtEnd() {
         return base.isAtEnd();
     }
 
@@ -78,8 +80,7 @@ public class SubstringTransition extends TransitionTypeString
      * @return Whether the current value is at the start.
      */
     @Override
-    public boolean isAtStart ()
-    {
+    public boolean isAtStart() {
         return base.isAtStart();
     }
 
@@ -87,8 +88,7 @@ public class SubstringTransition extends TransitionTypeString
      * The step-forward method for the transition.
      */
     @Override
-    public void doForward ()
-    {
+    public void doForward() {
         synchronized (threadLock) {
             base.setForward();
         }
@@ -98,31 +98,27 @@ public class SubstringTransition extends TransitionTypeString
      * The step-backward method for the transition.
      */
     @Override
-    public void doBackward ()
-    {
+    public void doBackward() {
         synchronized (threadLock) {
             base.setBackward();
         }
     }
 
     @Override
-    public void destroy ()
-    {
+    public void destroy() {
         base.destroy();
 
         super.destroy();
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "SubstringTransition{" +
-               "originStackTrace=" + originStackTrace +
-               '}';
+                "originStackTrace=" + originStackTrace +
+                '}';
     }
 
-    public static SubstringTransitionBuilder builder ()
-    {
+    public static SubstringTransitionBuilder builder() {
         return new SubstringTransitionBuilder();
     }
 }

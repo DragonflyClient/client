@@ -1,17 +1,13 @@
 package net.inceptioncloud.dragonfly.ui.components.button;
 
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.design.color.CloudColor;
-import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
-import net.inceptioncloud.dragonfly.design.color.RGB;
+import net.inceptioncloud.dragonfly.design.color.*;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
-import net.inceptioncloud.dragonfly.transition.color.ColorTransition;
-import net.inceptioncloud.dragonfly.transition.color.ColorTransitionBuilder;
+import net.inceptioncloud.dragonfly.transition.color.*;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.*;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -19,8 +15,7 @@ import java.awt.*;
 /**
  * An extension of the {@link SimpleButton} that forces the user to confirm the action by holding down the button.
  */
-public class ConfirmationButton extends SimpleButton
-{
+public class ConfirmationButton extends SimpleButton {
     /**
      * Handles the effect when holding down the button.
      */
@@ -51,8 +46,7 @@ public class ConfirmationButton extends SimpleButton
      *
      * @see GuiButton#GuiButton(int, int, int, String) Original Constructor
      */
-    public ConfirmationButton (final GuiScreen parentScreen, final int buttonId, final int x, final int y, final String buttonText)
-    {
+    public ConfirmationButton(final GuiScreen parentScreen, final int buttonId, final int x, final int y, final String buttonText) {
         super(buttonId, x, y, buttonText);
         this.parentScreen = parentScreen;
 
@@ -64,8 +58,15 @@ public class ConfirmationButton extends SimpleButton
      *
      * @see GuiButton#GuiButton(int, int, int, String) Original Constructor
      */
-    public ConfirmationButton (final GuiScreen parentScreen, final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText)
-    {
+    public ConfirmationButton(
+            final GuiScreen parentScreen,
+            final int buttonId,
+            final int x,
+            final int y,
+            final int widthIn,
+            final int heightIn,
+            final String buttonText
+    ) {
         super(buttonId, x, y, widthIn, heightIn, buttonText);
         this.parentScreen = parentScreen;
 
@@ -76,8 +77,7 @@ public class ConfirmationButton extends SimpleButton
      * Draws this button on the screen.
      */
     @Override
-    public void drawButton (final Minecraft mc, final int mouseX, final int mouseY)
-    {
+    public void drawButton(final Minecraft mc, final int mouseX, final int mouseY) {
         if (this.visible) {
             IFontRenderer fontrenderer = Dragonfly.getFontManager().getMedium();
             final double border = 0.5;
@@ -94,10 +94,16 @@ public class ConfirmationButton extends SimpleButton
             drawRect(left - border, top - border, right + border, bottom + border, RGB.of(GreyToneColor.LIGHT_WHITE).alpha(opacity).rgb());
             drawRect(left, top, right, bottom, RGB.of(GreyToneColor.DARK_GREY).alpha(opacity).rgb());
 
-            drawRect(left + ( holdTransition.get() * ( width - 4 ) ), top, left + 4 + ( hoverTransition.get() * ( width - 4 ) ), bottom, color.getRGB());
+            drawRect(left + (holdTransition.get() * (width - 4)), top, left + 4 + (hoverTransition.get() * (width - 4)), bottom, color.getRGB());
 
             if (opacity > 0.05)
-                drawCenteredString(fontrenderer, this.displayString, ( int ) left + this.width / 2, ( int ) top + ( this.height - 6 ) / 2, new Color(1, 1, 1, opacity).getRGB());
+                drawCenteredString(
+                        fontrenderer,
+                        this.displayString,
+                        (int) left + this.width / 2,
+                        (int) top + (this.height - 6) / 2,
+                        new Color(1, 1, 1, opacity).getRGB()
+                );
 
             if (holdTransition.isAtEnd()) {
                 endTicks++;
@@ -113,28 +119,27 @@ public class ConfirmationButton extends SimpleButton
     /**
      * Called in the constructor to initialize all transitions.
      */
-    private void initTransitions ()
-    {
+    private void initTransitions() {
         holdTransition = DoubleTransition.builder()
-            .start(0.0).end(1.0)
-            .amountOfSteps(( int ) ( width / 2.8))
-            .autoTransformator(( ForwardBackward ) () -> hoverTransition != null && hoverTransition.isAtEnd() && Mouse.isCreated() && Mouse.isButtonDown(0))
-            .build();
+                .start(0.0).end(1.0)
+                .amountOfSteps((int) (width / 2.8))
+                .autoTransformator((ForwardBackward) () -> hoverTransition != null && hoverTransition.isAtEnd() && Mouse.isCreated() && Mouse
+                        .isButtonDown(0))
+                .build();
 
-        colorTransition  = new ColorTransitionBuilder()
-            .start(CloudColor.ROYAL.brighter()).end(CloudColor.NTSC)
-            .amountOfSteps(width / 2)
-            .autoTransformator(( ForwardBackward ) () -> hovered).build();
+        colorTransition = new ColorTransitionBuilder()
+                .start(CloudColor.ROYAL.brighter()).end(CloudColor.NTSC)
+                .amountOfSteps(width / 2)
+                .autoTransformator((ForwardBackward) () -> hovered).build();
 
         hoverTransition = DoubleTransition.builder()
-            .start(0.0).end(1.0)
-            .amountOfSteps(width / 4)
-            .autoTransformator(( ForwardBackward ) () -> hovered || !holdTransition.isAtStart()).build();
+                .start(0.0).end(1.0)
+                .amountOfSteps(width / 4)
+                .autoTransformator((ForwardBackward) () -> hovered || !holdTransition.isAtStart()).build();
     }
 
     @Override
-    public void destroy ()
-    {
+    public void destroy() {
         holdTransition.destroy();
         colorTransition.destroy();
         hoverTransition.destroy();

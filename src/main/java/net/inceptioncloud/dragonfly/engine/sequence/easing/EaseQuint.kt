@@ -7,8 +7,7 @@ import kotlin.math.pow
  *
  * Provides easing functions using the exponent 5.
  */
-object EaseQuint
-{
+object EaseQuint {
     /**
      * ## Ease In Quint
      * Calculates the easing the following way:

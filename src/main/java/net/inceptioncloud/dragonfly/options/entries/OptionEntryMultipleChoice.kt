@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.options.entries
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.entries.util.ExternalApplier
 import net.inceptioncloud.dragonfly.options.entries.util.OptionChoice
@@ -30,14 +31,12 @@ import java.awt.Color
  * @property choices a set of choices from which one can be selected
  */
 class OptionEntryMultipleChoice(
-        name: String,
-        description: String,
-        val key: OptionKey<Int>,
-        private val choices: List<OptionChoice>,
-        default: Int,
-        override var externalApplier: ((Int, OptionKey<Int>) -> Unit)? = null
-) : OptionEntry<Int>(name, description), ExternalApplier<Int>
-{
+    name: String,
+    description: String,
+    val key: OptionKey<Int>,
+    private val choices: List<OptionChoice>,
+    override var externalApplier: ((Int, OptionKey<Int>) -> Unit)? = null
+) : OptionEntry<Int>(name, description), ExternalApplier<Int> {
     /**
      * Whether the left arrow is enabled.
      *
@@ -61,7 +60,7 @@ class OptionEntryMultipleChoice(
      * @see enableLeftArrow
      */
     private val leftArrowHoverColor = ColorTransition.builder()
-        .start(Color(0x355571)).end(BluePalette.FOREGROUND)
+        .start(Color(0x75673E)).end(BluePalette.FOREGROUND)
         .autoTransformator(ForwardBackward { enableLeftArrow })
         .amountOfSteps(15).build()
 
@@ -72,7 +71,7 @@ class OptionEntryMultipleChoice(
      * @see enableRightArrow
      */
     private val rightArrowHoverColor = ColorTransition.builder()
-        .start(Color(0x355571)).end(BluePalette.FOREGROUND)
+        .start(Color(0x75673E)).end(BluePalette.FOREGROUND)
         .autoTransformator(ForwardBackward { enableRightArrow })
         .amountOfSteps(15).build()
 
@@ -101,8 +100,7 @@ class OptionEntryMultipleChoice(
     /**
      * Extension to [drawEntry].
      */
-    override fun drawContent(x: Int, y: Int, height: Int, width: Int)
-    {
+    override fun drawContent(x: Int, y: Int, height: Int, width: Int) {
         val viewWidth = 80
         val viewHeight = height - 6
         val viewX = x + width - viewWidth - 6
@@ -110,9 +108,9 @@ class OptionEntryMultipleChoice(
 
         val fontRenderer = Dragonfly.fontManager.regular
         fontRenderer.drawCenteredString(
-                selectedChoice.displayString,
-                viewX + viewWidth / 2, viewY + height / 2 - fontRenderer.height / 2,
-                BluePalette.PRIMARY.rgb, false
+            selectedChoice.displayString,
+            viewX + viewWidth / 2, viewY + height / 2 - fontRenderer.height / 2,
+            DragonflyPalette.accentBright.rgb, false
         )
 
         val viewXD = viewX.toDouble()
@@ -140,18 +138,17 @@ class OptionEntryMultipleChoice(
         val rightColor = rightArrowHoverColor.get()
         GlStateManager.color(rightColor.red / 255F, rightColor.green / 255F, rightColor.blue / 255F, 1.0F)
         RenderUtils.drawLine(
-                (viewX + viewWidth).toDouble(), viewCenterVertical,
-                (viewX + viewWidth - 3).toDouble(), arrowTop,
-                3F
+            (viewX + viewWidth).toDouble(), viewCenterVertical,
+            (viewX + viewWidth - 3).toDouble(), arrowTop,
+            3F
         )
         RenderUtils.drawLine(
-                (viewX + viewWidth).toDouble(), viewCenterVertical,
-                (viewX + viewWidth - 3).toDouble(), arrowBottom,
-                3F
+            (viewX + viewWidth).toDouble(), viewCenterVertical,
+            (viewX + viewWidth - 3).toDouble(), arrowBottom,
+            3F
         )
 
-        if (externalApplier != null)
-        {
+        if (externalApplier != null) {
             valueChanged = renderChangeState(x, y, height, width, key, valueCache)
             textOffset = ((height - 7) * transitionExternalApplier.get()).toInt()
         }
@@ -160,8 +157,7 @@ class OptionEntryMultipleChoice(
     /**
      * Called when the entry is (double-) clicked.
      */
-    override fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int, entryHeight: Int)
-    {
+    override fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int, entryHeight: Int) {
         val viewWidth = 80
         val viewHeight = entryHeight - 6
         val viewX = entryWidth - viewWidth - 6
@@ -169,26 +165,21 @@ class OptionEntryMultipleChoice(
         val arrowTop = viewY + viewHeight / 2 - 3
         val arrowBottom = viewY + viewHeight / 2 + 3
 
-        if (mouseOnEntryY in arrowTop..arrowBottom)
-        {
-            if (mouseOnEntryX in viewX - 3..viewX + 9 && enableLeftArrow)
-            {
+        if (mouseOnEntryY in arrowTop..arrowBottom) {
+            if (mouseOnEntryX in viewX - 3..viewX + 9 && enableLeftArrow) {
                 selectedIndex--
-            } else if (mouseOnEntryX in viewX + viewWidth - 9..viewX + viewWidth + 3 && enableRightArrow)
-            {
+            } else if (mouseOnEntryX in viewX + viewWidth - 9..viewX + viewWidth + 3 && enableRightArrow) {
                 selectedIndex++
             } else return
 
             Minecraft.getMinecraft().soundHandler.playSound(
-                    PositionedSoundRecord.create(ResourceLocation("gui.button.press"), 1.0F)
+                PositionedSoundRecord.create(ResourceLocation("gui.button.press"), 1.0F)
             )
 
             selectedChoice = choices[selectedIndex]
-            if (externalApplier == null)
-            {
+            if (externalApplier == null) {
                 key.set(selectedChoice.identifier)
-            } else
-            {
+            } else {
                 valueCache = selectedChoice.identifier
             }
         }
@@ -202,8 +193,7 @@ class OptionEntryMultipleChoice(
      *
      * @see OptionChoice.identifier
      */
-    private fun getChoiceByIdentifier(id: Int): OptionChoice?
-    {
+    private fun getChoiceByIdentifier(id: Int): OptionChoice? {
         return choices.find { it.identifier == id }
     }
 
@@ -211,8 +201,7 @@ class OptionEntryMultipleChoice(
      * A quick function to retrieve the next choice.
      * @return `null` if the selected choice is the last one, otherwise the next choice
      */
-    private fun next(): OptionChoice?
-    {
+    private fun next(): OptionChoice? {
         return if (choices.size > selectedIndex + 1) choices[selectedIndex + 1] else null
     }
 
@@ -220,8 +209,7 @@ class OptionEntryMultipleChoice(
      * A quick function to retrieve the previous choice.
      * @return `null` if the selected choice is the first one, otherwise the previous choice
      */
-    private fun previous(): OptionChoice?
-    {
+    private fun previous(): OptionChoice? {
         return if (selectedIndex - 1 >= 0) choices[selectedIndex - 1] else null
     }
 
@@ -254,8 +242,7 @@ class OptionEntryMultipleChoice(
      * It is called when the "Save and Exit" button is pressed thus the value should be
      * applied.
      */
-    override fun applyExternally()
-    {
+    override fun applyExternally() {
         if (valueCache != key.get())
             externalApplier?.invoke(valueCache, key)
     }

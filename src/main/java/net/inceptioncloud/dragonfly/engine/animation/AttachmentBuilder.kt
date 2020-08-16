@@ -14,8 +14,7 @@ import org.apache.logging.log4j.LogManager
 class AttachmentBuilder<Child : Widget<Child>>(
     private val animation: Animation,
     private val widget: Widget<Child>
-)
-{
+) {
     /**
      * If this is `true`, the value will be automatically started when it's attached.
      */
@@ -24,8 +23,7 @@ class AttachmentBuilder<Child : Widget<Child>>(
     /**
      * A convenient function to set the [start] variable to true.
      */
-    fun start()
-    {
+    fun start() {
         start = true
     }
 
@@ -35,8 +33,7 @@ class AttachmentBuilder<Child : Widget<Child>>(
      *
      * @param action the action that will be added, it has the animation and the widget as parameters
      */
-    fun post(action: (Animation, Widget<*>) -> Unit)
-    {
+    fun post(action: (Animation, Widget<*>) -> Unit) {
         animation.postActions.add(action)
     }
 
@@ -48,8 +45,7 @@ class AttachmentBuilder<Child : Widget<Child>>(
      * @param nextAnimation the animation to be attached
      * @param preferences the preferences of the attachment process
      */
-    fun post(nextAnimation: Animation, preferences: (AttachmentBuilder<Child>.() -> Unit)? = null)
-    {
+    fun post(nextAnimation: Animation, preferences: (AttachmentBuilder<Child>.() -> Unit)? = null) {
         val attachBuilder = AttachmentBuilder(nextAnimation, widget)
         preferences?.invoke(attachBuilder)
         post { _, _ -> attachBuilder.attach() }
@@ -60,8 +56,7 @@ class AttachmentBuilder<Child : Widget<Child>>(
      * Before this is done, the [Animation.initAnimation] function will be called that returns true
      * if the animation was initialized.
      */
-    fun attach()
-    {
+    fun attach() {
         if (!animation.initAnimation(widget)) {
             LogManager.getRootLogger().warn("The animation ${animation::class.simpleName} could not be attached!")
             return

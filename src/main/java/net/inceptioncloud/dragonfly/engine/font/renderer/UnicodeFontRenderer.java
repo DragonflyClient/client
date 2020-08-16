@@ -2,26 +2,21 @@ package net.inceptioncloud.dragonfly.engine.font.renderer;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.*;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.*;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A custom Font Renderer based on the Unicode.
  */
-public class UnicodeFontRenderer implements IFontRenderer
-{
+public class UnicodeFontRenderer implements IFontRenderer {
     public final int FONT_HEIGHT = 9;
     private final int[] colorCodes = new int[32];
     private final float kerning;
@@ -36,8 +31,7 @@ public class UnicodeFontRenderer implements IFontRenderer
      * @param kerning            The kerning value
      * @param antiAliasingFactor Anti-Aliasing Factor
      */
-    private UnicodeFontRenderer (Font font, float kerning, float antiAliasingFactor)
-    {
+    private UnicodeFontRenderer(Font font, float kerning, float antiAliasingFactor) {
         this.antiAliasingFactor = antiAliasingFactor;
         this.unicodeFont = new UnicodeFont(font);
         this.kerning = kerning;
@@ -52,11 +46,11 @@ public class UnicodeFontRenderer implements IFontRenderer
             e.printStackTrace();
         }
 
-        for (int i = 0 ; i < 32 ; i++) {
-            int shadow = ( i >> 3 & 1 ) * 85;
-            int red = ( i >> 2 & 1 ) * 170 + shadow;
-            int green = ( i >> 1 & 1 ) * 170 + shadow;
-            int blue = ( i & 1 ) * 170 + shadow;
+        for (int i = 0; i < 32; i++) {
+            int shadow = (i >> 3 & 1) * 85;
+            int red = (i >> 2 & 1) * 170 + shadow;
+            int green = (i >> 1 & 1) * 170 + shadow;
+            int blue = (i & 1) * 170 + shadow;
 
             if (i == 6) {
                 red += 85;
@@ -68,14 +62,13 @@ public class UnicodeFontRenderer implements IFontRenderer
                 blue /= 4;
             }
 
-            this.colorCodes[i] = ( red & 255 ) << 16 | ( green & 255 ) << 8 | blue & 255;
+            this.colorCodes[i] = (red & 255) << 16 | (green & 255) << 8 | blue & 255;
         }
     }
 
     //<editor-fold desc="<--- Static Content --->">
 
-    public static UnicodeFontRenderer newInstance (String name, int size, int style)
-    {
+    public static UnicodeFontRenderer newInstance(String name, int size, int style) {
         try {
             // If the font isn't already loaded, import it from a .ttf file
             if (!GlyphFontRenderer.LOADED_FONTS.contains(name)) {
@@ -100,9 +93,8 @@ public class UnicodeFontRenderer implements IFontRenderer
      * @see #drawString(String, float, float, int, boolean) Parameter Description
      */
     @Override
-    public int drawString (String text, int x, int y, int color)
-    {
-        return drawString(text, ( float ) x, ( float ) y, color, false);
+    public int drawString(String text, int x, int y, int color) {
+        return drawString(text, (float) x, (float) y, color, false);
     }
 
     /**
@@ -114,12 +106,10 @@ public class UnicodeFontRenderer implements IFontRenderer
      * @param y          The y location
      * @param color      The color
      * @param dropShadow Whether to draw a shadow
-     *
      * @return The end x-value
      */
     @Override
-    public int drawString (String text, float x, float y, int color, boolean dropShadow)
-    {
+    public int drawString(String text, float x, float y, int color, boolean dropShadow) {
         if (dropShadow)
             return drawStringWithShadow(text, x, y, color);
 
@@ -136,10 +126,10 @@ public class UnicodeFontRenderer implements IFontRenderer
         GL11.glScaled(0.5F, 0.5F, 0.5F);
         x *= antiAliasingFactor;
         y *= antiAliasingFactor;
-        float red = ( float ) ( color >> 16 & 255 ) / 255.0F;
-        float green = ( float ) ( color >> 8 & 255 ) / 255.0F;
-        float blue = ( float ) ( color & 255 ) / 255.0F;
-        float alpha = ( float ) ( color >> 24 & 255 ) / 255.0F;
+        float red = (float) (color >> 16 & 255) / 255.0F;
+        float green = (float) (color >> 8 & 255) / 255.0F;
+        float blue = (float) (color & 255) / 255.0F;
+        float alpha = (float) (color >> 24 & 255) / 255.0F;
         GlStateManager.color(red, green, blue, alpha);
 
         boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
@@ -163,10 +153,10 @@ public class UnicodeFontRenderer implements IFontRenderer
             if (c == '\n') {
                 y += getHeight() * 2.0F;
             }
-            if (c != '\247' && ( index == 0 || index == characters.length - 1 || characters[index - 1] != '\247' )) {
+            if (c != '\247' && (index == 0 || index == characters.length - 1 || characters[index - 1] != '\247')) {
                 //Line causing error
                 unicodeFont.drawString(x, y, Character.toString(c), new org.newdawn.slick.Color(currentColor));
-                x += ( getUnicodeWidth(Character.toString(c)) * 2.0F * antiAliasingFactor );
+                x += (getUnicodeWidth(Character.toString(c)) * 2.0F * antiAliasingFactor);
             } else if (c == ' ') {
                 x += unicodeFont.getSpaceWidth();
             } else if (c == '\247' && index != characters.length - 1) {
@@ -188,7 +178,7 @@ public class UnicodeFontRenderer implements IFontRenderer
             GL11.glDisable(GL11.GL_BLEND);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
-        return ( int ) x / 2;
+        return (int) x / 2;
     }
 
     @Override
@@ -204,8 +194,7 @@ public class UnicodeFontRenderer implements IFontRenderer
      * @see #drawString(String, float, float, int, boolean) Parameter Description
      */
     @Override
-    public int drawStringWithShadow (String text, float x, float y, int color)
-    {
+    public int drawStringWithShadow(String text, float x, float y, int color) {
         drawString(StringUtils.stripControlCodes(text), x + 0.5F, y + 0.5F, 0x000000, false);
         return drawString(text, x, y, color, false);
     }
@@ -214,19 +203,17 @@ public class UnicodeFontRenderer implements IFontRenderer
      * Get the width of a string in the current font.
      *
      * @param text The text
-     *
      * @return The width in pixels
      */
     @Override
-    public int getStringWidth (String text)
-    {
+    public int getStringWidth(String text) {
         if (text == null)
             return 0;
 
         int i = 0;
         boolean flag = false;
 
-        for (int j = 0 ; j < text.length() ; ++j) {
+        for (int j = 0; j < text.length(); ++j) {
             char c0 = text.charAt(j);
             float k = this.getUnicodeWidth(String.valueOf(c0));
 
@@ -259,32 +246,27 @@ public class UnicodeFontRenderer implements IFontRenderer
      * The exact with of the specific char in the current font.
      *
      * @param c The character
-     *
      * @return The width in pixels
      */
     @Override
-    public float getCharWidthFloat (char c)
-    {
+    public float getCharWidthFloat(char c) {
         return unicodeFont.getWidth(String.valueOf(c));
     }
 
     /**
      * @param c The character
-     *
      * @return {@link #getCharWidthFloat(char)} rounded to an integer value.
      */
     @Override
-    public int getCharWidth (final char c)
-    {
-        return ( int ) getCharWidthFloat(c);
+    public int getCharWidth(final char c) {
+        return (int) getCharWidthFloat(c);
     }
 
     /**
      * @return The default character height
      */
     @Override
-    public int getHeight ()
-    {
+    public int getHeight() {
         return unicodeFont.getHeight("A") / 2;
     }
 
@@ -293,12 +275,10 @@ public class UnicodeFontRenderer implements IFontRenderer
      *
      * @param text  The text
      * @param width The target with
-     *
      * @return The trimmed string
      */
     @Override
-    public String trimStringToWidth (String text, int width)
-    {
+    public String trimStringToWidth(String text, int width) {
         StringBuilder var4 = new StringBuilder();
         float var5 = 0.0F;
         int var6 = 0;
@@ -306,7 +286,7 @@ public class UnicodeFontRenderer implements IFontRenderer
         boolean var8 = false;
         boolean var9 = false;
 
-        for (int var10 = var6 ; var10 >= 0 && var10 < text.length() && var5 < ( float ) width ; var10 += var7) {
+        for (int var10 = var6; var10 >= 0 && var10 < text.length() && var5 < (float) width; var10 += var7) {
             char var11 = text.charAt(var10);
             float var12 = this.getCharWidthFloat(var11);
 
@@ -330,7 +310,7 @@ public class UnicodeFontRenderer implements IFontRenderer
                 }
             }
 
-            if (var5 > ( float ) width) {
+            if (var5 > (float) width) {
                 break;
             } else {
                 var4.append(var11);
@@ -346,12 +326,10 @@ public class UnicodeFontRenderer implements IFontRenderer
      * @param text    The text
      * @param width   The target with
      * @param reverse Whether to reverse the string
-     *
      * @return The trimmed string
      */
     @Override
-    public String trimStringToWidth (final String text, final int width, final boolean reverse)
-    {
+    public String trimStringToWidth(final String text, final int width, final boolean reverse) {
         throw new UnsupportedOperationException("Not supported in the Unicode Font Renderer!");
     }
 
@@ -360,12 +338,10 @@ public class UnicodeFontRenderer implements IFontRenderer
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The list of broken strings
      */
     @Override
-    public List<String> listFormattedStringToWidth (final String text, final int width)
-    {
+    public List<String> listFormattedStringToWidth(final String text, final int width) {
         throw new UnsupportedOperationException("Not supported!");
     }
 
@@ -374,12 +350,10 @@ public class UnicodeFontRenderer implements IFontRenderer
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The string with new lines determined via \n
      */
     @Override
-    public String wrapFormattedStringToWidth (final String text, final int width)
-    {
+    public String wrapFormattedStringToWidth(final String text, final int width) {
         throw new UnsupportedOperationException("Not supported!");
     }
 
@@ -388,28 +362,23 @@ public class UnicodeFontRenderer implements IFontRenderer
      *
      * @param text  The text
      * @param width The target width
-     *
      * @return The amount of characters
      */
     @Override
-    public int sizeStringToWidth (final String text, final int width)
-    {
+    public int sizeStringToWidth(final String text, final int width) {
         throw new UnsupportedOperationException("Not supported!");
     }
 
     //<editor-fold desc="<--- Extra Content --->">
-    public UnicodeFont getFont ()
-    {
+    public UnicodeFont getFont() {
         return this.unicodeFont;
     }
 
-    public void drawCenteredString (String text, float x, float y, int color)
-    {
-        drawString(text, ( float ) ( x - getUnicodeWidth(text) / 2D ), y, color, false);
+    public void drawCenteredString(String text, float x, float y, int color) {
+        drawString(text, (float) (x - getUnicodeWidth(text) / 2D), y, color, false);
     }
 
-    public void drawStringScaled (String text, int givenX, int givenY, int color, double givenScale)
-    {
+    public void drawStringScaled(String text, int givenX, int givenY, int color, double givenScale) {
         GL11.glPushMatrix();
         GL11.glTranslated(givenX, givenY, 0);
         GL11.glScaled(givenScale, givenScale, givenScale);
@@ -417,8 +386,7 @@ public class UnicodeFontRenderer implements IFontRenderer
         GL11.glPopMatrix();
     }
 
-    public void drawCenteredStringScaled (String text, int givenX, int givenY, int color, double givenScale)
-    {
+    public void drawCenteredStringScaled(String text, int givenX, int givenY, int color, double givenScale) {
         GL11.glPushMatrix();
         GL11.glTranslated(givenX, givenY, 0);
         GL11.glScaled(givenScale, givenScale, givenScale);
@@ -426,14 +394,12 @@ public class UnicodeFontRenderer implements IFontRenderer
         GL11.glPopMatrix();
     }
 
-    public void drawCenteredStringWithShadow (String text, float x, float y, int color)
-    {
+    public void drawCenteredStringWithShadow(String text, float x, float y, int color) {
         drawCenteredString(StringUtils.stripControlCodes(text), x + 0.5F, y + 0.5F, color);
         drawCenteredString(text, x, y, color);
     }
 
-    public float getUnicodeWidth (String s)
-    {
+    public float getUnicodeWidth(String s) {
         if (cachedStringWidth.size() > 1000)
             cachedStringWidth.clear();
         return cachedStringWidth.computeIfAbsent(s, e ->
@@ -449,18 +415,16 @@ public class UnicodeFontRenderer implements IFontRenderer
 
     }
 
-    public void drawSplitString (ArrayList<String> lines, int x, int y, int color)
-    {
+    public void drawSplitString(ArrayList<String> lines, int x, int y, int color) {
         drawString(
-            String.join("\n\r", lines),
-            x,
-            y,
-            color
+                String.join("\n\r", lines),
+                x,
+                y,
+                color
         );
     }
 
-    public List<String> splitString (String text, int wrapWidth)
-    {
+    public List<String> splitString(String text, int wrapWidth) {
         List<String> lines = new ArrayList<>();
 
         String[] splitText = text.split(" ");

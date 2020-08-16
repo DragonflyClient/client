@@ -4,10 +4,9 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.BluePalette
 import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
-import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.Options
@@ -74,14 +73,14 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
      * UI Initialization
      */
     override fun initGui() {
-        +Image(
-            resourceLocation = ResourceLocation("dragonflyres/icons/info.png"),
-            x = 0.0,
-            y = 0.0,
-            width = 14.0,
-            height = 14.0,
+        +Image {
+            resourceLocation = ResourceLocation("dragonflyres/icons/info.png")
+            x = 0.0
+            y = 0.0
+            width = 14.0
+            height = 14.0
             color = WidgetColor(255, 255, 255, 0)
-        ) id "help-icon"
+        } id "help-icon"
 
         uiList = uiListFactory {
             dimensions {
@@ -101,6 +100,16 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
                     +TitleEntry(section.title)
                     section.entries.forEach {
                         +it
+                    }
+                }
+            }
+
+            scrollHook {
+                if (helpAttachedEntry != null) {
+                    getWidget<Image>("help-icon")?.apply {
+                        isVisible = true
+                        x = helpAttachedEntry!!.x - 19.0
+                        y = helpAttachedEntry!!.y + 3.0
                     }
                 }
             }
@@ -125,7 +134,7 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
      */
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         drawBackground()
-        buffer.render()
+        stage.render()
 
         drawHeader()
         drawFooter()
@@ -148,9 +157,11 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         if (newFocusedEntry == null && focusedEntry != null) {
             focusedEntry = newFocusedEntry
             helpAttachedEntry = null
-            helpIcon?.morph(50, EaseCubic.IN_OUT) {
-                color = WidgetColor(255, 255, 255, 0)
-            }?.start()
+            helpIcon?.morph(
+                50,
+                null,
+                helpIcon::color to WidgetColor(255, 255, 255, 0)
+            )?.start()
         } else if (newFocusedEntry is OptionEntry<*> && newFocusedEntry != focusedEntry) {
             focusedEntry = newFocusedEntry
             helpAttachedEntry = newFocusedEntry
@@ -158,23 +169,19 @@ class ModOptionsUI(private val previousScreen: GuiScreen) : GuiScreen() {
                 helpIcon?.run {
                     x = focusedEntry!!.x - 19.0
                     y = focusedEntry!!.y + 3.0
-                    morph(50, EaseCubic.IN_OUT) {
-                        color = WidgetColor(255, 255, 255, 255)
-                    }?.start()
+                    morph(
+                        50,
+                        null,
+                        ::color to WidgetColor(255, 255, 255, 255)
+                    )?.start()
                 }
             } else {
-                helpIcon.morph(25, EaseCubic.IN_OUT) {
-                    x = focusedEntry!!.x - 19.0
-                    y = focusedEntry!!.y + 3.0
-                }?.start()
-            }
-        }
-
-        if (helpAttachedEntry != null) {
-            helpIcon?.apply {
-                isVisible = true
-                x = helpAttachedEntry!!.x - 19.0
-                y = helpAttachedEntry!!.y + 3.0
+                helpIcon.morph(
+                    25,
+                    null,
+                    helpIcon::x to focusedEntry!!.x - 19.0,
+                    helpIcon::y to focusedEntry!!.y + 3.0
+                )?.start()
             }
         }
     }

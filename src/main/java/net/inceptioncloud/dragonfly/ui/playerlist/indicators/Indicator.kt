@@ -29,8 +29,7 @@ fun calcMaxIndicatorCount(list: List<NetworkPlayerInfo>): Int = list.maxBy { it.
  * This is an item that is displayed next to the player list entry to show that a
  * certain condition is filled.
  */
-abstract class Indicator(val itemStack: ItemStack, val text: String, val xIndex: Int)
-{
+abstract class Indicator(val itemStack: ItemStack, val text: String, val xIndex: Int) {
     /**
      * The function to be overwritten that checks if the indicator should be assigned to a certain player.
      */
@@ -39,8 +38,7 @@ abstract class Indicator(val itemStack: ItemStack, val text: String, val xIndex:
     /**
      * Draws the indicator into the current GUI at the given coordinates.
      */
-    fun draw(x: Int, y: Int)
-    {
+    fun draw(x: Int, y: Int) {
         val factor = 0.6
         val defactor = 1 / factor
         GlStateManager.scale(factor, factor, factor)
@@ -49,12 +47,13 @@ abstract class Indicator(val itemStack: ItemStack, val text: String, val xIndex:
     }
 }
 
-class SamePartyIndicator : Indicator(ItemStack(Items.cake), "§5Party", 0)
-{
+class SamePartyIndicator : Indicator(ItemStack(Items.cake), "§5Party", 0) {
     /**
      * The function to be overwritten that checks if the indicator should be assigned to a certain player.
      */
-    override fun check(playerInfo: NetworkPlayerInfo): Boolean = check(if (playerInfo.displayName != null) playerInfo.displayName.formattedText else ScorePlayerTeam.formatPlayerName(playerInfo.playerTeam, playerInfo.gameProfile.name))
+    override fun check(playerInfo: NetworkPlayerInfo): Boolean = check(
+        if (playerInfo.displayName != null) playerInfo.displayName.formattedText else ScorePlayerTeam.formatPlayerName(playerInfo.playerTeam,
+            playerInfo.gameProfile.name))
 
     /**
      * Customized [check] method.
@@ -64,8 +63,7 @@ class SamePartyIndicator : Indicator(ItemStack(Items.cake), "§5Party", 0)
     fun check(displayName: String): Boolean = displayName.endsWith(" [§5Party§7]")
 }
 
-class ThePlayerIndicator : Indicator(ItemStack(Items.golden_apple), "§6Client player", 10)
-{
+class ThePlayerIndicator : Indicator(ItemStack(Items.golden_apple), "§6Client player", 10) {
     /**
      * The function to be overwritten that checks if the indicator should be assigned to a certain player.
      */

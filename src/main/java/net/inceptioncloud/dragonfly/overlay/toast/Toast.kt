@@ -22,7 +22,10 @@ object Toast {
         if (!OptionsSectionOverlay.enableToastMessages.getKey().get())
             return
 
-        queue.offer(ToastWidget(title, duration))
+        queue.offer(ToastWidget().apply {
+            this.text = title
+            this.duration = duration
+        })
         displayNext()
     }
 
@@ -31,21 +34,23 @@ object Toast {
      * a smooth fly-in animation
      */
     fun displayNext(): Boolean {
-        if (ScreenOverlay.buffer["toast"] != null || queue.isEmpty())
+        if (ScreenOverlay.stage["toast"] != null || queue.isEmpty())
             return false
 
         val next = queue.poll()
 
-        next.updateStructure()
+        next.runStructureUpdate()
         next.y = ScreenOverlay.dimensions.height - 45.0
-        next.updateStructure()
+        next.runStructureUpdate()
 
         ScreenOverlay.addComponent("toast", next)
 
-        next.morph(duration = 60, easing = EaseCubic.IN_OUT) {
-            y = ScreenOverlay.dimensions.height - 85.0
-            opacity = 1.0
-        }?.post { _, _ ->
+        next.morph(
+            60,
+            EaseCubic.IN_OUT,
+            next::y to ScreenOverlay.dimensions.height - 85.0,
+            next::opacity to 1.0
+        )?.post { _, _ ->
             GuiIngame.canDisplayActionBar = false
         }?.start()
 
@@ -61,11 +66,13 @@ object Toast {
             GuiIngame.canDisplayActionBar = true
 
         expired = true
-        morph(duration = 60, easing = EaseCubic.IN_OUT) {
-            y = ScreenOverlay.dimensions.height - 45.0
-            opacity = 0.0
-        }?.post { _, _ ->
-            ScreenOverlay.buffer.content.remove("toast")
+        morph(
+            60,
+            EaseCubic.IN_OUT,
+            ::y to ScreenOverlay.dimensions.height - 45.0,
+            ::opacity to 0.0
+        )?.post { _, _ ->
+            ScreenOverlay.stage.remove("toast")
             displayNext()
         }?.start()
     }

@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent;
 import net.inceptioncloud.dragonfly.event.control.ZoomEvent;
+import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -1187,7 +1188,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 GlStateManager.loadIdentity();
                 GlStateManager.matrixMode(5888);
                 GlStateManager.loadIdentity();
-                this.setupOverlayRendering();
+                this.setupOverlayRendering(true);
                 this.renderEndNanoTime = System.nanoTime();
                 TileEntityRendererDispatcher.instance.renderEngine = this.mc.getTextureManager();
             }
@@ -1229,6 +1230,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
             }
 
             // EVENTBUS - PostRenderEvent
+            this.setupOverlayRendering(false);
             Dragonfly.getEventBus().post(new PostRenderEvent(scaledWidth, scaledHeight, scaledMouseX, scaledMouseY));
         }
 
@@ -1243,7 +1245,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
     public void renderStreamIndicator (float partialTicks)
     {
-        this.setupOverlayRendering();
+        this.setupOverlayRendering(false);
         this.mc.ingameGUI.renderStreamIndicator(new ScaledResolution(this.mc));
     }
 
@@ -1903,11 +1905,19 @@ public class EntityRenderer implements IResourceManagerReloadListener
     /**
      * Setup orthogonal projection for rendering GUI screen overlays
      */
-    public void setupOverlayRendering ()
+    public void setupOverlayRendering (boolean useCustomScale)
     {
         ScaledResolution scaledresolution = new ScaledResolution(this.mc);
         double scaledWidth = scaledresolution.getScaledWidth_double();
         double scaledHeight = scaledresolution.getScaledHeight_double();
+
+        if (mc.currentScreen != null && useCustomScale) {
+            Double customScaleFactor = mc.currentScreen.getCustomScaleFactor().invoke();
+            if (customScaleFactor != null) {
+                scaledWidth = mc.displayWidth / customScaleFactor;
+                scaledHeight = mc.displayHeight / customScaleFactor;
+            }
+        }
 
         GlStateManager.clear(256);
         GlStateManager.matrixMode(5889);
@@ -2331,10 +2341,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
             }
         }
 
-        if (this.mc.currentScreen instanceof GuiMainMenu) {
-            this.updateMainMenu(( GuiMainMenu ) this.mc.currentScreen);
-        }
-
         if (this.updatedWorld != world) {
             RandomMobs.worldChanged(this.updatedWorld, world);
             Config.updateThreadPriorities();
@@ -2363,40 +2369,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                     this.mc.ingameGUI.getChatGUI().printChatMessage(chatcomponenttext);
                 }
             }
-        }
-    }
-
-    private void updateMainMenu (GuiMainMenu p_updateMainMenu_1_)
-    {
-        try {
-            String s = null;
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            int i = calendar.get(5);
-            int j = calendar.get(2) + 1;
-
-            if (i == 8 && j == 4) {
-                s = "Happy birthday, OptiFine!";
-            }
-
-            if (i == 14 && j == 8) {
-                s = "Happy birthday, sp614x!";
-            }
-
-            if (s == null) {
-                return;
-            }
-
-            Field[] afield = GuiMainMenu.class.getDeclaredFields();
-
-            for (int k = 0 ; k < afield.length ; ++k) {
-                if (afield[k].getType() == String.class) {
-                    afield[k].setAccessible(true);
-                    afield[k].set(p_updateMainMenu_1_, s);
-                    break;
-                }
-            }
-        } catch (Throwable var8) {
         }
     }
 

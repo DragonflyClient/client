@@ -4,21 +4,18 @@ import net.inceptioncloud.dragonfly.ui.mainmenu.QuickAction;
 import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
 /**
  * Restarts the client when clicking the action.
  */
-public class RestartAction extends QuickAction
-{
+public class RestartAction extends QuickAction {
     /**
      * Default Constructor
      */
-    public RestartAction ()
-    {
+    public RestartAction() {
         super(3, 18, "Restart", () ->
         {
             try {
@@ -33,11 +30,9 @@ public class RestartAction extends QuickAction
      * Restart the current Java application
      *
      * @param runBeforeRestart some custom code to be run before restarting
-     *
      * @throws IOException Any exception
      */
-    public static void restartApplication (Runnable runBeforeRestart) throws IOException
-    {
+    public static void restartApplication(Runnable runBeforeRestart) throws IOException {
         try {
             String java = System.getProperty("java.home") + "/bin/java";
             List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
@@ -58,7 +53,7 @@ public class RestartAction extends QuickAction
             else
                 cmd.append("-cp \"").append(System.getProperty("java.class.path")).append("\" ").append(mainCommand[0]);
 
-            for (int i = 1 ; i < mainCommand.length ; i++) {
+            for (int i = 1; i < mainCommand.length; i++) {
                 cmd.append(" ");
                 cmd.append(mainCommand[i]);
             }

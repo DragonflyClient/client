@@ -24,13 +24,6 @@ public class ScaledResolution
             i = 1000;
         }
 
-//        if (Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen.getClass().getName().startsWith("net.minecraft.client.gui.inventory")) {
-//            StackTraceElement stackTraceElement = RuntimeUtils.getStackTrace(ScaledResolution.class);
-//
-//            if (!( stackTraceElement != null && stackTraceElement.getClassName().contains("GuiIngame") ))
-//                i = 3;
-//        }
-
         while (this.scaleFactor < i && this.scaledWidth / ( this.scaleFactor + 1 ) >= 320 && this.scaledHeight / ( this.scaleFactor + 1 ) >= 240) {
             ++this.scaleFactor;
         }
@@ -39,7 +32,7 @@ public class ScaledResolution
             --this.scaleFactor;
         }
 
-        this.scaledWidthD = ( double ) this.scaledWidth / ( double ) this.scaleFactor; // 12 / 2 = 6 | 12 / 3 = 4 | 6 * 2/3 = 4
+        this.scaledWidthD = ( double ) this.scaledWidth / ( double ) this.scaleFactor;
         this.scaledHeightD = ( double ) this.scaledHeight / ( double ) this.scaleFactor;
         this.scaledWidth = MathHelper.ceiling_double_int(this.scaledWidthD);
         this.scaledHeight = MathHelper.ceiling_double_int(this.scaledHeightD);
@@ -59,7 +52,6 @@ public class ScaledResolution
     {
         return this.scaledWidthD;
     }
-
 
     public double getScaledHeight_double ()
     {

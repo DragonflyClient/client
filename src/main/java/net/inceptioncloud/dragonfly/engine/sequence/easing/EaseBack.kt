@@ -7,8 +7,7 @@ import kotlin.math.pow
  *
  * Provides easing functions that go back before starting to increase their value.
  */
-object EaseBack
-{
+object EaseBack {
     /**
      * ## Ease In Back
      * Calculates the easing the following way:

@@ -11,7 +11,7 @@ import net.inceptioncloud.dragonfly.engine.structure.*
  * The alignment can be used both horizontally and vertically using the [calc] function.
  */
 enum class Alignment
-(
+    (
     /**
      * Calculates the x or y coordinate based on the input position and input size.
      * The output of this function will be the resulting x/y coordinate.
@@ -22,8 +22,7 @@ enum class Alignment
      * A mathematic function to reverse the calculation that was done by the [calc] function.
      */
     private val reverse: (coordinate: Double, size: Double) -> Double
-)
-{
+) {
     /**
      * Keeps the input location of the widget. In this case, the widget is drawn on the right/bottom
      * side of the position.

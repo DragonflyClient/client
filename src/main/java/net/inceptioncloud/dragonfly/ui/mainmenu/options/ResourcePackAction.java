@@ -6,15 +6,13 @@ import net.minecraft.client.gui.GuiScreenResourcePacks;
 /**
  * Opens the resource pack selection when clicking on this quick action.
  */
-public class ResourcePackAction extends QuickAction
-{
+public class ResourcePackAction extends QuickAction {
     /**
      * Default Constructor.
      */
-    public ResourcePackAction ()
-    {
+    public ResourcePackAction() {
         super(2, 15, "Resource Packs",
-            () -> mc.displayGuiScreen(new GuiScreenResourcePacks(mc.currentScreen))
+                () -> mc.displayGuiScreen(new GuiScreenResourcePacks(mc.currentScreen))
         );
     }
 }

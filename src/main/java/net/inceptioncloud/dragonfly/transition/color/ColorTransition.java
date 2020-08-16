@@ -11,8 +11,7 @@ import java.util.function.IntSupplier;
  * <p>
  * Supplies a color value that transforms from the start value to the end value on only that direction.
  */
-public class ColorTransition extends TransitionTypeColor
-{
+public class ColorTransition extends TransitionTypeColor {
     /**
      * A simple object that the constructor and non-thread-safe methods are synchronized on.
      * The content of this object is never used and it is never updated or accessed.
@@ -60,9 +59,10 @@ public class ColorTransition extends TransitionTypeColor
      * @param reachEnd      {@link #reachEnd}
      * @param reachStart    {@link #reachStart}
      */
-    ColorTransition (final Color start, final Color end, final int amountOfSteps,
-                     final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
-    {
+    ColorTransition(
+            final Color start, final Color end, final int amountOfSteps,
+            final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator
+    ) {
         super(reachEnd, reachStart, autoTransformator);
 
         synchronized (threadLock) {
@@ -78,8 +78,7 @@ public class ColorTransition extends TransitionTypeColor
         }
     }
 
-    public static ColorTransitionBuilder builder ()
-    {
+    public static ColorTransitionBuilder builder() {
         return new ColorTransitionBuilder();
     }
 
@@ -87,8 +86,7 @@ public class ColorTransition extends TransitionTypeColor
      * @return The current color value
      */
     @Override
-    public Color get ()
-    {
+    public Color get() {
         return new Color(redBase.castToInt(), greenBase.castToInt(), blueBase.castToInt());
     }
 
@@ -96,8 +94,7 @@ public class ColorTransition extends TransitionTypeColor
      * @return Whether the current value is at the end.
      */
     @Override
-    public boolean isAtEnd ()
-    {
+    public boolean isAtEnd() {
         return redBase.isAtEnd() && greenBase.isAtEnd() && blueBase.isAtEnd();
     }
 
@@ -105,19 +102,17 @@ public class ColorTransition extends TransitionTypeColor
      * @return Whether the current value is at the start.
      */
     @Override
-    public boolean isAtStart ()
-    {
+    public boolean isAtStart() {
         return redBase != null && redBase.isAtStart()
-               && greenBase != null && greenBase.isAtStart()
-               && blueBase != null && blueBase.isAtStart();
+                && greenBase != null && greenBase.isAtStart()
+                && blueBase != null && blueBase.isAtStart();
     }
 
     /**
      * The step-forward method for the transition.
      */
     @Override
-    public void doForward ()
-    {
+    public void doForward() {
         synchronized (threadLock) {
             try {
                 redBase.setForward();
@@ -136,8 +131,7 @@ public class ColorTransition extends TransitionTypeColor
      * The step-backward method for the transition.
      */
     @Override
-    public void doBackward ()
-    {
+    public void doBackward() {
         synchronized (threadLock) {
             if (redBase != null && greenBase != null && blueBase != null) {
                 redBase.setBackward();
@@ -151,8 +145,7 @@ public class ColorTransition extends TransitionTypeColor
     }
 
     @Override
-    public void destroy ()
-    {
+    public void destroy() {
         redBase.destroy();
         greenBase.destroy();
         blueBase.destroy();
@@ -161,10 +154,9 @@ public class ColorTransition extends TransitionTypeColor
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "ColorTransition{" +
-               "originStackTrace=" + originStackTrace +
-               '}';
+                "originStackTrace=" + originStackTrace +
+                '}';
     }
 }

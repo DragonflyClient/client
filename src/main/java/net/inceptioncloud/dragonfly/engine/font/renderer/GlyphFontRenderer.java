@@ -1,26 +1,29 @@
 package net.inceptioncloud.dragonfly.engine.font.renderer;
 
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine;
-import net.inceptioncloud.dragonfly.engine.font.FontManager;
-import net.inceptioncloud.dragonfly.engine.font.GlyphPage;
+import net.inceptioncloud.dragonfly.engine.font.*;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.*;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.*;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glScaled;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
 
 /**
  * The Glyph Page Font Renderer creates Glyph Pages of different fonts to easily render them ingame.
