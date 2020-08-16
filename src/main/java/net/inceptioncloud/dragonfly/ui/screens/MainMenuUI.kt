@@ -116,20 +116,23 @@ class MainMenuUI : GuiScreen() {
         Taskbar.initializeTaskbar(this)
     }
 
-    /**
-     * Load the splash image and its properties from the Dragonfly webserver and creates a [SizedImage]
-     * based on them.
-     */
-    private fun loadSplashImage(): SizedImage {
-        val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/image.png"))
-        val properties = JsonParser().parse(
-            URL("https://cdn.icnet.dev/dragonfly/splash/properties.json").readText()
-        ).asJsonObject
+    companion object {
 
-        val width = properties.get("width").asInt.toDouble()
-        val height = properties.get("height").asInt.toDouble()
+        /**
+         * Load the splash image and its properties from the Dragonfly webserver and creates a [SizedImage]
+         * based on them.
+         */
+        fun loadSplashImage(): SizedImage {
+            val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/image.png"))
+            val properties = JsonParser().parse(
+                URL("https://cdn.icnet.dev/dragonfly/splash/properties.json").readText()
+            ).asJsonObject
 
-        return SizedImage(ImageResource(DynamicTexture(image)), width, height)
+            val width = properties.get("width").asInt.toDouble()
+            val height = properties.get("height").asInt.toDouble()
+
+            return SizedImage(ImageResource(DynamicTexture(image)), width, height)
+        }
     }
 }
 
