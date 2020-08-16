@@ -26,11 +26,10 @@ class MainMenuUI : GuiScreen() {
             URL("https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve")
         ))
     } catch (e: Exception) {
-        e.printStackTrace()
         null
     }
 
-    override var backgroundImage: SizedImage? = loadSplashImage()
+    override var backgroundImage: SizedImage? = splashImage
 
     override var customScaleFactor: () -> Double? = { min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
 
@@ -122,7 +121,7 @@ class MainMenuUI : GuiScreen() {
          * Load the splash image and its properties from the Dragonfly webserver and creates a [SizedImage]
          * based on them.
          */
-        fun loadSplashImage(): SizedImage {
+        val splashImage: SizedImage by lazy {
             val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/image.png"))
             val properties = JsonParser().parse(
                 URL("https://cdn.icnet.dev/dragonfly/splash/properties.json").readText()
@@ -131,7 +130,7 @@ class MainMenuUI : GuiScreen() {
             val width = properties.get("width").asInt.toDouble()
             val height = properties.get("height").asInt.toDouble()
 
-            return SizedImage(ImageResource(DynamicTexture(image)), width, height)
+            SizedImage(ImageResource(DynamicTexture(image)), width, height)
         }
     }
 }
