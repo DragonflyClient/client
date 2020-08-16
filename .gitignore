@@ -24,6 +24,7 @@ gradle.properties
 /runtime/assets/skins
 /runtime/logs
 /runtime/screenshots
+/runtime/launcher_profiles.json
 
 # Runtime Dragonfly
 /runtime/dragonfly/options.json
