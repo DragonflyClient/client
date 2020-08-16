@@ -3,7 +3,7 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService
-import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.hexToUUID
+import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
 import java.net.Proxy
 import java.net.URL
 import java.util.*
@@ -79,51 +79,12 @@ data class Account(
             this.clientToken = jsonObject.get("clientToken").asString
             this.displayName = selectedProfile.get("name").asString
             this.email = user.get("username").asString
-            this.uuid = hexToUUID(selectedProfile.get("id").asString)
+            this.uuid = parseWithoutDashes(selectedProfile.get("id").asString)
             true
         } else false
     } catch (e: Exception) {
         e.printStackTrace()
         false
-    }
-
-    companion object {
-
-        /**
-         * Create an [Account] by authenticating on the Mojang auth servers using an [email]
-         * address and a [password]. If the authentication succeeded, an instance of [Account]
-         * will be returned, otherwise null.
-         */
-        fun authenticate(email: String, password: String): Account? = try {
-            val payload = JsonObject().apply {
-                val agent = JsonObject().apply {
-                    addProperty("name", "Minecraft")
-                    addProperty("version", 1)
-                }
-                add("agent", agent)
-
-                addProperty("username", email)
-                addProperty("password", password)
-                addProperty("requestUser", true)
-            }
-            val response = request("authenticate", payload)
-            val jsonObject = JsonParser().parse(response).asJsonObject
-
-            if (!jsonObject.has("error")) {
-                val user = jsonObject.get("user").asJsonObject
-                val selectedProfile = jsonObject.get("selectedProfile").asJsonObject
-                Account(
-                    selectedProfile.get("name").asString,
-                    user.get("username").asString,
-                    hexToUUID(selectedProfile.get("id").asString),
-                    jsonObject.get("accessToken").asString,
-                    jsonObject.get("clientToken").asString
-                )
-            } else null
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
     }
 }
 
