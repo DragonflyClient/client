@@ -159,6 +159,30 @@ class WidgetColor {
     }
 
     /**
+     * Clone of the [Color.brighter] function with a custom [factor].
+     */
+    fun brighter(factor: Double): WidgetColor {
+        var r: Int = red
+        var g: Int = green
+        var b: Int = blue
+        val alpha: Int = alpha
+
+        val i = (1.0 / (1.0 - factor)).toInt()
+        if (r == 0 && g == 0 && b == 0) {
+            return WidgetColor(i, i, i, alpha)
+        }
+
+        if (r in 1 until i) r = i
+        if (g in 1 until i) g = i
+        if (b in 1 until i) b = i
+
+        return WidgetColor((r / factor).toInt().coerceAtMost(255),
+            (g / factor).toInt().coerceAtMost(255),
+            (b / factor).toInt().coerceAtMost(255),
+            alpha)
+    }
+
+    /**
      * Calculates the contrast value between this and the [other] color.
      */
     fun getContrastValue(other: WidgetColor): Int = (red - other.red).absoluteValue +
