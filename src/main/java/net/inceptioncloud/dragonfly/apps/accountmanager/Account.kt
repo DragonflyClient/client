@@ -5,6 +5,7 @@ import com.google.gson.JsonParser
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
 import net.minecraft.client.renderer.texture.DynamicTexture
+import net.minecraft.util.Session
 import java.net.Proxy
 import java.net.URL
 import java.util.*
@@ -111,6 +112,11 @@ data class Account(
         playerSkullTexture = downloaded
         return downloaded
     }
+
+    /**
+     * Creates a [Session] based on the account data.
+     */
+    fun toSession() = Session(displayName, uuid.toString(), accessToken, "mojang")
 }
 
 /**
