@@ -3,6 +3,8 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.Session
@@ -41,7 +43,7 @@ data class Account(
      * Validates the account (strictly speaking the [accessToken] together with the [clientToken])
      * and returns whether the validation was successful.
      */
-    fun validate(): Boolean = try {
+    suspend fun validate(): Boolean = try {
         val payload = JsonObject().apply {
             addProperty("accessToken", accessToken)
             addProperty("clientToken", clientToken)
@@ -55,7 +57,7 @@ data class Account(
     /**
      * Invalidates the [accessToken]. Returns whether the invalidation was a success.
      */
-    fun invalidate(): Boolean = try {
+    suspend fun invalidate(): Boolean = try {
         val payload = JsonObject().apply {
             addProperty("accessToken", accessToken)
             addProperty("clientToken", clientToken)
@@ -70,7 +72,7 @@ data class Account(
      * Refreshes the account properties (especially the [accessToken] if it was invalidated
      * by a login with another client token). Returns whether the refresh was a success.
      */
-    fun refresh(): Boolean = try {
+    suspend fun refresh(): Boolean = try {
         val payload = JsonObject().apply {
             addProperty("accessToken", accessToken)
             addProperty("clientToken", clientToken)
@@ -129,6 +131,9 @@ val authenticationService = YggdrasilAuthenticationService(Proxy.NO_PROXY, "")
  * Convenient function for sending a request to the specified [route] of the Mojang authentication
  * servers with the given [payload] in the body.
  */
-fun request(route: String, payload: JsonObject): String = authenticationService.performPostRequest(
-    URL("https://authserver.mojang.com/$route"), payload.toString(), "application/json"
-)
+@Suppress("BlockingMethodInNonBlockingContext")
+suspend fun request(route: String, payload: JsonObject): String = withContext(Dispatchers.IO) {
+    authenticationService.performPostRequest(
+        URL("https://authserver.mojang.com/$route"), payload.toString(), "application/json"
+    )
+}
