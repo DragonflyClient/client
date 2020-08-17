@@ -53,7 +53,7 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
      * address and a [password]. If the authentication succeeded, an instance of [Account]
      * will be returned, otherwise null.
      */
-    fun authenticate(email: String, password: String): Account? = try {
+    suspend fun authenticate(email: String, password: String): Account? = try {
         val payload = JsonObject().apply {
             val agent = JsonObject().apply {
                 addProperty("name", "Minecraft")
