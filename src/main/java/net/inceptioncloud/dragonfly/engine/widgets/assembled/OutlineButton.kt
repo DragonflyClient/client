@@ -70,11 +70,15 @@ class OutlineButton(
         "text"<TextField> {
             x = this@OutlineButton.x
             y = this@OutlineButton.y
-            text = this@OutlineButton.text
+            width = this@OutlineButton.width
+            height = this@OutlineButton.height
+            staticText = this@OutlineButton.text
             color = this@OutlineButton.foregroundColor
             fontRenderer = buttonFontRenderer
             dropShadow = true
             shadowDistance = 2.0
+            textAlignHorizontal = Alignment.CENTER
+            textAlignVertical = Alignment.CENTER
         }
     }
 
@@ -83,25 +87,25 @@ class OutlineButton(
 
         val mouseX = GraphicsEngine.getMouseX()
         val mouseY = GraphicsEngine.getMouseY()
-        val backgroundWidget = getWidget<Rectangle>("background")
+        val container = getWidget<Rectangle>("container")
 
         if (mouseX in x..x + width && mouseY in y..y + height) {
             if (isHovered)
                 return
 
-            backgroundWidget?.detachAnimation<MorphAnimation>()
-            backgroundWidget?.morph(
+            container?.detachAnimation<MorphAnimation>()
+            container?.morph(
                 60,
                 EaseQuad.IN_OUT,
-                Rectangle::color to color.base.brighter().toWidgetColor()
+                Rectangle::color to color.brighter(0.8)
             )?.start()
             isHovered = true
         } else {
             if (!isHovered)
                 return
 
-            backgroundWidget?.detachAnimation<MorphAnimation>()
-            backgroundWidget?.morph(
+            container?.detachAnimation<MorphAnimation>()
+            container?.morph(
                 60,
                 EaseQuad.IN_OUT,
                 Rectangle::color to color
