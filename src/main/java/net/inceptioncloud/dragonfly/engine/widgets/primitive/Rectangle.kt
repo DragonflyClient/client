@@ -31,31 +31,6 @@ class Rectangle(
     }
 
     override fun render() {
-        if (outlineStroke > 0.0) {
-            outlineColor.glBindColor()
-            glBegin(GL_QUADS)
-
-            val o = outlineStroke
-
-            // red
-            glVertex2d(x + width, y - o); glVertex2d(x - o, y - o)
-            glVertex2d(x - o, y); glVertex2d(x + width, y)
-
-            // blue
-            glVertex2d(x, y); glVertex2d(x - o, y)
-            glVertex2d(x - o, y + height + o); glVertex2d(x, y + height + o)
-
-            // green
-            glVertex2d(x + width + o, y + height); glVertex2d(x, y + height)
-            glVertex2d(x, y + height + o); glVertex2d(x + width + o, y + height + o)
-
-            // yellow
-            glVertex2d(x + width + o, y - o); glVertex2d(x + width, y - o)
-            glVertex2d(x + width, y + height); glVertex2d(x + width + o, y + height)
-
-            glEnd()
-        }
-
         if (color.alpha > 0) {
             color.glBindColor()
             glBegin(GL_QUADS)
@@ -66,6 +41,23 @@ class Rectangle(
             glVertex2d(x + width, y + height)
 
             glEnd()
+        }
+
+        if (outlineStroke > 0.0) {
+            outlineColor.glBindColor()
+            glLineWidth(2.0F)
+            glEnable(GL_LINE_SMOOTH)
+
+            glBegin(GL_LINE_LOOP)
+
+            glVertex2d(x + width, y)
+            glVertex2d(x, y)
+            glVertex2d(x, y + height)
+            glVertex2d(x + width, y + height)
+
+            glEnd()
+
+            glDisable(GL_LINE_SMOOTH)
         }
     }
 }
