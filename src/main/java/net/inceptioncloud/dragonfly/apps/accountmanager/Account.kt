@@ -6,8 +6,9 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
-import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.Session
+import java.awt.Image
+import java.awt.image.BufferedImage
 import java.net.Proxy
 import java.net.URL
 import java.util.*
@@ -37,7 +38,7 @@ data class Account(
     /**
      * Cache for the player skull texture downloaded from the craftatar api.
      */
-    var playerSkullTexture: DynamicTexture? = null
+    var skull: BufferedImage? = null
 
     /**
      * Validates the account (strictly speaking the [accessToken] together with the [clientToken])
@@ -98,21 +99,23 @@ data class Account(
     }
 
     /**
-     * Downloads the player skull texture using the craftatar api or returns the [playerSkullTexture]
+     * Downloads the player skull texture using the craftatar api or returns the [skull]
      * if it isn't null.
      */
-    fun retrievePlayerSkullTexture(): DynamicTexture? {
-        if (playerSkullTexture != null)
-            return playerSkullTexture!!
+    suspend fun retrieveSkull(): BufferedImage? {
+        return withContext(Dispatchers.IO) {
+            if (skull != null)
+                return@withContext skull!!
 
-        val downloaded = try {
-            DynamicTexture(ImageIO.read(URL("https://crafatar.com/avatars/$uuid?size=200&default=MHF_Steve")))
-        } catch (e: Exception) {
-            null
+            val downloaded = try {
+                ImageIO.read(URL("https://crafatar.com/avatars/$uuid?size=100&default=MHF_Steve"))
+            } catch (e: Exception) {
+                null
+            }
+
+            skull = downloaded
+            return@withContext downloaded
         }
-
-        playerSkullTexture = downloaded
-        return downloaded
     }
 
     /**
