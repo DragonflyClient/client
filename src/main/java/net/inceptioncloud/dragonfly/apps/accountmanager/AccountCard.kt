@@ -3,7 +3,10 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.OutlineButton
@@ -27,6 +30,19 @@ class AccountCard(
 
     var isSelected: Boolean by property(false)
     var isExpired: Boolean by property(false)
+    @Interpolate var accentColor: WidgetColor by property(DragonflyPalette.foreground)
+
+    init {
+        this::isSelected.getTypedWidgetDelegate<Boolean>()!!.objectProperty
+            .addListener { _, oldValue, newValue ->
+                if (oldValue == newValue) return@addListener
+
+                morph(
+                    30, EaseQuad.IN_OUT,
+                    this::accentColor to if (newValue) DragonflyPalette.accentNormal else DragonflyPalette.foreground
+                )?.start()
+            }
+    }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to Rectangle(),
@@ -41,8 +57,6 @@ class AccountCard(
 
     override fun updateStructure() {
         this.width = getCardWidth(account.displayName)
-
-        val accentColor = if (isSelected) DragonflyPalette.accentNormal else DragonflyPalette.foreground
 
         "container"<Rectangle> {
             x = this@AccountCard.x
@@ -105,6 +119,7 @@ class AccountCard(
         }!!.also { it.adaptHeight() }
 
         val buttonMargin = 10.0
+        val mc = Minecraft.getMinecraft()
 
         val secondaryButton = "secondary-button"<OutlineButton> {
             width = this@AccountCard.width - buttonMargin * 2
@@ -114,6 +129,7 @@ class AccountCard(
 
             if (isSelected) {
                 text = "Refresh"
+                color = DragonflyPalette.background
             } else {
                 text = "Switch"
                 color = DragonflyPalette.accentNormal
@@ -136,15 +152,16 @@ class AccountCard(
                         }
 
                         if (valid) {
-                            Minecraft.getMinecraft().session = account.toSession()
-                            Toast.queue("Switched to account '${account.displayName}'", 500)
-                        } else {
-                            Toast.queue("Access to account '${account.displayName}' has expired!", 500)
-                        }
-                    }
+                            mc.session = account.toSession()
 
-                    Minecraft.getMinecraft().addScheduledTask {
-                        Minecraft.getMinecraft().currentScreen.refresh()
+                            (mc.currentScreen as? AccountManagerUI)?.stage?.content
+                                ?.filterKeys { it.startsWith("account-") }
+                                ?.forEach { (_, value) -> (value as? AccountCard)?.isSelected = false }
+
+                            isSelected = true
+                        } else {
+                            Toast.queue("§cFailed to switch to account §r${account.displayName}§c!", 500)
+                        }
                     }
                 }
             }
@@ -161,10 +178,6 @@ class AccountCard(
                 GlobalScope.launch(Dispatchers.IO) {
                     account.invalidate()
                     Toast.queue("Account '${account.displayName}' has been logged out", 200)
-
-                    Minecraft.getMinecraft().addScheduledTask {
-                        Minecraft.getMinecraft().currentScreen.refresh()
-                    }
                 }
             }
         }
@@ -172,7 +185,7 @@ class AccountCard(
         if (skull.dynamicTexture == null) {
             GlobalScope.launch(Dispatchers.IO) {
                 val image = account.retrieveSkull() ?: return@launch
-                Minecraft.getMinecraft().addScheduledTask {
+                mc.addScheduledTask {
                     skull.dynamicTexture = DynamicTexture(image)
                 }
             }
