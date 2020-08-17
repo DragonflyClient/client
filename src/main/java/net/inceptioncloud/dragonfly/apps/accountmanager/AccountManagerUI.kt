@@ -30,15 +30,15 @@ class AccountManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         } id "logo-account-manager"
 
         +BackNavigation {
-            x = 10.0
-            y = this@AccountManagerUI.height - height - 10.0
+            x = 30.0
+            y = this@AccountManagerUI.height - height - 30.0
             gui(previousScreen)
         } id "back-navigation"
 
-        if (accounts.isEmpty()) return
-
-        val space = 100.0
-        val totalWidth = accounts.sumByDouble { AccountCard.getCardWidth(it.displayName) } + space * (accounts.size - 1)
+        val space = 50.0
+        val totalWidth = accounts.sumByDouble { AccountCard.getCardWidth(it.displayName) } +
+                AccountCard.getCardWidth("") + // minimum width for AddAccountCard
+                space * accounts.size
         var currentX = width / 2.0 - totalWidth / 2.0
 
         accounts.forEachIndexed { index, it ->
@@ -54,6 +54,11 @@ class AccountManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
             currentX += AccountCard.getCardWidth(it.displayName) + space
         }
+
+        +AddAccountCard {
+            x = currentX
+            y = 300.0
+        } id "add-account"
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {

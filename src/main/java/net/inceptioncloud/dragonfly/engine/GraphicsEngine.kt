@@ -2,7 +2,9 @@ package net.inceptioncloud.dragonfly.engine
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
+import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.structure.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
@@ -135,3 +137,15 @@ object GraphicsEngine {
  * A simple extension function that converts a [java.awt.Color] to a [WidgetColor].
  */
 fun Color.toWidgetColor(): WidgetColor = WidgetColor(this)
+
+/**
+ * Extension function to conveniently check if a mouse position is within the bounds of a widget.
+ */
+operator fun <W> W.contains(data: MouseData): Boolean where W : IDimension, W : IPosition =
+    data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
+
+/**
+ * Extension function to conveniently check if a mouse position is within the bounds of a widget.
+ */
+operator fun <W> W.contains(data: MouseData): Boolean where W : ISize, W : IPosition =
+    data.mouseX.toDouble() in x..x + size && data.mouseY.toDouble() in y..y + size
