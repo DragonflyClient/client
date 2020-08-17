@@ -1,7 +1,9 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
 import com.google.gson.JsonParser
+import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
@@ -18,22 +20,22 @@ import javax.imageio.ImageIO
 
 class MainMenuUI : GuiScreen() {
 
-    /**
-     * An image of the player's skull fetched using the crafatar API or null, if an error occurred.
-     */
-    val playerSkullTexture = try {
-        DynamicTexture(ImageIO.read(
-            URL("https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve")
-        ))
-    } catch (e: Exception) {
-        null
-    }
-
     override var backgroundImage: SizedImage? = splashImage
 
     override var customScaleFactor: () -> Double? = { min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
 
     override fun initGui() {
+        val playerSkullTexture = runBlocking {
+            AccountManagerApp.selectedAccount?.retrieveSkull()?.let { DynamicTexture(it) }
+                ?: try {
+                    DynamicTexture(ImageIO.read(
+                        URL("https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve")
+                    ))
+                } catch (e: Exception) {
+                    null
+                }
+        }
+
         +Image {
             x = 10.0
             y = 10.0

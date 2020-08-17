@@ -33,6 +33,12 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
         (fromLauncher + fromFile).distinctBy { it.uuid }.toMutableList()
     }
 
+    /**
+     * Currently selected account from the [accounts] list or null if none is selected.
+     */
+    val selectedAccount: Account?
+        get() = accounts.firstOrNull { it.uuid.toString() == Minecraft.getMinecraft().session.playerID }
+
     init {
         storeAccounts()
     }
