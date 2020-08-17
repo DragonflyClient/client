@@ -3,6 +3,8 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.foreground
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
@@ -30,7 +32,7 @@ class AccountCard(
 
     var isSelected: Boolean by property(false)
     var isExpired: Boolean by property(false)
-    @Interpolate var accentColor: WidgetColor by property(DragonflyPalette.foreground)
+    @Interpolate var accentColor: WidgetColor by property(foreground)
 
     init {
         this::isSelected.getTypedWidgetDelegate<Boolean>()!!.objectProperty
@@ -39,7 +41,7 @@ class AccountCard(
 
                 morph(
                     30, EaseQuad.IN_OUT,
-                    this::accentColor to if (newValue) DragonflyPalette.accentNormal else DragonflyPalette.foreground
+                    this::accentColor to if (newValue) accentNormal else foreground
                 )?.start()
             }
     }
@@ -132,7 +134,7 @@ class AccountCard(
                 color = DragonflyPalette.background
             } else {
                 text = "Switch"
-                color = DragonflyPalette.accentNormal
+                color = accentNormal
             }
 
             onClick {
@@ -177,7 +179,13 @@ class AccountCard(
             onClick {
                 GlobalScope.launch(Dispatchers.IO) {
                     account.invalidate()
+                    AccountManagerApp.accounts.removeIf { it.uuid == account.uuid }
+                    AccountManagerApp.storeAccounts()
                     Toast.queue("Account '${account.displayName}' has been logged out", 200)
+
+                    mc.addScheduledTask {
+                        Minecraft.getMinecraft().currentScreen.refresh()
+                    }
                 }
             }
         }

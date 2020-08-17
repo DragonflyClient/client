@@ -38,6 +38,7 @@ data class Account(
     /**
      * Cache for the player skull texture downloaded from the craftatar api.
      */
+    @Transient
     var skull: BufferedImage? = null
 
     /**

@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.apps.accountmanager
 
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.google.gson.*
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
@@ -18,11 +17,60 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
     override fun open() = gui(AccountManagerUI(Minecraft.getMinecraft().currentScreen))
 
     /**
+     * The Dragonfly-internal file in which the saved accounts are stored.
+     */
+    private val accountsFile = File("dragonfly/accounts.json")
+
+    /**
+     * A mutable list of accounts that have been stored in the launcher or Dragonfly-internal
+     * account storages. This list can be modified to reflect changes in the account manager.
+     * Its content is stored when [storeAccounts] is called.
+     */
+    val accounts: MutableList<Account> = kotlin.run {
+        val fromLauncher = readFromLauncher() ?: listOf()
+        val fromFile = readFromAccountsFile() ?: listOf()
+
+        (fromLauncher + fromFile).distinctBy { it.uuid }.toMutableList()
+    }
+
+    init {
+        storeAccounts()
+    }
+
+    /**
+     * Stores the [accounts] in the accounts.json file catching any errors.
+     */
+    fun storeAccounts() {
+        try {
+            accountsFile.writeText(GsonBuilder().setPrettyPrinting().create().toJson(accounts))
+        } catch (e: Exception) {
+            LogManager.getLogger().error("Could not store accounts!")
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Reads the accounts that are stored in the `accounts.json` file and returns a list of
+     * them or null if an error occurred or if the file doesn't exist.
+     */
+    private fun readFromAccountsFile(): List<Account>? {
+        return try {
+            val file = accountsFile.takeIf { it.exists() } ?: return null
+
+            Gson().fromJson(file.reader(), AccountList::class.java)
+        } catch (e: Exception) {
+            LogManager.getLogger().error("Could not read accounts from accounts.json!")
+            e.printStackTrace()
+            null
+        }
+    }
+
+    /**
      * Reads the accounts that are stored in the `launcher_profiles.json` file and returns
      * a list of them mapped to [account objects][Account]. Returns null if an error occurred
      * or if the file doesn't exist.
      */
-    fun readFromLauncher(): List<Account>? {
+    private fun readFromLauncher(): List<Account>? {
         return try {
             val file = File("launcher_profiles.json").takeIf { it.exists() } ?: return null
             val jsonObject = JsonParser().parse(file.reader()).asJsonObject
