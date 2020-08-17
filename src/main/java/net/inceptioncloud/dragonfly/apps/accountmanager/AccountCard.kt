@@ -141,6 +141,7 @@ class AccountCard(
                 GlobalScope.launch(Dispatchers.IO) {
                     if (isSelected) {
                         if (account.refresh()) {
+                            mc.session = account.toSession()
                             Toast.queue("Access token refreshed", 500)
                         } else {
                             Toast.queue("Could not refresh token!", 500)
