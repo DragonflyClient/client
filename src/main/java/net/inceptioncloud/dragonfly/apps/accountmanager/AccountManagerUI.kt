@@ -7,7 +7,7 @@ import java.lang.Double.min
 
 class AccountManagerUI(previousScreen: GuiScreen) : GuiScreen() {
 
-    override var backgroundImage: SizedImage? = MainMenuUI.loadSplashImage()
+    override var backgroundImage: SizedImage? = MainMenuUI.splashImage
 
     override var customScaleFactor: () -> Double? = { min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
 
