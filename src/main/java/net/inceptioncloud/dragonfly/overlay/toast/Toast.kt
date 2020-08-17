@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiIngame
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -26,7 +27,9 @@ object Toast {
             this.text = title
             this.duration = duration
         })
-        displayNext()
+        Minecraft.getMinecraft().addScheduledTask {
+            displayNext()
+        }
     }
 
     /**
