@@ -4,9 +4,11 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
+import net.minecraft.client.renderer.texture.DynamicTexture
 import java.net.Proxy
 import java.net.URL
 import java.util.*
+import javax.imageio.ImageIO
 
 /**
  * Represents a user account that can be safely read and stored in the JSON format. It does
@@ -28,6 +30,11 @@ data class Account(
     var accessToken: String,
     var clientToken: String
 ) {
+
+    /**
+     * Cache for the player skull texture downloaded from the craftatar api.
+     */
+    var playerSkullTexture: DynamicTexture? = null
 
     /**
      * Validates the account (strictly speaking the [accessToken] together with the [clientToken])
@@ -85,6 +92,24 @@ data class Account(
     } catch (e: Exception) {
         e.printStackTrace()
         false
+    }
+
+    /**
+     * Downloads the player skull texture using the craftatar api or returns the [playerSkullTexture]
+     * if it isn't null.
+     */
+    fun retrievePlayerSkullTexture(): DynamicTexture? {
+        if (playerSkullTexture != null)
+            return playerSkullTexture!!
+
+        val downloaded = try {
+            DynamicTexture(ImageIO.read(URL("https://crafatar.com/avatars/$uuid?size=200&default=MHF_Steve")))
+        } catch (e: Exception) {
+            null
+        }
+
+        playerSkullTexture = downloaded
+        return downloaded
     }
 }
 
