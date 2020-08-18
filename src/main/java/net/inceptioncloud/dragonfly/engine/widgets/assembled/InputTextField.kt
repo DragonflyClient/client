@@ -12,6 +12,7 @@ import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.sequence.types.DoubleSequence
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
@@ -87,19 +88,13 @@ class InputTextField(
     /** The time in milliseconds the cursor has moved lately */
     private var timeCursorMoved = 0L
 
+    private var labelHeight: Double? = null
+    private var labelY: Double? = null
+
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
         this.x = alignedX
         this.y = alignedY
-
-        GlobalScope.launch {
-            DoubleSequence(fontSize, fontSize / 1.8, 20).also {
-                for (i in 0..20) {
-                    it.next()
-                    font.fontRenderer(size = it.current.toInt(), fontWeight = this@InputTextField.fontWeight)
-                }
-            }
-        }
     }
 
     /**
@@ -110,14 +105,17 @@ class InputTextField(
         val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
             ?: error("Structure should contain bottom line overlay!")
 
+        label.detachAnimation<MorphAnimation>()
         label.morph(
-            20,
-            null,
-            label::fontSize to if (isLabelRaised) fontSize / 1.8 else fontSize,
-            label::height to if (isLabelRaised) height / 2.5 else height,
+            20, EaseQuad.IN_OUT,
+            label::scaleFactor to if (isLabelRaised) 0.5 else 1.0,
+            label::x to if (isLabelRaised) x + padding * 0.5 else x,
+            label::y to if (isLabelRaised) y + padding * 0.5 else labelY,
+            label::height to if (isLabelRaised) height / 2.5 else labelHeight,
             label::color to if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
         )?.start()
 
+        lineOverlay.detachAnimation<MorphAnimation>()
         lineOverlay.morph(
             60,
             EaseCubic.IN_OUT,
@@ -147,7 +145,7 @@ class InputTextField(
             it.y = y
             it.width = width
             it.height = height
-            it.arc = 2.0
+            it.arc = width / 100.0
             it.color = WidgetColor(0xF5F5F5)
         }
 
@@ -166,9 +164,9 @@ class InputTextField(
             it.fontWeight = fontWeight
             it.color = WidgetColor(Color.BLACK)
             it.width = width
-            it.height = height - 2
+            it.height = height - height / 5.0
             it.x = x
-            it.y = y + 2
+            it.y = y + height / 5.0
             it.padding = padding
             it.textAlignVertical = Alignment.CENTER
         }
@@ -180,16 +178,20 @@ class InputTextField(
             it.fontWeight = fontWeight
             it.color = DEFAULT_TEXT_COLOR
             it.width = width
-            it.height = height
+            it.adaptHeight = true
             it.x = x
-            it.y = y
+            it.y = y + (height - it.height) / 2.0
             it.padding = padding
-            it.textAlignVertical = Alignment.CENTER
+
+            if (!isLabelRaised) {
+                labelHeight = it.height
+                labelY = it.y
+            }
         }
 
         val bottomLine = (structure["bottom-line"] as Rectangle).also {
             it.width = width
-            it.height = 1.0
+            it.height = height / 20.0
             it.x = x
             it.y = y + height - it.height
             it.color = DEFAULT_TEXT_COLOR
@@ -205,7 +207,7 @@ class InputTextField(
 
         (structure["cursor"] as Rectangle).also {
             it.height = inputText.fontRenderer.height.toDouble()
-            it.width = 0.6
+            it.width = height / 33.3
             it.color = color
             it.y = y + height - it.height - bottomLine.height - 1
         }
