@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
@@ -129,6 +130,17 @@ object GraphicsEngine {
         GlobalScope.launch {
             delay(millis)
             block()
+        }
+    }
+}
+
+/**
+ * Switches to the screen using the switch overlay.
+ */
+fun GuiScreen.switch() {
+    ScreenOverlay.withSwitchOverlay {
+        Minecraft.getMinecraft().addScheduledTask {
+            Minecraft.getMinecraft().displayGuiScreen(this)
         }
     }
 }

@@ -1,11 +1,9 @@
 package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.GraphicsEngine
+import net.inceptioncloud.dragonfly.engine.*
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.animation.post
-import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
@@ -13,7 +11,7 @@ import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
+import net.inceptioncloud.dragonfly.mc
 import net.minecraft.util.ResourceLocation
 
 class AddAccountCard(
@@ -91,7 +89,7 @@ class AddAccountCard(
 
     override fun handleMousePress(data: MouseData) {
         if (data in this) {
-            println("Add account!")
+            AddAccountUI(mc.currentScreen).switch()
         }
     }
 }

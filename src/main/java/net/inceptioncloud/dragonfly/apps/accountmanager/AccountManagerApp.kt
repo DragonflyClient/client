@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import com.google.gson.*
+import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
@@ -30,7 +31,7 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
         val fromLauncher = readFromLauncher() ?: listOf()
         val fromFile = readFromAccountsFile() ?: listOf()
 
-        (fromLauncher + fromFile).distinctBy { it.uuid }.toMutableList()
+        (fromFile + fromLauncher).distinctBy { it.uuid }.toMutableList()
     }
 
     /**
@@ -94,7 +95,7 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
                     val clientToken = jsonObject.get("clientToken").asString
 
                     Account(displayName, email, uuid, accessToken, clientToken)
-                }
+                }.filter { runBlocking { it.validate() } }
         } catch (e: Exception) {
             LogManager.getLogger().error("Could not read profiles from launcher!")
             e.printStackTrace()

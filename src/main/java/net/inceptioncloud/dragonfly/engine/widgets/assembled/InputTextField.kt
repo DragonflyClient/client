@@ -397,8 +397,8 @@ class InputTextField(
         val k: Int = maxStringLength - inputText.length - (i - j)
         val l: Int
 
-        if (inputText.isNotEmpty()) {
-            result += inputText.substring(0, i)
+        if (realText.isNotEmpty()) {
+            result += realText.substring(0, i)
         }
 
         if (k < allowedCharacters.length) {
@@ -409,8 +409,8 @@ class InputTextField(
             l = allowedCharacters.length
         }
 
-        if (inputText.isNotEmpty() && j < inputText.length) {
-            result += inputText.substring(j)
+        if (realText.isNotEmpty() && j < realText.length) {
+            result += realText.substring(j)
         }
 
         inputText = result
@@ -434,7 +434,7 @@ class InputTextField(
         if (!isEnabled && !force)
             return
 
-        if (inputText.isNotEmpty()) {
+        if (realText.isNotEmpty()) {
             if (selectionEnd != cursorPosition) {
                 writeText("")
             } else {
@@ -443,10 +443,10 @@ class InputTextField(
                 val start = if (toLeft) cursorPosition else cursorPosition + amount
                 var result = ""
                 if (end >= 0) {
-                    result = inputText.substring(0, end)
+                    result = realText.substring(0, end)
                 }
-                if (start < inputText.length) {
-                    result += inputText.substring(start)
+                if (start < realText.length) {
+                    result += realText.substring(start)
                 }
                 inputText = result
                 if (toLeft) {

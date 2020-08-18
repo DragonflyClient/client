@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.engine.internal.SizedImage
+import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI
@@ -16,9 +17,9 @@ class AccountManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     override var customScaleFactor: () -> Double? = { min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
 
-    val accounts = AccountManagerApp.accounts
-
     override fun initGui() {
+        val accounts = AccountManagerApp.accounts
+
         +Image {
             val aspectRatio = 384.0 / 76.0
 
@@ -63,7 +64,7 @@ class AccountManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
         if (keyCode == 1 && canManuallyClose) {
-            mc.displayGuiScreen(previousScreen)
+            previousScreen.switch()
             return
         }
 
