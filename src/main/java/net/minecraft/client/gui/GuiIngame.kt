@@ -1042,7 +1042,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         var posX: Double
         var posY: Double
 
-        if(overrideColors) {
+        if (overrideColors) {
             for (keystroke in KeyStrokesManager.keystrokes) {
                 keyStrokesTextColor["keystrokes-${keystroke.keyDesc}"] = KeyStrokesManager.colorTextInactive
                 keyStrokesBackgroundColor["keystrokes-${keystroke.keyDesc}"] = KeyStrokesManager.colorBgInactive
@@ -1050,94 +1050,97 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         }
 
         stage.clear()
-        for (keyStroke in KeyStrokesManager.keystrokes) {
-            val filter = "keystrokes-${keyStroke.keyDesc}"
 
-            keyStrokesScale[filter] = OptionsSectionKeystrokes.scale.invoke()!!
-            keyStrokesSpace[filter] = OptionsSectionKeystrokes.space.invoke()!!
-            keyStrokesFontSize[filter] = OptionsSectionKeystrokes.fontSize.invoke()!!
-            keyStrokesScaleW[filter] = OptionsSectionKeystrokes.scale.invoke()!!
-            keyStrokesScaleH[filter] = OptionsSectionKeystrokes.scale.invoke()!!
+        if (OptionsSectionKeystrokes.switch.invoke()!! == 1) {
+            for (keyStroke in KeyStrokesManager.keystrokes) {
+                val filter = "keystrokes-${keyStroke.keyDesc}"
 
-            var name = ""
+                keyStrokesScale[filter] = OptionsSectionKeystrokes.scale.invoke()!!
+                keyStrokesSpace[filter] = OptionsSectionKeystrokes.space.invoke()!!
+                keyStrokesFontSize[filter] = OptionsSectionKeystrokes.fontSize.invoke()!!
+                keyStrokesScaleW[filter] = OptionsSectionKeystrokes.scale.invoke()!!
+                keyStrokesScaleH[filter] = OptionsSectionKeystrokes.scale.invoke()!!
 
-            when (keyStroke.keyDesc) {
-                "key.forward" -> {
-                    posX = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
-                    posY = keyStrokesStart
-                    keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
-                    keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
-                    name = Keyboard.getKeyName(keyStroke.keyCode)
+                var name = ""
+
+                when (keyStroke.keyDesc) {
+                    "key.forward" -> {
+                        posX = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        posY = keyStrokesStart
+                        keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
+                        keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
+                        name = Keyboard.getKeyName(keyStroke.keyCode)
+                    }
+                    "key.left" -> {
+                        posX = keyStrokesStart
+                        posY = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
+                        keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
+                        name = Keyboard.getKeyName(keyStroke.keyCode)
+                    }
+                    "key.back" -> {
+                        posX = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        posY = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
+                        keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
+                        name = Keyboard.getKeyName(keyStroke.keyCode)
+                    }
+                    "key.right" -> {
+                        posX = keyStrokesStart + (2 * keyStrokesScaleW[filter]!!) + (2 * keyStrokesSpace[filter]!!)
+                        posY = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
+                        keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
+                        name = Keyboard.getKeyName(keyStroke.keyCode)
+                    }
+                    "key.jump" -> {
+                        posX = keyStrokesStart
+                        posY = keyStrokesStart + (2 * keyStrokesScaleW[filter]!!) + (2 * keyStrokesSpace[filter]!!)
+                        keyStrokesScaleW[filter] = (3 * keyStrokesScale[filter]!!) + (2 * keyStrokesSpace[filter]!!)
+                        keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
+                        name = Keyboard.getKeyName(keyStroke.keyCode)
+                    }
+                    "key.attack" -> {
+                        posX = keyStrokesStart
+                        posY = keyStrokesStart + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
+                        keyStrokesScaleW[filter] =
+                            (1.5 * keyStrokesScale[filter]!!) + (0.65 * keyStrokesSpace[filter]!!)
+                        keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
+                        name = Mouse.getButtonName(keyStroke.keyCode + 100)
+                            .replace("BUTTON0", "LMB")
+                            .replace("BUTTON1", "RMB")
+                            .replace("BUTTON2", "MMB")
+                    }
+                    "key.use" -> {
+                        posX = keyStrokesStart + (1.5 * keyStrokesScale[filter]!!) + (1.7 * keyStrokesSpace[filter]!!)
+                        posY = keyStrokesStart + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
+                        keyStrokesScaleW[filter] = (1.55 * keyStrokesScale[filter]!!)
+                        keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
+                        name = Mouse.getButtonName(keyStroke.keyCode + 100)
+                            .replace("BUTTON0", "LMB")
+                            .replace("BUTTON1", "RMB")
+                            .replace("BUTTON2", "MMB")
+                    }
+                    else -> {
+                        posX = -1000.0
+                        posY = -1000.0
+                    }
                 }
-                "key.left" -> {
-                    posX = keyStrokesStart
-                    posY = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
-                    keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
-                    keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
-                    name = Keyboard.getKeyName(keyStroke.keyCode)
-                }
-                "key.back" -> {
-                    posX = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
-                    posY = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
-                    keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
-                    keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
-                    name = Keyboard.getKeyName(keyStroke.keyCode)
-                }
-                "key.right" -> {
-                    posX = keyStrokesStart + (2 * keyStrokesScaleW[filter]!!) + (2 * keyStrokesSpace[filter]!!)
-                    posY = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
-                    keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
-                    keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
-                    name = Keyboard.getKeyName(keyStroke.keyCode)
-                }
-                "key.jump" -> {
-                    posX = keyStrokesStart
-                    posY = keyStrokesStart + (2 * keyStrokesScaleW[filter]!!) + (2 * keyStrokesSpace[filter]!!)
-                    keyStrokesScaleW[filter] = (3 * keyStrokesScale[filter]!!) + (2 * keyStrokesSpace[filter]!!)
-                    keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
-                    name = Keyboard.getKeyName(keyStroke.keyCode)
-                }
-                "key.attack" -> {
-                    posX = keyStrokesStart
-                    posY = keyStrokesStart + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
-                    keyStrokesScaleW[filter] = (1.5 * keyStrokesScale[filter]!!) + (0.65 * keyStrokesSpace[filter]!!)
-                    keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
-                    name = Mouse.getButtonName(keyStroke.keyCode + 100)
-                        .replace("BUTTON0", "LMB")
-                        .replace("BUTTON1", "RMB")
-                        .replace("BUTTON2", "MMB")
-                }
-                "key.use" -> {
-                    posX = keyStrokesStart + (1.5 * keyStrokesScale[filter]!!) + (1.7 * keyStrokesSpace[filter]!!)
-                    posY = keyStrokesStart + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
-                    keyStrokesScaleW[filter] = (1.55 * keyStrokesScale[filter]!!)
-                    keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
-                    name = Mouse.getButtonName(keyStroke.keyCode + 100)
-                        .replace("BUTTON0", "LMB")
-                        .replace("BUTTON1", "RMB")
-                        .replace("BUTTON2", "MMB")
-                }
-                else -> {
-                    posX = -1000.0
-                    posY = -1000.0
-                }
+
+                +TextField {
+                    x = posX
+                    y = posY
+                    width = keyStrokesScaleW[filter]!!
+                    height = keyStrokesScaleH[filter]!!
+                    backgroundColor = keyStrokesBackgroundColor[filter]!!
+                    color = keyStrokesTextColor[filter]!!
+                    textAlignHorizontal = Alignment.CENTER
+                    textAlignVertical = Alignment.CENTER
+                    staticText = name
+                    font = fontManager.defaultFont
+                    this.fontSize = keyStrokesFontSize[filter]!!
+                } id "keystrokes-${keyStroke.keyDesc}"
             }
-
-            +TextField {
-                x = posX
-                y = posY
-                width = keyStrokesScaleW[filter]!!
-                height = keyStrokesScaleH[filter]!!
-                backgroundColor = keyStrokesBackgroundColor[filter]!!
-                color = keyStrokesTextColor[filter]!!
-                textAlignHorizontal = Alignment.CENTER
-                textAlignVertical = Alignment.CENTER
-                staticText = name
-                font = fontManager.defaultFont
-                this.fontSize = keyStrokesFontSize[filter]!!
-            } id "keystrokes-${keyStroke.keyDesc}"
         }
-
     }
 
     companion object {
