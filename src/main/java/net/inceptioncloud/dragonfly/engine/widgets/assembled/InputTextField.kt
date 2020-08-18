@@ -109,7 +109,7 @@ class InputTextField(
 
         label.detachAnimation<MorphAnimation>()
         label.morph(
-            60, EaseQuad.IN_OUT,
+            30, EaseQuad.IN_OUT,
             label::scaleFactor to if (isLabelRaised) 0.5 else 1.0,
             label::x to if (isLabelRaised) x + padding * 0.5 else x,
             label::y to if (isLabelRaised) y + padding * 0.5 else labelY,
@@ -119,8 +119,7 @@ class InputTextField(
 
         lineOverlay.detachAnimation<MorphAnimation>()
         lineOverlay.morph(
-            60,
-            EaseCubic.IN_OUT,
+            30, EaseCubic.IN_OUT,
             lineOverlay::width to if (focused) width else 0.0
         )?.start()
     }
