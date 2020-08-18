@@ -183,3 +183,9 @@ object Dragonfly {
         }
     }
 }
+
+/**
+ * Convenient access to the Minecraft instance.
+ */
+val Any.mc: Minecraft
+    get() = Minecraft.getMinecraft()
