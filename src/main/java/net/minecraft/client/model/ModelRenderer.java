@@ -132,13 +132,13 @@ public class ModelRenderer
         this.rotationPointZ = rotationPointZIn;
     }
 
-    public void render(float p_78785_1_)
+    public void render(float scale)
     {
         if (!this.isHidden && this.showModel)
         {
             if (!this.compiled)
             {
-                this.compileDisplayList(p_78785_1_);
+                this.compileDisplayList(scale);
             }
 
             GlStateManager.translate(this.offsetX, this.offsetY, this.offsetZ);
@@ -153,30 +153,30 @@ public class ModelRenderer
                     {
                         for (int k = 0; k < this.childModels.size(); ++k)
                         {
-                            ((ModelRenderer)this.childModels.get(k)).render(p_78785_1_);
+                            ((ModelRenderer)this.childModels.get(k)).render(scale);
                         }
                     }
                 }
                 else
                 {
-                    GlStateManager.translate(this.rotationPointX * p_78785_1_, this.rotationPointY * p_78785_1_, this.rotationPointZ * p_78785_1_);
+                    GlStateManager.translate(this.rotationPointX * scale, this.rotationPointY * scale, this.rotationPointZ * scale);
                     GlStateManager.callList(this.displayList);
 
                     if (this.childModels != null)
                     {
                         for (int j = 0; j < this.childModels.size(); ++j)
                         {
-                            ((ModelRenderer)this.childModels.get(j)).render(p_78785_1_);
+                            ((ModelRenderer)this.childModels.get(j)).render(scale);
                         }
                     }
 
-                    GlStateManager.translate(-this.rotationPointX * p_78785_1_, -this.rotationPointY * p_78785_1_, -this.rotationPointZ * p_78785_1_);
+                    GlStateManager.translate(-this.rotationPointX * scale, -this.rotationPointY * scale, -this.rotationPointZ * scale);
                 }
             }
             else
             {
                 GlStateManager.pushMatrix();
-                GlStateManager.translate(this.rotationPointX * p_78785_1_, this.rotationPointY * p_78785_1_, this.rotationPointZ * p_78785_1_);
+                GlStateManager.translate(this.rotationPointX * scale, this.rotationPointY * scale, this.rotationPointZ * scale);
 
                 if (this.rotateAngleZ != 0.0F)
                 {
@@ -199,7 +199,7 @@ public class ModelRenderer
                 {
                     for (int i = 0; i < this.childModels.size(); ++i)
                     {
-                        ((ModelRenderer)this.childModels.get(i)).render(p_78785_1_);
+                        ((ModelRenderer)this.childModels.get(i)).render(scale);
                     }
                 }
 
