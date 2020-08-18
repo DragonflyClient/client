@@ -1,9 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.design.color.BluePalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
@@ -13,8 +11,8 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
-import net.inceptioncloud.dragonfly.engine.sequence.types.DoubleSequence
 import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.toWidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiScreen.Companion.isCtrlKeyDown
@@ -24,7 +22,8 @@ import org.lwjgl.input.Keyboard.*
 import java.awt.Color
 import kotlin.math.abs
 
-val DEFAULT_TEXT_COLOR = WidgetColor(0xababab)
+val DEFAULT_TEXT_COLOR
+        get() = DragonflyPalette.background.brighter(0.4)
 
 /**
  * A simple text field that the user can write to. Supports common operations like copying, pasting,
@@ -43,9 +42,12 @@ class InputTextField(
     @Interpolate override var y: Double by property(0.0)
     @Interpolate override var width: Double by property(100.0)
     @Interpolate override var height: Double by property(20.0)
-    @Interpolate override var color: WidgetColor by property(WidgetColor(BluePalette.PRIMARY))
     override var horizontalAlignment: Alignment by property(Alignment.START)
     override var verticalAlignment: Alignment by property(Alignment.START)
+
+    @Interpolate override var color: WidgetColor by property(DragonflyPalette.accentNormal)
+    @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
+    @Interpolate var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
 
     var font: WidgetFont by property(Dragonfly.fontManager.defaultFont)
     var fontWeight: FontWeight by property(FontWeight.REGULAR)
@@ -107,7 +109,7 @@ class InputTextField(
 
         label.detachAnimation<MorphAnimation>()
         label.morph(
-            20, EaseQuad.IN_OUT,
+            60, EaseQuad.IN_OUT,
             label::scaleFactor to if (isLabelRaised) 0.5 else 1.0,
             label::x to if (isLabelRaised) x + padding * 0.5 else x,
             label::y to if (isLabelRaised) y + padding * 0.5 else labelY,
@@ -146,7 +148,7 @@ class InputTextField(
             it.width = width
             it.height = height
             it.arc = width / 100.0
-            it.color = WidgetColor(0xF5F5F5)
+            it.color = backgroundColor
         }
 
         (structure["box-sharp"] as Rectangle).also {
@@ -162,7 +164,7 @@ class InputTextField(
             it.font = font
             it.fontSize = fontSize
             it.fontWeight = fontWeight
-            it.color = WidgetColor(Color.BLACK)
+            it.color = foregroundColor
             it.width = width
             it.height = height - height / 5.0
             it.x = x
