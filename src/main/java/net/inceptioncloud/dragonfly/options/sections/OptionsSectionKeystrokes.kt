@@ -1,11 +1,15 @@
 package net.inceptioncloud.dragonfly.options.sections
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryMultipleChoiceFactory
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryRangeDoubleFactory
 import net.inceptioncloud.dragonfly.options.entries.util.OptionChoice
 import net.minecraft.client.Minecraft
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
@@ -148,13 +152,13 @@ object OptionsSectionKeystrokes {
     }
 
     fun reloadOverlay() {
+        for(keystroke in KeyStrokesManager.keystrokes) {
+            Minecraft.getMinecraft().ingameGUI.keyStrokesScale["keystrokes-${keystroke.keyDesc}"] = scale.invoke()!!
+            Minecraft.getMinecraft().ingameGUI.keyStrokesSpace["keystrokes-${keystroke.keyDesc}"] = space.invoke()!!
+            Minecraft.getMinecraft().ingameGUI.keyStrokesFontSize["keystrokes-${keystroke.keyDesc}"] = fontSize.invoke()!!
 
-        /*Minecraft.getMinecraft().ingameGUI.keyStrokesScale = scale.invoke()!!
-        Minecraft.getMinecraft().ingameGUI.keyStrokesSpace = space.invoke()!!
-        Minecraft.getMinecraft().ingameGUI.keyStrokesFontSize = fontSize.invoke()!!
-
-        Minecraft.getMinecraft().ingameGUI.initKeyStrokes()*/
-
+            Minecraft.getMinecraft().ingameGUI.initKeyStrokes(true)
+        }
     }
 
 }
