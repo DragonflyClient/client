@@ -7,7 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
 import net.minecraft.util.Session
-import java.awt.Image
 import java.awt.image.BufferedImage
 import java.net.Proxy
 import java.net.URL
