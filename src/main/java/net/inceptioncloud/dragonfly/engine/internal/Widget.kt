@@ -1,11 +1,12 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.mc
 import net.minecraft.client.gui.Gui
+import net.minecraft.client.renderer.GlStateManager
 import java.util.*
 import kotlin.reflect.KProperty
 
@@ -158,7 +159,12 @@ abstract class Widget<W : Widget<W>>(
      */
     @Suppress("DEPRECATION")
     fun draw() {
-        GraphicsEngine.pushScale(scaleFactor)
+        GlStateManager.pushMatrix()
+        GlStateManager.scale(scaleFactor)
+
+        if (this is IPosition && mc.currentScreen != null) {
+            GlStateManager.translate(x * (1 / scaleFactor) - x, y * (1 / scaleFactor) - y, 0.0)
+        }
 
         drawNative()
 
@@ -167,7 +173,7 @@ abstract class Widget<W : Widget<W>>(
             Gui.drawRect(x, y, x + width, y + height, WidgetColor(0x1abc9c).apply { alphaDouble = 0.5 }.rgb)
         }
 
-        GraphicsEngine.popScale()
+        GlStateManager.popMatrix()
     }
 
     /**
