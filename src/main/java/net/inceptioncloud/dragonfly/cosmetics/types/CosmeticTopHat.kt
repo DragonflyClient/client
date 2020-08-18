@@ -3,16 +3,30 @@ package net.inceptioncloud.dragonfly.cosmetics.types
 import net.inceptioncloud.dragonfly.cosmetics.*
 import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.client.model.ModelRenderer
+import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.entity.RenderPlayer
 import net.minecraft.entity.Entity
 import net.minecraft.util.ResourceLocation
 
-val resource = ResourceLocation("hat.png")
+class CosmeticTopHat(renderPlayer: RenderPlayer) : Cosmetic(renderPlayer) {
 
-class CosmeticTopHat : Cosmetic() {
+    private val resource = ResourceLocation("dragonflyres/hat.png")
+
+    private val modelTopHat = ModelTopHat(renderPlayer)
 
     override fun render(player: AbstractClientPlayer, partialTicks: Float, data: CosmeticRenderData) {
-        TODO("Not yet implemented")
+
+        GlStateManager.pushMatrix()
+
+        renderPlayer.bindTexture(resource)
+        if (player.isSneaking)
+            GlStateManager.translate(0.0, 0.225, 0.0)
+
+        GlStateManager.color(0.5F, 0.0F, 1.0F)
+        modelTopHat.render(player, data)
+
+        GlStateManager.popMatrix()
+
     }
 
     private class ModelTopHat(renderPlayer: RenderPlayer) : CosmeticModel(renderPlayer) {

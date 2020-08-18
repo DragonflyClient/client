@@ -70,6 +70,10 @@ public class ModelRenderer
         this(model, (String)null);
     }
 
+    /**
+     * @param texOffX offset in pixels if the whole texture is 64px (13 -> 13px/64px = 26px/128px = ...)
+     * @param texOffY offset in pixels ^
+     */
     public ModelRenderer(ModelBase model, int texOffX, int texOffY)
     {
         this(model);
