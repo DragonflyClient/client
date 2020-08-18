@@ -42,6 +42,7 @@ class DragonflyButton(
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
     var text: String by property("Button")
     var icon: ImageResource? by property(null)
+    var iconSize: Double? by property(null)
 
     var isHovered: Boolean = false
     var enableClickSound: Boolean = true
@@ -66,8 +67,8 @@ class DragonflyButton(
 
         val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt())
         val stringWidth = buttonFontRenderer.getStringWidth(text)
-        val iconSize = height - 6.0
         val iconMarginRight = height / 5.0
+        val iconSize = this.iconSize ?: height - 6.0
         val totalWidth = stringWidth + iconSize + iconMarginRight
 
         val iconWidget = "icon"<Image> {
