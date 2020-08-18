@@ -18,6 +18,7 @@ import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiScreen.Companion.isCtrlKeyDown
 import net.minecraft.client.gui.GuiScreen.Companion.isShiftKeyDown
 import net.minecraft.util.ChatAllowedCharacters
+import org.apache.commons.lang3.StringUtils
 import org.lwjgl.input.Keyboard.*
 import java.awt.Color
 import kotlin.math.abs
@@ -71,8 +72,27 @@ class InputTextField(
             focusedStateChanged(value)
         }
 
+    /**
+     * Whether the input text should be replaced with wildcards (called password-mode).
+     */
+    var isPassword by property(false)
+
     /** The currently entered input text. */
     var inputText: String = ""
+        set(value) {
+            realText = value
+            field = if (isPassword) {
+                StringUtils.repeat('*', value.length)
+            } else {
+                value
+            }
+        }
+
+    /**
+     * The real content of the input text field. This only differs from [inputText] if [isPassword]
+     * is true.
+     */
+    var realText: String = ""
 
     /** Whether the text label is raised due to present input text or focus state. */
     private val isLabelRaised: Boolean
@@ -167,7 +187,7 @@ class InputTextField(
             it.width = width
             it.height = height - height / 5.0
             it.x = x
-            it.y = y + height / 5.0
+            it.y = y + height / (if (isPassword) 3.0 else 5.0)
             it.padding = padding
             it.textAlignVertical = Alignment.CENTER
         }
@@ -254,10 +274,9 @@ class InputTextField(
 
         if (cursor.x != cursorX && destinationCursorX != cursorX) {
             timeCursorMoved = System.currentTimeMillis()
-            cursor.findAnimation<MorphAnimation>()?.let { cursor.detachAnimation(it) }
+            cursor.detachAnimation<MorphAnimation>()
             cursor.morph(
-                (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20),
-                null,
+                (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20), null,
                 cursor::x to cursorX
             )?.post { animation, widget -> widget.detachAnimation(animation) }?.start()
         }
