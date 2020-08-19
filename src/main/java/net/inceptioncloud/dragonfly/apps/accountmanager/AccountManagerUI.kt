@@ -1,18 +1,20 @@
 package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import kotlinx.coroutines.*
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.internal.SizedImage
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.inceptioncloud.dragonfly.ui.loader.OneTimeUILoader
 import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
-import org.apache.logging.log4j.LogManager
 import java.lang.Double.min
 
 class AccountManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
+
+    companion object : OneTimeUILoader(500)
 
     override var backgroundImage: SizedImage? = MainMenuUI.splashImage
 

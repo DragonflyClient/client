@@ -39,11 +39,5 @@ abstract class TaskbarApp(val name: String, val icon: String = name.toLowerCase(
     /**
      * Convenient function for opening a gui screen with a switch overlay.
      */
-    protected fun gui(gui: GuiScreen) {
-        ScreenOverlay.withSwitchOverlay {
-            Minecraft.getMinecraft().addScheduledTask {
-                Minecraft.getMinecraft().displayGuiScreen(gui)
-            }
-        }
-    }
+    protected fun gui(gui: GuiScreen) = ScreenOverlay.displayGui(gui)
 }

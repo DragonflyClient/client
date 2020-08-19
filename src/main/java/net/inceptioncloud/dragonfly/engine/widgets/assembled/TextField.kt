@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
@@ -25,9 +24,6 @@ import kotlin.math.floor
  * @property textAlignHorizontal the horizontal alignment of the text within the field bounds
  * @property textAlignVertical the vertical alignment of the text within the field bounds
  * @property fontRenderer the font renderer to render the text; this has no effect if a [font] is set
- * @property font the font that the text is rendered with
- * @property fontWeight the weight of the font (has no effect if no [font] is set)
- * @property fontSize the size of the font (has no effect if no [font] is set)
  * @property backgroundColor the color of the background rectangle
  * @property padding a padding between the bounds and the text
  * @property adaptHeight whether the height of the text field should be adapted to its requirements
@@ -51,11 +47,7 @@ class TextField(
     var textAlignHorizontal: Alignment by property(START)
     var textAlignVertical: Alignment by property(START)
 
-    var useScale: Boolean by property(true)
-    var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
-    var font: WidgetFont? by property(null)
-    var fontWeight: FontWeight by property(FontWeight.REGULAR)
-    @Interpolate var fontSize: Double by property(19.0)
+    var fontRenderer: IFontRenderer? by property(null)
 
     @Interpolate var backgroundColor: WidgetColor by property(WidgetColor(0, 0, 0, 0))
     @Interpolate var padding: Double by property(0.0)
@@ -78,18 +70,14 @@ class TextField(
 
     override fun updateStructure() {
         reassemble()
-        if (font != null) {
-            fontRenderer = font?.fontRenderer(
-                fontWeight = this@TextField.fontWeight,
-                size = fontSize.toInt(),
-                useScale = useScale
-            ) ?: fontRenderer
-        }
 
-        val maxAmount = floor((height - padding * 2) / fontRenderer.height).toInt()
-        val lines = fontRenderer.listFormattedStringToWidth(currentText(), (width - padding * 2).toInt())
+        if (fontRenderer == null)
+            return
+
+        val maxAmount = floor((height - padding * 2) / fontRenderer!!.height).toInt()
+        val lines = fontRenderer!!.listFormattedStringToWidth(currentText(), (width - padding * 2).toInt())
             .let { if (adaptHeight) it else it.take(maxAmount) }
-        val size = lines.size * fontRenderer.height
+        val size = lines.size * fontRenderer!!.height
 
         adaptHeight()
 
@@ -98,18 +86,15 @@ class TextField(
             widget.parentAssembled = this
             (widget as TextRenderer).also {
                 it.fontRenderer = fontRenderer
-                it.font = font
-                it.fontSize = fontSize
-                it.fontWeight = fontWeight
                 it.text = line
                 it.color = color
                 it.dropShadow = dropShadow
                 it.shadowDistance = shadowDistance
-                it.x = alignText(textAlignHorizontal, x, width, fontRenderer.getStringWidth(it.text).toDouble())
+                it.x = alignText(textAlignHorizontal, x, width, fontRenderer!!.getStringWidth(it.text).toDouble())
                 it.y = when (textAlignVertical) {
-                    START -> y + index * fontRenderer.height + padding
-                    CENTER -> y + (height - size) / 2 + index * fontRenderer.height
-                    END -> y + height - size + index * fontRenderer.height - padding
+                    START -> y + index * fontRenderer!!.height + padding
+                    CENTER -> y + (height - size) / 2 + index * fontRenderer!!.height
+                    END -> y + height - size + index * fontRenderer!!.height - padding
                 }
             }
         }
@@ -130,15 +115,26 @@ class TextField(
         }
     }
 
+    fun WidgetFont.bindFontRenderer(
+        fontWeight: FontWeight = FontWeight.REGULAR,
+        size: Int = 19,
+        letterSpacing: Double? = null,
+        useScale: Boolean = true
+    ) {
+        fontRendererAsync(fontWeight, size, letterSpacing, useScale) {
+            this@TextField.fontRenderer = it
+        }
+    }
+
     /**
      * Performs the height-adaption.
      */
     fun adaptHeight() {
-        if (!adaptHeight)
+        if (!adaptHeight || fontRenderer == null)
             return
 
-        val lines = fontRenderer.listFormattedStringToWidth(currentText(), (width - padding * 2).toInt())
-        val size = lines.size * fontRenderer.height
+        val lines = fontRenderer!!.listFormattedStringToWidth(currentText(), (width - padding * 2).toInt())
+        val size = lines.size * fontRenderer!!.height
         val previousHeight = height
         height = (size + padding * 2)
 

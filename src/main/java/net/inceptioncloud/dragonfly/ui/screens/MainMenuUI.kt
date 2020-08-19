@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
+import org.apache.logging.log4j.LogManager
 import java.lang.Double.min
 import java.net.URL
 import javax.imageio.ImageIO
@@ -51,9 +52,7 @@ class MainMenuUI : GuiScreen() {
             width = 200.0
             height = 50.0
             staticText = mc.session.username
-            font = Dragonfly.fontManager.defaultFont
-            fontSize = 50.0
-            useScale = false
+            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50, useScale = false)
             textAlignVertical = Alignment.CENTER
         } id "player-name"
 
@@ -70,9 +69,7 @@ class MainMenuUI : GuiScreen() {
         +TextField {
             staticText = "v1.3.0.0"
             textAlignHorizontal = Alignment.END
-            font = Dragonfly.fontManager.defaultFont
-            fontSize = 50.0
-            useScale = false
+            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50, useScale = false)
             color = DragonflyPalette.foreground
             width = 500.0
             padding = 10.0
@@ -129,6 +126,8 @@ class MainMenuUI : GuiScreen() {
          * based on them.
          */
         val splashImage: SizedImage by lazy {
+            LogManager.getLogger().info("Downloading splash image...");
+
             val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/image.png"))
             val properties = JsonParser().parse(
                 URL("https://cdn.icnet.dev/dragonfly/splash/properties.json").readText()

@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.font
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.engine.font.renderer.*
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
@@ -32,6 +31,8 @@ class WidgetFont @JvmOverloads constructor(
         FontWeight.REGULAR to regular,
         FontWeight.MEDIUM to medium
     )
+
+    private val threadPool = newFixedThreadPoolContext(4, "Font-$familyName")
 
     /**
      * Cache for already created font renderer.
@@ -114,7 +115,7 @@ class WidgetFont @JvmOverloads constructor(
         asyncBuilding[fingerprint] = null
 
         // build the font renderer in a new coroutine
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             LogManager.getLogger().debug(
                 "${Thread.currentThread().name} is building font renderer for ${this@WidgetFont.familyName} with $fingerprint"
             )

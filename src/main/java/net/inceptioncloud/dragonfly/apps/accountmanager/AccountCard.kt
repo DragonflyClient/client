@@ -99,22 +99,24 @@ class AccountCard(
         }
 
         val name = "name"<TextField> {
+            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 60, useScale = false)
+
             x = this@AccountCard.x
             y = skull.y + skull.height + 20.0
             width = this@AccountCard.width
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
             staticText = account.displayName
             textAlignHorizontal = Alignment.CENTER
             dropShadow = true
         }!!.also { it.adaptHeight() }
 
         "email"<TextField> {
+            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 35, useScale = false)
+
             x = this@AccountCard.x
             y = name.y + name.height + 7.0
             width = this@AccountCard.width
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
             staticText = censorEmail(account.email)
             textAlignHorizontal = Alignment.CENTER
             dropShadow = true

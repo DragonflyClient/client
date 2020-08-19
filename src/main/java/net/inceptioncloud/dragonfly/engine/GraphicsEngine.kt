@@ -138,11 +138,7 @@ object GraphicsEngine {
  * Switches to the screen using the switch overlay.
  */
 fun GuiScreen.switch() {
-    ScreenOverlay.withSwitchOverlay {
-        Minecraft.getMinecraft().addScheduledTask {
-            Minecraft.getMinecraft().displayGuiScreen(this)
-        }
-    }
+    ScreenOverlay.displayGui(this)
 }
 
 /**

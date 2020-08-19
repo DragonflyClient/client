@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import com.google.gson.*
 import kotlinx.coroutines.runBlocking
+import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
@@ -15,7 +16,7 @@ import java.util.*
  */
 object AccountManagerApp : TaskbarApp("Account Manager") {
 
-    override fun open() = gui(AccountManagerUI(Minecraft.getMinecraft().currentScreen))
+    override fun open() = gui(AccountManagerUI(mc.currentScreen))
 
     /**
      * The Dragonfly-internal file in which the saved accounts are stored.

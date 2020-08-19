@@ -43,8 +43,7 @@ class BackNavigation(
             height = this@BackNavigation.height
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = (height * 1.2).toInt())
-            useScale = false
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = (height * 1.2).toInt(), useScale = false)
         }!!
 
         this.width = text.x + text.width - icon.x
@@ -62,11 +61,7 @@ class BackNavigation(
 
     fun gui(gui: GuiScreen) {
         action = {
-            ScreenOverlay.withSwitchOverlay {
-                Minecraft.getMinecraft().addScheduledTask {
-                    Minecraft.getMinecraft().displayGuiScreen(gui)
-                }
-            }
+            ScreenOverlay.displayGui(gui)
         }
     }
 }

@@ -66,6 +66,7 @@ class WidgetStage(val name: String) {
     fun add(widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
         contentPrivate += widgetWithId
         widgetWithId.second.parentStage = this
+        (widgetWithId.second as? AssembledWidget<*>)?.runStructureUpdate()
         inspector { observableContent += widgetWithId }
     }
 
@@ -76,7 +77,10 @@ class WidgetStage(val name: String) {
      */
     fun add(vararg widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
         contentPrivate += widgetWithId
-        widgetWithId.forEach { it.second.parentStage = this }
+        widgetWithId.forEach {
+            it.second.parentStage = this
+            (it.second as? AssembledWidget<*>)?.runStructureUpdate()
+        }
         inspector { observableContent += widgetWithId }
     }
 

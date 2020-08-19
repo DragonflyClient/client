@@ -40,9 +40,7 @@ class AddAccountUI(val previousScreen: GuiScreen) : GuiScreen() {
             y = 400.0
             label = "Email address"
             padding = 8.0
-            font = Dragonfly.fontManager.defaultFont
-            fontSize = height
-            useScale = false
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt(), useScale = false)
             maxStringLength = 100
         } id "email-field"
 
@@ -50,9 +48,7 @@ class AddAccountUI(val previousScreen: GuiScreen) : GuiScreen() {
             positionBelow("email-field", 25.0)
             label = "Password"
             padding = 8.0
-            font = Dragonfly.fontManager.defaultFont
-            fontSize = height
-            useScale = false
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt(), useScale = false)
             isPassword = true
             maxStringLength = 100
         } id "password-field"

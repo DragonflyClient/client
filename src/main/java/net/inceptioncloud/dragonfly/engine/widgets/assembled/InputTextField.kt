@@ -7,6 +7,7 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.WidgetFont
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
@@ -50,10 +51,7 @@ class InputTextField(
     @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
     @Interpolate var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
 
-    var useScale: Boolean by property(true)
-    var font: WidgetFont by property(Dragonfly.fontManager.defaultFont)
-    var fontWeight: FontWeight by property(FontWeight.REGULAR)
-    @Interpolate var fontSize: Double by property(18.0)
+    var fontRenderer: IFontRenderer? by property(null)
     @Interpolate var padding: Double by property(2.0)
 
     var label: String by property("Input Label")
@@ -145,11 +143,6 @@ class InputTextField(
         )?.start()
     }
 
-    /**
-     * Builds a font renderer based on the [font], [fontSize] and [fontWeight].
-     */
-    private fun getFontRenderer() = (structure["input-text"] as TextField).fontRenderer
-
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "box-round" to RoundedRectangle(),
         "box-sharp" to Rectangle(),
@@ -181,10 +174,7 @@ class InputTextField(
 
         val inputText = (structure["input-text"] as TextField).also {
             it.staticText = ""
-            it.font = font
-            it.fontSize = fontSize
-            it.fontWeight = fontWeight
-            it.useScale = useScale
+            it.fontRenderer = fontRenderer
             it.color = foregroundColor
             it.width = width
             it.height = height - height / 5.0
@@ -196,10 +186,7 @@ class InputTextField(
 
         (structure["label"] as TextField).also {
             it.staticText = label
-            it.font = font
-            it.fontSize = fontSize
-            it.fontWeight = fontWeight
-            it.useScale = useScale
+            it.fontRenderer = fontRenderer
             it.color = DEFAULT_TEXT_COLOR
             it.width = width
             it.adaptHeight = true
@@ -230,7 +217,7 @@ class InputTextField(
         }
 
         (structure["cursor"] as Rectangle).also {
-            it.height = inputText.fontRenderer.height.toDouble()
+            it.height = inputText.fontRenderer?.height?.toDouble() ?: 0.0
             it.width = height / 33.3
             it.color = color
             it.y = y + height - it.height - bottomLine.height - 1
@@ -238,10 +225,9 @@ class InputTextField(
     }
 
     override fun render() {
-        val fontRenderer = getFontRenderer()
         val cursorPos = cursorPosition - lineScrollOffset
         val maxStringSize = (width - padding * 2).toInt()
-        val visibleText = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringSize)
+        val visibleText = fontRenderer?.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringSize) ?: ""
         val end = (selectionEnd - lineScrollOffset).coerceAtMost(visibleText.length)
         val cursorInBounds = cursorPos >= 0 && cursorPos <= visibleText.length
         val cursorVisible = isFocused && ((System.currentTimeMillis() / 500) % 2 == 0L
@@ -250,18 +236,18 @@ class InputTextField(
 
         if (visibleText.isNotEmpty()) {
             val string = if (cursorInBounds) visibleText.substring(0, cursorPos) else visibleText
-            val stringWidth = fontRenderer.getStringWidth(string)
+            val stringWidth = fontRenderer?.getStringWidth(string) ?: 0
             x1 = x + stringWidth
         }
 
         val cursorNotAtEnd = cursorPosition < inputText.length || inputText.length >= maxStringLength
         var cursorX = x1 + padding
         val closedRange = 0..visibleText.length
-        val selectionWidth: Double = fontRenderer.getStringWidth(
+        val selectionWidth: Double = fontRenderer?.getStringWidth(
             visibleText.substring(
                 cursorPos.coerceAtMost(end).coerceIn(closedRange), end.coerceAtLeast(cursorPos).coerceIn(closedRange)
             )
-        ).toDouble()
+        )?.toDouble() ?: 0.0
 
         if (!cursorInBounds) {
             cursorX = if (cursorPos > 0) x + width else x
@@ -364,10 +350,9 @@ class InputTextField(
         isFocused = data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
 
         if (isFocused && data.button == 0) {
-            val fontRenderer = getFontRenderer()
             val i: Int = (data.mouseX - x - padding).toInt() // TODO: -4 can be removed
-            val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), (width - padding * 2).toInt())
-            setCursorPosition(fontRenderer.trimStringToWidth(s, i).length + lineScrollOffset)
+            val s: String = fontRenderer?.trimStringToWidth(inputText.substring(lineScrollOffset), (width - padding * 2).toInt()) ?: ""
+            setCursorPosition(fontRenderer?.trimStringToWidth(s, i)?.length ?: 0 + lineScrollOffset)
         }
     }
 
@@ -461,7 +446,6 @@ class InputTextField(
 
     private fun setSelectionPos(pos: Int) {
         val i: Int = inputText.length
-        val fontRenderer = getFontRenderer()
         var position = pos
 
         if (position > i) {
@@ -478,10 +462,10 @@ class InputTextField(
             this.lineScrollOffset = i
         }
         val maxStringWidth: Int = (width - padding * 2).toInt()
-        val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringWidth)
+        val s: String = fontRenderer?.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringWidth) ?: ""
         val k: Int = s.length + lineScrollOffset
         if (position == lineScrollOffset) {
-            lineScrollOffset -= fontRenderer.trimStringToWidth(inputText, maxStringWidth, true).length
+            lineScrollOffset -= fontRenderer?.trimStringToWidth(inputText, maxStringWidth, true)?.length ?: 0
         }
         if (position > k) {
             lineScrollOffset += position - k

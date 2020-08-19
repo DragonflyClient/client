@@ -31,11 +31,7 @@ class TextRenderer(
     var shadowColor: WidgetColor? by property(null)
     var shadowDistance: Double? by property(null)
 
-    var useScale: Boolean by property(true)
-    var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
-    var font: WidgetFont? by property(null)
-    var fontWeight: FontWeight by property(FontWeight.REGULAR)
-    @Interpolate var fontSize: Double by property(19.0)
+    var fontRenderer: IFontRenderer? by property(null)
 
     @Interpolate override var x: Double by property(0.0)
     @Interpolate override var y: Double by property(0.0)
@@ -55,27 +51,22 @@ class TextRenderer(
         if (color.alphaDouble <= 0.1)
             return
 
-        if (font != null) {
-            fontRenderer = font?.fontRenderer(
-                fontWeight = this@TextRenderer.fontWeight,
-                size = fontSize.toInt(),
-                useScale = useScale
-            ) ?: fontRenderer
-        }
+        if (fontRenderer == null)
+            return
 
         val posX = x.toFloat()
         val posY = if (fontRenderer is GlyphFontRenderer) y.toFloat() + 3F else y.toFloat()
 
         color.glBindColor()
-        height = fontRenderer.height.toDouble()
+        height = fontRenderer!!.height.toDouble()
         width = if (dropShadow) {
-            fontRenderer.drawStringWithCustomShadow(
+            fontRenderer!!.drawStringWithCustomShadow(
                 text, posX.toInt(), posY.toInt(), color.rgb,
                 shadowColor?.rgb ?: WidgetColor(0.0, 0.0, 0.0, 0.5).rgb,
                 shadowDistance?.toFloat() ?: 1F
             ).toDouble() - posX
         } else {
-            fontRenderer.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
+            fontRenderer!!.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
         }
 
         if (showBounds) {
@@ -84,9 +75,12 @@ class TextRenderer(
     }
 
     override fun stateChanged() {
+        if (fontRenderer == null)
+            return
+
         // override to support aligning in assembled widgets
-        height = fontRenderer.height.toDouble()
-        width = fontRenderer.getStringWidth(text).toDouble()
+        height = fontRenderer!!.height.toDouble()
+        width = fontRenderer!!.getStringWidth(text).toDouble()
     }
 
     /**
