@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.font
 
+import com.google.common.hash.Hashing
 import com.google.gson.Gson
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
 import net.minecraft.client.renderer.GlStateManager
@@ -13,9 +14,11 @@ import java.awt.font.TextAttribute
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
+import java.nio.charset.Charset
 import javax.imageio.ImageIO
 import kotlin.math.ceil
 import kotlin.math.sqrt
+import kotlin.system.measureNanoTime
 
 class GlyphPage(
     val font: Font
@@ -180,15 +183,26 @@ class GlyphPage(
     }
 
     /** the directory in which the glyphs are cached */
-    private val glyphsDirectory = with(font) {
-        File("dragonfly/glyphs/${name}/${attributes[TextAttribute.TRACKING]}/${style}/${imgSize}/").also { it.mkdirs() }
+    private val glyphsDirectory by lazy {
+        File("dragonfly/glyphs/${hash.substring(0, 2)}/").also { it.mkdirs() }
+    }
+
+    /**
+     * The hash value that uniquely identifies the glyph page and is used for saving and reading it.
+     */
+    private val hash by lazy {
+        with(font) {
+            Hashing.sha1().hashString(
+                    "${name}-${attributes[TextAttribute.TRACKING]}-${style}-${imgSize}-${size}", Charset.defaultCharset()
+            ).toString()
+        }
     }
 
     /** the file that caches the glyph image */
-    private val glyphImage = File(glyphsDirectory, "${font.size}.png")
+    private val glyphImage by lazy { File(glyphsDirectory, "${hash}.png") }
 
     /** the file that caches the glyph properties */
-    private val glyphProperties = File(glyphsDirectory, "${font.size}.json")
+    private val glyphProperties by lazy { File(glyphsDirectory, "${hash}.json") }
 
     /**
      * Returns a cached glyph image for the [font].
