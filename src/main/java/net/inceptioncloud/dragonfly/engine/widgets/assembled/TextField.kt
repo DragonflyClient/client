@@ -51,6 +51,7 @@ class TextField(
     var textAlignHorizontal: Alignment by property(START)
     var textAlignVertical: Alignment by property(START)
 
+    var useScale: Boolean by property(true)
     var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
     var font: WidgetFont? by property(null)
     var fontWeight: FontWeight by property(FontWeight.REGULAR)
@@ -80,7 +81,8 @@ class TextField(
         if (font != null) {
             fontRenderer = font?.fontRenderer(
                 fontWeight = this@TextField.fontWeight,
-                size = fontSize.toInt()
+                size = fontSize.toInt(),
+                useScale = useScale
             ) ?: fontRenderer
         }
 

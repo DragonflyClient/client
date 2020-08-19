@@ -10,9 +10,10 @@ package net.inceptioncloud.dragonfly.engine.font
  * @param letterSpacing optional modification of the letter spacing (0.0 by default)
  * @param forceCreation true, if no cached font renderer should be used
  */
-data class FontRendererBuilder(
+data class FontRendererFingerprint(
     var fontWeight: FontWeight,
     var size: Int,
     var letterSpacing: Double,
+    var useScale: Boolean,
     var forceCreation: Boolean = false
 )

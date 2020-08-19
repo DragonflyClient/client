@@ -108,6 +108,8 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     private float blue;
 
+    private boolean useScale;
+
     /**
      * Default Constructor
      */
@@ -115,12 +117,14 @@ public class GlyphFontRenderer implements IFontRenderer {
             GlyphPage pageRegular,
             GlyphPage pageBold,
             GlyphPage pageItalic,
-            GlyphPage pageBoldItalic
+            GlyphPage pageBoldItalic,
+            boolean useScale
     ) {
         this.pageRegular = pageRegular;
         this.pageBold = pageBold;
         this.pageItalic = pageItalic;
         this.pageBoldItalic = pageBoldItalic;
+        this.useScale = useScale;
 
         for (int i = 0; i < 32; ++i) {
             int j = (i >> 3 & 1) * 85;
@@ -149,7 +153,8 @@ public class GlyphFontRenderer implements IFontRenderer {
     public static GlyphFontRenderer create(
             String fontName,
             int size,
-            double letterSpacing
+            double letterSpacing,
+            boolean useScale
     ) {
         // If the font isn't already loaded, import it from a .ttf file
         if (!LOADED_FONTS.contains(fontName)) {
@@ -164,8 +169,9 @@ public class GlyphFontRenderer implements IFontRenderer {
             }
         }
 
+        final double quality = Math.round(OptionsSectionPerformance.getFontQuality().invoke() * 10.0) / 10.0;
         final char[] chars = GraphicsEngine.CHARACTERS;
-        final int scaledSize = (int) (size * getFontQualityScale());
+        final int scaledSize = useScale ? (int) (size * quality) : size;
 
         GlyphPage regularPage = new GlyphPage(makeFont(fontName, Font.PLAIN, scaledSize, letterSpacing));
         regularPage.generateGlyphPage(chars);
@@ -180,14 +186,17 @@ public class GlyphFontRenderer implements IFontRenderer {
         boldItalicPage.generateGlyphPage(chars);
 
         return new GlyphFontRenderer(
-                regularPage, boldPage, italicPage, boldItalicPage
+                regularPage, boldPage, italicPage, boldItalicPage, useScale
         );
     }
 
     /**
      * Quick Method to access {@link OptionsSectionPerformance#getFontQuality()}
      */
-    public static double getFontQualityScale() {
+    public double getFontQualityScale() {
+        if (!useScale)
+            return 1.0;
+
         final double quality = OptionsSectionPerformance.getFontQuality().invoke();
         return Math.round(quality * 10.0) / 10.0;
     }

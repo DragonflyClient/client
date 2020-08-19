@@ -103,7 +103,7 @@ class AccountCard(
             y = skull.y + skull.height + 20.0
             width = this@AccountCard.width
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
             staticText = account.displayName
             textAlignHorizontal = Alignment.CENTER
             dropShadow = true
@@ -114,7 +114,7 @@ class AccountCard(
             y = name.y + name.height + 7.0
             width = this@AccountCard.width
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
             staticText = censorEmail(account.email)
             textAlignHorizontal = Alignment.CENTER
             dropShadow = true

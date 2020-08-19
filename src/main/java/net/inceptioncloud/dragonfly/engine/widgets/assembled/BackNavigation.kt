@@ -44,6 +44,7 @@ class BackNavigation(
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = (height * 1.2).toInt())
+            useScale = false
         }!!
 
         this.width = text.x + text.width - icon.x

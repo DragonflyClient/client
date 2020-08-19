@@ -31,6 +31,7 @@ class TextRenderer(
     var shadowColor: WidgetColor? by property(null)
     var shadowDistance: Double? by property(null)
 
+    var useScale: Boolean by property(true)
     var fontRenderer: IFontRenderer by property(Dragonfly.fontManager.regular)
     var font: WidgetFont? by property(null)
     var fontWeight: FontWeight by property(FontWeight.REGULAR)
@@ -57,7 +58,8 @@ class TextRenderer(
         if (font != null) {
             fontRenderer = font?.fontRenderer(
                 fontWeight = this@TextRenderer.fontWeight,
-                size = fontSize.toInt()
+                size = fontSize.toInt(),
+                useScale = useScale
             ) ?: fontRenderer
         }
 

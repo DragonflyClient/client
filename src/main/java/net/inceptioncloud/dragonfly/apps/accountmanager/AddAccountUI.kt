@@ -42,6 +42,7 @@ class AddAccountUI(val previousScreen: GuiScreen) : GuiScreen() {
             padding = 8.0
             font = Dragonfly.fontManager.defaultFont
             fontSize = height
+            useScale = false
             maxStringLength = 100
         } id "email-field"
 
@@ -51,6 +52,7 @@ class AddAccountUI(val previousScreen: GuiScreen) : GuiScreen() {
             padding = 8.0
             font = Dragonfly.fontManager.defaultFont
             fontSize = height
+            useScale = false
             isPassword = true
             maxStringLength = 100
         } id "password-field"
@@ -63,6 +65,7 @@ class AddAccountUI(val previousScreen: GuiScreen) : GuiScreen() {
             height = 60.0
             x = this@AddAccountUI.width / 2.0 - width / 2.0
             iconSize = 50.0
+            useScale = false
 
             onClick {
                 GlobalScope.launch(Dispatchers.IO) {

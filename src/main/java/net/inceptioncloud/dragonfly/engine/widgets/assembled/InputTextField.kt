@@ -50,6 +50,7 @@ class InputTextField(
     @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
     @Interpolate var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
 
+    var useScale: Boolean by property(true)
     var font: WidgetFont by property(Dragonfly.fontManager.defaultFont)
     var fontWeight: FontWeight by property(FontWeight.REGULAR)
     @Interpolate var fontSize: Double by property(18.0)
@@ -183,6 +184,7 @@ class InputTextField(
             it.font = font
             it.fontSize = fontSize
             it.fontWeight = fontWeight
+            it.useScale = useScale
             it.color = foregroundColor
             it.width = width
             it.height = height - height / 5.0
@@ -197,6 +199,7 @@ class InputTextField(
             it.font = font
             it.fontSize = fontSize
             it.fontWeight = fontWeight
+            it.useScale = useScale
             it.color = DEFAULT_TEXT_COLOR
             it.width = width
             it.adaptHeight = true

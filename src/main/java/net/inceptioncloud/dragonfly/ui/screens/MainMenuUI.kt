@@ -53,6 +53,7 @@ class MainMenuUI : GuiScreen() {
             staticText = mc.session.username
             font = Dragonfly.fontManager.defaultFont
             fontSize = 50.0
+            useScale = false
             textAlignVertical = Alignment.CENTER
         } id "player-name"
 
@@ -71,6 +72,7 @@ class MainMenuUI : GuiScreen() {
             textAlignHorizontal = Alignment.END
             font = Dragonfly.fontManager.defaultFont
             fontSize = 50.0
+            useScale = false
             color = DragonflyPalette.foreground
             width = 500.0
             padding = 10.0
@@ -86,6 +88,7 @@ class MainMenuUI : GuiScreen() {
             y = 500.0
             text = "Singleplayer"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/singleplayer.png"))
+            useScale = false
 
             onClick {
                 mc.displayGuiScreen(GuiSelectWorld(this@MainMenuUI))
@@ -97,6 +100,7 @@ class MainMenuUI : GuiScreen() {
 
             text = "Multiplayer"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/multiplayer.png"))
+            useScale = false
 
             onClick {
                 mc.displayGuiScreen(GuiMultiplayer(this@MainMenuUI))
@@ -108,6 +112,7 @@ class MainMenuUI : GuiScreen() {
 
             text = "Options"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/options.png"))
+            useScale = false
 
             onClick {
                 mc.displayGuiScreen(GuiOptions(this@MainMenuUI, mc.gameSettings))
