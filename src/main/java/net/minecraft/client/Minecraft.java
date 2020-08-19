@@ -13,6 +13,7 @@ import net.inceptioncloud.dragonfly.engine.inspector.InspectorService;
 import net.inceptioncloud.dragonfly.event.client.ClientStartupEvent;
 import net.inceptioncloud.dragonfly.event.client.GraphicsInitializedEvent;
 import net.inceptioncloud.dragonfly.event.client.ResizeEvent;
+import net.inceptioncloud.dragonfly.event.client.ToggleFullscreenEvent;
 import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent;
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent;
 import net.inceptioncloud.dragonfly.event.control.MouseInputEvent;
@@ -1475,6 +1476,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
                 this.displayWidth = this.tempDisplayWidth;
                 this.displayHeight = this.tempDisplayHeight;
             }
+
+            final ToggleFullscreenEvent toggleFullscreenEvent = new ToggleFullscreenEvent(this.displayWidth, this.displayHeight, new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth(), new ScaledResolution(Minecraft.getMinecraft()).getScaledHeight(), !this.isFullScreen());
+            Dragonfly.getEventBus().post(toggleFullscreenEvent);
 
             if (this.displayWidth <= 0) {
                 this.displayWidth = 1;
