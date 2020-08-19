@@ -28,17 +28,34 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
      * Its content is stored when [storeAccounts] is called.
      */
     val accounts: MutableList<Account> = kotlin.run {
-        val fromLauncher = readFromLauncher() ?: listOf()
         val fromFile = readFromAccountsFile() ?: listOf()
+        val fromLauncher = readFromLauncher() ?: listOf()
 
-        (fromFile + fromLauncher).distinctBy { it.uuid }.toMutableList()
+        val total = fromFile.toMutableList()
+
+        fromLauncher // add accounts from launcher that aren't in the file
+            .filter { l -> total.none { it.uuid == l.uuid } }
+            .also { LogManager.getLogger().info("Importing ${it.size} account(s) from launcher..."); }
+            .forEach { total.add(it) }
+
+        total.forEach { runBlocking { it.retrieveSkull() } } // preload skulls
+
+        total
     }
+
+    /**
+     * The client token that is used for authentication by the Minecraft launcher. This token
+     * can be reused for authentications by Dragonfly to prevent invalidating the accounts stored
+     * in the launcher. If no client token could be found, this value is null and the server will
+     * randomly generate a client token for authentications by Dragonfly.
+     */
+    private var launcherClientToken: String? = null
 
     /**
      * Currently selected account from the [accounts] list or null if none is selected.
      */
     val selectedAccount: Account?
-        get() = accounts.firstOrNull { it.uuid.toString() == Minecraft.getMinecraft().session.playerID }
+        get() = accounts.firstOrNull { it.uuid.toSimpleString() == Minecraft.getMinecraft().session.playerID }
 
     init {
         storeAccounts()
@@ -94,6 +111,8 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
                     val displayName = profiles.get(digits).asJsonObject.get("displayName").asString
                     val clientToken = jsonObject.get("clientToken").asString
 
+                    launcherClientToken = clientToken
+
                     Account(displayName, email, uuid, accessToken, clientToken)
                 }.filter { runBlocking { it.validate() } }
         } catch (e: Exception) {
@@ -119,6 +138,9 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
             addProperty("username", email)
             addProperty("password", password)
             addProperty("requestUser", true)
+
+            if (launcherClientToken != null)
+                addProperty("clientToken", launcherClientToken)
         }
         val response = request("authenticate", payload)
         val jsonObject = JsonParser().parse(response).asJsonObject
@@ -146,3 +168,8 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
         digits.replace("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})".toRegex(), "$1-$2-$3-$4-$5")
     )
 }
+
+/**
+ * Convenient function to remove dashes from a UUID.
+ */
+fun UUID.toSimpleString() = toString().replace("-", "")

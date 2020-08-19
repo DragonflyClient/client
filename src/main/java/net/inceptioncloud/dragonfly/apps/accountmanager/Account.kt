@@ -121,7 +121,7 @@ data class Account(
     /**
      * Creates a [Session] based on the account data.
      */
-    fun toSession() = Session(displayName, uuid.toString(), accessToken, "mojang")
+    fun toSession() = Session(displayName, uuid.toSimpleString(), accessToken, "mojang")
 }
 
 /**

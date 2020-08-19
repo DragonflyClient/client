@@ -9,6 +9,7 @@ import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
+import org.apache.logging.log4j.LogManager
 import java.lang.Double.min
 
 class AccountManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
@@ -46,7 +47,7 @@ class AccountManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             val accountCard = +AccountCard(it) {
                 x = currentX
                 y = 300.0
-                isSelected = Minecraft.getMinecraft().session.playerID == it.uuid.toString()
+                isSelected = AccountManagerApp.selectedAccount == it
             } id "account-$index"
 
             GlobalScope.launch(Dispatchers.IO) {
