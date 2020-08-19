@@ -32,4 +32,9 @@ object KeyStrokesSubscriber {
         Minecraft.getMinecraft().ingameGUI.initKeyStrokes(true)
     }
 
+    @Subscribe
+    fun resizeWindow(event: ResizeEvent) {
+        Minecraft.getMinecraft().ingameGUI.initKeyStrokes(true)
+    }
+
 }
