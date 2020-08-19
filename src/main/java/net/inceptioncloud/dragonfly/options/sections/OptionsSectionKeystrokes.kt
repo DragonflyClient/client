@@ -23,7 +23,8 @@ object OptionsSectionKeystrokes {
     @JvmStatic
     val switch = OptionEntryMultipleChoiceFactory.optionEntryMultipleChoice {
         name = "Keystrokes"
-        description = "Turning this on activates the KeyStrokes feature, turning this off deactivates the KeyStrokes feature."
+        description =
+            "Turning this on activates the KeyStrokes feature, turning this off deactivates the KeyStrokes feature."
         +OptionChoice(0, "Off")
         +OptionChoice(1, "On")
         externalApply = { value, optionKey ->
@@ -44,6 +45,9 @@ object OptionsSectionKeystrokes {
         name = "Position"
         description = "Changes the position of the KeyStrokes overlay."
         +OptionChoice(0, "Top Left")
+        +OptionChoice(1, "Top Right")
+        +OptionChoice(2, "Bottom Left")
+        +OptionChoice(3, "Bottom Right")
         externalApply = { value, optionKey ->
             optionKey.set(value)
             reloadOverlay()
@@ -152,10 +156,11 @@ object OptionsSectionKeystrokes {
     }
 
     fun reloadOverlay() {
-        for(keystroke in KeyStrokesManager.keystrokes) {
+        for (keystroke in KeyStrokesManager.keystrokes) {
             Minecraft.getMinecraft().ingameGUI.keyStrokesScale["keystrokes-${keystroke.keyDesc}"] = scale.invoke()!!
             Minecraft.getMinecraft().ingameGUI.keyStrokesSpace["keystrokes-${keystroke.keyDesc}"] = space.invoke()!!
-            Minecraft.getMinecraft().ingameGUI.keyStrokesFontSize["keystrokes-${keystroke.keyDesc}"] = fontSize.invoke()!!
+            Minecraft.getMinecraft().ingameGUI.keyStrokesFontSize["keystrokes-${keystroke.keyDesc}"] =
+                fontSize.invoke()!!
 
             Minecraft.getMinecraft().ingameGUI.initKeyStrokes(true)
         }

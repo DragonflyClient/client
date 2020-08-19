@@ -1027,7 +1027,8 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     @Suppress("UNCHECKED_CAST")
     fun <W : Widget<W>> getWidget(identifier: String): W? = stage[identifier] as? W
 
-    val keyStrokesStart = 10.0
+    var keyStrokesStartX = 10.0
+    var keyStrokesStartY = 10.0
 
     val keyStrokesTextColor = HashMap<String, WidgetColor>()
     val keyStrokesBackgroundColor = HashMap<String, WidgetColor>()
@@ -1041,6 +1042,38 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     fun initKeyStrokes(overrideColors: Boolean) {
         var posX: Double
         var posY: Double
+
+        when (OptionsSectionKeystrokes.position.invoke()!!) {
+            0 -> {
+                keyStrokesStartX = 10.0
+                keyStrokesStartY = 10.0
+            }
+            1 -> {
+                val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
+                val scale = keyStrokesScale.values.first()
+                val space = keyStrokesSpace.values.first()
+
+                keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
+                keyStrokesStartY = 10.0
+            }
+            2 -> {
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = keyStrokesScale.values.first()
+                val space = keyStrokesSpace.values.first()
+
+                keyStrokesStartX = 10.0
+                keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+            }
+            3 -> {
+                val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = keyStrokesScale.values.first()
+                val space = keyStrokesSpace.values.first()
+
+                keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
+                keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+            }
+        }
 
         if (overrideColors) {
             for (keystroke in KeyStrokesManager.keystrokes) {
@@ -1065,43 +1098,43 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
                 when (keyStroke.keyDesc) {
                     "key.forward" -> {
-                        posX = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
-                        posY = keyStrokesStart
+                        posX = keyStrokesStartX + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        posY = keyStrokesStartY
                         keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
                         keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
                         name = Keyboard.getKeyName(keyStroke.keyCode)
                     }
                     "key.left" -> {
-                        posX = keyStrokesStart
-                        posY = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        posX = keyStrokesStartX
+                        posY = keyStrokesStartY + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
                         keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
                         keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
                         name = Keyboard.getKeyName(keyStroke.keyCode)
                     }
                     "key.back" -> {
-                        posX = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
-                        posY = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        posX = keyStrokesStartX + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        posY = keyStrokesStartY + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
                         keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
                         keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
                         name = Keyboard.getKeyName(keyStroke.keyCode)
                     }
                     "key.right" -> {
-                        posX = keyStrokesStart + (2 * keyStrokesScaleW[filter]!!) + (2 * keyStrokesSpace[filter]!!)
-                        posY = keyStrokesStart + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
+                        posX = keyStrokesStartX + (2 * keyStrokesScaleW[filter]!!) + (2 * keyStrokesSpace[filter]!!)
+                        posY = keyStrokesStartY + keyStrokesScaleW[filter]!! + keyStrokesSpace[filter]!!
                         keyStrokesScaleW[filter] = keyStrokesScale[filter]!!
                         keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
                         name = Keyboard.getKeyName(keyStroke.keyCode)
                     }
                     "key.jump" -> {
-                        posX = keyStrokesStart
-                        posY = keyStrokesStart + (2 * keyStrokesScaleW[filter]!!) + (2 * keyStrokesSpace[filter]!!)
+                        posX = keyStrokesStartX
+                        posY = keyStrokesStartY + (2 * keyStrokesScaleW[filter]!!) + (2 * keyStrokesSpace[filter]!!)
                         keyStrokesScaleW[filter] = (3 * keyStrokesScale[filter]!!) + (2 * keyStrokesSpace[filter]!!)
                         keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
                         name = Keyboard.getKeyName(keyStroke.keyCode)
                     }
                     "key.attack" -> {
-                        posX = keyStrokesStart
-                        posY = keyStrokesStart + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
+                        posX = keyStrokesStartX
+                        posY = keyStrokesStartY + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
                         keyStrokesScaleW[filter] =
                             (1.5 * keyStrokesScale[filter]!!) + (0.65 * keyStrokesSpace[filter]!!)
                         keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
@@ -1111,8 +1144,8 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
                             .replace("BUTTON2", "MMB")
                     }
                     "key.use" -> {
-                        posX = keyStrokesStart + (1.5 * keyStrokesScale[filter]!!) + (1.7 * keyStrokesSpace[filter]!!)
-                        posY = keyStrokesStart + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
+                        posX = keyStrokesStartX + (1.5 * keyStrokesScale[filter]!!) + (1.7 * keyStrokesSpace[filter]!!)
+                        posY = keyStrokesStartY + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
                         keyStrokesScaleW[filter] = (1.55 * keyStrokesScale[filter]!!)
                         keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
                         name = Mouse.getButtonName(keyStroke.keyCode + 100)
