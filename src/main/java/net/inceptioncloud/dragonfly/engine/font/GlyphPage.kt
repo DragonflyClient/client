@@ -181,7 +181,7 @@ class GlyphPage(
 
     /** the directory in which the glyphs are cached */
     private val glyphsDirectory = with(font) {
-        File("dragonfly/glyphs/${name}/${attributes[TextAttribute.TRACKING]}/${style}").also { it.mkdirs() }
+        File("dragonfly/glyphs/${name}/${attributes[TextAttribute.TRACKING]}/${style}/${imgSize}/").also { it.mkdirs() }
     }
 
     /** the file that caches the glyph image */
