@@ -17,8 +17,10 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.key.KeyController
 import net.inceptioncloud.dragonfly.key.KeyStorage
+import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.*
+import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.ScaledResolution
 import org.apache.logging.log4j.LogManager
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -43,10 +45,10 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
     private var result: KeyController.Result? = null
 
     /**
-     * An instance of the [GuiMainMenu] prepared to provide a smooth transition between this UI
-     * and the [GuiMainMenu] in case the [result] said that the attaching was a success.
+     * An instance of the [MainMenuUI] prepared to provide a smooth transition between this UI
+     * and the [MainMenuUI] in case the [result] said that the attaching was a success.
      */
-    private var guiMainMenu: GuiMainMenu? = null
+    private var mainMenuUI: MainMenuUI? = null
 
     /**
      * An instance of the [EnterKeyUI] that is previewed and switched to if the [result] shows that
@@ -122,7 +124,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                                 EaseCubic.IN_OUT,
                                 overlayBorder::x to this@AttachingKeyUI.width.toDouble()
                             )?.post { _, _ ->
-                                Minecraft.getMinecraft().currentScreen = if (result?.success == true) guiMainMenu else enterKeyUI
+                                Minecraft.getMinecraft().currentScreen = if (result?.success == true) mainMenuUI else enterKeyUI
                             }?.start()
                         }
                     }?.start()
@@ -190,8 +192,8 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         // initialize the main menu
-        if (guiMainMenu == null) {
-            guiMainMenu = GuiMainMenu().apply {
+        if (mainMenuUI == null) {
+            mainMenuUI = MainMenuUI().apply {
                 val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
                 val scaledWidth = scaledResolution.scaledWidth
                 val scaledHeight = scaledResolution.scaledHeight
@@ -247,7 +249,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
         } else if (loadingCircle1?.isVisible == false) {
             if (result?.success == true) {
                 // draw the main menu background to provide a smooth transition
-                guiMainMenu?.drawScreen(mouseX, mouseY, partialTicks)
+                mainMenuUI?.drawScreen(mouseX, mouseY, partialTicks)
             } else {
                 // draw the enter key ui background to provide a smooth transition
                 enterKeyUI?.drawScreen(mouseX, mouseY, partialTicks) ?: println("not drawing")

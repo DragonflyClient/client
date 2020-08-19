@@ -2,8 +2,8 @@ package net.inceptioncloud.dragonfly.engine.inspector.extension
 
 import javafx.application.Platform
 import javafx.scene.control.TreeItem
+import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiScreen
 import org.apache.logging.log4j.LogManager
 import org.reflections.Reflections
@@ -107,7 +107,7 @@ class GuiSelectorView : View("GUI selector") {
                         it.parameters.size == 1 && it.parameterTypes.getOrNull(0) == GuiScreen::class.java
                     }.also { constructor = it } != null -> {
                         LogManager.getLogger().info("Using parent-screen-constructor to instantiate ${clazz.simpleName}")
-                        instance = constructor!!.newInstance(Minecraft.getMinecraft().currentScreen ?: GuiMainMenu()) as GuiScreen
+                        instance = constructor!!.newInstance(Minecraft.getMinecraft().currentScreen ?: MainMenuUI()) as GuiScreen
                     }
                     else -> {
                         LogManager.getLogger().error("Cannot instantiate ${clazz.simpleName}!")
