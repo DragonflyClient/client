@@ -18,11 +18,9 @@ import java.nio.charset.Charset
 import javax.imageio.ImageIO
 import kotlin.math.ceil
 import kotlin.math.sqrt
-import kotlin.system.measureNanoTime
 
-class GlyphPage(
-    val font: Font
-) {
+class GlyphPage(val font: Font) {
+
     @JvmField
     var glyphCharacterMap = mutableMapOf<Char, Glyph>()
 
@@ -51,6 +49,9 @@ class GlyphPage(
     }
 
     fun generateGlyphPage(chars: CharArray) {
+        // obtain the current system graphical settings
+        val gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().defaultScreenDevice.defaultConfiguration
+
         // Calculate glyphPageSize
         var maxWidth = -1.0
         var maxHeight = -1.0
@@ -96,9 +97,9 @@ class GlyphPage(
             }
         }
 
-        bufferedImage = BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB)
+        bufferedImage = gfxConfig.createCompatibleImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB)
 
-        val graphics = bufferedImage!!.graphics as Graphics2D
+        val graphics = bufferedImage!!.createGraphics()
 
         graphics.font = font
         graphics.color = Color(255, 255, 255, 0)
@@ -141,6 +142,8 @@ class GlyphPage(
             posX += glyph.width + 4
             glyphCharacterMap[ch] = glyph
         }
+
+        graphics.dispose()
 
         cacheGlyph()
     }
@@ -193,7 +196,7 @@ class GlyphPage(
     private val hash by lazy {
         with(font) {
             Hashing.sha1().hashString(
-                    "${name}-${attributes[TextAttribute.TRACKING]}-${style}-${imgSize}-${size}", Charset.defaultCharset()
+                "${name}-${attributes[TextAttribute.TRACKING]}-${style}-${imgSize}-${size}", Charset.defaultCharset()
             ).toString()
         }
     }
