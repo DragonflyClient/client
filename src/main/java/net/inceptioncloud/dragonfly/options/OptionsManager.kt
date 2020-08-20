@@ -14,5 +14,6 @@ object OptionsManager {
         OptionsSectionOverlay.init()
         OptionsSectionChat.init()
         OptionsSectionPerformance.init()
+        OptionsSectionKeystrokes.init()
     }
 }

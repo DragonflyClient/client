@@ -174,9 +174,9 @@ object Dragonfly {
         synchronized(this) {
             transitions.toTypedArray().forEach { it.tick() }
             ScreenOverlay.stage.update()
+            Minecraft.getMinecraft().ingameGUI?.stage?.update()
 
-            if (Minecraft.getMinecraft().currentScreen != null)
-                Minecraft.getMinecraft().currentScreen.stage.update()
+            Minecraft.getMinecraft().currentScreen?.stage?.update()
 
             val tickEvent = ClientTickEvent()
             eventBus.post(tickEvent)
