@@ -1043,25 +1043,33 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         var posX: Double
         var posY: Double
 
-        val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
-        val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-        val scale = keyStrokesScale.values.first()
-        val space = keyStrokesSpace.values.first()
-
         when (OptionsSectionKeystrokes.position.invoke()!!) {
             0 -> {
                 keyStrokesStartX = 10.0
                 keyStrokesStartY = 10.0
             }
             1 -> {
+                val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
+                val scale = keyStrokesScale.values.first()
+                val space = keyStrokesSpace.values.first()
+
                 keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
                 keyStrokesStartY = 10.0
             }
             2 -> {
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = keyStrokesScale.values.first()
+                val space = keyStrokesSpace.values.first()
+
                 keyStrokesStartX = 10.0
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
             }
             3 -> {
+                val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = keyStrokesScale.values.first()
+                val space = keyStrokesSpace.values.first()
+
                 keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
             }
