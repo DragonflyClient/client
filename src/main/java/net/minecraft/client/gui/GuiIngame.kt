@@ -1169,7 +1169,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
                     textAlignHorizontal = Alignment.CENTER
                     textAlignVertical = Alignment.CENTER
                     staticText = name
-                fontRenderer = fontManager.defaultFont.fontRenderer(size = keyStrokesFontSize.toInt())
+                    fontRenderer = fontManager.defaultFont.fontRenderer(size = keyStrokesFontSize[filter]!!.toInt())
                 } id "keystrokes-${keyStroke.keyDesc}"
             }
         }

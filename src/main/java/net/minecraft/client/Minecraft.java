@@ -1611,7 +1611,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
                 if (Mouse.getEventButtonState()) {
                     if (this.thePlayer.isSpectator() && i == 2) {
-                        this.ingameGUI.getSpectatorGui().func_175261_b();
+                        this.ingameGUI.spectatorGui.func_175261_b();
                     } else {
                         KeyBinding.onTick(i - 100);
                     }
@@ -1626,8 +1626,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                         if (this.thePlayer.isSpectator()) {
                             j = j < 0 ? -1 : 1;
 
-                            if (this.ingameGUI.getSpectatorGui().func_175262_a()) {
-                                this.ingameGUI.getSpectatorGui().func_175259_b(-j);
+                            if (this.ingameGUI.spectatorGui.func_175262_a()) {
+                                this.ingameGUI.spectatorGui.func_175259_b(-j);
                             } else {
                                 float f = MathHelper.clamp_float(this.thePlayer.capabilities.getFlySpeed() + (float) j * 0.005F, 0.0F, 0.2F);
                                 this.thePlayer.capabilities.setFlySpeed(f);
@@ -1778,7 +1778,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             for (int l = 0 ; l < 9 ; ++l) {
                 if (this.gameSettings.keyBindsHotbar[l].isPressed()) {
                     if (this.thePlayer.isSpectator()) {
-                        this.ingameGUI.getSpectatorGui().func_175260_a(l);
+                        this.ingameGUI.spectatorGui.func_175260_a(l);
                     } else {
                         this.thePlayer.inventory.currentItem = l;
                     }
