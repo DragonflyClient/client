@@ -64,7 +64,6 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     /**
      * The spectator GUI for this in-game GUI instance
      */
-    @JvmField
     val spectatorGui: GuiSpectator
 
     val tabList: GuiPlayerTabOverlay
@@ -141,7 +140,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         val scaledresolution = ScaledResolution(mc)
         val scaledWidth = scaledresolution.scaledWidth
         val scaledHeight = scaledresolution.scaledHeight
-        mc.entityRenderer.setupOverlayRendering()
+        mc.entityRenderer.setupOverlayRendering(false)
         GlStateManager.enableBlend()
         if (Config.isVignetteEnabled()) {
             renderVignette(mc.thePlayer.getBrightness(partialTicks), scaledresolution)
@@ -1116,8 +1115,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
                 textAlignHorizontal = Alignment.CENTER
                 textAlignVertical = Alignment.CENTER
                 staticText = name
-                font = fontManager.defaultFont
-                this.fontSize = keyStrokesFontSize
+                fontRenderer = fontManager.defaultFont.fontRenderer(size = keyStrokesFontSize.toInt())
             } id "keystrokes-${keyStroke.keyDesc}"
         }
 
