@@ -1,11 +1,15 @@
 package net.inceptioncloud.dragonfly.options.sections
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryMultipleChoiceFactory
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryRangeDoubleFactory
 import net.inceptioncloud.dragonfly.options.entries.util.OptionChoice
 import net.minecraft.client.Minecraft
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
@@ -19,7 +23,8 @@ object OptionsSectionKeystrokes {
     @JvmStatic
     val switch = OptionEntryMultipleChoiceFactory.optionEntryMultipleChoice {
         name = "Keystrokes"
-        description = "Turning this on activates the KeyStrokes feature, turning this off deactivates the KeyStrokes feature."
+        description =
+            "Turning this on activates the KeyStrokes feature, turning this off deactivates the KeyStrokes feature."
         +OptionChoice(0, "Off")
         +OptionChoice(1, "On")
         externalApply = { value, optionKey ->
@@ -40,6 +45,9 @@ object OptionsSectionKeystrokes {
         name = "Position"
         description = "Changes the position of the KeyStrokes overlay."
         +OptionChoice(0, "Top Left")
+        +OptionChoice(1, "Top Right")
+        +OptionChoice(2, "Bottom Left")
+        +OptionChoice(3, "Bottom Right")
         externalApply = { value, optionKey ->
             optionKey.set(value)
             reloadOverlay()
@@ -148,13 +156,14 @@ object OptionsSectionKeystrokes {
     }
 
     fun reloadOverlay() {
+        for (keystroke in KeyStrokesManager.keystrokes) {
+            Minecraft.getMinecraft().ingameGUI.keyStrokesScale["keystrokes-${keystroke.keyDesc}"] = scale.invoke()!!
+            Minecraft.getMinecraft().ingameGUI.keyStrokesSpace["keystrokes-${keystroke.keyDesc}"] = space.invoke()!!
+            Minecraft.getMinecraft().ingameGUI.keyStrokesFontSize["keystrokes-${keystroke.keyDesc}"] =
+                fontSize.invoke()!!
 
-        /*Minecraft.getMinecraft().ingameGUI.keyStrokesScale = scale.invoke()!!
-        Minecraft.getMinecraft().ingameGUI.keyStrokesSpace = space.invoke()!!
-        Minecraft.getMinecraft().ingameGUI.keyStrokesFontSize = fontSize.invoke()!!
-
-        Minecraft.getMinecraft().ingameGUI.initKeyStrokes()*/
-
+            Minecraft.getMinecraft().ingameGUI.initKeyStrokes(true)
+        }
     }
 
 }

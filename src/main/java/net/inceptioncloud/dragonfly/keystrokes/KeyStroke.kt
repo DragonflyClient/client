@@ -13,14 +13,13 @@ class KeyStroke(val keyCode: Int, val keyDesc: String) {
             Minecraft.getMinecraft().ingameGUI.stage["keystrokes-$keyDesc"].apply {
                 if(this is TextField) {
                     if(value) {
-                        Minecraft.getMinecraft().ingameGUI.keyStrokesTextColor = WidgetColor(1.0, 1.0, 1.0, 1.0)
-                        Minecraft.getMinecraft().ingameGUI.keyStrokesBackgroundColor = WidgetColor(1.0, 1.0, 1.0, 0.2)
+                        Minecraft.getMinecraft().ingameGUI.keyStrokesTextColor["keystrokes-$keyDesc"] = KeyStrokesManager.colorTextActive
+                        Minecraft.getMinecraft().ingameGUI.keyStrokesBackgroundColor["keystrokes-$keyDesc"] = KeyStrokesManager.colorBgActive
                     }else {
-                        Minecraft.getMinecraft().ingameGUI.keyStrokesTextColor = WidgetColor(1.0, 1.0, 1.0, 1.0)
-                        Minecraft.getMinecraft().ingameGUI.keyStrokesBackgroundColor = WidgetColor(0.5, 0.5, 0.5, 0.2)
+                        Minecraft.getMinecraft().ingameGUI.keyStrokesTextColor["keystrokes-$keyDesc"] = KeyStrokesManager.colorTextInactive
+                        Minecraft.getMinecraft().ingameGUI.keyStrokesBackgroundColor["keystrokes-$keyDesc"] = KeyStrokesManager.colorBgInactive
                     }
-                    this.backgroundColor = Minecraft.getMinecraft().ingameGUI.keyStrokesBackgroundColor
-                    this.color = Minecraft.getMinecraft().ingameGUI.keyStrokesTextColor
+                    Minecraft.getMinecraft().ingameGUI.initKeyStrokes(false)
                 }
             }
 

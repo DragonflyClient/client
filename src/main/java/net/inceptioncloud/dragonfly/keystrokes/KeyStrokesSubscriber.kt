@@ -1,8 +1,11 @@
 package net.inceptioncloud.dragonfly.keystrokes
 
 import com.google.common.eventbus.Subscribe
+import net.inceptioncloud.dragonfly.event.client.ResizeEvent
+import net.inceptioncloud.dragonfly.event.client.ToggleFullscreenEvent
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
+import net.minecraft.client.Minecraft
 
 object KeyStrokesSubscriber {
 
@@ -22,6 +25,16 @@ object KeyStrokesSubscriber {
                 keyStroke.pressed = event.press
             }
         }
+    }
+
+    @Subscribe
+    fun toggleFullscreenWindow(event: ToggleFullscreenEvent) {
+        Minecraft.getMinecraft().ingameGUI.initKeyStrokes(true)
+    }
+
+    @Subscribe
+    fun resizeWindow(event: ResizeEvent) {
+        Minecraft.getMinecraft().ingameGUI.initKeyStrokes(true)
     }
 
 }
