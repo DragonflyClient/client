@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.apps.*
 import net.inceptioncloud.dragonfly.apps.about.AboutDragonflyApp
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
+import net.inceptioncloud.dragonfly.apps.mods.ModManagerApp
 import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsApp
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
 import net.minecraft.client.gui.GuiScreen
@@ -15,7 +16,8 @@ object Taskbar {
         DragonflySettingsApp,
         AccountManagerApp,
         IdeasPlatformApp,
-        AboutDragonflyApp
+        AboutDragonflyApp,
+        ModManagerApp
     )
 
     fun initializeTaskbar(gui: GuiScreen): Unit = with(gui) {
