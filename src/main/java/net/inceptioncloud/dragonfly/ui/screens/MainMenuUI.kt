@@ -127,15 +127,20 @@ class MainMenuUI : GuiScreen() {
         val splashImage: SizedImage by lazy {
             LogManager.getLogger().info("Downloading splash image...");
 
-            val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/image.png"))
-            val properties = JsonParser().parse(
-                URL("https://cdn.icnet.dev/dragonfly/splash/properties.json").readText()
-            ).asJsonObject
+            try {
+                val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/imeage.png"))
+                val properties = JsonParser().parse(
+                    URL("https://cdn.icnet.dev/dragonfly/splash/properties.json").readText()
+                ).asJsonObject
 
-            val width = properties.get("width").asInt.toDouble()
-            val height = properties.get("height").asInt.toDouble()
+                val width = properties.get("width").asInt.toDouble()
+                val height = properties.get("height").asInt.toDouble()
 
-            SizedImage(ImageResource(DynamicTexture(image)), width, height)
+                SizedImage(ImageResource(DynamicTexture(image)), width, height)
+            } catch (e: Exception) {
+                LogManager.getLogger().warn("Could not download splash image! Using offline backup...")
+                SizedImage(ImageResource("dragonflyres/splashes/offline-main-menu.png"), 1920.0, 1080.0)
+            }
         }
     }
 }
