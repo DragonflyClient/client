@@ -32,7 +32,7 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
         val fromFile = readFromAccountsFile() ?: listOf()
         val fromLauncher = readFromLauncher() ?: listOf()
 
-        val total = fromFile.toMutableList()
+        val total = fromFile.filter { runBlocking { it.validate() } }.toMutableList()
 
         fromLauncher // add accounts from launcher that aren't in the file
             .filter { l -> total.none { it.uuid == l.uuid } }
