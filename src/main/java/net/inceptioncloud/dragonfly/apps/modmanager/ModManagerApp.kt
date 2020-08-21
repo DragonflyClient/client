@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.apps.mods
+package net.inceptioncloud.dragonfly.apps.modmanager
 
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
