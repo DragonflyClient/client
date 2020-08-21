@@ -2,11 +2,13 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import com.google.gson.*
 import kotlinx.coroutines.runBlocking
+import net.inceptioncloud.dragonfly.Dragonfly.secretsDirectory
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import java.io.File
+import java.nio.file.*
 import java.util.*
 
 /**
@@ -21,7 +23,7 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
     /**
      * The Dragonfly-internal file in which the saved accounts are stored.
      */
-    private val accountsFile = File("dragonfly/accounts.json")
+    private val accountsFile = File(secretsDirectory, "accounts.json")
 
     /**
      * A mutable list of accounts that have been stored in the launcher or Dragonfly-internal

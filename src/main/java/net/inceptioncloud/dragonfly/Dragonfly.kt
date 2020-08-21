@@ -18,6 +18,8 @@ import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.lwjgl.opengl.Display
+import java.io.File
+import java.nio.file.*
 import java.util.*
 
 /**
@@ -65,6 +67,17 @@ object Dragonfly {
      */
     @JvmStatic
     var isDeveloperMode = false
+
+    /**
+     * The directory in which secret Dragonfly files are stored.
+     */
+    @JvmStatic
+    val secretsDirectory = File("dragonfly/.secrets").also {
+        if(it.mkdirs()) {
+            val path: Path = FileSystems.getDefault().getPath("dragonfly/.secrets")
+            Files.setAttribute(path, "dos:hidden", true)
+        }
+    }
 
     /**
      * The [Timer] that performs the mod ticks.
