@@ -104,6 +104,8 @@ abstract class Widget<W : Widget<W>>(
      */
     var clickAction: () -> Unit = {}
 
+    var hoverAction: (Boolean) -> Unit = {}
+
     /**
      * A stacking list with all animations that are currently being applied to the widget.
      *
@@ -307,12 +309,8 @@ abstract class Widget<W : Widget<W>>(
      */
     open fun handleMousePress(data: MouseData) {
         /* can be implemented by a subclass */
-        if (this is IPosition && (this is IDimension || this is ISize)) {
-            val (width, height) = Defaults.getSizeOrDimension(this)
-
-            if (data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height) {
-                clickAction()
-            }
+        if (isHovered) {
+            clickAction()
         }
     }
 
@@ -349,6 +347,7 @@ abstract class Widget<W : Widget<W>>(
      */
     open fun handleHoverStateUpdate() {
         /* can be implemented by a subclass */
+        hoverAction(isHovered)
     }
 
     /**
