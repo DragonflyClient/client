@@ -16,6 +16,7 @@ import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 
@@ -27,6 +28,7 @@ class ModListEntry(
     override var y: Double by property(0.0)
     override var width: Double by property(353.0)
     override var height: Double by property(53.0)
+
     @Interpolate
     override var color: WidgetColor by property(DragonflyPalette.background)
 
@@ -74,18 +76,45 @@ class ModListEntry(
     }
 
     override fun handleMousePress(data: MouseData) {
+        val currentScreen = Minecraft.getMinecraft().currentScreen
+
         if (data in this) {
-            morph(100, EaseQuad.IN_OUT, ::color to DragonflyPalette.accentNormal)?.start()?.post { animation, widget ->
-                if (Minecraft.getMinecraft().currentScreen is ModManagerUI) {
-                    (Minecraft.getMinecraft().currentScreen as ModManagerUI).selectedEntry = this
-                    (Minecraft.getMinecraft().currentScreen as ModManagerUI).updateScreen()
-                }
+            if (currentScreen is ModManagerUI) {
+                currentScreen.show = false
             }
+
+            morph(50, EaseQuad.IN_OUT, ::color to DragonflyPalette.accentNormal)?.start()
+
+            if (currentScreen is ModManagerUI) {
+                for (content in currentScreen.stage.content) {
+                    if (content.key == "placeholder-plate") {
+                        content.value.morph(
+                            20,
+                            EaseQuad.IN_OUT,
+                            (content.value as Rectangle)::color to DragonflyPalette.foreground
+                        )?.start()
+                    }
+                }
+
+                currentScreen.selectedEntry = this
+            }
+
         } else {
-            morph(100, EaseQuad.IN_OUT, ::color to DragonflyPalette.background)?.start()?.post { animation, widget ->
-                if (Minecraft.getMinecraft().currentScreen is ModManagerUI) {
-                    (Minecraft.getMinecraft().currentScreen as ModManagerUI).selectedEntry = null
-                    (Minecraft.getMinecraft().currentScreen as ModManagerUI).updateScreen()
+            morph(50, EaseQuad.IN_OUT, ::color to DragonflyPalette.background)?.start()
+            if (currentScreen is ModManagerUI) {
+                currentScreen.selectedEntry = null
+                if (currentScreen.show) {
+                    for (content in currentScreen.stage.content) {
+                        if (content.key == "placeholder-plate") {
+                            content.value.morph(
+                                20,
+                                EaseQuad.IN_OUT,
+                                (content.value as Rectangle)::color to WidgetColor(255, 255, 255, 0)
+                            )?.start()
+                        }
+                    }
+                }else {
+                    currentScreen.show = true
                 }
             }
         }
