@@ -1608,6 +1608,13 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 int i = Mouse.getEventButton();
                 KeyBinding.setKeyBindState(i - 100, Mouse.getEventButtonState());
 
+                MouseInputEvent mouseInputEvent = new MouseInputEvent(i);
+                Dragonfly.getEventBus().post(mouseInputEvent);
+
+                if (mouseInputEvent.isCancelled()) {
+                    continue;
+                }
+
                 if (Mouse.getEventButtonState()) {
                     if (this.thePlayer.isSpectator() && i == 2) {
                         this.ingameGUI.spectatorGui.func_175261_b();
