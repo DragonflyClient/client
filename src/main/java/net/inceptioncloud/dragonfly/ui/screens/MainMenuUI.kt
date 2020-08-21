@@ -27,14 +27,13 @@ class MainMenuUI : GuiScreen() {
 
     override fun initGui() {
         val playerSkullTexture = runBlocking {
-            AccountManagerApp.selectedAccount?.retrieveSkull()?.let { DynamicTexture(it) }
-                ?: try {
-                    DynamicTexture(ImageIO.read(
-                        URL("https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve")
-                    ))
-                } catch (e: Exception) {
-                    null
-                }
+            AccountManagerApp.selectedAccount?.retrieveSkull()?.let {
+                DynamicTexture(it)
+            } ?: kotlin.runCatching {
+                DynamicTexture(ImageIO.read(URL(
+                    "https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve"
+                )))
+            }.getOrNull()
         }
 
         +Image {

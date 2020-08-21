@@ -107,11 +107,9 @@ data class Account(
             if (skull != null)
                 return@withContext skull!!
 
-            val downloaded = try {
+            val downloaded = kotlin.runCatching {
                 ImageIO.read(URL("https://crafatar.com/avatars/$uuid?size=100&default=MHF_Steve"))
-            } catch (e: Exception) {
-                null
-            }
+            }.getOrNull()
 
             skull = downloaded
             return@withContext downloaded

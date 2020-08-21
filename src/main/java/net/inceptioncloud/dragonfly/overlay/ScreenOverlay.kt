@@ -58,10 +58,12 @@ object ScreenOverlay {
 
         overlayAction = {
             GraphicsEngine.runAfter(firstDelay) {
-                mc.displayGuiScreen(gui)
+                mc.addScheduledTask {
+                    mc.displayGuiScreen(gui)
 
-                GraphicsEngine.runAfter(secondDelay) {
-                    finishSwitchOverlay()
+                    GraphicsEngine.runAfter(secondDelay) {
+                        finishSwitchOverlay()
+                    }
                 }
             }
         }
