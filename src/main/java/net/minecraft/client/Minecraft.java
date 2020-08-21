@@ -567,9 +567,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.mojangLogo = null;
         this.loadingScreen = new LoadingScreenRenderer(this);
 
-        if (this.gameSettings.fullScreen && !this.fullscreen) {
-            this.toggleFullscreen();
-        }
+        this.toggleFullscreen();
 
         try {
             Display.setVSyncEnabled(this.gameSettings.enableVsync);
@@ -630,6 +628,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
         Display.setDisplayMode(new DisplayMode(400, 500));
+        Display.setResizable(false);
     }
 
     private void setPostInitialDisplayMode() throws LWJGLException {
