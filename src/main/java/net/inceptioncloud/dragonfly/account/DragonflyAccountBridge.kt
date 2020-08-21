@@ -29,7 +29,10 @@ object DragonflyAccountBridge {
         if (response.statusCode != 200) throw Exception("Invalid response status code: ${response.statusCode}")
         if (!response.jsonObject.getBoolean("success")) throw Exception(response.jsonObject.getString("error"))
 
-        return Gson().fromJson(response.text, DragonflyAccount::class.java)
+        val account = Gson().fromJson(response.text, DragonflyAccount::class.java)
+        tokenFile.writeText(account.token!!)
+
+        return account
     }
 
     private fun validateToken(token: String): DragonflyAccount {
