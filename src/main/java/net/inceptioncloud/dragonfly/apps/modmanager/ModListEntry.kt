@@ -83,7 +83,7 @@ class ModListEntry(
                 currentScreen.show = false
             }
 
-            morph(50, EaseQuad.IN_OUT, ::color to DragonflyPalette.accentNormal)?.start()
+            morph(25, EaseQuad.IN_OUT, ::color to DragonflyPalette.accentNormal)?.start()
 
             if (currentScreen is ModManagerUI) {
                 for (content in currentScreen.stage.content) {
@@ -100,7 +100,7 @@ class ModListEntry(
             }
 
         } else {
-            morph(50, EaseQuad.IN_OUT, ::color to DragonflyPalette.background)?.start()
+            morph(25, EaseQuad.IN_OUT, ::color to DragonflyPalette.background)?.start()
             if (currentScreen is ModManagerUI) {
                 currentScreen.selectedEntry = null
                 if (currentScreen.show) {
