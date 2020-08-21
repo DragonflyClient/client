@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import net.inceptioncloud.dragonfly.engine.animation.Animation
-import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine
+import net.inceptioncloud.dragonfly.engine.animation.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.mc
@@ -92,6 +92,8 @@ abstract class Widget<W : Widget<W>>(
     @Interpolate
     var scaleFactor: Double = 1.0
 
+    var isHovered: Boolean = false
+
     /**
      * A stacking list with all animations that are currently being applied to the widget.
      *
@@ -174,6 +176,26 @@ abstract class Widget<W : Widget<W>>(
         }
 
         GlStateManager.popMatrix()
+
+        if (canUpdateHoverState() && this is IPosition && (this is IDimension || this is ISize)) {
+            val mouseX = GraphicsEngine.getMouseX()
+            val mouseY = GraphicsEngine.getMouseY()
+            val (width, height) = Defaults.getSizeOrDimension(this)
+
+            if (mouseX in x..x + width && mouseY in y..y + height) {
+                if (isHovered)
+                    return
+
+                isHovered = true
+                handleHoverStateUpdate()
+            } else {
+                if (!isHovered)
+                    return
+
+                isHovered = false
+                handleHoverStateUpdate()
+            }
+        }
     }
 
     /**
@@ -303,6 +325,22 @@ abstract class Widget<W : Widget<W>>(
      */
     open fun handleStageAdd(stage: WidgetStage) {
         /* can be implemented by a subclass */
+    }
+
+    /**
+     * Called when the hover state of a widget changes.
+     */
+    open fun handleHoverStateUpdate() {
+        /* can be implemented by a subclass */
+    }
+
+    /**
+     * Called when the widget searches for changes in the hover state. When this evaluates to
+     * true, the hover state can be changed, otherwise changes are ignored.
+     */
+    open fun canUpdateHoverState(): Boolean {
+        /* can be implemented by a subclass */
+        return true
     }
 
     // This function is only implemented to deprecate it in this context.

@@ -26,7 +26,6 @@ class AddAccountCard(
     val accentColor: WidgetColor = DragonflyPalette.foreground
 
     @Interpolate var opacity: Double by property(0.2)
-    var isHovered: Boolean = false
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to Rectangle(),
@@ -55,35 +54,19 @@ class AddAccountCard(
         }
     }
 
-    override fun render() {
-        super.render()
-
-        if (!isVisible)
-            return
-
-        val mouseX = GraphicsEngine.getMouseX()
-        val mouseY = GraphicsEngine.getMouseY()
-
-        if (mouseX in x..x + width && mouseY in y..y + height) {
-            if (isHovered)
-                return
-
+    override fun handleHoverStateUpdate() {
+        if (isHovered) {
             detachAnimation<MorphAnimation>()
             morph(
                 30, EaseQuad.IN_OUT,
                 AddAccountCard::opacity to 0.3
             )?.start()
-            isHovered = true
         } else {
-            if (!isHovered)
-                return
-
             detachAnimation<MorphAnimation>()
             morph(
                 30, EaseQuad.IN_OUT,
                 AddAccountCard::opacity to 0.2
             )?.start()
-            isHovered = false
         }
     }
 

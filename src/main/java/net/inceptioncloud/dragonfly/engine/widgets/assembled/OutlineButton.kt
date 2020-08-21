@@ -45,7 +45,6 @@ class OutlineButton(
     var outlineColor: WidgetColor by property(DragonflyPalette.foreground)
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
 
-    var isHovered: Boolean = false
     var enableClickSound: Boolean = true
     private var onClick: () -> Unit = {}
 
@@ -82,35 +81,23 @@ class OutlineButton(
         }
     }
 
-    override fun update() {
-        super.update()
-
-        val mouseX = GraphicsEngine.getMouseX()
-        val mouseY = GraphicsEngine.getMouseY()
+    override fun handleHoverStateUpdate() {
         val container = getWidget<Rectangle>("container")
 
-        if (mouseX in x..x + width && mouseY in y..y + height) {
-            if (isHovered)
-                return
-
+        if (isHovered) {
             container?.detachAnimation<MorphAnimation>()
             container?.morph(
                 60,
                 EaseQuad.IN_OUT,
                 Rectangle::color to color.brighter(0.8)
             )?.start()
-            isHovered = true
         } else {
-            if (!isHovered)
-                return
-
             container?.detachAnimation<MorphAnimation>()
             container?.morph(
                 60,
                 EaseQuad.IN_OUT,
                 Rectangle::color to color
             )?.start()
-            isHovered = false
         }
     }
 

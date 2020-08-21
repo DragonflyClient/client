@@ -45,7 +45,6 @@ class DragonflyButton(
     var iconSize: Double? by property(null)
     var useScale: Boolean by property(true)
 
-    var isHovered: Boolean = false
     var enableClickSound: Boolean = true
     private var onClick: () -> Unit = {}
 
@@ -110,36 +109,24 @@ class DragonflyButton(
         }
     }
 
-    override fun update() {
-        super.update()
-
-        val mouseX = GraphicsEngine.getMouseX()
-        val mouseY = GraphicsEngine.getMouseY()
+    override fun handleHoverStateUpdate() {
         val offset = width / 40.0
         val overlayWidget = getWidget<Rectangle>("overlay")
 
-        if (mouseX in x..x + width && mouseY in y..y + height) {
-            if (isHovered)
-                return
-
+        if (isHovered) {
             overlayWidget?.detachAnimation<MorphAnimation>()
             overlayWidget?.morph(
                 60,
                 EaseQuad.IN_OUT,
                 Rectangle::width to width - offset
             )?.start()
-            isHovered = true
         } else {
-            if (!isHovered)
-                return
-
             overlayWidget?.detachAnimation<MorphAnimation>()
             overlayWidget?.morph(
                 60,
                 EaseQuad.IN_OUT,
                 Rectangle::width to offset
             )?.start()
-            isHovered = false
         }
     }
 
