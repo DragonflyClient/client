@@ -48,7 +48,7 @@ class MainMenuUI : GuiScreen() {
         +TextField {
             x = 75.0
             y = 10.0
-            width = 200.0
+            width = 300.0
             height = 50.0
             staticText = mc.session.username
             Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50, useScale = false)
