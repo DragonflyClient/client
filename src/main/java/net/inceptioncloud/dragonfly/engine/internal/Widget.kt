@@ -1,7 +1,8 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
-import net.inceptioncloud.dragonfly.engine.animation.*
+import net.inceptioncloud.dragonfly.engine.animation.Animation
+import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.mc
@@ -92,7 +93,16 @@ abstract class Widget<W : Widget<W>>(
     @Interpolate
     var scaleFactor: Double = 1.0
 
+    /**
+     * Whether the widget is currently hovered.
+     */
     var isHovered: Boolean = false
+
+    /**
+     * The default action that is executed when the widget is clicked. Can be
+     * overwritten by extending the widget class.
+     */
+    var clickAction: () -> Unit = {}
 
     /**
      * A stacking list with all animations that are currently being applied to the widget.
@@ -297,6 +307,13 @@ abstract class Widget<W : Widget<W>>(
      */
     open fun handleMousePress(data: MouseData) {
         /* can be implemented by a subclass */
+        if (this is IPosition && (this is IDimension || this is ISize)) {
+            val (width, height) = Defaults.getSizeOrDimension(this)
+
+            if (data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height) {
+                clickAction()
+            }
+        }
     }
 
     /**
