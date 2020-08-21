@@ -65,9 +65,11 @@ class AddAccountUI(val previousScreen: GuiScreen) : GuiScreen() {
 
             onClick {
                 GlobalScope.launch(Dispatchers.IO) {
+                    Toast.queue("Authenticating with Minecraft...", 200)
                     val account = AccountManagerApp.authenticate(email.realText, password.realText)
 
                     if (account != null) {
+                        Toast.queue("§aAccount added!", 400)
                         AccountManagerApp.accounts.add(account)
                         AccountManagerApp.storeAccounts()
 

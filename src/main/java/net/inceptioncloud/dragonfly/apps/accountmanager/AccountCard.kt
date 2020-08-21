@@ -157,6 +157,7 @@ class AccountCard(
                         }
 
                         if (valid) {
+                            isExpired = false
                             mc.session = account.toSession()
 
                             (mc.currentScreen as? AccountManagerUI)?.stage?.content
