@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly
 
+import net.inceptioncloud.dragonfly.account.DragonflyAccount
+import net.inceptioncloud.dragonfly.account.DragonflyAccountBridge
 import net.inceptioncloud.dragonfly.design.DesignSubscribers
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
@@ -56,12 +58,6 @@ object Dragonfly {
     val transitions: MutableList<Transition> = Collections.synchronizedList(ArrayList())
 
     /**
-     * The last amount of mod ticks per second.
-     */
-    @JvmStatic
-    var lastTPS = 0
-
-    /**
      * Whether the developer mode is currently enabled.
      * It provides several features for developers or users to find, identify and fix bugs.
      */
@@ -80,19 +76,10 @@ object Dragonfly {
     }
 
     /**
-     * The [Timer] that performs the mod ticks.
+     * The Dragonfly account with which the user is currently authenticated or null if
+     * there is no connected Dragonfly account.
      */
-    private lateinit var tickTimer: Timer
-
-    /**
-     * The amount of ticks that have been executed in the current second.
-     */
-    private var ticks = 0
-
-    /**
-     * When the first tick of the second was recorded. Used for calculating reasons.
-     */
-    private var firstTick: Long = 0
+    var account: DragonflyAccount? = null
 
     /**
      * Dragonfly Initializer Block
@@ -124,6 +111,17 @@ object Dragonfly {
             }
         }, 0, 5)
 
+        try {
+            LogManager.getLogger().info("Checking for authenticated Dragonfly account...")
+            val stored = DragonflyAccountBridge.validateStoredToken()
+            account = stored
+            if (stored == null) LogManager.getLogger().info("No Dragonfly account token stored!")
+            else LogManager.getLogger().info("Successfully authenticated with Dragonfly");
+        } catch (e: Exception) {
+            LogManager.getLogger().warn("Failed to authenticate with Dragonfly:")
+            e.printStackTrace()
+        }
+
         Runtime.getRuntime().addShutdownHook(Thread(Runnable {
             // EVENTBUS - ClientShutdownEvent when the game is being closed
             val event = ClientShutdownEvent()
@@ -148,6 +146,27 @@ object Dragonfly {
         Options.contentSave()
         fontManager.clearCache()
     }
+
+    /**
+     * The [Timer] that performs the mod ticks.
+     */
+    private lateinit var tickTimer: Timer
+
+    /**
+     * The amount of ticks that have been executed in the current second.
+     */
+    private var ticks = 0
+
+    /**
+     * When the first tick of the second was recorded. Used for calculating reasons.
+     */
+    private var firstTick: Long = 0
+
+    /**
+     * The last amount of mod ticks per second.
+     */
+    @JvmStatic
+    var lastTPS = 0
 
     /**
      * Record the procedure of the tick for the debug screen.
