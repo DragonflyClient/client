@@ -11,6 +11,7 @@ import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
+import net.inceptioncloud.dragonfly.event.client.ResizeEvent
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
 import net.inceptioncloud.dragonfly.mc
@@ -156,6 +157,12 @@ object ScreenOverlay {
 
             stage.remove("switch-overlay-full")
         }
+    }
+
+    @Subscribe
+    fun onResize(event: ResizeEvent) {
+        stage.remove("switch-overlay")
+        stage.remove("switch-overlay-tail")
     }
 
     @Subscribe

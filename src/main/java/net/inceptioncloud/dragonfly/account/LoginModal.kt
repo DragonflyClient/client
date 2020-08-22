@@ -1,13 +1,14 @@
-package net.inceptioncloud.dragonfly.overlay.modal
+package net.inceptioncloud.dragonfly.account
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.account.DragonflyAccountBridge
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
+import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
@@ -188,5 +189,22 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
         }
 
         structure.values.forEach { it.handleKeyTyped(char, keyCode) }
+    }
+}
+
+fun showLoginModal() {
+    var otherFinished = false
+    fun `continue`() {
+        if (otherFinished) {
+            Modal.showModal(LoginModal())
+        }
+    }
+    Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 60, useScale = false) {
+        `continue`()
+        otherFinished = true
+    }
+    Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 50, useScale = false) {
+        `continue`()
+        otherFinished = true
     }
 }

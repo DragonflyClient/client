@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.overlay.modal
 
+import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
@@ -8,6 +9,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.*
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.event.client.ResizeEvent
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay.stage
 import org.apache.logging.log4j.LogManager
@@ -105,6 +107,22 @@ object Modal {
         }?.start()
 
         return true
+    }
+
+    @Subscribe
+    fun onResize(event: ResizeEvent) {
+        (stage["modal"] as? ModalWidget)?.apply {
+            scaleFactor = 1.0
+            x = ScreenOverlay.dimensions.getWidth() / 2.0 - width / 2.0
+            y = ScreenOverlay.dimensions.getHeight() / 2.0 - height / 2.0
+        }
+        (stage["modal-shadow"] as? Rectangle)?.apply {
+            x = 0.0
+            y = 0.0
+            width = ScreenOverlay.dimensions.getWidth()
+            height = ScreenOverlay.dimensions.getHeight()
+            color = WidgetColor(0, 0, 0, 200)
+        }
     }
 
     /**

@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.key.StartupGuiSubscriber
 import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesSubscriber
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.tracking.transitions.FileSaveSubscriber
 import net.inceptioncloud.dragonfly.tracking.transitions.TickSubscriber
 
@@ -28,6 +29,7 @@ object DefaultSubscribers {
             register(ShutdownSubscriber)
             register(ScreenOverlay)
             register(HotAction)
+            register(Modal)
             register(InspectorSubscriber)
             register(KeyStrokesSubscriber)
         }
