@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.apps.accountmanager.Account
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
@@ -14,7 +15,6 @@ import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.input.Keyboard
-import java.util.*
 
 /**
  * A modal window that is used to prompt the user for Dragonfly authentication.
@@ -24,7 +24,7 @@ import java.util.*
  */
 class LinkModal(
     val account: Account
-) : ModalWidget("Link Minecraft", 400.0, 550.0) {
+) : ModalWidget("Link Minecraft", 400.0, 600.0) {
 
     /**
      * The padding of the container box.
@@ -47,7 +47,8 @@ class LinkModal(
         "title" to TextField(),
         "info" to TextField(),
         "link-button" to OutlineButton(),
-        "dont-link-button" to OutlineButton()
+        "dont-link-button" to OutlineButton(),
+        "skip-text" to TextField()
     )
 
     override fun updateStructure() {
@@ -83,7 +84,7 @@ class LinkModal(
             x = this@LinkModal.x + this@LinkModal.padding
             y = title.y + title.height + 20.0
             width = this@LinkModal.width - 2 * this@LinkModal.padding
-            height = 150.0
+            height = 170.0
             staticText = "In order to activate certain features like cosmetics and statistics, " +
                     "you have to link your Minecraft account to your Dragonfly account.\n" +
                     "Do you wish to link §6${account.displayName} §rwith your Dragonfly account §6${Dragonfly.account?.username}§r?"
@@ -93,7 +94,7 @@ class LinkModal(
 
         val link = "link-button"<OutlineButton> {
             x = this@LinkModal.x + this@LinkModal.padding
-            y = info.y + info.height + 40.0
+            y = info.y + info.height + 30.0
             width = this@LinkModal.width - (padding * 2)
             height = 40.0
             text = "Link"
@@ -103,7 +104,7 @@ class LinkModal(
             }
         }!!
 
-        "dont-link-button"<OutlineButton> {
+        val dontLink = "dont-link-button"<OutlineButton> {
             x = this@LinkModal.x + this@LinkModal.padding
             y = link.y + link.height + 20.0
             width = this@LinkModal.width - (padding * 2)
@@ -111,6 +112,30 @@ class LinkModal(
             text = "Don't link"
             onClick {
                 Modal.hideModal()
+            }
+        }!!
+
+        "skip-text"<TextField> {
+            x = this@LinkModal.x
+            y = dontLink.y + dontLink.height + 25.0
+            width = this@LinkModal.width
+            height = 40.0
+            color = DragonflyPalette.background.brighter(0.5)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+            staticText = "Don't ask again"
+            textAlignHorizontal = Alignment.CENTER
+            textAlignVertical = Alignment.CENTER
+            clickAction = {
+                try {
+                    account.getSkipLinkOption().set(true)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                Modal.hideModal()
+            }
+            hoverAction = {
+                if (isHovered) morph(50, null, TextField::color to DragonflyPalette.background.brighter(0.3))?.start()
+                else morph(50, null, TextField::color to DragonflyPalette.background.brighter(0.5))?.start()
             }
         }
 

@@ -2,6 +2,8 @@ package net.inceptioncloud.dragonfly.account.link
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.checkSuccess
+import net.inceptioncloud.dragonfly.apps.accountmanager.Account
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import java.lang.IllegalStateException
 import java.util.*
 
@@ -23,5 +25,10 @@ object LinkBridge {
         val newLinkedAccounts = Dragonfly.account!!.linkedMinecraftAccounts?.toMutableList() ?: mutableListOf()
         newLinkedAccounts.add(uuid.toString())
         Dragonfly.account!!.linkedMinecraftAccounts = newLinkedAccounts
+    }
+
+    fun showModalForAccount(account: Account) {
+        if (account.getSkipLinkOption().get()) return
+        Modal.showModal(LinkModal(account))
     }
 }

@@ -6,6 +6,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
+import net.inceptioncloud.dragonfly.options.OptionKey
 import net.minecraft.util.Session
 import java.awt.image.BufferedImage
 import java.net.Proxy
@@ -120,6 +121,15 @@ data class Account(
      * Creates a [Session] based on the account data.
      */
     fun toSession() = Session(displayName, uuid.toSimpleString(), accessToken, "mojang")
+
+    /**
+     * Returns an option key that holds whether the user wants to skip the linking process.
+     */
+    fun getSkipLinkOption(): OptionKey<Boolean> = OptionKey.newInstance(Boolean::class.java)
+        .key("skip-link-$uuid")
+        .defaultValue(false)
+        .validator { true }
+        .build()
 }
 
 /**

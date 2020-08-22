@@ -128,7 +128,7 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
             height = 40.0
             color = DragonflyPalette.background.brighter(0.5)
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
-            staticText = "Skip for now"
+            staticText = "Don't ask again"
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
             clickAction = {
