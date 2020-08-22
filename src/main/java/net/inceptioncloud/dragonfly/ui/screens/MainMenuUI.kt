@@ -128,7 +128,7 @@ class MainMenuUI : GuiScreen() {
             LogManager.getLogger().info("Downloading splash image...");
 
             try {
-                val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/imeage.png"))
+                val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/image.png"))
                 val properties = JsonParser().parse(
                     URL("https://cdn.icnet.dev/dragonfly/splash/properties.json").readText()
                 ).asJsonObject
