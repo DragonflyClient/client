@@ -36,7 +36,7 @@ class HotActionWidget(
 ) : AssembledWidget<HotActionWidget>(initializerBlock), IPosition, IDimension {
 
     @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(15.0)
+    @Interpolate override var y: Double by property(30.0)
     @Interpolate override var width: Double by property(-1.0)
     @Interpolate override var height: Double by property(-1.0)
 
@@ -82,14 +82,13 @@ class HotActionWidget(
     override fun updateStructure() {
         initialTime = System.currentTimeMillis()
 
-        val messageFR = Dragonfly.fontManager.defaultFont.fontRenderer(size = 16)
-        val titleFR = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 20)
+        val messageFR = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+        val titleFR = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 50, useScale = false)
 
         val messageWidth = messageFR.getStringWidth(message)
         val titleWidth = titleFR.getStringWidth(title)
         val actionWidth = messageFR.getStringWidth(actions.joinToString(" ", transform = joinFunc))
-        val containerWidth = listOf(messageWidth, titleWidth, actionWidth)
-            .max()!!.coerceAtMost(200) + PADDING * 2.0
+        val containerWidth = listOf(messageWidth, titleWidth, actionWidth).max()!!.coerceAtMost(500) + PADDING * 2.0
 
         val titleWidget = updateWidget<TextField>("title") {
             x = this@HotActionWidget.x
@@ -182,12 +181,12 @@ class HotActionWidget(
 /**
  * The amount of padding that the different text fields use
  */
-const val PADDING = 1.5
+const val PADDING = 3.0
 
 /**
  * The corner-arc value of the hot action container
  */
-const val ARC = 1.0
+const val ARC = 3.0
 
 /**
  * Convenient function to get the vertical end of a widget using the position and the dimension
