@@ -6,16 +6,15 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
-import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
+import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetStage
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.loader.UILoader
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
-import net.minecraft.client.gui.ScaledResolution
 import java.awt.Dimension
+import java.lang.Double.min
 import kotlin.reflect.full.companionObjectInstance
 
 /**
@@ -33,7 +32,8 @@ object ScreenOverlay {
      */
     val dimensions: Dimension
         get() {
-            return Dimension(mc.displayWidth, mc.displayHeight)
+            val scale = min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0)
+            return Dimension((mc.displayWidth / scale).toInt(), (mc.displayHeight / scale).toInt())
         }
 
     /**
@@ -45,7 +45,7 @@ object ScreenOverlay {
      * Adds a component to the screen [stage].
      */
     @JvmStatic
-    fun addComponent(name: String, component: AssembledWidget<*>): AssembledWidget<*> {
+    fun addComponent(name: String, component: Widget<*>): Widget<*> {
         stage.add(name to component)
         return component
     }
