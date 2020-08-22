@@ -28,7 +28,10 @@ object LinkBridge {
     }
 
     fun showModalForAccount(account: Account) {
+        if (Dragonfly.account == null) return
+        if (Dragonfly.account?.linkedMinecraftAccounts?.contains(account.uuid.toString()) == true) return
         if (account.getSkipLinkOption().get()) return
+
         Modal.showModal(LinkModal(account))
     }
 }

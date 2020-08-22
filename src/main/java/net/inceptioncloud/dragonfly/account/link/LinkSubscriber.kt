@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.account.link
 
 import com.google.common.eventbus.Subscribe
-import net.inceptioncloud.dragonfly.Dragonfly.account
 import net.inceptioncloud.dragonfly.apps.accountmanager.Account
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.selectedAccount
@@ -17,9 +16,7 @@ object LinkSubscriber {
         if (session.token == null) return
 
         val sessionAccount = selectedAccount ?: Account(session.username, "", parseWithoutDashes(session.playerID), session.token, "")
-        if (account != null && account?.linkedMinecraftAccounts?.contains(sessionAccount.uuid.toString()) != true) {
-            LinkBridge.showModalForAccount(sessionAccount)
-        }
+        LinkBridge.showModalForAccount(sessionAccount)
     }
 
     @Subscribe
@@ -28,8 +25,6 @@ object LinkSubscriber {
         if (session.token == null) return
 
         val sessionAccount = selectedAccount ?: Account(session.username, "", parseWithoutDashes(session.playerID), session.token, "")
-        if (event.account.linkedMinecraftAccounts?.contains(sessionAccount.uuid.toString()) != true) {
-            LinkBridge.showModalForAccount(sessionAccount)
-        }
+        LinkBridge.showModalForAccount(sessionAccount)
     }
 }

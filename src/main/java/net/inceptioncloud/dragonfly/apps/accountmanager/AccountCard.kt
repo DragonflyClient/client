@@ -167,9 +167,7 @@ class AccountCard(
 
                             isSelected = true
 
-                            if (Dragonfly.account != null && Dragonfly.account?.linkedMinecraftAccounts?.contains(account.uuid.toString()) != true) {
-                                LinkBridge.showModalForAccount(account)
-                            }
+                            LinkBridge.showModalForAccount(account)
                         } else {
                             Toast.queue("§cFailed to switch to account §r${account.displayName}§c!", 500)
                         }

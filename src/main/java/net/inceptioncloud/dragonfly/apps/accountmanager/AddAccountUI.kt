@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.account.link.LinkBridge
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
 import net.inceptioncloud.dragonfly.engine.internal.SizedImage
 import net.inceptioncloud.dragonfly.engine.switch
@@ -72,6 +73,9 @@ class AddAccountUI(val previousScreen: GuiScreen) : GuiScreen() {
                         Toast.queue("§aAccount added!", 400)
                         AccountManagerApp.accounts.add(account)
                         AccountManagerApp.storeAccounts()
+
+                        mc.session = account.toSession()
+                        LinkBridge.showModalForAccount(account)
 
                         previousScreen.switch()
                     } else {
