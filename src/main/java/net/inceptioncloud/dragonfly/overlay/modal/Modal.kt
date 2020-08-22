@@ -12,7 +12,9 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.client.ResizeEvent
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay.stage
+import net.inceptioncloud.dragonfly.overlay.hotaction.HotActionWidget
 import org.apache.logging.log4j.LogManager
+import java.util.concurrent.LinkedBlockingQueue
 
 /**
  * Manages modal windows that are displayed on the screen overlay.
@@ -25,6 +27,12 @@ object Modal {
     var currentModal: ModalWidget? = null
 
     /**
+     * A queue that contains modals that should have shown up while another
+     * modal was active.
+     */
+    private val queue = LinkedBlockingQueue<ModalWidget>()
+
+    /**
      * Whether the modal is currently in its hiding animation and thus cannot
      * be hidden again ([hideModal]).
      */
@@ -34,10 +42,14 @@ object Modal {
      * Shows a new [modal] window on the screen.
      *
      * This function uses a smooth popup animation and darkens the background before showing
-     * the full [modal] window. Returns true if the widget was successfully shown.
+     * the full [modal] window. Returns true if the widget was successfully shown and false
+     * if it was added to the queue.
      */
     fun showModal(modal: ModalWidget): Boolean {
-        if (currentModal != null) return false
+        if (currentModal != null) {
+            queue.offer(modal)
+            return false
+        }
 
         LogManager.getLogger().info("Displaying modal: ${modal.name}");
         currentModal = modal
@@ -104,6 +116,10 @@ object Modal {
             stage.remove("modal")
             currentModal = null
             inHidingAnimation = false
+
+            if (queue.isNotEmpty()) {
+                showModal(queue.poll())
+            }
         }?.start()
 
         return true
