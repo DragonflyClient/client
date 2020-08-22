@@ -632,16 +632,16 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      */
     @Throws(IOException::class)
     open fun handleKeyboardInput() {
+        val i = if (Keyboard.getEventKey() == 0) Keyboard.getEventCharacter().toInt() else Keyboard.getEventKey()
+
+        val keyInputEvent = KeyInputEvent(i)
+        eventBus.post(keyInputEvent)
+
+        if (keyInputEvent.isCancelled) {
+            return
+        }
+
         if (!Modal.isModalPresent()) {
-            val i = if (Keyboard.getEventKey() == 0) Keyboard.getEventCharacter().toInt() else Keyboard.getEventKey()
-
-            val keyInputEvent = KeyInputEvent(i)
-            eventBus.post(keyInputEvent)
-
-            if (keyInputEvent.isCancelled) {
-                return
-            }
-
             if (Keyboard.getEventKeyState()) {
                 val eventCharacter = Keyboard.getEventCharacter()
                 val eventKey = Keyboard.getEventKey()

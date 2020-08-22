@@ -160,7 +160,10 @@ object ScreenOverlay {
 
     @Subscribe
     fun onKeyInput(event: KeyInputEvent) {
-        stage.handleKeyTyped(Keyboard.getEventCharacter(), event.key)
+        if (event.press) {
+            val char = Keyboard.getEventCharacter()
+            stage.handleKeyTyped(char, event.key)
+        }
     }
 
     @Subscribe
