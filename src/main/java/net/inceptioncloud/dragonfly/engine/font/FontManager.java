@@ -19,8 +19,14 @@ public class FontManager {
      * The default {@link WidgetFont} instance that is used by the graphics engine.
      */
     private final WidgetFont defaultFont = new WidgetFont(
-            getFontFamily(), getFontFamily() + " Light", getFontFamily(),
-            getFontFamily() + " Medium", -0.035
+            getFontFamily(), getFontFamily() + " Light", getFontFamily(), getFontFamily() + " Medium", -0.035
+    );
+
+    /**
+     * The default monospace {@link WidgetFont} instance that is used by the graphics engine.
+     */
+    private final WidgetFont monospaceFont = new WidgetFont(
+            "JetBrains Mono", "JetBrains Mono", "JetBrains Mono", "JetBrains Mono Medium", 0.0
     );
 
     /**
@@ -28,6 +34,10 @@ public class FontManager {
      */
     public WidgetFont getDefaultFont() {
         return defaultFont;
+    }
+
+    public WidgetFont getMonospaceFont() {
+        return monospaceFont;
     }
 
     /**
@@ -53,8 +63,7 @@ public class FontManager {
         if (cache.containsKey(info))
             return cache.get(info);
 
-        final GlyphFontRenderer fontRenderer =
-                GlyphFontRenderer.create(info.name, info.size, info.letterSpacing, true);
+        final GlyphFontRenderer fontRenderer = GlyphFontRenderer.create(info.name, info.size, info.letterSpacing, true);
         cache.put(info, fontRenderer);
 
         return fontRenderer;
