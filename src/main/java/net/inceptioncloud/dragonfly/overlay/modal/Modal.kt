@@ -40,6 +40,7 @@ object Modal {
 
         ScreenOverlay.addComponent("modal", modal)
 
+        modal.isModal = true
         modal.x = screenWidth / 2.0 - modal.width / 4.0
         modal.y = screenHeight
         modal.scaleFactor = 0.5
@@ -88,4 +89,7 @@ object Modal {
 
         return true
     }
+
+    @JvmStatic
+    fun isModalPresent() = currentModal != null
 }
