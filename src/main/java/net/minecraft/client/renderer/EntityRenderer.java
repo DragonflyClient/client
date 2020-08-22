@@ -1231,8 +1231,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
             }
 
             // EVENTBUS - PostRenderEvent
+            final double scaleFactor = Math.min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0);
             Dragonfly.getEventBus().post(new PostRenderEvent(
-                    mc.displayWidth, mc.displayHeight, (int) GraphicsEngine.getMouseX(), (int) GraphicsEngine.getMouseY()
+                    mc.displayWidth / scaleFactor, mc.displayHeight / scaleFactor, GraphicsEngine.getMouseX(), GraphicsEngine.getMouseY()
             ));
         }
 
