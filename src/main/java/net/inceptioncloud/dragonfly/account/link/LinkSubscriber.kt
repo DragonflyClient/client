@@ -7,6 +7,7 @@ import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.select
 import net.inceptioncloud.dragonfly.event.client.ClientStartupEvent
 import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyLoginEvent
 import net.minecraft.client.Minecraft
+import org.apache.logging.log4j.LogManager
 
 object LinkSubscriber {
 
@@ -25,6 +26,6 @@ object LinkSubscriber {
         if (session.token == null) return
 
         val sessionAccount = selectedAccount ?: Account(session.username, "", parseWithoutDashes(session.playerID), session.token, "")
-        LinkBridge.showModalForAccount(sessionAccount)
+        LinkBridge.showModalForAccount(sessionAccount, event.account)
     }
 }
