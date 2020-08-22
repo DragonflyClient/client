@@ -20,7 +20,6 @@ object DefaultSubscribers {
     @JvmStatic
     fun register(modEventBus: ModEventBus) {
         with(modEventBus) {
-            register(AuthenticationSubscriber())
             register(FileSaveSubscriber())
             register(TickSubscriber())
             register(LastServerSaveSubscriber())
