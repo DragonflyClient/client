@@ -33,8 +33,7 @@ object ScreenOverlay {
      */
     val dimensions: Dimension
         get() {
-            val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
-            return Dimension(scaledResolution.scaledWidth, scaledResolution.scaledHeight)
+            return Dimension(mc.displayWidth, mc.displayHeight)
         }
 
     /**
