@@ -11,6 +11,7 @@ import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
+import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
@@ -595,11 +596,15 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      */
     @Throws(IOException::class)
     open fun handleMouseInput() {
-        if (Modal.isModalPresent()) return
-
         val mouseX = Mouse.getEventX() * width / mc.displayWidth
         val mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1
         val k = Mouse.getEventButton()
+
+        val mouseInputEvent = MouseInputEvent(k)
+        eventBus.post(mouseInputEvent)
+
+        if (Modal.isModalPresent()) return
+
         if (Mouse.getEventButtonState()) {
             if (mc.gameSettings.touchscreen && touchValue++ > 0) {
                 return
@@ -627,21 +632,21 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      */
     @Throws(IOException::class)
     open fun handleKeyboardInput() {
-        if (Modal.isModalPresent()) return
+        if (!Modal.isModalPresent()) {
+            val i = if (Keyboard.getEventKey() == 0) Keyboard.getEventCharacter().toInt() else Keyboard.getEventKey()
 
-        val i = if (Keyboard.getEventKey() == 0) Keyboard.getEventCharacter().toInt() else Keyboard.getEventKey()
+            val keyInputEvent = KeyInputEvent(i)
+            eventBus.post(keyInputEvent)
 
-        val keyInputEvent = KeyInputEvent(i)
-        eventBus.post(keyInputEvent)
+            if (keyInputEvent.isCancelled) {
+                return
+            }
 
-        if (keyInputEvent.isCancelled) {
-            return
-        }
-
-        if (Keyboard.getEventKeyState()) {
-            val eventCharacter = Keyboard.getEventCharacter()
-            val eventKey = Keyboard.getEventKey()
-            keyTyped(eventCharacter, eventKey)
+            if (Keyboard.getEventKeyState()) {
+                val eventCharacter = Keyboard.getEventCharacter()
+                val eventKey = Keyboard.getEventKey()
+                keyTyped(eventCharacter, eventKey)
+            }
         }
 
         mc.dispatchKeypresses()
