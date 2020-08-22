@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.subscriber
 
+import net.inceptioncloud.dragonfly.account.link.LinkSubscriber
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorSubscriber
 import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.key.StartupGuiSubscriber
@@ -32,6 +33,7 @@ object DefaultSubscribers {
             register(Modal)
             register(InspectorSubscriber)
             register(KeyStrokesSubscriber)
+            register(LinkSubscriber)
         }
     }
 }

@@ -2,6 +2,8 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.Dragonfly.account
+import net.inceptioncloud.dragonfly.account.link.LinkModal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.foreground
@@ -15,6 +17,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.OutlineButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -165,6 +168,10 @@ class AccountCard(
                                 ?.forEach { (_, value) -> (value as? AccountCard)?.isSelected = false }
 
                             isSelected = true
+
+                            if (Dragonfly.account != null && Dragonfly.account?.linkedMinecraftAccounts?.contains(account.uuid.toString()) != true) {
+                                Modal.showModal(LinkModal(account))
+                            }
                         } else {
                             Toast.queue("§cFailed to switch to account §r${account.displayName}§c!", 500)
                         }

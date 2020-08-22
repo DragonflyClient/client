@@ -172,7 +172,7 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
      * Parses a [UUID] from the given [digits] that do not contain dashes for the UUID.
      */
     fun parseWithoutDashes(digits: String): UUID = UUID.fromString(
-        digits.replace("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})".toRegex(), "$1-$2-$3-$4-$5")
+        if (digits.contains("-")) digits else digits.replace("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})".toRegex(), "$1-$2-$3-$4-$5")
     )
 }
 

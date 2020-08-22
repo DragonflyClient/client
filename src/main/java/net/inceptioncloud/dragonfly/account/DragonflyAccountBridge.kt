@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.account
 
 import com.google.gson.Gson
+import khttp.responses.Response
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyLoginEvent
 import net.inceptioncloud.dragonfly.event.post
@@ -13,11 +14,9 @@ object DragonflyAccountBridge {
      */
     private val tokenFile = File(Dragonfly.secretsDirectory, "token.txt")
 
-    fun validateStoredToken(): DragonflyAccount? {
-        if (!tokenFile.exists()) return null
+    fun validateStoredToken() = readStoredToken()?.let { validateToken(it) }
 
-        return validateToken(tokenFile.readText())
-    }
+    fun readStoredToken() = tokenFile.takeIf { it.exists() }?.readText()
 
     fun login(username: String, password: String): DragonflyAccount {
         val response = khttp.post(
@@ -28,8 +27,7 @@ object DragonflyAccountBridge {
             )
         )
 
-        if (response.statusCode != 200) throw Exception("Invalid response status code: ${response.statusCode}")
-        if (!response.jsonObject.getBoolean("success")) throw Exception(response.jsonObject.getString("error"))
+        response.checkSuccess()
 
         val account = Gson().fromJson(response.text, DragonflyAccount::class.java)
         tokenFile.writeText(account.token!!)
@@ -47,9 +45,13 @@ object DragonflyAccountBridge {
             )
         )
 
-        if (response.statusCode != 200) throw Exception("Invalid response status code: ${response.statusCode}")
-        if (!response.jsonObject.getBoolean("success")) throw Exception(response.jsonObject.getString("error"))
+        response.checkSuccess()
 
         return Gson().fromJson(response.text, DragonflyAccount::class.java)
     }
+}
+
+fun Response.checkSuccess() {
+    if (statusCode != 200) throw Exception("Invalid response status code: $statusCode")
+    if (!jsonObject.getBoolean("success")) throw Exception(jsonObject.getString("error"))
 }

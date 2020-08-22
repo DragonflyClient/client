@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly.account
 
 data class DragonflyAccount(
-    val token: String? = null,
+    var token: String? = null,
     val identifier: String,
     val uuid: String,
     val username: String,
