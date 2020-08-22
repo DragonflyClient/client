@@ -7,6 +7,7 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
@@ -131,6 +132,7 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
             clickAction = {
+                StorageOptions.SKIP_LOGIN.set(true)
                 Modal.hideModal()
             }
             hoverAction = {

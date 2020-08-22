@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly
 
-import net.inceptioncloud.dragonfly.account.DragonflyAccount
-import net.inceptioncloud.dragonfly.account.DragonflyAccountBridge
+import net.inceptioncloud.dragonfly.account.*
 import net.inceptioncloud.dragonfly.design.DesignSubscribers
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
@@ -11,6 +10,7 @@ import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
 import net.inceptioncloud.dragonfly.event.client.ClientTickEvent
 import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.OptionsManager
+import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.state.GameStateManager
 import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers
@@ -120,6 +120,10 @@ object Dragonfly {
         } catch (e: Exception) {
             LogManager.getLogger().warn("Failed to authenticate with Dragonfly:")
             e.printStackTrace()
+        } finally {
+            if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
+                showLoginModal()
+            }
         }
 
         Runtime.getRuntime().addShutdownHook(Thread(Runnable {
