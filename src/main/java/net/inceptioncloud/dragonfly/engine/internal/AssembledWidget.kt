@@ -29,6 +29,13 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
      */
     lateinit var structure: MutableMap<String, Widget<*>>
 
+    override var isModal: Boolean = false
+        get() = super.isModal
+        set(value) {
+            structure.forEach { it.value.isModal = true }
+            field = value
+        }
+
     /**
      * Whether the assembled widget has been initialized by calling the first structure update.
      *

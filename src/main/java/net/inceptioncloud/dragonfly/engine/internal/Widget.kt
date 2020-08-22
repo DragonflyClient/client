@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.mc
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
 import java.util.*
@@ -45,6 +46,12 @@ abstract class Widget<W : Widget<W>>(
      * Whether this widget is part of an assembled widget.
      */
     var isInAssembled = false
+
+    /**
+     * Whether the widget is part of a modal widget. This property is overwritten by
+     * [AssembledWidget] to also change the value of it's children.
+     */
+    open var isModal = false
 
     /**
      * The assembled widget that this widget is part of. This value is only non-null if the widget is
@@ -99,11 +106,13 @@ abstract class Widget<W : Widget<W>>(
     var isHovered: Boolean = false
 
     /**
-     * The default action that is executed when the widget is clicked. Can be
-     * overwritten by extending the widget class.
+     * The default action that is executed when the widget is clicked.
      */
     var clickAction: () -> Unit = {}
 
+    /**
+     * The default action that is executed when the widget is hovered.
+     */
     var hoverAction: (Boolean) -> Unit = {}
 
     /**
@@ -189,7 +198,9 @@ abstract class Widget<W : Widget<W>>(
 
         GlStateManager.popMatrix()
 
-        if (canUpdateHoverState() && this is IPosition && (this is IDimension || this is ISize)) {
+        if (canUpdateHoverState() && !(Modal.isModalPresent() && !isModal)
+            && this is IPosition && (this is IDimension || this is ISize)
+        ) {
             val mouseX = GraphicsEngine.getMouseX()
             val mouseY = GraphicsEngine.getMouseY()
             val (width, height) = Defaults.getSizeOrDimension(this)
