@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly.overlay.modal
 
-import net.inceptioncloud.dragonfly.apps.accountmanager.AccountCard
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
@@ -12,12 +12,28 @@ import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay.stage
 import org.apache.logging.log4j.LogManager
 
+/**
+ * Manages modal windows that are displayed on the screen overlay.
+ */
 object Modal {
 
+    /**
+     * The currently shown modal window or null if none is present.
+     */
     var currentModal: ModalWidget? = null
 
+    /**
+     * Whether the modal is currently in its hiding animation and thus cannot
+     * be hidden again ([hideModal]).
+     */
     private var inHidingAnimation = false
 
+    /**
+     * Shows a new [modal] window on the screen.
+     *
+     * This function uses a smooth popup animation and darkens the background before showing
+     * the full [modal] window. Returns true if the widget was successfully shown.
+     */
     fun showModal(modal: ModalWidget): Boolean {
         if (currentModal != null) return false
 
@@ -42,6 +58,8 @@ object Modal {
         modal.x = screenWidth / 2.0 - modal.width / 4.0
         modal.y = screenHeight
         modal.scaleFactor = 0.5
+        modal.onShow()
+        modal.detachAnimation<MorphAnimation>()
         modal.morph(
             100, EaseBack.OUT,
             ModalWidget::scaleFactor to 1.0,
@@ -49,13 +67,12 @@ object Modal {
             ModalWidget::y to screenHeight / 2.0 - modal.height / 2.0
         )?.start()
 
-        GraphicsEngine.runAfter(5_000) {
-            hideModal()
-        }
-
         return true
     }
 
+    /**
+     * Hides the [currentModal] if one is set. Returns whether a modal window was hidden.
+     */
     fun hideModal(): Boolean {
         if (currentModal == null) return false
         if (inHidingAnimation) return false
@@ -70,10 +87,12 @@ object Modal {
         val modalShadow = stage["modal-shadow"]!!
 
         GraphicsEngine.runAfter(125) {
+            modalShadow.detachAnimation<MorphAnimation>()
             modalShadow.morph(75, EaseQuad.IN, Rectangle::color to WidgetColor(0, 0, 0, 0))
                 ?.post { _, _ -> stage.remove("modal-shadow") }?.start()
         }
 
+        modal.detachAnimation<MorphAnimation>()
         modal.morph(
             100, EaseBack.IN,
             ModalWidget::scaleFactor to 0.5,
@@ -88,6 +107,9 @@ object Modal {
         return true
     }
 
+    /**
+     * Returns whether a modal window is currently present.
+     */
     @JvmStatic
     fun isModalPresent() = currentModal != null
 }
