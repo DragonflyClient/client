@@ -34,7 +34,11 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
         val fromFile = readFromAccountsFile() ?: listOf()
         val fromLauncher = readFromLauncher() ?: listOf()
 
-        val total = fromFile.filter { runBlocking { it.validate() } }.toMutableList()
+        val total = fromFile.filter {
+            val isValid = runBlocking { it.validate() }
+            if (!isValid) LogManager.getLogger().info("Account ${it.displayName} in accounts.json is invalid! Skipping...")
+            isValid
+        }.toMutableList()
 
         fromLauncher // add accounts from launcher that aren't in the file
             .filter { l -> total.none { it.uuid == l.uuid } }
