@@ -51,12 +51,12 @@ class ToastWidget(
     override fun updateStructure() {
         initialTime = System.currentTimeMillis()
 
-        val fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 16)
+        val fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
 
         val textField = updateWidget<TextField>("text") {
-            width = (fontRenderer.getStringWidth(text).toDouble() + 4.0).coerceAtMost(ScreenOverlay.dimensions.width / 2.0)
+            width = (fontRenderer.getStringWidth(text).toDouble() + 8.0).coerceAtMost(ScreenOverlay.dimensions.width / 2.0)
             x = (ScreenOverlay.dimensions.width) / 2 - (width / 2)
-            y = this@ToastWidget.y + 3.0
+            y = this@ToastWidget.y + 6.0
             staticText = text
             adaptHeight = true
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
@@ -65,12 +65,12 @@ class ToastWidget(
         }!!.also { it.adaptHeight() }
 
         val container = updateWidget<RoundedRectangle>("container") {
-            val padding = 4.0
-            arc = 4.0
+            val padding = 8.0
+            arc = 8.0
             x = textField.x - padding
-            y = textField.y - padding + 1.0
+            y = textField.y - padding + 2.0
             width = textField.width + (padding * 2)
-            height = textField.height + (padding * 2) - 1.0
+            height = textField.height + (padding * 2) - 2.0
             color = DragonflyPalette.background.altered { alphaDouble = 0.8 * opacity }
         }!!
 
