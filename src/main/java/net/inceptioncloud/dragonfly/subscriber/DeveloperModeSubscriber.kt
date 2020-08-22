@@ -7,52 +7,52 @@ import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import java.awt.Color
-import java.awt.Font
 
 object DeveloperModeSubscriber {
+
     @Subscribe
     fun postRender(event: PostRenderEvent) {
         if (!Dragonfly.isDeveloperMode)
             return
 
-        renderDebugInfo(
+        renderDeveloperInfo(
             "FPS: ",
             Minecraft.getDebugFPS().toString(),
             event.scaledWidth, 2
         )
-        renderDebugInfo(
+        renderDeveloperInfo(
             "TPS: ",
             Dragonfly.lastTPS.toString(),
-            event.scaledWidth, 10
+            event.scaledWidth, 22
         )
-        renderDebugInfo(
+        renderDeveloperInfo(
             "GUI: ",
             Minecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "null",
-            event.scaledWidth, 18
+            event.scaledWidth, 42
         )
 
         val asyncBuilding = Dragonfly.fontManager.defaultFont.asyncBuilding
         val cachedFontRenderer = Dragonfly.fontManager.defaultFont.cachedFontRenderer
 
-        renderDebugInfo(
+        renderDeveloperInfo(
             "Building: ",
             asyncBuilding.size.toString(),
-            event.scaledWidth, 28
+            event.scaledWidth, 62
         )
-        renderDebugInfo(
+        renderDeveloperInfo(
             "Cached: ",
             cachedFontRenderer.size.toString(),
-            event.scaledWidth, 36
+            event.scaledWidth, 82
         )
-        renderDebugInfo(
+        renderDeveloperInfo(
             "Scaled: ",
             cachedFontRenderer.count { it.value is ScaledFontRenderer }.toString(),
-            event.scaledWidth, 44
+            event.scaledWidth, 102
         )
     }
 
-    private fun renderDebugInfo(title: String, content: String, screenWidth: Int, y: Int) {
-        val fontRenderer = Dragonfly.fontManager.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 14)
+    private fun renderDeveloperInfo(title: String, content: String, screenWidth: Int, y: Int) {
+        val fontRenderer = Dragonfly.fontManager.monospaceFont.fontRenderer(size = 38, useScale = false)
         val height = fontRenderer.height
         val framesTitleWidth = fontRenderer.getStringWidth(title)
         val framesWidth = framesTitleWidth + fontRenderer.getStringWidth(content)
