@@ -126,7 +126,7 @@ data class Account(
      * Returns an option key that holds whether the user wants to skip the linking process.
      */
     fun getSkipLinkOption(): OptionKey<Boolean> = OptionKey.newInstance(Boolean::class.java)
-        .key("skip-link-$uuid")
+        .key("skipLink:$uuid")
         .defaultValue(false)
         .validator { true }
         .build()
