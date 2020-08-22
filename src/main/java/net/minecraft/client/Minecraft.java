@@ -2495,6 +2495,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     public void setSession (final Session session)
     {
         this.session = session;
+
+        SessionChangeEvent sessionChangeEvent = new SessionChangeEvent(session);
+        Dragonfly.getEventBus().post(sessionChangeEvent);
     }
 
     public PropertyMap getTwitchDetails ()

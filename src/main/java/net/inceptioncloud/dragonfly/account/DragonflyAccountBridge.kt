@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.account
 import com.google.gson.Gson
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyLoginEvent
+import net.inceptioncloud.dragonfly.event.post
 import java.io.File
 
 object DragonflyAccountBridge {
@@ -33,7 +34,7 @@ object DragonflyAccountBridge {
         val account = Gson().fromJson(response.text, DragonflyAccount::class.java)
         tokenFile.writeText(account.token!!)
 
-        val dragonflyLoginEvent = DragonflyLoginEvent(account)
+        DragonflyLoginEvent(account).post()
 
         return account
     }
