@@ -7,7 +7,6 @@ import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.*
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
-import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay.stage
@@ -15,15 +14,14 @@ import org.apache.logging.log4j.LogManager
 
 object Modal {
 
-    var currentModal: Widget<*>? = null
+    var currentModal: ModalWidget? = null
 
     private var inHidingAnimation = false
 
-    fun showModal(modal: Widget<*>): Boolean {
-        if (modal !is IPosition || modal !is IDimension) return false
+    fun showModal(modal: ModalWidget): Boolean {
         if (currentModal != null) return false
 
-        LogManager.getLogger().info("Displaying modal: ${modal::class.simpleName}");
+        LogManager.getLogger().info("Displaying modal: ${modal.name}");
         currentModal = modal
 
         val screenWidth = ScreenOverlay.dimensions.getWidth()
@@ -46,9 +44,9 @@ object Modal {
         modal.scaleFactor = 0.5
         modal.morph(
             100, EaseBack.OUT,
-            AccountCard::scaleFactor to 1.0,
-            AccountCard::x to screenWidth / 2.0 - modal.width / 2.0,
-            AccountCard::y to screenHeight / 2.0 - modal.height / 2.0
+            ModalWidget::scaleFactor to 1.0,
+            ModalWidget::x to screenWidth / 2.0 - modal.width / 2.0,
+            ModalWidget::y to screenHeight / 2.0 - modal.height / 2.0
         )?.start()
 
         GraphicsEngine.runAfter(5_000) {
@@ -78,9 +76,9 @@ object Modal {
 
         modal.morph(
             100, EaseBack.IN,
-            AccountCard::scaleFactor to 0.5,
-            AccountCard::x to screenWidth / 2.0 - modal.width / 4.0,
-            AccountCard::y to screenHeight
+            ModalWidget::scaleFactor to 0.5,
+            ModalWidget::x to screenWidth / 2.0 - modal.width / 4.0,
+            ModalWidget::y to screenHeight
         )?.post { _, _ ->
             stage.remove("modal")
             currentModal = null
