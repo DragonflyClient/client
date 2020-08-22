@@ -92,7 +92,7 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
             width = this@LoginModal.width - 2 * this@LoginModal.padding
             height = 50.0
             label = "Password"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
             isPassword = true
         }!!
 
@@ -125,7 +125,7 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
             width = this@LoginModal.width
             height = 40.0
             color = DragonflyPalette.background.brighter(0.5)
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
             staticText = "Skip for now"
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
