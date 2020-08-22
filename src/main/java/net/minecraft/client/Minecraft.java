@@ -288,6 +288,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.jvm64bit = isJvm64bit();
         this.theIntegratedServer = new IntegratedServer(this);
 
+        SessionChangeEvent sessionChangeEvent = new SessionChangeEvent(session);
+        Dragonfly.getEventBus().post(sessionChangeEvent);
+
         if (gameConfig.serverInfo.serverName != null) {
             this.serverName = gameConfig.serverInfo.serverName;
             this.serverPort = gameConfig.serverInfo.serverPort;
