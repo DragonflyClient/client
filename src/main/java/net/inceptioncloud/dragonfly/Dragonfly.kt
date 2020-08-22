@@ -113,7 +113,10 @@ object Dragonfly {
         try {
             LogManager.getLogger().info("Checking for authenticated Dragonfly account...")
             val stored = DragonflyAccountBridge.validateStoredToken()
+
+            stored?.token = DragonflyAccountBridge.readStoredToken()
             account = stored
+
             if (stored == null) LogManager.getLogger().info("No Dragonfly account token stored!")
             else LogManager.getLogger().info("Successfully authenticated with Dragonfly")
         } catch (e: Exception) {
