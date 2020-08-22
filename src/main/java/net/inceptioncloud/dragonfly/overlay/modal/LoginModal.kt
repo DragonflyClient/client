@@ -71,7 +71,7 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
             y = image.y + image.height + 10.0
             width = this@LoginModal.width
             height = 60.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
             staticText = "Dragonfly Login"
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
@@ -83,7 +83,7 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
             width = this@LoginModal.width - 2 * this@LoginModal.padding
             height = 50.0
             label = "Username"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
         }!!
 
         val password = "password-field"<InputTextField> {
