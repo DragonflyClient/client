@@ -37,6 +37,9 @@ object ScreenOverlay {
             return Dimension(scaledResolution.scaledWidth, scaledResolution.scaledHeight)
         }
 
+    /**
+     * The action that is performed with the switch overlay.
+     */
     var overlayAction: (() -> Unit)? = null
 
     /**
@@ -48,6 +51,11 @@ object ScreenOverlay {
         return component
     }
 
+    /**
+     * Displays the new [gui] screen by fading over using the switch overlay. This function respects
+     * companion objects of the gui that implement the [UILoader] interface and specify loading
+     * preferences.
+     */
     @JvmStatic
     fun displayGui(gui: GuiScreen) {
         val companionObject = gui::class.companionObjectInstance
@@ -129,7 +137,6 @@ object ScreenOverlay {
         if (overlay != null && overlayAction != null &&
             overlay.width == dimensions.width.toDouble() && overlay.x == 0.0
         ) {
-
             stage.add("switch-overlay-full" to Rectangle().apply {
                 stagePriority = -99
                 x = 0.0
@@ -139,10 +146,6 @@ object ScreenOverlay {
                 color = DragonflyPalette.accentNormal
             })
             stage.update()
-            stage.render()
-            stage.render()
-            stage.render()
-            stage.render()
             stage.render()
 
             overlayAction?.invoke()
