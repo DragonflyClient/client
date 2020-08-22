@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.event.client
 
 import net.inceptioncloud.dragonfly.event.Cancellable
+import net.inceptioncloud.dragonfly.event.Event
 
 /**
  * Called whenever the game window is resized.
@@ -13,4 +14,4 @@ data class ResizeEvent(
     val height: Int,
     val scaledWidth: Int,
     val scaledHeight: Int
-) : Cancellable()
+) : Cancellable(), Event

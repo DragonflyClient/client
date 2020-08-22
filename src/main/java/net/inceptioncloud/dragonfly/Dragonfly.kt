@@ -5,9 +5,8 @@ import net.inceptioncloud.dragonfly.design.DesignSubscribers
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
 import net.inceptioncloud.dragonfly.engine.font.FontManager
-import net.inceptioncloud.dragonfly.event.ModEventBus
-import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
-import net.inceptioncloud.dragonfly.event.client.ClientTickEvent
+import net.inceptioncloud.dragonfly.event.*
+import net.inceptioncloud.dragonfly.event.client.*
 import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.OptionsManager
 import net.inceptioncloud.dragonfly.options.sections.StorageOptions

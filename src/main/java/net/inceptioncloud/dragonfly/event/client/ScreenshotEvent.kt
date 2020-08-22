@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.event.client
 
 import net.inceptioncloud.dragonfly.event.Cancellable
+import net.inceptioncloud.dragonfly.event.Event
 import java.awt.image.BufferedImage
 import java.io.File
 
@@ -15,4 +16,4 @@ import java.io.File
 data class ScreenshotEvent(
     val image: BufferedImage,
     val file: File
-) : Cancellable()
+) : Cancellable(), Event

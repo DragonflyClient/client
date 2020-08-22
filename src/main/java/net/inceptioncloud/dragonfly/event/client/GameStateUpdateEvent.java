@@ -1,11 +1,12 @@
 package net.inceptioncloud.dragonfly.event.client;
 
+import net.inceptioncloud.dragonfly.event.Event;
 import net.inceptioncloud.dragonfly.state.*;
 
 /**
  * When the current Game State is changed via {@link GameStateManager#updateState(GameState)}.
  */
-public class GameStateUpdateEvent {
+public class GameStateUpdateEvent implements Event {
     /**
      * The previously selected Game State.
      */

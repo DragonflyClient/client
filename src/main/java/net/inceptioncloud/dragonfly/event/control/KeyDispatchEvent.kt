@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.event.control
 
 import net.inceptioncloud.dragonfly.event.Cancellable
+import net.inceptioncloud.dragonfly.event.Event
 import org.lwjgl.input.Keyboard
 
 /**
@@ -20,4 +21,4 @@ data class KeyDispatchEvent @JvmOverloads constructor(
     } catch (e: Exception) {
         false
     }
-) : Cancellable()
+) : Cancellable(), Event
