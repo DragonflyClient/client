@@ -3,16 +3,20 @@ package net.inceptioncloud.dragonfly.overlay
 import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine.getMouseX
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine.getMouseY
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
-import net.inceptioncloud.dragonfly.engine.internal.Widget
-import net.inceptioncloud.dragonfly.engine.internal.WidgetStage
+import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
+import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
+import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.loader.UILoader
 import net.minecraft.client.gui.GuiScreen
+import org.lwjgl.input.Keyboard
 import java.awt.Dimension
 import java.lang.Double.min
 import kotlin.reflect.full.companionObjectInstance
@@ -151,6 +155,22 @@ object ScreenOverlay {
             overlayAction = null
 
             stage.remove("switch-overlay-full")
+        }
+    }
+
+    @Subscribe
+    fun onKeyInput(event: KeyInputEvent) {
+        stage.handleKeyTyped(Keyboard.getEventCharacter(), event.key)
+    }
+
+    @Subscribe
+    fun onMouseInput(event: MouseInputEvent) {
+        val mouseX = getMouseX().toInt()
+        val mouseY = getMouseY().toInt()
+        if (event.press) {
+            stage.handleMousePress(MouseData(mouseX, mouseY, event.button))
+        } else {
+            stage.handleMouseRelease(MouseData(mouseX, mouseY, event.button))
         }
     }
 }
