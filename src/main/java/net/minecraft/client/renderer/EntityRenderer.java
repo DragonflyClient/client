@@ -3,6 +3,7 @@ package net.minecraft.client.renderer;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine;
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent;
 import net.inceptioncloud.dragonfly.event.control.ZoomEvent;
 import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
@@ -1230,8 +1231,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
             }
 
             // EVENTBUS - PostRenderEvent
-            this.setupOverlayRendering(false);
-            Dragonfly.getEventBus().post(new PostRenderEvent(scaledWidth, scaledHeight, scaledMouseX, scaledMouseY));
+            Dragonfly.getEventBus().post(new PostRenderEvent(
+                    mc.displayWidth, mc.displayHeight, (int) GraphicsEngine.getMouseX(), (int) GraphicsEngine.getMouseY()
+            ));
         }
 
         this.frameFinish();
