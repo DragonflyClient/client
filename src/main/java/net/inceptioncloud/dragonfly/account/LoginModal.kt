@@ -159,6 +159,7 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
             try {
                 Toast.queue("Authenticating with Dragonfly...", 200)
                 val account = DragonflyAccountBridge.login(username.realText, password.realText)
+                Dragonfly.account = account
                 Toast.queue("§aLogged in as §r${account.username}", 500)
                 Modal.hideModal()
             } catch (e: Exception) {
