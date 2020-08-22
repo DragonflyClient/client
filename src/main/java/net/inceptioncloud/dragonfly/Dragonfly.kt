@@ -115,7 +115,7 @@ object Dragonfly {
             val stored = DragonflyAccountBridge.validateStoredToken()
             account = stored
             if (stored == null) LogManager.getLogger().info("No Dragonfly account token stored!")
-            else LogManager.getLogger().info("Successfully authenticated with Dragonfly");
+            else LogManager.getLogger().info("Successfully authenticated with Dragonfly")
         } catch (e: Exception) {
             LogManager.getLogger().warn("Failed to authenticate with Dragonfly:")
             e.printStackTrace()
@@ -125,11 +125,11 @@ object Dragonfly {
             }
         }
 
-        Runtime.getRuntime().addShutdownHook(Thread(Runnable {
+        Runtime.getRuntime().addShutdownHook(Thread {
             // EVENTBUS - ClientShutdownEvent when the game is being closed
             val event = ClientShutdownEvent()
             eventBus.post(event)
-        }))
+        })
     }
 
     /**
