@@ -726,7 +726,7 @@ public class GlyphFontRenderer implements IFontRenderer {
                     break;
 
                 case '§':
-                    if (index + 7 < length) {
+                    if (index + 7 < length && text.charAt(index + 1) == '#') {
                         index += 7;
                     } else if (index + 1 < length) {
                         ++index;
