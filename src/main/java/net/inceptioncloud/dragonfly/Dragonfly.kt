@@ -116,9 +116,9 @@ object Dragonfly {
 
         try {
             LogManager.getLogger().info("Checking for authenticated Dragonfly account...")
-            val stored = DragonflyAccountBridge.validateStoredToken()
+            val stored = AuthenticationBridge.validateStoredToken()
 
-            stored?.token = DragonflyAccountBridge.readStoredToken()
+            stored?.token = AuthenticationBridge.readStoredToken()
             account = stored
 
             if (stored == null) LogManager.getLogger().info("No Dragonfly account token stored!")
@@ -128,7 +128,7 @@ object Dragonfly {
             e.printStackTrace()
         } finally {
             if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
-                showLoginModal()
+                AuthenticationBridge.showLoginModal()
             }
         }
 

@@ -158,7 +158,7 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 Toast.queue("Authenticating with Dragonfly...", 200)
-                val account = DragonflyAccountBridge.login(username.realText, password.realText)
+                val account = AuthenticationBridge.login(username.realText, password.realText)
                 Dragonfly.account = account
                 Toast.queue("§aLogged in as §r${account.username}", 500)
                 Modal.hideModal()
@@ -192,22 +192,5 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
         }
 
         structure.values.forEach { it.handleKeyTyped(char, keyCode) }
-    }
-}
-
-fun showLoginModal() {
-    var otherFinished = false
-    fun `continue`() {
-        if (otherFinished) {
-            Modal.showModal(LoginModal())
-        }
-    }
-    Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 60, useScale = false) {
-        `continue`()
-        otherFinished = true
-    }
-    Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 50, useScale = false) {
-        `continue`()
-        otherFinished = true
     }
 }

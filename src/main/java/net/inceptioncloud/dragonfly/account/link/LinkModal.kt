@@ -17,10 +17,8 @@ import net.minecraft.util.ResourceLocation
 import org.lwjgl.input.Keyboard
 
 /**
- * A modal window that is used to prompt the user for Dragonfly authentication.
- *
- * It provides a username and password field as well as an option to register for a new account
- * and skip the login process.
+ * A modal window that is used to ask the user whether he wants to link the given
+ * Minecraft [account] to their Dragonfly account.
  */
 class LinkModal(
     val account: Account
