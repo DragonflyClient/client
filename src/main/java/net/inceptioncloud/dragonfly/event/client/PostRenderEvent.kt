@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.event.client
 
+import net.inceptioncloud.dragonfly.event.Event
 import net.minecraft.client.renderer.EntityRenderer
 
 /**
@@ -10,8 +11,8 @@ import net.minecraft.client.renderer.EntityRenderer
  * has finished, this event will be fired.
  */
 data class PostRenderEvent(
-    val scaledWidth: Int,
-    val scaledHeight: Int,
-    val scaledMouseX: Int,
-    val scaledMouseY: Int
-)
+    val scaledWidth: Double,
+    val scaledHeight: Double,
+    val scaledMouseX: Double,
+    val scaledMouseY: Double
+) : Event

@@ -2,11 +2,13 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import com.google.gson.*
 import kotlinx.coroutines.runBlocking
+import net.inceptioncloud.dragonfly.Dragonfly.secretsDirectory
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import java.io.File
+import java.nio.file.*
 import java.util.*
 
 /**
@@ -21,7 +23,7 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
     /**
      * The Dragonfly-internal file in which the saved accounts are stored.
      */
-    private val accountsFile = File("dragonfly/accounts.json")
+    private val accountsFile = File(secretsDirectory, "accounts.json")
 
     /**
      * A mutable list of accounts that have been stored in the launcher or Dragonfly-internal
@@ -32,7 +34,11 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
         val fromFile = readFromAccountsFile() ?: listOf()
         val fromLauncher = readFromLauncher() ?: listOf()
 
-        val total = fromFile.toMutableList()
+        val total = fromFile.filter {
+            val isValid = runBlocking { it.validate() }
+            if (!isValid) LogManager.getLogger().info("Account ${it.displayName} in accounts.json is invalid! Skipping...")
+            isValid
+        }.toMutableList()
 
         fromLauncher // add accounts from launcher that aren't in the file
             .filter { l -> total.none { it.uuid == l.uuid } }
@@ -166,7 +172,7 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
      * Parses a [UUID] from the given [digits] that do not contain dashes for the UUID.
      */
     fun parseWithoutDashes(digits: String): UUID = UUID.fromString(
-        digits.replace("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})".toRegex(), "$1-$2-$3-$4-$5")
+        if (digits.contains("-")) digits else digits.replace("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})".toRegex(), "$1-$2-$3-$4-$5")
     )
 }
 

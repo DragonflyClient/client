@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.ui.screens
 import com.google.gson.JsonParser
 import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
@@ -27,14 +28,13 @@ class MainMenuUI : GuiScreen() {
 
     override fun initGui() {
         val playerSkullTexture = runBlocking {
-            AccountManagerApp.selectedAccount?.retrieveSkull()?.let { DynamicTexture(it) }
-                ?: try {
-                    DynamicTexture(ImageIO.read(
-                        URL("https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve")
-                    ))
-                } catch (e: Exception) {
-                    null
-                }
+            AccountManagerApp.selectedAccount?.retrieveSkull()?.let {
+                DynamicTexture(it)
+            } ?: kotlin.runCatching {
+                DynamicTexture(ImageIO.read(URL(
+                    "https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve"
+                )))
+            }.getOrNull()
         }
 
         +Image {
@@ -49,7 +49,7 @@ class MainMenuUI : GuiScreen() {
         +TextField {
             x = 75.0
             y = 10.0
-            width = 200.0
+            width = 300.0
             height = 50.0
             staticText = mc.session.username
             Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50, useScale = false)
@@ -66,17 +66,12 @@ class MainMenuUI : GuiScreen() {
             y = 70.0
         } id "brand-icon"
 
-        +TextField {
-            staticText = "v1.3.0.0"
-            textAlignHorizontal = Alignment.END
-            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50, useScale = false)
-            color = DragonflyPalette.foreground
-            width = 500.0
-            padding = 10.0
-            x = this@MainMenuUI.width - width
-            y = 0.0
-            adaptHeight = true
-        } id "version"
+        +LoginStatusWidget {
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            width = fontRenderer!!.getStringWidth(Dragonfly.account?.username ?: "Login") + 50.0
+            x = this@MainMenuUI.width - width - 10.0
+            y = 10.0
+        } id "login-status"
 
         +DragonflyButton {
             width = 620.0
@@ -128,15 +123,20 @@ class MainMenuUI : GuiScreen() {
         val splashImage: SizedImage by lazy {
             LogManager.getLogger().info("Downloading splash image...");
 
-            val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/image.png"))
-            val properties = JsonParser().parse(
-                URL("https://cdn.icnet.dev/dragonfly/splash/properties.json").readText()
-            ).asJsonObject
+            try {
+                val image = ImageIO.read(URL("https://cdn.icnet.dev/dragonfly/splash/image.png"))
+                val properties = JsonParser().parse(
+                    URL("https://cdn.icnet.dev/dragonfly/splash/properties.json").readText()
+                ).asJsonObject
 
-            val width = properties.get("width").asInt.toDouble()
-            val height = properties.get("height").asInt.toDouble()
+                val width = properties.get("width").asInt.toDouble()
+                val height = properties.get("height").asInt.toDouble()
 
-            SizedImage(ImageResource(DynamicTexture(image)), width, height)
+                SizedImage(ImageResource(DynamicTexture(image)), width, height)
+            } catch (e: Exception) {
+                LogManager.getLogger().warn("Could not download splash image! Using offline backup...")
+                SizedImage(ImageResource("dragonflyres/splashes/offline-main-menu.png"), 1920.0, 1080.0)
+            }
         }
     }
 }

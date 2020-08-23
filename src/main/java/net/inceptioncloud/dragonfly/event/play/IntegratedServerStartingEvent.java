@@ -1,13 +1,13 @@
 package net.inceptioncloud.dragonfly.event.play;
 
-import net.inceptioncloud.dragonfly.event.Cancellable;
+import net.inceptioncloud.dragonfly.event.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.WorldSettings;
 
 /**
  * When the player joins a singleplayer world and the client launches an integrated server via {@link Minecraft#launchIntegratedServer(String, String, WorldSettings)}.
  */
-public class IntegratedServerStartingEvent extends Cancellable {
+public class IntegratedServerStartingEvent extends Cancellable implements Event {
     /**
      * The current name of the world.
      */

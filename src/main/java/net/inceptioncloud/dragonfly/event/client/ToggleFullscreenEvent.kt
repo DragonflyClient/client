@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.event.client
 
 import net.inceptioncloud.dragonfly.event.Cancellable
+import net.inceptioncloud.dragonfly.event.Event
 
 /**
  * Called whenever the game window is toggled the fullscreen mode
@@ -14,4 +15,4 @@ data class ToggleFullscreenEvent(
     val scaledWidth: Int,
     val scaledHeight: Int,
     val windowed: Boolean
-) : Cancellable()
+) : Cancellable(), Event

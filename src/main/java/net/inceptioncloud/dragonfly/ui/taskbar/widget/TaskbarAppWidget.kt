@@ -2,7 +2,6 @@ package net.inceptioncloud.dragonfly.ui.taskbar.widget
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
@@ -47,11 +46,9 @@ class TaskbarAppWidget(
     var originWidth by Delegates.notNull<Double>()
     var originHeight by Delegates.notNull<Double>()
 
-    var isHovered: Boolean = false
-    val hoverGrow = 6.0
-
     var isPressed: Boolean = false
     val pressGrow = 8.0
+    val hoverGrow = 6.0
 
     val shadowOffset = 2.0
     val iconMargin = 6.0
@@ -98,19 +95,17 @@ class TaskbarAppWidget(
         }
     }
 
-    override fun render() {
-        super.render()
+    override fun handleStageAdd(stage: WidgetStage) {
+        originX = x
+        originY = y
+        originWidth = width
+        originHeight = height
+    }
 
-        if (isPressed || !isVisible)
-            return
+    override fun canUpdateHoverState(): Boolean = !isPressed && isVisible
 
-        val mouseX = GraphicsEngine.getMouseX()
-        val mouseY = GraphicsEngine.getMouseY()
-
-        if (mouseX in x..x + width && mouseY in y..y + height) {
-            if (isHovered)
-                return
-
+    override fun handleHoverStateUpdate() {
+        if (isHovered) {
             detachAnimation<MorphAnimation>()
             morph(
                 30, EaseQuad.IN_OUT,
@@ -119,11 +114,7 @@ class TaskbarAppWidget(
                 TaskbarAppWidget::width to width + hoverGrow * 2,
                 TaskbarAppWidget::height to height + hoverGrow * 2
             )?.post { _, _ -> morphTooltip(true) }?.start()
-            isHovered = true
         } else {
-            if (!isHovered)
-                return
-
             detachAnimation<MorphAnimation>()
             morph(
                 30, EaseQuad.IN_OUT,
@@ -132,15 +123,7 @@ class TaskbarAppWidget(
                 TaskbarAppWidget::width to originWidth,
                 TaskbarAppWidget::height to originHeight
             )?.post { _, _ -> morphTooltip(false) }?.start()
-            isHovered = false
         }
-    }
-
-    override fun handleStageAdd(stage: WidgetStage) {
-        originX = x
-        originY = y
-        originWidth = width
-        originHeight = height
     }
 
     override fun handleMousePress(data: MouseData) {
