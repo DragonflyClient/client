@@ -1,17 +1,19 @@
-package net.inceptioncloud.dragonfly.options;
+package net.inceptioncloud.dragonfly.apps.settings
 
-import com.google.common.eventbus.Subscribe;
-import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent;
+import com.google.common.eventbus.Subscribe
+import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
+import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
 
 /**
- * Saves the options when shutting down the client (via {@link ClientShutdownEvent}).
+ * Saves the options when shutting down the client (via [ClientShutdownEvent]).
  */
-public class OptionSaveSubscriber {
+object OptionSaveSubscriber {
+
     /**
-     * {@link ClientShutdownEvent} Subscriber
+     * [ClientShutdownEvent] Subscriber
      */
     @Subscribe
-    public void clientShutdown(ClientShutdownEvent event) {
-        Options.contentSave();
+    fun clientShutdown(event: ClientShutdownEvent?) {
+        DragonflyOptions.contentSave()
     }
 }

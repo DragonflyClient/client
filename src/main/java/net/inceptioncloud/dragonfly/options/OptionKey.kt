@@ -1,81 +1,44 @@
-package net.inceptioncloud.dragonfly.options;
+package net.inceptioncloud.dragonfly.options
 
-import java.util.function.*;
+import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
 
 /**
  * Represents a value that is set in the options file for a specific key.
  *
- * @param <T> The type of the value
+ * @param T The type of the value
+ * @param key The key in String-Format under which the value is saved
+ * @param validator Validates whether the current value is acceptable
+ * @param defaultValue Supplies the default value
  */
-public class OptionKey<T> {
+class OptionKey<T>(
+    val typeClass: Class<T>,
+    val key: String,
+    val validator: (T) -> Boolean,
+    val defaultValue: () -> T,
+    val optionsBase: OptionsBase = DragonflyOptions
+) {
     /**
-     * The class of the value's type.
+     * @see OptionsBase.getValue
      */
-    private final Class<T> typeClass;
-
-    /**
-     * The key that is set for the option in the file.
-     */
-    private final String key;
-
-    /**
-     * The predicate that checks if the value for this option is valid.
-     */
-    private final Predicate<T> validator;
-
-    /**
-     * The fallback value for the option.
-     */
-    private final Supplier<T> defaultValue;
-
-    /**
-     * Initialize a new Options Key.
-     *
-     * @param key          The key in String-Format under which the value is saved
-     * @param validator    Validates whether the current value is acceptable
-     * @param defaultValue Supplies the default value
-     */
-    public OptionKey(final Class<T> typeClass, final String key, final Predicate<T> validator, final Supplier<T> defaultValue) {
-        this.typeClass = typeClass;
-        this.key = key;
-        this.validator = validator;
-        this.defaultValue = defaultValue;
+    fun get(): T {
+        return optionsBase.getValue(this)
     }
 
     /**
-     * Returns a new {@link OptionKeyBuilder} to build a new instance of the {@link OptionKey} class.
+     * @see OptionsBase.setValue
      */
-    public static <T> OptionKeyBuilder<T> newInstance(Class<T> typeClass) {
-        return new OptionKeyBuilder<>(typeClass);
+    fun set(value: T): Boolean {
+        return optionsBase.setValue(this, value)
     }
 
-    /**
-     * @see Options#getValue(OptionKey) Documentation
-     */
-    public T get() {
-        return Options.getValue(this);
-    }
+    companion object {
 
-    /**
-     * @see Options#setValue(OptionKey, Object) Documentation
-     */
-    public boolean set(T value) {
-        return Options.setValue(this, value);
-    }
-
-    public Class<T> getTypeClass() {
-        return typeClass;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public Predicate<T> getValidator() {
-        return validator;
-    }
-
-    public Supplier<T> getDefaultValue() {
-        return defaultValue;
+        /**
+         * Returns a new [OptionKeyBuilder] to build a new instance of the [OptionKey] class.
+         */
+        @JvmStatic
+        fun <T> newInstance(typeClass: Class<T>): OptionKeyBuilder<T> {
+            return OptionKeyBuilder(typeClass)
+        }
     }
 }

@@ -4,16 +4,12 @@ import com.google.gson.*
 import net.inceptioncloud.dragonfly.Dragonfly.eventBus
 import org.apache.logging.log4j.LogManager
 import java.io.*
+import java.lang.NumberFormatException
 
 /**
  * This class manages the reading and writing of the options to the specific file.
  */
-object Options {
-
-    /**
-     * The file in which the options are saved.
-     */
-    private val OPTIONS_FILE = File("dragonfly/options.json")
+open class OptionsBase(val optionsFile: File) {
 
     /**
      * A cache for values of the option keys.
@@ -27,8 +23,7 @@ object Options {
     /**
      * The Gson instance that allows the (de-)serialization of objects.
      */
-    @JvmStatic
-    val gson: Gson
+    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     /**
      * The last read content (via [.contentUpdate]) in JSON-Format.
@@ -36,14 +31,24 @@ object Options {
     private var jsonObject: JsonObject? = null
 
     /**
+     * The logger instance that logs messages for this option base instance.
+     */
+    private val logger = LogManager.getLogger("DragonflyOptions: ${optionsFile.name}")
+
+    /**
+     * Initial Constructor that updates the content when called.
+     */
+    init {
+        contentUpdate()
+    }
+
+    /**
      * Reads the content from the options file and stores it.
      */
-    @JvmStatic
     fun contentUpdate() {
         try {
-            LogManager.getLogger().info("Loading Settings...")
-            jsonObject = if (!OPTIONS_FILE.exists()) JsonObject() else JsonParser().parse(FileReader(OPTIONS_FILE)).asJsonObject
-            LogManager.getLogger().info(jsonObject)
+            logger.info("Loading options from file ${optionsFile.name}...")
+            jsonObject = if (!optionsFile.exists()) JsonObject() else JsonParser().parse(optionsFile.reader()).asJsonObject
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -52,13 +57,10 @@ object Options {
     /**
      * Prints the current (and potential modified) [.jsonObject] to the [.OPTIONS_FILE].
      */
-    @JvmStatic
     fun contentSave() {
         try {
-            if (!OPTIONS_FILE.exists() && !OPTIONS_FILE.createNewFile()) throw IOException(
-                "Unable to create options.json file!"
-            )
-            val fw = FileWriter(OPTIONS_FILE)
+            if (!optionsFile.exists() && !optionsFile.createNewFile()) throw IOException("Unable to create options.json file!")
+            val fw = FileWriter(optionsFile)
             fw.write(gson.toJson(jsonObject))
             fw.flush()
         } catch (e: IOException) {
@@ -76,8 +78,7 @@ object Options {
      *
      * @return The saved value or the default value
      */
-    @JvmStatic
-    fun <T> getValue(optionKey: OptionKey<T>): T? {
+    fun <T> getValue(optionKey: OptionKey<T>): T {
         @Suppress("UNCHECKED_CAST")
         if (valueCache.containsKey(optionKey)) // check for cached value
             return valueCache[optionKey] as T
@@ -86,21 +87,19 @@ object Options {
             try {
                 val jsonElement = jsonObject!![optionKey.key]
                 val value = gson.fromJson(jsonElement, optionKey.typeClass)
-                if (optionKey.validator.test(value))
+                if (optionKey.validator(value))
                     return value.also { valueCache[optionKey] = it as Any }
             } catch (exception: JsonSyntaxException) {
-                if (exception.cause!!.javaClass.simpleName == "IllegalStateException" || exception.cause!!.javaClass.simpleName == "NumberFormatException") {
-                    LogManager.getLogger().info(
-                        "Noticed migrated value type for " + optionKey.key
-                                + ". Default Value of " + optionKey.defaultValue.get() + " restored!"
-                    )
+                if (exception.cause is IllegalStateException || exception.cause is NumberFormatException) {
+                    logger.info("Noticed migrated value type for ${optionKey.key}. " +
+                            "Default Value of ${optionKey.defaultValue()} restored!")
                 } else {
                     exception.printStackTrace()
                 }
             }
         }
 
-        val value = optionKey.defaultValue.get()
+        val value = optionKey.defaultValue()
         setValue(optionKey, value)
         return value.also { valueCache[optionKey] = it as Any? }
     }
@@ -114,23 +113,13 @@ object Options {
      *
      * @return False if the value is not valid, otherwise true.
      */
-    @JvmStatic
     fun <T> setValue(optionKey: OptionKey<T>, value: T): Boolean {
-        if (!optionKey.validator.test(value)) {
-            LogManager.getLogger().error("Failed to set option value {} for key {} (validation failed!)", value, optionKey.key)
+        if (!optionKey.validator(value)) {
+            logger.error("Failed to set option value {} for key {} (validation failed!)", value, optionKey.key)
             return false
         }
         jsonObject!!.add(optionKey.key, gson.toJsonTree(value))
         valueCache[optionKey] = value as Any?
         return true
-    }
-
-    /**
-     * Initial Constructor that updates the content when called.
-     */
-    init {
-        eventBus.register(OptionSaveSubscriber())
-        gson = GsonBuilder().setPrettyPrinting().create()
-        contentUpdate()
     }
 }

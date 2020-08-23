@@ -63,9 +63,9 @@ class OptionEntryRangeIntFactory : OptionEntryFactory<Int>() {
             description ?: "description not set",
             OptionKey(
                 Int::class.java,
-                keyFactory.fileKey,
+                keyFactory.fileKey!!,
                 keyFactory.validator ?: { value -> value in minValue!!..maxValue!! },
-                keyFactory.default
+                keyFactory.default!!
             ),
             minValue!!,
             maxValue!!,

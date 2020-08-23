@@ -1,6 +1,8 @@
 package net.inceptioncloud.dragonfly.subscriber
 
 import net.inceptioncloud.dragonfly.account.LoginSubscriber
+import net.inceptioncloud.dragonfly.apps.settings.OptionSaveSubscriber
+import net.inceptioncloud.dragonfly.design.zoom.ZoomSubscriber
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorSubscriber
 import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.key.StartupGuiSubscriber
@@ -25,6 +27,7 @@ object DefaultSubscribers {
             register(FileSaveSubscriber())
             register(TickSubscriber())
             register(LastServerSaveSubscriber())
+            register(ZoomSubscriber())
             register(StartupGuiSubscriber)
             register(DeveloperModeSubscriber)
             register(ShutdownSubscriber)
@@ -34,6 +37,7 @@ object DefaultSubscribers {
             register(InspectorSubscriber)
             register(KeyStrokesSubscriber)
             register(LoginSubscriber)
+            register(OptionSaveSubscriber)
         }
     }
 }

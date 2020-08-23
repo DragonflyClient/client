@@ -36,7 +36,7 @@ public class GuiShaderOptions extends GuiScreenOF
         this.screenName = null;
         this.screenText = null;
         this.changed = false;
-        this.title = "Shader Options";
+        this.title = "Shader DragonflyOptions";
         this.prevScreen = guiscreen;
         this.settings = gamesettings;
     }

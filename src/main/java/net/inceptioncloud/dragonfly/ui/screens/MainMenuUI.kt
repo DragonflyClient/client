@@ -102,7 +102,7 @@ class MainMenuUI : GuiScreen() {
         +DragonflyButton {
             positionBelow("multiplayer-button", 10.0)
 
-            text = "Options"
+            text = "DragonflyOptions"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/options.png"))
             useScale = false
 

@@ -47,9 +47,9 @@ class OptionEntryBooleanFactory : OptionEntryFactory<Boolean>() {
     private fun finish(): OptionEntryBoolean {
         val key = OptionKey(
             Boolean::class.java,
-            keyFactory.fileKey,
+            keyFactory.fileKey!!,
             keyFactory.validator ?: { true },
-            keyFactory.default
+            keyFactory.default ?: { false }
         )
         return OptionEntryBoolean(
             name ?: "boolean value",

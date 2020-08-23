@@ -1,19 +1,18 @@
 package net.inceptioncloud.dragonfly
 
 import net.inceptioncloud.dragonfly.account.*
-import net.inceptioncloud.dragonfly.design.DesignSubscribers
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
 import net.inceptioncloud.dragonfly.engine.font.FontManager
 import net.inceptioncloud.dragonfly.event.*
 import net.inceptioncloud.dragonfly.event.client.*
-import net.inceptioncloud.dragonfly.options.Options
-import net.inceptioncloud.dragonfly.options.OptionsManager
+import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
 import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.state.GameStateManager
 import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers
 import net.inceptioncloud.dragonfly.transition.Transition
+import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
@@ -93,9 +92,8 @@ object Dragonfly {
     fun init() {
         Display.setTitle("Dragonfly ${DragonflyVersion.string} for Minecraft 1.8.8")
 
-        OptionsManager.loadOptions()
+        Taskbar
         DefaultSubscribers.register(eventBus)
-        DesignSubscribers.register(eventBus)
 
         fontManager = FontManager()
         splashScreen = DragonflySplashScreen()
@@ -153,7 +151,7 @@ object Dragonfly {
      */
     @JvmStatic
     fun reload() {
-        Options.contentSave()
+        DragonflyOptions.contentSave()
         fontManager.clearCache()
     }
 

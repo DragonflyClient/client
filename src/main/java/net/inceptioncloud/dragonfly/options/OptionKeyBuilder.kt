@@ -1,38 +1,41 @@
-package net.inceptioncloud.dragonfly.options;
+package net.inceptioncloud.dragonfly.options
 
-import java.util.function.*;
+import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
 
-public final class OptionKeyBuilder<T> {
-    private String key;
-    private Predicate<T> validator = obj -> true;
-    private Supplier<T> defaultValue = () -> null;
-    private final Class<T> typeClass;
+class OptionKeyBuilder<T> internal constructor(val typeClass: Class<T>) {
 
-    OptionKeyBuilder(Class<T> typeClass) {
-        this.typeClass = typeClass;
+    private var key: String? = null
+    private var validator: ((T) -> Boolean)? = null
+    private var defaultValue: (() -> T)? = null
+    private var optionsBase: OptionsBase = DragonflyOptions
+
+    fun key(key: String?): OptionKeyBuilder<T> {
+        this.key = key
+        return this
     }
 
-    public OptionKeyBuilder<T> key(String key) {
-        this.key = key;
-        return this;
+    fun validator(validator: (T) -> Boolean): OptionKeyBuilder<T> {
+        this.validator = validator
+        return this
     }
 
-    public OptionKeyBuilder<T> validator(Predicate<T> validator) {
-        this.validator = validator;
-        return this;
+    fun defaultValue(defaultValue: () -> T): OptionKeyBuilder<T> {
+        this.defaultValue = defaultValue
+        return this
     }
 
-    public OptionKeyBuilder<T> defaultValue(Supplier<T> defaultValue) {
-        this.defaultValue = defaultValue;
-        return this;
+    fun defaultValue(defaultValue: T): OptionKeyBuilder<T> {
+        this.defaultValue = { defaultValue }
+        return this
     }
 
-    public OptionKeyBuilder<T> defaultValue(T defaultValue) {
-        this.defaultValue = () -> defaultValue;
-        return this;
+    fun optionsBase(optionsBase: OptionsBase): OptionKeyBuilder<T> {
+        this.optionsBase = optionsBase
+        return this
     }
 
-    public OptionKey<T> build() {
-        return new OptionKey<>(typeClass, key, validator, defaultValue);
+    fun build(): OptionKey<T> {
+        return OptionKey(typeClass, key!!, validator!!, defaultValue!!, optionsBase)
     }
+
 }

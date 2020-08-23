@@ -10,7 +10,7 @@ open class OptionEntryFactory<T> {
     /**
      * The name of the option that this entry belongs to.
      *
-     * This value is displayed on the left of the entry when it's rendered in the Mod Options UI. It is **not** the key
+     * This value is displayed on the left of the entry when it's rendered in the Mod DragonflyOptions UI. It is **not** the key
      * that is used in the config file to store the value! This value **must** be set as it is null by default.
      */
     var name: String? = null

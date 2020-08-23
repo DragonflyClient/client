@@ -68,9 +68,9 @@ class OptionEntryMultipleChoiceFactory : OptionEntryFactory<Int>() {
     private fun finish(): OptionEntryMultipleChoice {
         val key = OptionKey(
             Int::class.java,
-            keyFactory.fileKey,
+            keyFactory.fileKey!!,
             keyFactory.validator ?: { value -> value in choices.map { it.identifier } },
-            keyFactory.default
+            keyFactory.default ?: { 1 }
         )
 
         return OptionEntryMultipleChoice(

@@ -17,7 +17,7 @@ public class GuiScreenOptionsSounds extends GuiScreen
 
     /** Reference to the GameSettings object. */
     private final GameSettings game_settings_4;
-    protected String field_146507_a = "Options";
+    protected String field_146507_a = "DragonflyOptions";
     private String field_146508_h;
 
     public GuiScreenOptionsSounds(GuiScreen p_i45025_1_, GameSettings p_i45025_2_)

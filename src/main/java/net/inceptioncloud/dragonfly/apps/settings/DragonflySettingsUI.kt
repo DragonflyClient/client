@@ -9,7 +9,6 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.options.OptionKey
-import net.inceptioncloud.dragonfly.options.Options
 import net.inceptioncloud.dragonfly.options.entries.OptionEntry
 import net.inceptioncloud.dragonfly.options.entries.TitleEntry
 import net.inceptioncloud.dragonfly.options.entries.util.ExternalApplier
@@ -29,13 +28,13 @@ import java.awt.Color
 import java.util.*
 
 /**
- * ## Mod Options UI
+ * ## Mod DragonflyOptions UI
  *
  * In this gui screen, all options for the client can be modified.
  * It is built up by a list in which the different option entries are grouped in sections.
  * Thanks to the list, it is responsible on plenty of different screen sizes and can dynamically be updated.
  *
- * @see Options
+ * @see DragonflyOptions
  * @see OptionList
  * @see OptionKey
  * @see OptionEntry
@@ -215,12 +214,12 @@ class DragonflySettingsUI(private val previousScreen: GuiScreen) : GuiScreen() {
     }
 
     /**
-     * Draws the header with the "Mod Options" title.
+     * Draws the header with the "Mod DragonflyOptions" title.
      */
     private fun drawHeader() {
         val font = Dragonfly.fontManager.defaultFont
         val fontSize = 16
-        val titleString = "Mod Options"
+        val titleString = "Mod DragonflyOptions"
         val y = 15 - fontSize / 2 + 2
         val fontRenderer: IFontRenderer? =
             font.fontRendererAsync(size = fontSize * 2, fontWeight = FontWeight.MEDIUM)

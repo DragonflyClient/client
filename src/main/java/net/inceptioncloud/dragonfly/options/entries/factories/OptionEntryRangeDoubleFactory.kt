@@ -75,9 +75,9 @@ class OptionEntryRangeDoubleFactory : OptionEntryFactory<Double>() {
     private fun finish(): OptionEntryRangeDouble {
         val key = OptionKey(
             Double::class.java,
-            keyFactory.fileKey,
+            keyFactory.fileKey!!,
             keyFactory.validator ?: { value -> value in minValue!!..maxValue!! },
-            keyFactory.default
+            keyFactory.default!!
         )
 
         return OptionEntryRangeDouble(
