@@ -49,6 +49,9 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
     }
 
     override fun initGui() {
+        val contentWidth = this@ModManagerUI.width - 400.0
+        val contentX = 400.0
+
         +Rectangle {
             x = 0.0
             y = 0.0
@@ -60,7 +63,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         +Rectangle {
             x = 0.0
             y = 0.0
-            width = 400.0
+            width = contentX
             height = this@ModManagerUI.height.toDouble()
             color = background
         } id "sidebar-background"
@@ -89,10 +92,21 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             +Image {
                 height = this@ModManagerUI.height / 2.0
                 width = height
-                x = 400.0 + ((this@ModManagerUI.width - 400.0) / 2.0 - width / 2.0)
-                y = this@ModManagerUI.height / 2.0 - height / 2.0
+                x = 400.0 + (contentWidth / 2.0 - width / 2.0)
+                y = this@ModManagerUI.height / 2.5 - height / 2.0
                 resourceLocation = ResourceLocation("dragonflyres/vectors/rocket.png")
             } id "placeholder-image"
+
+            +TextField {
+                positionBelow("placeholder-image", 10.0)
+                width = contentWidth / 3.0
+                adaptHeight = true
+                x = contentX + contentWidth / 2.0 - width / 2.0
+                staticText = "Choose a mod in the sidebar to (de-)activate it and customize it's appearance, behavior and much more."
+                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+                color = background
+                textAlignHorizontal = Alignment.CENTER
+            } id "placeholder-text"
         }
 
     }
