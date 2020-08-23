@@ -288,6 +288,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.jvm64bit = isJvm64bit();
         this.theIntegratedServer = new IntegratedServer(this);
 
+        SessionChangeEvent sessionChangeEvent = new SessionChangeEvent(session);
+        Dragonfly.getEventBus().post(sessionChangeEvent);
+
         if (gameConfig.serverInfo.serverName != null) {
             this.serverName = gameConfig.serverInfo.serverName;
             this.serverPort = gameConfig.serverInfo.serverPort;
@@ -567,9 +570,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         this.mojangLogo = null;
         this.loadingScreen = new LoadingScreenRenderer(this);
 
-        if (this.gameSettings.fullScreen && !this.fullscreen) {
-            this.toggleFullscreen();
-        }
+        this.toggleFullscreen();
 
         try {
             Display.setVSyncEnabled(this.gameSettings.enableVsync);
@@ -630,6 +631,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
         Display.setDisplayMode(new DisplayMode(400, 500));
+        Display.setResizable(false);
     }
 
     private void setPostInitialDisplayMode() throws LWJGLException {
@@ -2496,6 +2498,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     public void setSession (final Session session)
     {
         this.session = session;
+
+        SessionChangeEvent sessionChangeEvent = new SessionChangeEvent(session);
+        Dragonfly.getEventBus().post(sessionChangeEvent);
     }
 
     public PropertyMap getTwitchDetails ()

@@ -1,9 +1,11 @@
 package net.inceptioncloud.dragonfly.event.control;
 
+import net.inceptioncloud.dragonfly.event.Event;
+
 /**
  * When the user presses the zoom keybind for zooming in.
  */
-public class ZoomEvent {
+public class ZoomEvent implements Event {
     /**
      * The current field of view as a float. Can be modified.
      */

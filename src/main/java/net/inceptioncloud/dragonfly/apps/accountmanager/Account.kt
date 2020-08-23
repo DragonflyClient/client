@@ -6,6 +6,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
+import net.inceptioncloud.dragonfly.options.OptionKey
 import net.minecraft.util.Session
 import java.awt.image.BufferedImage
 import java.net.Proxy
@@ -107,11 +108,9 @@ data class Account(
             if (skull != null)
                 return@withContext skull!!
 
-            val downloaded = try {
+            val downloaded = kotlin.runCatching {
                 ImageIO.read(URL("https://crafatar.com/avatars/$uuid?size=100&default=MHF_Steve"))
-            } catch (e: Exception) {
-                null
-            }
+            }.getOrNull()
 
             skull = downloaded
             return@withContext downloaded
@@ -122,6 +121,15 @@ data class Account(
      * Creates a [Session] based on the account data.
      */
     fun toSession() = Session(displayName, uuid.toSimpleString(), accessToken, "mojang")
+
+    /**
+     * Returns an option key that holds whether the user wants to skip the linking process.
+     */
+    fun getSkipLinkOption(): OptionKey<Boolean> = OptionKey.newInstance(Boolean::class.java)
+        .key("skipLink:$uuid")
+        .defaultValue(false)
+        .validator { true }
+        .build()
 }
 
 /**

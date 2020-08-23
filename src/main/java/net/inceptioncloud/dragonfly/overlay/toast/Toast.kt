@@ -43,7 +43,7 @@ object Toast {
         val next = queue.poll()
 
         next.runStructureUpdate()
-        next.y = ScreenOverlay.dimensions.height - 45.0
+        next.y = ScreenOverlay.dimensions.height - 130.0
         next.runStructureUpdate()
 
         ScreenOverlay.addComponent("toast", next)
@@ -51,11 +51,9 @@ object Toast {
         next.morph(
             60,
             EaseCubic.IN_OUT,
-            next::y to ScreenOverlay.dimensions.height - 85.0,
+            next::y to ScreenOverlay.dimensions.height - 180.0,
             next::opacity to 1.0
-        )?.post { _, _ ->
-            GuiIngame.canDisplayActionBar = false
-        }?.start()
+        )?.start()
 
         return true
     }
@@ -65,14 +63,11 @@ object Toast {
      * and calls [displayNext]
      */
     fun finish(toast: ToastWidget): Unit = with(toast) {
-        if (queue.isEmpty())
-            GuiIngame.canDisplayActionBar = true
-
         expired = true
         morph(
             60,
             EaseCubic.IN_OUT,
-            ::y to ScreenOverlay.dimensions.height - 45.0,
+            ::y to ScreenOverlay.dimensions.height - 130.0,
             ::opacity to 0.0
         )?.post { _, _ ->
             ScreenOverlay.stage.remove("toast")

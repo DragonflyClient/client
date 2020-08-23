@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.account.link.LinkBridge
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
 import net.inceptioncloud.dragonfly.engine.internal.SizedImage
 import net.inceptioncloud.dragonfly.engine.switch
@@ -65,11 +66,16 @@ class AddAccountUI(val previousScreen: GuiScreen) : GuiScreen() {
 
             onClick {
                 GlobalScope.launch(Dispatchers.IO) {
+                    Toast.queue("Authenticating with Minecraft...", 200)
                     val account = AccountManagerApp.authenticate(email.realText, password.realText)
 
                     if (account != null) {
+                        Toast.queue("§aAccount added!", 400)
                         AccountManagerApp.accounts.add(account)
                         AccountManagerApp.storeAccounts()
+
+                        mc.session = account.toSession()
+                        LinkBridge.showModalForAccount(account)
 
                         previousScreen.switch()
                     } else {

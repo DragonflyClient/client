@@ -3,19 +3,23 @@ package net.inceptioncloud.dragonfly.overlay
 import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine.getMouseX
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine.getMouseY
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
-import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
-import net.inceptioncloud.dragonfly.engine.internal.WidgetStage
+import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
+import net.inceptioncloud.dragonfly.event.client.ResizeEvent
+import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
+import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.loader.UILoader
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
-import net.minecraft.client.gui.ScaledResolution
+import org.lwjgl.input.Keyboard
 import java.awt.Dimension
+import java.lang.Double.min
 import kotlin.reflect.full.companionObjectInstance
 
 /**
@@ -33,21 +37,29 @@ object ScreenOverlay {
      */
     val dimensions: Dimension
         get() {
-            val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
-            return Dimension(scaledResolution.scaledWidth, scaledResolution.scaledHeight)
+            val scale = min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0)
+            return Dimension((mc.displayWidth / scale).toInt(), (mc.displayHeight / scale).toInt())
         }
 
+    /**
+     * The action that is performed with the switch overlay.
+     */
     var overlayAction: (() -> Unit)? = null
 
     /**
      * Adds a component to the screen [stage].
      */
     @JvmStatic
-    fun addComponent(name: String, component: AssembledWidget<*>): AssembledWidget<*> {
+    fun addComponent(name: String, component: Widget<*>): Widget<*> {
         stage.add(name to component)
         return component
     }
 
+    /**
+     * Displays the new [gui] screen by fading over using the switch overlay. This function respects
+     * companion objects of the gui that implement the [UILoader] interface and specify loading
+     * preferences.
+     */
     @JvmStatic
     fun displayGui(gui: GuiScreen) {
         val companionObject = gui::class.companionObjectInstance
@@ -58,10 +70,12 @@ object ScreenOverlay {
 
         overlayAction = {
             GraphicsEngine.runAfter(firstDelay) {
-                mc.displayGuiScreen(gui)
+                mc.addScheduledTask {
+                    mc.displayGuiScreen(gui)
 
-                GraphicsEngine.runAfter(secondDelay) {
-                    finishSwitchOverlay()
+                    GraphicsEngine.runAfter(secondDelay) {
+                        finishSwitchOverlay()
+                    }
                 }
             }
         }
@@ -127,7 +141,6 @@ object ScreenOverlay {
         if (overlay != null && overlayAction != null &&
             overlay.width == dimensions.width.toDouble() && overlay.x == 0.0
         ) {
-
             stage.add("switch-overlay-full" to Rectangle().apply {
                 stagePriority = -99
                 x = 0.0
@@ -138,15 +151,36 @@ object ScreenOverlay {
             })
             stage.update()
             stage.render()
-            stage.render()
-            stage.render()
-            stage.render()
-            stage.render()
 
             overlayAction?.invoke()
             overlayAction = null
 
             stage.remove("switch-overlay-full")
+        }
+    }
+
+    @Subscribe
+    fun onResize(event: ResizeEvent) {
+        stage.remove("switch-overlay")
+        stage.remove("switch-overlay-tail")
+    }
+
+    @Subscribe
+    fun onKeyInput(event: KeyInputEvent) {
+        if (event.press) {
+            val char = Keyboard.getEventCharacter()
+            stage.handleKeyTyped(char, event.key)
+        }
+    }
+
+    @Subscribe
+    fun onMouseInput(event: MouseInputEvent) {
+        val mouseX = getMouseX().toInt()
+        val mouseY = getMouseY().toInt()
+        if (event.press) {
+            stage.handleMousePress(MouseData(mouseX, mouseY, event.button))
+        } else {
+            stage.handleMouseRelease(MouseData(mouseX, mouseY, event.button))
         }
     }
 }

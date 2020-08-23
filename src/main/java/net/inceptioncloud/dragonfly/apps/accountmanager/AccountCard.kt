@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.account.link.LinkBridge
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.foreground
@@ -157,6 +158,7 @@ class AccountCard(
                         }
 
                         if (valid) {
+                            isExpired = false
                             mc.session = account.toSession()
 
                             (mc.currentScreen as? AccountManagerUI)?.stage?.content
@@ -164,6 +166,8 @@ class AccountCard(
                                 ?.forEach { (_, value) -> (value as? AccountCard)?.isSelected = false }
 
                             isSelected = true
+
+                            LinkBridge.showModalForAccount(account)
                         } else {
                             Toast.queue("§cFailed to switch to account §r${account.displayName}§c!", 500)
                         }

@@ -68,6 +68,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             staticText = "Please enter your Dragonfly key or press the button next to the input field to paste it from your clipboard.\n\n" +
                     "Note that by redeeming your key, it is attached to your machine and cannot be used on any other device.\n\n" +
                     "If you don't already have a key, consider applying for our alpha program on our Discord server."
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer()
         } id "description"
 
         +TextField {
@@ -79,9 +80,11 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             textAlignVertical = Alignment.END
             staticText = message ?: ""
             color = DragonflyPalette.accentNormal
-        }.apply { isVisible = message != null } id "message"
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer()
+            isVisible = message != null
+        } id "message"
 
-        val keyInput = +InputTextField {
+        val keyInput = +InputTextField().apply {
             x = this@EnterKeyUI.width / 2.0 - 110.0
             y = description.y + description.height + 35.0
             color = DragonflyPalette.accentNormal
@@ -89,6 +92,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             height = 20.0
             label = "32-digit key with hyphens"
             maxStringLength = 32
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer()
         } id "key-input"
 
         with(buttonList) {

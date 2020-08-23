@@ -11,6 +11,8 @@ import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
+import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
@@ -96,7 +98,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     private var clickedLinkURI: URI? = null
 
     @JvmField
-    var stage = WidgetStage(this::class.simpleName!!)
+    val stage = WidgetStage(this::class.simpleName!!)
 
     /**
      * The color that is used in the [drawBackgroundFill] function to color the background.
@@ -597,6 +599,12 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         val mouseX = Mouse.getEventX() * width / mc.displayWidth
         val mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1
         val k = Mouse.getEventButton()
+
+        val mouseInputEvent = MouseInputEvent(k)
+        eventBus.post(mouseInputEvent)
+
+        if (Modal.isModalPresent()) return
+
         if (Mouse.getEventButtonState()) {
             if (mc.gameSettings.touchscreen && touchValue++ > 0) {
                 return
@@ -633,10 +641,12 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             return
         }
 
-        if (Keyboard.getEventKeyState()) {
-            val eventCharacter = Keyboard.getEventCharacter()
-            val eventKey = Keyboard.getEventKey()
-            keyTyped(eventCharacter, eventKey)
+        if (!Modal.isModalPresent()) {
+            if (Keyboard.getEventKeyState()) {
+                val eventCharacter = Keyboard.getEventCharacter()
+                val eventKey = Keyboard.getEventKey()
+                keyTyped(eventCharacter, eventKey)
+            }
         }
 
         mc.dispatchKeypresses()

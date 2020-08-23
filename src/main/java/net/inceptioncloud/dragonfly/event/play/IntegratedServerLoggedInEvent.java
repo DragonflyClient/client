@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.event.play;
 
+import net.inceptioncloud.dragonfly.event.Event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.world.WorldSettings;
@@ -7,7 +8,7 @@ import net.minecraft.world.WorldSettings;
 /**
  * When an integrated server was successfully started by {@link Minecraft#launchIntegratedServer(String, String, WorldSettings)}.
  */
-public class IntegratedServerLoggedInEvent {
+public class IntegratedServerLoggedInEvent implements Event {
     /**
      * The integrated server that has been launched.
      */

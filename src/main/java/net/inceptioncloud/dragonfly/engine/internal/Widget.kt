@@ -1,10 +1,12 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.mc
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
 import java.util.*
@@ -44,6 +46,12 @@ abstract class Widget<W : Widget<W>>(
      * Whether this widget is part of an assembled widget.
      */
     var isInAssembled = false
+
+    /**
+     * Whether the widget is part of a modal widget. This property is overwritten by
+     * [AssembledWidget] to also change the value of it's children.
+     */
+    open var isModal = false
 
     /**
      * The assembled widget that this widget is part of. This value is only non-null if the widget is
@@ -91,6 +99,21 @@ abstract class Widget<W : Widget<W>>(
      */
     @Interpolate
     var scaleFactor: Double = 1.0
+
+    /**
+     * Whether the widget is currently hovered.
+     */
+    var isHovered: Boolean = false
+
+    /**
+     * The default action that is executed when the widget is clicked.
+     */
+    var clickAction: () -> Unit = {}
+
+    /**
+     * The default action that is executed when the widget is hovered.
+     */
+    var hoverAction: (Boolean) -> Unit = {}
 
     /**
      * A stacking list with all animations that are currently being applied to the widget.
@@ -174,6 +197,28 @@ abstract class Widget<W : Widget<W>>(
         }
 
         GlStateManager.popMatrix()
+
+        if (canUpdateHoverState() && !(Modal.isModalPresent() && !isModal)
+            && this is IPosition && (this is IDimension || this is ISize)
+        ) {
+            val mouseX = GraphicsEngine.getMouseX()
+            val mouseY = GraphicsEngine.getMouseY()
+            val (width, height) = Defaults.getSizeOrDimension(this)
+
+            if (mouseX in x..x + width && mouseY in y..y + height) {
+                if (isHovered)
+                    return
+
+                isHovered = true
+                handleHoverStateUpdate()
+            } else {
+                if (!isHovered)
+                    return
+
+                isHovered = false
+                handleHoverStateUpdate()
+            }
+        }
     }
 
     /**
@@ -275,6 +320,9 @@ abstract class Widget<W : Widget<W>>(
      */
     open fun handleMousePress(data: MouseData) {
         /* can be implemented by a subclass */
+        if (isHovered) {
+            clickAction()
+        }
     }
 
     /**
@@ -303,6 +351,23 @@ abstract class Widget<W : Widget<W>>(
      */
     open fun handleStageAdd(stage: WidgetStage) {
         /* can be implemented by a subclass */
+    }
+
+    /**
+     * Called when the hover state of a widget changes.
+     */
+    open fun handleHoverStateUpdate() {
+        /* can be implemented by a subclass */
+        hoverAction(isHovered)
+    }
+
+    /**
+     * Called when the widget searches for changes in the hover state. When this evaluates to
+     * true, the hover state can be changed, otherwise changes are ignored.
+     */
+    open fun canUpdateHoverState(): Boolean {
+        /* can be implemented by a subclass */
+        return true
     }
 
     // This function is only implemented to deprecate it in this context.

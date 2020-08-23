@@ -28,8 +28,9 @@ gradle.properties
 
 # Runtime Dragonfly
 /runtime/dragonfly/options.json
-/runtime/dragonfly/accounts.json
-/runtime/dragonfly/alpha.key
 /runtime/dragonfly/glyphs
 /runtime/dragonfly/hotkeys.json
 /runtime/dragonfly/keystrokes.json
+
+# Dragonfly Secrets
+/runtime/dragonfly/.secrets/

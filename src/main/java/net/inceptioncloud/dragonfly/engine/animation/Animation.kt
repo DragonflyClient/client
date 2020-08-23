@@ -81,11 +81,10 @@ abstract class Animation {
      */
     open fun start(): Animation {
         if (finished) {
-            throw IllegalStateException("The animation has already finished and cannot be started again!")
+            return this
         }
 
         running = true
-
         return this
     }
 
