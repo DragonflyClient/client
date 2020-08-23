@@ -2,11 +2,12 @@ package net.inceptioncloud.dragonfly.apps.modmanager
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.internal.Alignment
-import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.contains
+import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
-import net.inceptioncloud.dragonfly.engine.structure.IColor
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
@@ -17,7 +18,26 @@ import net.minecraft.util.ResourceLocation
 
 class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
+    /**
+     * Returns all mod list entries in the sidebar
+     */
+    val entries: List<ModListEntry>
+        get() = stage.content
+            .filterKeys { it.startsWith("sidebar-entry") }
+            .mapNotNull { it.value as? ModListEntry }
+
     var selectedEntry: ModListEntry? = null
+        set(value) {
+            field = value
+            entries.forEach {
+                it.morph(
+                    30, EaseQuad.IN_OUT,
+                    ModListEntry::color to if (it == value) accentNormal else background
+                )?.start()
+            }
+        }
+
+    val dummyMods = listOf("Hotkeys", "KeyStrokes")
 
     var show = true
 
@@ -29,21 +49,20 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
     }
 
     override fun initGui() {
-
         +Rectangle {
             x = 0.0
             y = 0.0
-            width = 1920.0
-            height = 1080.0
+            width = this@ModManagerUI.width.toDouble()
+            height = this@ModManagerUI.height.toDouble()
             color = DragonflyPalette.foreground
         } id "background-color"
 
         +Rectangle {
             x = 0.0
             y = 0.0
-            width = 383.0
+            width = 400.0
             height = this@ModManagerUI.height.toDouble()
-            color = DragonflyPalette.background
+            color = background
         } id "sidebar-background"
 
         +BackNavigation {
@@ -53,96 +72,34 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         } id "back-navigation"
 
         var currentY = 17.0
-        var currentText = "Hotkeys"
-        var currentColor = DragonflyPalette.background
 
-        if (selectedEntry != null) {
-            currentColor = if (selectedEntry!!.text == currentText) {
-                DragonflyPalette.accentNormal
-            } else {
-                DragonflyPalette.background
-            }
+        for (mod in dummyMods) {
+            +ModListEntry {
+                x = 15.0
+                y = currentY
+                color = background
+                text = mod
+                icon = ResourceLocation("dragonflyres/icons/mods/${mod.toLowerCase()}.png")
+            } id "sidebar-entry-${mod.toLowerCase()}"
+
+            currentY += 61.0
         }
-
-        +ModListEntry {
-            x = 15.0
-            y = currentY
-            color = currentColor
-            text = currentText
-            icon = ResourceLocation("dragonflyres/icons/mods/hotkeys.png")
-        } id "sidebar-entry-${currentText.toLowerCase()}"
-
-        currentY += 61.0
-        currentText = "KeyStrokes"
-
-        if (selectedEntry != null) {
-            currentColor = if (selectedEntry!!.text == currentText) {
-                DragonflyPalette.accentNormal
-            } else {
-                DragonflyPalette.background
-            }
-        }
-
-        +ModListEntry {
-            x = 15.0
-            y = currentY
-            color = currentColor
-            text = currentText
-            icon = ResourceLocation("dragonflyres/icons/mods/hotkeys.png")
-        } id "sidebar-entry-${currentText.toLowerCase()}"
 
         if (selectedEntry == null) {
             +Image {
-                x = 965.0
-                y = 195.0
-                width = 250.0
-                height = 250.0
-                resourceLocation = ResourceLocation("dragonflyres/icons/taskbar/apps/mod-manager.png")
+                height = this@ModManagerUI.height / 2.0
+                width = height
+                x = 400.0 + ((this@ModManagerUI.width - 400.0) / 2.0 - width / 2.0)
+                y = this@ModManagerUI.height / 2.0 - height / 2.0
+                resourceLocation = ResourceLocation("dragonflyres/vectors/rocket.png")
             } id "placeholder-image"
-            +TextField {
-                x = 808.0
-                y = 448.0
-                width = 800.0
-                height = 119.0
-                staticText = "Mod Manager"
-                textAlignVertical = Alignment.CENTER
-                textAlignHorizontal = Alignment.START
-                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 100 * 2, useScale = false)
-                color = DragonflyPalette.background
-            } id "placeholder-title"
-            +TextField {
-                x = 727.0
-                y = 530.0
-                width = 800.0
-                height = 119.0
-                staticText = "The place where everything begins."
-                textAlignVertical = Alignment.CENTER
-                textAlignHorizontal = Alignment.START
-                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50 * 2, useScale = false)
-                color = DragonflyPalette.background
-            } id "placeholder-slogan"
-            +TextField {
-                x = 700.0
-                y = 670.0
-                width = 800.0
-                height = 119.0
-                staticText = "In the Mod Manager you are able to control all your mods, \n" +
-                        "and to customize the client so that everything is exactly\n" +
-                        "how you want it to be."
-                textAlignVertical = Alignment.CENTER
-                textAlignHorizontal = Alignment.CENTER
-                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 25 * 2, useScale = false)
-                color = DragonflyPalette.background
-            } id "placeholder-text"
-            +Rectangle {
-                x = 700.0
-                y = 195.0
-                width = 800.0
-                height = 700.0
-                color = WidgetColor(255,255,255,0)
-            } id "placeholder-plate"
         }
 
+    }
+
+    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
+        val data = MouseData(mouseX, mouseY, mouseButton)
+        selectedEntry = entries.firstOrNull { data in it }
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {

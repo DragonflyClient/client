@@ -35,6 +35,8 @@ class ModListEntry(
     var icon: ResourceLocation? by property(null)
     var text: String by property("No text given")
 
+    var selected = false
+
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "background" to RoundedRectangle(),
         "icon" to Image(),
@@ -71,53 +73,8 @@ class ModListEntry(
             textAlignHorizontal = Alignment.START
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 28 * 2, useScale = false)
             color = DragonflyPalette.foreground
+            dropShadow = true
         }
 
     }
-
-    override fun handleMousePress(data: MouseData) {
-        val currentScreen = Minecraft.getMinecraft().currentScreen
-
-        if (data in this) {
-            if (currentScreen is ModManagerUI) {
-                currentScreen.show = false
-            }
-
-            morph(25, EaseQuad.IN_OUT, ::color to DragonflyPalette.accentNormal)?.start()
-
-            if (currentScreen is ModManagerUI) {
-                for (content in currentScreen.stage.content) {
-                    if (content.key == "placeholder-plate") {
-                        content.value.morph(
-                            20,
-                            EaseQuad.IN_OUT,
-                            (content.value as Rectangle)::color to DragonflyPalette.foreground
-                        )?.start()
-                    }
-                }
-
-                currentScreen.selectedEntry = this
-            }
-
-        } else {
-            morph(25, EaseQuad.IN_OUT, ::color to DragonflyPalette.background)?.start()
-            if (currentScreen is ModManagerUI) {
-                currentScreen.selectedEntry = null
-                if (currentScreen.show) {
-                    for (content in currentScreen.stage.content) {
-                        if (content.key == "placeholder-plate") {
-                            content.value.morph(
-                                20,
-                                EaseQuad.IN_OUT,
-                                (content.value as Rectangle)::color to WidgetColor(255, 255, 255, 0)
-                            )?.start()
-                        }
-                    }
-                }else {
-                    currentScreen.show = true
-                }
-            }
-        }
-    }
-
 }
