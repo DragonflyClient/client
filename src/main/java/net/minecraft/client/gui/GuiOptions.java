@@ -20,14 +20,14 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
     private final GameSettings gameSettings;
     private GuiButton field_175357_i;
     private GuiLockIconButton field_175356_r;
-    protected String field_146442_a = "DragonflyOptions";
+    protected String field_146442_a = "Options";
 
     public GuiOptions(GuiScreen parentScreen, GameSettings gameSettings)
     {
         this.parentScreen = parentScreen;
         this.gameSettings = gameSettings;
 
-        // TODO [24.01.2020]: Add Language Button to DragonflyOptions
+        // TODO [24.01.2020]: Add Language Button to options
         // this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, j + 72 + 12));
         // -> this.mc.displayGuiScreen(new GuiLanguage(this, this.mc.gameSettings, this.mc.getLanguageManager()));
     }

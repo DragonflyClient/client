@@ -28,7 +28,7 @@ import java.awt.Color
 import java.util.*
 
 /**
- * ## Mod DragonflyOptions UI
+ * ## Dragonfly Settings UI
  *
  * In this gui screen, all options for the client can be modified.
  * It is built up by a list in which the different option entries are grouped in sections.
@@ -219,7 +219,7 @@ class DragonflySettingsUI(private val previousScreen: GuiScreen) : GuiScreen() {
     private fun drawHeader() {
         val font = Dragonfly.fontManager.defaultFont
         val fontSize = 16
-        val titleString = "Mod DragonflyOptions"
+        val titleString = "Dragonfly Settings"
         val y = 15 - fontSize / 2 + 2
         val fontRenderer: IFontRenderer? =
             font.fontRendererAsync(size = fontSize * 2, fontWeight = FontWeight.MEDIUM)

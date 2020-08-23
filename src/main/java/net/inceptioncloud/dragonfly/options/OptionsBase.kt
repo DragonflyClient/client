@@ -33,7 +33,7 @@ open class OptionsBase(val optionsFile: File) {
     /**
      * The logger instance that logs messages for this option base instance.
      */
-    private val logger = LogManager.getLogger("DragonflyOptions: ${optionsFile.name}")
+    private val logger = LogManager.getLogger()
 
     /**
      * Initial Constructor that updates the content when called.

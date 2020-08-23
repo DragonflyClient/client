@@ -93,17 +93,17 @@ public class GuiIngameMenu extends GuiScreen
 
         if (mc.isIntegratedServerRunning())
         {
-            /* DragonflyOptions */
-            this.buttonList.add(new SimpleButton(0, this.width / 2 - 100, this.height / 4 + 84, 98, 20, "DragonflyOptions"));
+            /* Options */
+            this.buttonList.add(new SimpleButton(0, this.width / 2 - 100, this.height / 4 + 84, 98, 20, "Options"));
             /* Share to LAN */
             this.buttonList.add(new SimpleButton(9, this.width / 2 + 2, this.height / 4 + 84, 98, 20, "Share to LAN"));
         } else {
-            /* DragonflyOptions */
-            this.buttonList.add(new SimpleButton(0, this.width / 2 - 100, this.height / 4 + 84, "DragonflyOptions"));
+            /* Options */
+            this.buttonList.add(new SimpleButton(0, this.width / 2 - 100, this.height / 4 + 84, "Options"));
         }
 
-        /* Mod DragonflyOptions */
-        this.buttonList.add(new SimpleButton(7, this.width / 2 - 100, this.height / 4 + 108, "Mod DragonflyOptions"));
+        /* Dragonfly Settings */
+        this.buttonList.add(new SimpleButton(7, this.width / 2 - 100, this.height / 4 + 108, "Dragonfly Settings"));
         /* Quit World */
         this.buttonList.add(new ConfirmationButton(this, 1, this.width / 2 - 100, this.height / 4 + 132, this.mc.isIntegratedServerRunning() ? "Save and Quit to Title" : "Disconnect"));
     }
