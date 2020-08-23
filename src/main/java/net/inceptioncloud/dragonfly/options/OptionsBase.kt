@@ -47,7 +47,7 @@ open class OptionsBase(val optionsFile: File) {
      */
     fun contentUpdate() {
         try {
-            logger.info("Loading options from file ${optionsFile.name}...")
+            logger.info("Loading options file: ${optionsFile.name}")
             jsonObject = if (!optionsFile.exists()) JsonObject() else JsonParser().parse(optionsFile.reader()).asJsonObject
         } catch (e: IOException) {
             e.printStackTrace()
@@ -59,7 +59,9 @@ open class OptionsBase(val optionsFile: File) {
      */
     fun contentSave() {
         try {
-            if (!optionsFile.exists() && !optionsFile.createNewFile()) throw IOException("Unable to create options.json file!")
+            if (!optionsFile.exists() && !optionsFile.createNewFile())
+                throw IOException("Unable to create options file: ${optionsFile.name}")
+
             val fw = FileWriter(optionsFile)
             fw.write(gson.toJson(jsonObject))
             fw.flush()
@@ -115,7 +117,7 @@ open class OptionsBase(val optionsFile: File) {
      */
     fun <T> setValue(optionKey: OptionKey<T>, value: T): Boolean {
         if (!optionKey.validator(value)) {
-            logger.error("Failed to set option value {} for key {} (validation failed!)", value, optionKey.key)
+            logger.error("Validation failed for value {} with key {} ({})", value, optionKey.key, optionsFile.name)
             return false
         }
         jsonObject!!.add(optionKey.key, gson.toJsonTree(value))
