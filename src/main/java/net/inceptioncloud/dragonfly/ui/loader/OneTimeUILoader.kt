@@ -8,7 +8,7 @@ package net.inceptioncloud.dragonfly.ui.loader
  */
 open class OneTimeUILoader(private val timeMillis: Long) : UILoader {
 
-    private var firstTime = false
+    private var firstTime = true
 
     override fun shouldPreload(): Boolean = firstTime
 
