@@ -1,7 +1,9 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
+import com.google.gson.*
 import org.lwjgl.opengl.GL11
 import java.awt.Color
+import java.lang.reflect.Type
 import kotlin.math.absoluteValue
 
 /**
@@ -14,6 +16,24 @@ import kotlin.math.absoluteValue
 class WidgetColor {
     companion object {
         val DEFAULT = WidgetColor(1F, 1F, 1F, 1F)
+
+        val serializer = JsonSerializer<WidgetColor> { color, _, _ ->
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("red", color.red)
+            jsonObject.addProperty("green", color.green)
+            jsonObject.addProperty("blue", color.blue)
+            jsonObject.addProperty("alpha", color.alpha)
+            jsonObject
+        }
+
+        val deserializer = JsonDeserializer<WidgetColor> { jsonElement, _, _ ->
+            val jsonObject = jsonElement.asJsonObject
+            val red = jsonObject.get("red").asInt
+            val green = jsonObject.get("green").asInt
+            val blue = jsonObject.get("blue").asInt
+            val alpha = jsonObject.get("alpha").asInt
+            WidgetColor(red, green, blue, alpha)
+        }
     }
 
     /**

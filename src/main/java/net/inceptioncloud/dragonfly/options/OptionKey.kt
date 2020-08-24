@@ -9,6 +9,7 @@ import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
  * @param key The key in String-Format under which the value is saved
  * @param validator Validates whether the current value is acceptable
  * @param defaultValue Supplies the default value
+ * @param optionsBase The options base instance to which the key's values are saved.
  */
 class OptionKey<T>(
     val typeClass: Class<T>,

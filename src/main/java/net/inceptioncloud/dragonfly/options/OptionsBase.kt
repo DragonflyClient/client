@@ -2,9 +2,12 @@ package net.inceptioncloud.dragonfly.options
 
 import com.google.gson.*
 import net.inceptioncloud.dragonfly.Dragonfly.eventBus
+import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import org.apache.logging.log4j.LogManager
+import tornadofx.*
 import java.io.*
 import java.lang.NumberFormatException
+import java.lang.reflect.Type
 
 /**
  * This class manages the reading and writing of the options to the specific file.
@@ -23,7 +26,11 @@ open class OptionsBase(val optionsFile: File) {
     /**
      * The Gson instance that allows the (de-)serialization of objects.
      */
-    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+    val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(WidgetColor::class.java, WidgetColor.serializer)
+        .registerTypeAdapter(WidgetColor::class.java, WidgetColor.deserializer)
+        .setPrettyPrinting()
+        .create()
 
     /**
      * The last read content (via [.contentUpdate]) in JSON-Format.
@@ -98,6 +105,8 @@ open class OptionsBase(val optionsFile: File) {
                 } else {
                     exception.printStackTrace()
                 }
+            } catch (exception: TypeCastException) {
+                logger.info("Illegal value for key ${optionKey.key}! Default value restored.")
             }
         }
 
