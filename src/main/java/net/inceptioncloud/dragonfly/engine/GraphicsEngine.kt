@@ -149,8 +149,8 @@ fun Color.toWidgetColor(): WidgetColor = WidgetColor(this)
 /**
  * Extension function to conveniently check if a mouse position is within the bounds of a widget.
  */
-operator fun <W> W.contains(data: MouseData): Boolean where W : IDimension, W : IPosition =
-    data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
+operator fun <W> W?.contains(data: MouseData): Boolean where W : IDimension, W : IPosition =
+    if (this == null) false else data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
 
 /**
  * Extension function to conveniently check if a mouse position is within the bounds of a widget.

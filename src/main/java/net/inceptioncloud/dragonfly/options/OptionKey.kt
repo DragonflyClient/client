@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.options
 
+import javafx.beans.property.SimpleObjectProperty
 import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
 
 /**
@@ -18,18 +19,29 @@ class OptionKey<T>(
     val defaultValue: () -> T,
     val optionsBase: OptionsBase = DragonflyOptions
 ) {
+
+    /**
+     * A simple object property that can be used to observe the option key but
+     * has no influence on the value.
+     */
+    val objectProperty = SimpleObjectProperty<T>(defaultValue())
+
     /**
      * @see OptionsBase.getValue
      */
     fun get(): T {
-        return optionsBase.getValue(this)
+        val value = optionsBase.getValue(this)
+        objectProperty.get()
+        return value
     }
 
     /**
      * @see OptionsBase.setValue
      */
     fun set(value: T): Boolean {
-        return optionsBase.setValue(this, value)
+        val success = optionsBase.setValue(this, value)
+        objectProperty.set(value)
+        return success
     }
 
     companion object {

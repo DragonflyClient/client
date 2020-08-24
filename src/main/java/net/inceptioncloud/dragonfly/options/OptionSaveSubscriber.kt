@@ -1,6 +1,7 @@
-package net.inceptioncloud.dragonfly.apps.settings
+package net.inceptioncloud.dragonfly.options
 
 import com.google.common.eventbus.Subscribe
+import net.inceptioncloud.dragonfly.apps.modmanager.ModManagerApp
 import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
 import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
 
@@ -15,5 +16,6 @@ object OptionSaveSubscriber {
     @Subscribe
     fun clientShutdown(event: ClientShutdownEvent?) {
         DragonflyOptions.contentSave()
+        ModManagerApp.availableMods.forEach { it.optionsBase.contentSave() }
     }
 }

@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly.subscriber
 
 import net.inceptioncloud.dragonfly.account.LoginSubscriber
-import net.inceptioncloud.dragonfly.apps.settings.OptionSaveSubscriber
+import net.inceptioncloud.dragonfly.options.OptionSaveSubscriber
 import net.inceptioncloud.dragonfly.design.zoom.ZoomSubscriber
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorSubscriber
 import net.inceptioncloud.dragonfly.event.ModEventBus

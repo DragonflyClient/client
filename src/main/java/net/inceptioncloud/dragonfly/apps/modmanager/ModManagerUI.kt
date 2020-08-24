@@ -1,6 +1,8 @@
 package net.inceptioncloud.dragonfly.apps.modmanager
 
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.apps.modmanager.controls.BooleanControl
+import net.inceptioncloud.dragonfly.apps.modmanager.controls.ModManagerControl
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
@@ -14,6 +16,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.mods.KeystrokesMod
 import net.inceptioncloud.dragonfly.ui.loader.OneTimeUILoader
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
@@ -32,6 +35,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     var selectedEntry: ModListEntry? = null
         set(value) {
+            if (field == value) return
             field = value
 
             updateSidebar()
@@ -122,11 +126,31 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
         placeholderImage?.morph(25, EaseQuad.IN_OUT, Image::color to placeholderImage.color.altered { alphaDouble = a })?.start()
         placeholderText?.morph(25, EaseQuad.IN_OUT, TextField::color to placeholderText.color.altered { alphaDouble = a })?.start()
+
+        (stage["dummy-boolean-control"] as? ModManagerControl<*>)?.removeListener()
+        stage.remove("dummy-boolean-control")
+
+        if (selectedEntry != null) {
+            +BooleanControl(
+                KeystrokesMod::enabled,
+                "Enable Keystrokes",
+                "Wennste des auf true setzt wird alles sterben und Nummer Fünf muss durch die Zeit springen und uns retten. Aber nur vllt."
+            ).apply {
+                x = 600.0
+                y = 40.0
+                width = 1200.0
+            } id "dummy-boolean-control"
+        }
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         val data = MouseData(mouseX, mouseY, mouseButton)
-        selectedEntry = entries.firstOrNull { data in it }
+
+        if (data in getWidget<Rectangle>("sidebar-background") &&
+            data !in getWidget<BackNavigation>("back-navigation")
+        ) {
+            selectedEntry = entries.firstOrNull { data in it }
+        }
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {

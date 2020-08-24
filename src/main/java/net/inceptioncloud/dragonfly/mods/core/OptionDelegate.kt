@@ -24,7 +24,7 @@ class OptionDelegate<T>(
     /**
      * The option key that is created by the delegate
      */
-    private lateinit var optionKey: OptionKey<T>
+    lateinit var optionKey: OptionKey<T>
 
     /**
      * Retrieves the value from the [optionKey] ([OptionKey.get])
