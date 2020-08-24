@@ -11,7 +11,7 @@ import kotlin.reflect.KMutableProperty0
 class BooleanControl(
     property: KMutableProperty0<Boolean>,
     name: String,
-    description: String
+    description: String? = null
 ) : ModManagerControl<Boolean>(property, name, description) {
 
     val switchWidth = 60.0

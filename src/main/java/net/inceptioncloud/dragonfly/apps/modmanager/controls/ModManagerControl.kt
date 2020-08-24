@@ -16,7 +16,7 @@ import kotlin.reflect.jvm.isAccessible
 abstract class ModManagerControl<T>(
     val property: KMutableProperty0<T>,
     val name: String,
-    val description: String
+    val description: String? = null
 ) : AssembledWidget<ModManagerControl<T>>(), IPosition, IDimension {
 
     final override var x by Delegates.notNull<Double>()
@@ -60,17 +60,29 @@ abstract class ModManagerControl<T>(
             staticText = name
         }!!.also { it.adaptHeight() }
 
-        val descriptionWidget = "description"<TextField> {
-            x = this@ModManagerControl.x
-            y = nameWidget.y + nameWidget.height
-            width = this@ModManagerControl.width * (2 / 3.0)
-            adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
-            color = DragonflyPalette.background.altered { alphaDouble = 0.4 }
-            staticText = description
-        }!!.also { it.adaptHeight() }
+        if (description == null) {
+            "description"<TextField> {
+                x = 0.0
+                y = 0.0
+                width = 0.0
+                height = 0.0
+                isVisible = false
+            }
 
-        height = nameWidget.height + descriptionWidget.height
+            height = nameWidget.height
+        } else {
+            val descriptionWidget = "description"<TextField> {
+                x = this@ModManagerControl.x
+                y = nameWidget.y + nameWidget.height
+                width = this@ModManagerControl.width * (2 / 3.0)
+                adaptHeight = true
+                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
+                color = DragonflyPalette.background.altered { alphaDouble = 0.4 }
+                staticText = description
+            }!!.also { it.adaptHeight() }
+
+            height = nameWidget.height + descriptionWidget.height
+        }
 
         controlUpdateStructure()
     }

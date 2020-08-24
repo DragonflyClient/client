@@ -1,8 +1,7 @@
 package net.inceptioncloud.dragonfly.apps.modmanager
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.BooleanControl
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.ModManagerControl
+import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
@@ -127,19 +126,48 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         placeholderImage?.morph(25, EaseQuad.IN_OUT, Image::color to placeholderImage.color.altered { alphaDouble = a })?.start()
         placeholderText?.morph(25, EaseQuad.IN_OUT, TextField::color to placeholderText.color.altered { alphaDouble = a })?.start()
 
-        (stage["dummy-boolean-control"] as? ModManagerControl<*>)?.removeListener()
-        stage.remove("dummy-boolean-control")
+        stage.content.filterKeys { it.startsWith("dummy-") }
+            .forEach { (key, value) ->
+                stage.remove(key)
+                (value as? ModManagerControl<*>)?.removeListener()
+            }
 
         if (selectedEntry != null) {
+            +TitleControl(
+                "Appearance",
+                "Configure the appearance of the keystrokes"
+            ).apply {
+                x = 600.0
+                y = 40.0
+                width = 1200.0
+            } id "dummy-title"
+
             +BooleanControl(
                 KeystrokesMod::enabled,
                 "Enable Keystrokes",
                 "Wennste des auf true setzt wird alles sterben..."
             ).apply {
                 x = 600.0
-                y = 40.0
+                y = 120.0
                 width = 1200.0
             } id "dummy-boolean-control"
+
+            +TitleControl(
+                "Ich bin noch ein Title"
+            ).apply {
+                x = 600.0
+                y = 180.0
+                width = 1200.0
+            } id "dummy-boolean-control-2"
+
+            +BooleanControl(
+                KeystrokesMod::enabled,
+                "Enable Keystrokes"
+            ).apply {
+                x = 600.0
+                y = 240.0
+                width = 1200.0
+            } id "dummy-boolean-control-3"
         }
     }
 
