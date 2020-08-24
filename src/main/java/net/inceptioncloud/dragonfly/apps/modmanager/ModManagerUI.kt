@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly.apps.modmanager
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
+import net.inceptioncloud.dragonfly.apps.modmanager.controls.OptionControlElement
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
@@ -15,7 +15,6 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.mods.KeystrokesMod
 import net.inceptioncloud.dragonfly.ui.loader.OneTimeUILoader
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
@@ -48,10 +47,12 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         )
     }
 
+    val contentX = 400.0
+    val contentWidth: Double
+        get() = this@ModManagerUI.width - 400.0
+
     override fun initGui() {
         selectedEntry = null
-        val contentWidth = this@ModManagerUI.width - 400.0
-        val contentX = 400.0
 
         +Rectangle {
             x = 0.0
@@ -111,63 +112,40 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     private fun updateSidebar() {
         entries.forEach {
-            it.morph(
-                30, EaseQuad.IN_OUT,
-                ModListEntry::color to if (it == selectedEntry) accentNormal else background
-            )?.start()
+            it.color = if (it == selectedEntry) accentNormal else background
         }
     }
 
     private fun updateContent() {
         val placeholderImage = getWidget<Image>("placeholder-image")
         val placeholderText = getWidget<TextField>("placeholder-text")
-        val a = if (selectedEntry == null) 1.0 else 0.0
 
-        placeholderImage?.morph(25, EaseQuad.IN_OUT, Image::color to placeholderImage.color.altered { alphaDouble = a })?.start()
-        placeholderText?.morph(25, EaseQuad.IN_OUT, TextField::color to placeholderText.color.altered { alphaDouble = a })?.start()
+        placeholderImage?.isVisible = selectedEntry == null
+        placeholderText?.isVisible = selectedEntry == null
 
-        stage.content.filterKeys { it.startsWith("dummy-") }
+        stage.content.filterKeys { it.startsWith("control-") }
             .forEach { (key, value) ->
                 stage.remove(key)
-                (value as? ModManagerControl<*>)?.removeListener()
+                (value as? OptionControlElement<*>)?.removeListener()
             }
 
         if (selectedEntry != null) {
-            +TitleControl(
-                "Appearance",
-                "Configure the appearance of the keystrokes"
-            ).apply {
-                x = 600.0
-                y = 40.0
-                width = 1200.0
-            } id "dummy-title"
+            val mod = selectedEntry!!.mod
+            val controls = mod.publishControls()
 
-            +BooleanControl(
-                KeystrokesMod::enabled,
-                "Enable Keystrokes",
-                "Wennste des auf true setzt wird alles sterben..."
-            ).apply {
-                x = 600.0
-                y = 120.0
-                width = 1200.0
-            } id "dummy-boolean-control"
+            val controlsWidth = (contentWidth - 600.0).coerceIn(1000.0..1500.0)
+            val controlsX = contentX + (contentWidth - controlsWidth) / 2.0
+            var currentY = 40.0
 
-            +TitleControl(
-                "Ich bin noch ein Title"
-            ).apply {
-                x = 600.0
-                y = 180.0
-                width = 1200.0
-            } id "dummy-boolean-control-2"
+            for ((index, control) in controls.withIndex()) {
+                control.x = controlsX
+                control.y = currentY
+                control.width = controlsWidth
 
-            +BooleanControl(
-                KeystrokesMod::enabled,
-                "Enable Keystrokes"
-            ).apply {
-                x = 600.0
-                y = 240.0
-                width = 1200.0
-            } id "dummy-boolean-control-3"
+                stage.add("control-element-$index" to control)
+
+                currentY += control.height + 20.0
+            }
         }
     }
 

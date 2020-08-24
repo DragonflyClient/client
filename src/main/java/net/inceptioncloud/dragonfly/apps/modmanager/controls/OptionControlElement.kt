@@ -3,21 +3,18 @@ package net.inceptioncloud.dragonfly.apps.modmanager.controls
 import javafx.beans.value.ChangeListener
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
 import net.inceptioncloud.dragonfly.engine.internal.Widget
-import net.inceptioncloud.dragonfly.engine.structure.IDimension
-import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
 import kotlin.properties.Delegates
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.jvm.isAccessible
 
-abstract class ModManagerControl<T>(
+abstract class OptionControlElement<T>(
     val property: KMutableProperty0<T>,
     val name: String,
     val description: String? = null
-) : AssembledWidget<ModManagerControl<T>>(), IPosition, IDimension {
+) : ControlElement<OptionControlElement<T>>() {
 
     final override var x by Delegates.notNull<Double>()
     final override var y by Delegates.notNull<Double>()
@@ -51,9 +48,9 @@ abstract class ModManagerControl<T>(
 
     override fun updateStructure() {
         val nameWidget = "name"<TextField> {
-            x = this@ModManagerControl.x
-            y = this@ModManagerControl.y
-            width = this@ModManagerControl.width * (2 / 3.0)
+            x = this@OptionControlElement.x
+            y = this@OptionControlElement.y
+            width = this@OptionControlElement.width * (2 / 3.0)
             adaptHeight = true
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
             color = DragonflyPalette.background
@@ -72,9 +69,9 @@ abstract class ModManagerControl<T>(
             height = nameWidget.height
         } else {
             val descriptionWidget = "description"<TextField> {
-                x = this@ModManagerControl.x
+                x = this@OptionControlElement.x
                 y = nameWidget.y + nameWidget.height
-                width = this@ModManagerControl.width * (2 / 3.0)
+                width = this@OptionControlElement.width * (2 / 3.0)
                 adaptHeight = true
                 fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
                 color = DragonflyPalette.background.altered { alphaDouble = 0.4 }

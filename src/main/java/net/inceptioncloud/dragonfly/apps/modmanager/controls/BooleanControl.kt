@@ -12,7 +12,7 @@ class BooleanControl(
     property: KMutableProperty0<Boolean>,
     name: String,
     description: String? = null
-) : ModManagerControl<Boolean>(property, name, description) {
+) : OptionControlElement<Boolean>(property, name, description) {
 
     val switchWidth = 60.0
     val switchHeight = 30.0

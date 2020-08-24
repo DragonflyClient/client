@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.mods.core
 
+import net.inceptioncloud.dragonfly.apps.modmanager.controls.ControlElement
 import net.inceptioncloud.dragonfly.options.OptionsBase
 import net.minecraft.util.ResourceLocation
 import java.io.File
@@ -42,6 +43,11 @@ open class DragonflyMod(
      * is named like the [directory] and is placed inside of it.
      */
     val optionsBase = OptionsBase(File(directory, "${cleanName}.json"))
+
+    /**
+     * Publishes the [controls][ControlElement] for this mod.
+     */
+    open fun publishControls(): List<ControlElement<*>> = listOf()
 
     /**
      * Creates a new [OptionDelegate] instance that allows creating options for the mod simply

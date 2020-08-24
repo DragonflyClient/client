@@ -3,17 +3,14 @@ package net.inceptioncloud.dragonfly.apps.modmanager.controls
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
-import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
 import net.inceptioncloud.dragonfly.engine.internal.Widget
-import net.inceptioncloud.dragonfly.engine.structure.IDimension
-import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import kotlin.properties.Delegates
 
 class TitleControl(
     val name: String,
     val description: String? = null
-) : AssembledWidget<TitleControl>(), IPosition, IDimension {
+) : ControlElement<TitleControl>() {
 
     override var x by Delegates.notNull<Double>()
     override var y by Delegates.notNull<Double>()
