@@ -1135,8 +1135,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
                     "key.attack" -> {
                         posX = keyStrokesStartX
                         posY = keyStrokesStartY + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
-                        keyStrokesScaleW[filter] =
-                            (1.5 * keyStrokesScale[filter]!!) + (0.65 * keyStrokesSpace[filter]!!)
+                        keyStrokesScaleW[filter] = (1.5 * keyStrokesScale[filter]!!) + (keyStrokesSpace[filter]!! / 2)
                         keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
                         name = Mouse.getButtonName(keyStroke.keyCode + 100)
                             .replace("BUTTON0", "LMB")
@@ -1144,9 +1143,9 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
                             .replace("BUTTON2", "MMB")
                     }
                     "key.use" -> {
-                        posX = keyStrokesStartX + (1.5 * keyStrokesScale[filter]!!) + (1.7 * keyStrokesSpace[filter]!!)
+                        posX = keyStrokesStartX + 1.5 * keyStrokesScale[filter]!! + (1.5 * keyStrokesSpace[filter]!!)
                         posY = keyStrokesStartY + (3 * keyStrokesScaleW[filter]!!) + (3 * keyStrokesSpace[filter]!!)
-                        keyStrokesScaleW[filter] = (1.55 * keyStrokesScale[filter]!!)
+                        keyStrokesScaleW[filter] = (1.5 * keyStrokesScale[filter]!!) + (keyStrokesSpace[filter]!! / 2)
                         keyStrokesScaleH[filter] = keyStrokesScale[filter]!!
                         name = Mouse.getButtonName(keyStroke.keyCode + 100)
                             .replace("BUTTON0", "LMB")
