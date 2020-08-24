@@ -5,10 +5,7 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.*
-import net.inceptioncloud.dragonfly.engine.toWidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
-import java.awt.Color
 import kotlin.reflect.KMutableProperty0
 
 class BooleanControl(

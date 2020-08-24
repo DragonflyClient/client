@@ -134,7 +134,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             +BooleanControl(
                 KeystrokesMod::enabled,
                 "Enable Keystrokes",
-                "Wennste des auf true setzt wird alles sterben und Nummer Fünf muss durch die Zeit springen und uns retten. Aber nur vllt."
+                "Wennste des auf true setzt wird alles sterben..."
             ).apply {
                 x = 600.0
                 y = 40.0

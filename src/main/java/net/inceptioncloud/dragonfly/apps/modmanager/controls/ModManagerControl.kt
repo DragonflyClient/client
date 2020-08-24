@@ -34,7 +34,7 @@ abstract class ModManagerControl<T>(
     }
 
     val listener: ChangeListener<T> = ChangeListener { _, oldValue, newValue ->
-        if (oldValue != newValue && !isInStateUpdate) {
+        if (oldValue != newValue) {
             react(newValue)
         }
     }

@@ -24,7 +24,7 @@ class OptionKey<T>(
      * A simple object property that can be used to observe the option key but
      * has no influence on the value.
      */
-    val objectProperty = SimpleObjectProperty<T>(defaultValue())
+    val objectProperty = SimpleObjectProperty<T>(optionsBase.getValue(this))
 
     /**
      * @see OptionsBase.getValue
