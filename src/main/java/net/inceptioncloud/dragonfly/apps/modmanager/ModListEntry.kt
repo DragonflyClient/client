@@ -17,10 +17,12 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 
 class ModListEntry(
+    val mod: DragonflyMod,
     initializerBlock: (ModListEntry.() -> Unit)? = null
 ) : AssembledWidget<ModListEntry>(initializerBlock), IPosition, IDimension, IColor {
 
@@ -32,8 +34,8 @@ class ModListEntry(
     @Interpolate
     override var color: WidgetColor by property(DragonflyPalette.background)
 
-    var icon: ResourceLocation? by property(null)
-    var text: String by property("No text given")
+    var icon: ResourceLocation? by property(ResourceLocation("dragonflyres/icons/mods/${mod.cleanName}.png"))
+    var text: String by property(mod.name)
 
     var selected = false
 
@@ -74,6 +76,8 @@ class ModListEntry(
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 28 * 2, useScale = false)
             color = DragonflyPalette.foreground
             dropShadow = true
+            shadowDistance = 2.0
+            shadowColor = WidgetColor(0, 0, 0, 80)
         }
 
     }

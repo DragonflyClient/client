@@ -6,17 +6,21 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.contains
-import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.internal.Alignment
+import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.ui.loader.OneTimeUILoader
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 
 class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
+
+    companion object : OneTimeUILoader(500)
 
     /**
      * Returns all mod list entries in the sidebar
@@ -29,17 +33,10 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
     var selectedEntry: ModListEntry? = null
         set(value) {
             field = value
-            entries.forEach {
-                it.morph(
-                    30, EaseQuad.IN_OUT,
-                    ModListEntry::color to if (it == value) accentNormal else background
-                )?.start()
-            }
+
+            updateSidebar()
+            updateContent()
         }
-
-    val dummyMods = listOf("Hotkeys", "KeyStrokes")
-
-    var show = true
 
     override var customScaleFactor: () -> Double? = {
         java.lang.Double.min(
@@ -49,6 +46,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
     }
 
     override fun initGui() {
+        selectedEntry = null
         val contentWidth = this@ModManagerUI.width - 400.0
         val contentX = 400.0
 
@@ -57,7 +55,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             y = 0.0
             width = this@ModManagerUI.width.toDouble()
             height = this@ModManagerUI.height.toDouble()
-            color = DragonflyPalette.foreground
+            color = DragonflyPalette.foreground.brighter(0.7)
         } id "background-color"
 
         +Rectangle {
@@ -76,39 +74,54 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
         var currentY = 17.0
 
-        for (mod in dummyMods) {
-            +ModListEntry {
+        for (mod in ModManagerApp.availableMods) {
+            +ModListEntry(mod) {
                 x = 15.0
                 y = currentY
-                color = background
-                text = mod
-                icon = ResourceLocation("dragonflyres/icons/mods/${mod.toLowerCase()}.png")
-            } id "sidebar-entry-${mod.toLowerCase()}"
+            } id "sidebar-entry-${mod.cleanName}"
 
             currentY += 61.0
         }
 
-        if (selectedEntry == null) {
-            +Image {
-                height = this@ModManagerUI.height / 2.0
-                width = height
+        +Image {
+            height = this@ModManagerUI.height / 2.0
+            width = height
                 x = 400.0 + (contentWidth / 2.0 - width / 2.0)
                 y = this@ModManagerUI.height / 2.5 - height / 2.0
                 resourceLocation = ResourceLocation("dragonflyres/vectors/rocket.png")
             } id "placeholder-image"
 
-            +TextField {
-                positionBelow("placeholder-image", 10.0)
-                width = contentWidth / 3.0
-                adaptHeight = true
-                x = contentX + contentWidth / 2.0 - width / 2.0
-                staticText = "Choose a mod in the sidebar to (de-)activate it and customize it's appearance, behavior and much more."
-                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
-                color = background
-                textAlignHorizontal = Alignment.CENTER
-            } id "placeholder-text"
-        }
+        +TextField {
+            positionBelow("placeholder-image", 10.0)
+            width = contentWidth / 3.0
+            adaptHeight = true
+            x = contentX + contentWidth / 2.0 - width / 2.0
+            staticText = "Choose a mod in the sidebar to (de-)activate it and customize it's appearance, behavior and much more."
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            color = background
+            textAlignHorizontal = Alignment.CENTER
+        } id "placeholder-text"
 
+        updateSidebar()
+        updateContent()
+    }
+
+    private fun updateSidebar() {
+        entries.forEach {
+            it.morph(
+                30, EaseQuad.IN_OUT,
+                ModListEntry::color to if (it == selectedEntry) accentNormal else background
+            )?.start()
+        }
+    }
+
+    private fun updateContent() {
+        val placeholderImage = getWidget<Image>("placeholder-image")
+        val placeholderText = getWidget<TextField>("placeholder-text")
+        val a = if (selectedEntry == null) 1.0 else 0.0
+
+        placeholderImage?.morph(25, EaseQuad.IN_OUT, Image::color to placeholderImage.color.altered { alphaDouble = a })?.start()
+        placeholderText?.morph(25, EaseQuad.IN_OUT, TextField::color to placeholderText.color.altered { alphaDouble = a })?.start()
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {

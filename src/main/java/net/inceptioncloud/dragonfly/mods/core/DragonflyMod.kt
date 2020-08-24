@@ -27,16 +27,21 @@ open class DragonflyMod(
 ) {
 
     /**
+     * The [name] of the mod in a [clean][String.clean] format.
+     */
+    val cleanName = name.clean()
+
+    /**
      * The directory inside the [globalModsDirectory] that is dedicated to this mod. Contains
      * the [optionsBase] file and potentially more configuration or assets files.
      */
-    val directory = File(globalModsDirectory, name.clean()).also { it.mkdirs() }
+    val directory = File(globalModsDirectory, cleanName).also { it.mkdirs() }
 
     /**
      * The options base instance created for this mod in which its settings are saved. The file
      * is named like the [directory] and is placed inside of it.
      */
-    val optionsBase = OptionsBase(File(directory, "${name.clean()}.json"))
+    val optionsBase = OptionsBase(File(directory, "${cleanName}.json"))
 
     /**
      * Creates a new [OptionDelegate] instance that allows creating options for the mod simply
