@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.apps.modmanager.controls
 
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
@@ -8,7 +9,12 @@ import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
+import org.apache.commons.lang3.StringUtils
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.reflect.KMutableProperty0
@@ -21,19 +27,24 @@ class NumberControl(
     val max: Double,
     val decimalPlaces: Int = 0,
     val transformer: (Number) -> Number = { it.keepDecimals(decimalPlaces) },
-    val enableLiveUpdate: Boolean = false
+    val formatter: ((String) -> String)? = null,
+    val liveUpdate: Boolean = false
 ) : OptionControlElement<Number>(property, name, description) {
 
     private val sliderWidth by lazy { controlWidth / 1.5 }
     private val sliderX by lazy { x + width - sliderWidth }
     private val sliderHeight = 6.0
-    private val circleSize = 18.0
+    private val circleSize = 16.0
 
     private var dragging = false
 
+    private val symbols = DecimalFormatSymbols(Locale.ENGLISH)
+    private val format = DecimalFormat("0." + StringUtils.repeat('0', decimalPlaces), symbols)
+
     override fun controlAssemble(): Map<String, Widget<*>> = mapOf(
         "slider-background" to RoundedRectangle(),
-        "slider-foreground" to FilledCircle()
+        "slider-foreground" to FilledCircle(),
+        "current-value" to TextField()
     )
 
     override fun controlUpdateStructure() {
@@ -52,6 +63,18 @@ class NumberControl(
             y = this@NumberControl.y + (this@NumberControl.height - size) / 2.0
             color = DragonflyPalette.accentNormal
         }
+
+        "current-value"<TextField> {
+            width = controlWidth / 3.0 - 15.0
+            height = this@NumberControl.height
+            x = sliderX - width - 15.0
+            y = this@NumberControl.y
+            staticText = formatString(transformer(optionKey.get()))
+            textAlignVertical = Alignment.CENTER
+            textAlignHorizontal = Alignment.END
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45)
+            color = DragonflyPalette.background.altered { alphaDouble = 0.6 }
+        }
     }
 
     private fun computeCircleX(): Double {
@@ -61,13 +84,15 @@ class NumberControl(
     }
 
     override fun react(newValue: Number) {
+        if (dragging && liveUpdate) return
+
         "slider-foreground"<FilledCircle> {
-            if (dragging) {
-                x = computeCircleX()
-            } else {
-                detachAnimation<MorphAnimation>()
-                morph(20, EaseQuad.IN_OUT, FilledCircle::x to computeCircleX())?.start()
-            }
+            detachAnimation<MorphAnimation>()
+            morph(20, EaseQuad.IN_OUT, FilledCircle::x to computeCircleX())?.start()
+        }
+
+        "current-value"<TextField> {
+            staticText = formatString(newValue)
         }
     }
 
@@ -75,13 +100,14 @@ class NumberControl(
         super.update()
 
         if (dragging) {
-            if (enableLiveUpdate) {
-                updateOptionKeyValue()
-            } else {
-                "slider-foreground"<FilledCircle> {
-                    x = GraphicsEngine.getMouseX().coerceIn(sliderX..sliderX + sliderWidth) - circleSize / 2.0
-                }
+            "slider-foreground"<FilledCircle> {
+                x = GraphicsEngine.getMouseX().coerceIn(sliderX..sliderX + sliderWidth) - circleSize / 2.0
             }
+            "current-value"<TextField> {
+                staticText = formatString(calculateMouseValue())
+            }
+
+            if (liveUpdate) updateOptionKeyValue()
         }
     }
 
@@ -102,19 +128,30 @@ class NumberControl(
 
     override fun handleMouseRelease(data: MouseData) {
         if (dragging) {
-            updateOptionKeyValue()
             dragging = false
+            react(updateOptionKeyValue())
         }
 
         super.handleMouseRelease(data)
     }
 
-    private fun updateOptionKeyValue() {
+    private fun updateOptionKeyValue(): Number {
+        val new = calculateMouseValue()
+        if (new != optionKey.get())
+            optionKey.set(new)
+        return new
+    }
+
+    private fun calculateMouseValue(): Number {
         val progress = (GraphicsEngine.getMouseX() - sliderX) / sliderWidth
         val value = (min + (progress * (max - min))).coerceIn(min..max)
-        val transformed = transformer(value)
-        if (transformed != optionKey.get())
-            optionKey.set(transformed).also { println("-> $transformed") }
+        return transformer(value)
+    }
+
+    private fun formatString(value: Number): String {
+        val decimalFormatted = if (decimalPlaces == 0) value.toInt().toString()
+        else format.format(value)
+        return formatter?.invoke(decimalFormatted) ?: decimalFormatted
     }
 }
 
