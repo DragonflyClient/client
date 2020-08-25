@@ -52,8 +52,8 @@ class TitleControl(
                 y = nameWidget.y + nameWidget.height
                 width = this@TitleControl.width * (2 / 3.0)
                 adaptHeight = true
-                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
-                color = DragonflyPalette.background.altered { alphaDouble = 0.6 }
+                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+                color = DragonflyPalette.background.altered { alphaDouble = 0.5 }
                 staticText = description
             }!!.also { it.adaptHeight() }
 
@@ -65,7 +65,7 @@ class TitleControl(
             y = this@TitleControl.y + this@TitleControl.height + 5.0
             height = 2.0
             width = this@TitleControl.width
-            color = WidgetColor(0, 0, 0, 50)
+            color = WidgetColor(0, 0, 0, 30)
         }
 
         height += 7.0
