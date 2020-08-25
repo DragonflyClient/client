@@ -4,7 +4,9 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.internal.Widget
+import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import kotlin.properties.Delegates
 
 class TitleControl(
@@ -20,6 +22,7 @@ class TitleControl(
     override fun assemble(): Map<String, Widget<*>> = buildMap {
         put("name", TextField())
         put("description", TextField())
+        put("horizontal-rule", Rectangle())
     }
 
     override fun updateStructure() {
@@ -56,5 +59,15 @@ class TitleControl(
 
             height = nameWidget.height + descriptionWidget.height
         }
+
+        "horizontal-rule"<Rectangle> {
+            x = this@TitleControl.x
+            y = this@TitleControl.y + this@TitleControl.height + 5.0
+            height = 2.0
+            width = this@TitleControl.width
+            color = WidgetColor(0, 0, 0, 50)
+        }
+
+        height += 7.0
     }
 }

@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.apps.modmanager
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.OptionControlElement
+import net.inceptioncloud.dragonfly.apps.modmanager.controls.TitleControl
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
@@ -138,13 +139,15 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             var currentY = 40.0
 
             for ((index, control) in controls.withIndex()) {
+                if (control is TitleControl && index != 0) currentY += 20.0
+
                 control.x = controlsX
                 control.y = currentY
                 control.width = controlsWidth
 
                 stage.add("control-element-$index" to control)
 
-                currentY += control.height + 20.0
+                currentY += control.height + 15.0
             }
         }
     }
