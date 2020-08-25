@@ -49,9 +49,6 @@ class GlyphPage(val font: Font) {
     }
 
     fun generateGlyphPage(chars: CharArray) {
-        // obtain the current system graphical settings
-        val gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().defaultScreenDevice.defaultConfiguration
-
         // Calculate glyphPageSize
         var maxWidth = -1.0
         var maxHeight = -1.0
@@ -97,9 +94,8 @@ class GlyphPage(val font: Font) {
             }
         }
 
-        bufferedImage = gfxConfig.createCompatibleImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB)
-
-        val graphics = bufferedImage!!.createGraphics()
+        bufferedImage = BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB)
+        val graphics = bufferedImage!!.graphics as Graphics2D
 
         graphics.font = font
         graphics.color = Color(255, 255, 255, 0)
