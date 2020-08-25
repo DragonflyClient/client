@@ -195,9 +195,8 @@ class GlyphPage(val font: Font) {
      */
     private val hash by lazy {
         with(font) {
-            Hashing.sha1().hashString(
-                "${name}-${attributes[TextAttribute.TRACKING]}-${style}-${imgSize}-${size}", Charset.defaultCharset()
-            ).toString()
+            val specifications = listOf(name, attributes[TextAttribute.TRACKING], style, imgSize, size)
+            Hashing.sha1().hashString(specifications.joinToString("-"), Charset.defaultCharset()).toString()
         }
     }
 
