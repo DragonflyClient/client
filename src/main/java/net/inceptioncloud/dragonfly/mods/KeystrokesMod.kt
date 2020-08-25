@@ -12,6 +12,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
         TitleControl("General"),
         BooleanControl(::enabled, "Enable mod"),
         TitleControl("Appearance", "Customize the appearance of the keystrokes on your screen"),
-        NumberControl(::space, "Space", "The spacing between multiple keystrokes boxes", 1.0, 3.0, 1)
+        NumberControl(::space, "Space", "Live", min = 1.0, max = 3.0, decimalPlaces = 0, enableLiveUpdate = true),
+        NumberControl(::space, "Space", "Not live", min = 1.0, max = 3.0, decimalPlaces = 0, enableLiveUpdate = false)
     )
 }
