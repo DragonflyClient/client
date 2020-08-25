@@ -14,9 +14,9 @@ class BooleanControl(
     description: String? = null
 ) : OptionControlElement<Boolean>(property, name, description) {
 
-    val switchWidth = 60.0
-    val switchHeight = 30.0
-    val innerSize = 22.0
+    val switchWidth = 50.0
+    val switchHeight = 24.0
+    val innerSize = 18.0
     val innerMargin = (switchHeight - innerSize) / 2.0
 
     override fun controlAssemble(): Map<String, Widget<*>> = mapOf(

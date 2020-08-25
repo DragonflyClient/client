@@ -53,7 +53,15 @@ open class DragonflyMod(
      * Creates a new [OptionDelegate] instance that allows creating options for the mod simply
      * by delegating properties.
      */
-    protected fun <T> option(validator: (T) -> Boolean = { true }, defaultValue: () -> T): OptionDelegate<T> {
+    protected fun <T> option(defaultValue: T, validator: (T) -> Boolean = { true }): OptionDelegate<T> {
+        return OptionDelegate(validator, { defaultValue }, optionsBase)
+    }
+
+    /**
+     * Creates a new [OptionDelegate] instance that allows creating options for the mod simply
+     * by delegating properties.
+     */
+    protected fun <T> option(defaultValue: () -> T, validator: (T) -> Boolean = { true }): OptionDelegate<T> {
         return OptionDelegate(validator, defaultValue, optionsBase)
     }
 }

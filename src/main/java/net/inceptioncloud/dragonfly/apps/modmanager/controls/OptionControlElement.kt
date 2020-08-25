@@ -11,7 +11,7 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.jvm.isAccessible
 
 abstract class OptionControlElement<T>(
-    val property: KMutableProperty0<T>,
+    val property: KMutableProperty0<out T>,
     val name: String,
     val description: String? = null
 ) : ControlElement<OptionControlElement<T>>() {
