@@ -5,14 +5,16 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
+import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.sequence.easing.*
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuart
 import net.inceptioncloud.dragonfly.engine.structure.IColor
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.mc
 import net.minecraft.util.ResourceLocation
 import kotlin.reflect.KMutableProperty0
 
@@ -64,8 +66,7 @@ class DropdownElement(
             color = DragonflyPalette.accentNormal
             arc = 5.0
             clickAction = {
-                if (isExpanded) collapse()
-                else expand()
+                if (!isExpanded) expand()
             }
         }
 
@@ -143,6 +144,7 @@ class DropdownElement(
 
     private fun expand() {
         if (isExpanded || isInProgress) return
+        mc.currentScreen.focusHandler = DropdownFocusHandler()
         isExpanded = true
         isInProgress = true
 
@@ -162,6 +164,7 @@ class DropdownElement(
 
     private fun collapse() {
         if (!isExpanded || isInProgress) return
+        mc.currentScreen.focusHandler = null
         isExpanded = false
         isInProgress = true
 
@@ -184,4 +187,10 @@ class DropdownElement(
 
     private fun getWidgetsForExpansion(): Collection<Widget<*>> =
         structure.filterKeys { it.startsWith("expanded::") }.values
+
+    inner class DropdownFocusHandler : FocusHandler {
+        override fun captureMouseFocus(data: MouseData) = data !in getWidget<RoundedRectangle>("expanded::container")
+        override fun captureKeyboardFocus(key: Int) = true
+        override fun handleCapturedMousePress(data: MouseData) = collapse()
+    }
 }
