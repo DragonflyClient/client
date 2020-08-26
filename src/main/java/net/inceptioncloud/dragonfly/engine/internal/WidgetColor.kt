@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.engine.internal
 import com.google.gson.*
 import org.lwjgl.opengl.GL11
 import java.awt.Color
-import java.lang.reflect.Type
 import kotlin.math.absoluteValue
 
 /**
@@ -34,6 +33,16 @@ class WidgetColor {
             val alpha = jsonObject.get("alpha").asInt
             WidgetColor(red, green, blue, alpha)
         }
+
+        /**
+         * Generates a rainbow color based on the current time in milliseconds and adds
+         * the given [alpha] value to it.
+         */
+        private fun generateRainbowColor(alpha: Int): Color {
+            val cycle = (System.currentTimeMillis() / 15) % 201
+            val hsbColor = Color.getHSBColor(cycle / 200.0f, 1f, 1f)
+            return Color(hsbColor.red, hsbColor.green, hsbColor.blue, alpha)
+        }
     }
 
     /**
@@ -55,11 +64,12 @@ class WidgetColor {
      */
     constructor(r: Int, g: Int, b: Int, a: Int = 255) {
         base = Color(
-            r.coerceAtLeast(0).coerceAtMost(255),
-            g.coerceAtLeast(0).coerceAtMost(255),
-            b.coerceAtLeast(0).coerceAtMost(255),
-            a.coerceAtLeast(0).coerceAtMost(255)
+            r.coerceIn(0..255),
+            g.coerceIn(0..255),
+            b.coerceIn(0..255),
+            a.coerceIn(0..255)
         )
+        actualAlpha = a.coerceIn(0..255)
     }
 
     /**
@@ -72,11 +82,12 @@ class WidgetColor {
      */
     constructor(r: Float, g: Float, b: Float, a: Float = 1.0F) {
         base = Color(
-            r.coerceAtLeast(0F).coerceAtMost(1F),
-            g.coerceAtLeast(0F).coerceAtMost(1F),
-            b.coerceAtLeast(0F).coerceAtMost(1F),
-            a.coerceAtLeast(0F).coerceAtMost(1F)
+            r.coerceIn(0F..1F),
+            g.coerceIn(0F..1F),
+            b.coerceIn(0F..1F),
+            a.coerceIn(0F..1F)
         )
+        actualAlpha = (a.coerceIn(0F..1F) * 255).toInt()
     }
 
     /**
@@ -89,11 +100,12 @@ class WidgetColor {
      */
     constructor(r: Double, g: Double, b: Double, a: Double = 0.0) {
         base = Color(
-            r.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat(),
-            g.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat(),
-            b.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat(),
-            a.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat()
+            r.coerceIn(0.0..1.0).toFloat(),
+            g.coerceIn(0.0..1.0).toFloat(),
+            b.coerceIn(0.0..1.0).toFloat(),
+            a.coerceIn(0.0..1.0).toFloat()
         )
+        actualAlpha = (a.coerceIn(0.0..1.0) * 255).toInt()
     }
 
     /**
@@ -109,7 +121,6 @@ class WidgetColor {
      * Binds the values of the color object to the current OpenGL context.
      */
     fun glBindColor() {
-//        GlStateManager.color(redFloat, greenFloat, blueFloat, alphaFloat)
         GL11.glColor4d(redDouble, greenDouble, blueDouble, alphaDouble)
     }
 
@@ -210,11 +221,11 @@ class WidgetColor {
             (blue - other.blue).absoluteValue
 
     /**
-     * The RGB value specified by the [base] color.
+     * Holds the actual alpha value that is required to [generate the rainbow color]
+     * [generateRainbowColor] if [rainbow] is enabled.
      */
-    val rgb: Int
-        get() = base.rgb
-
+    private var actualAlpha: Int = 255
+    
     /**
      * The base color stored in a [java.awt.Color] object.
      *
@@ -222,6 +233,19 @@ class WidgetColor {
      * Whenever values of the [WidgetColor] object are modified, the changes will be reflected on the base color.
      */
     var base: Color
+        get() = if (rainbow) generateRainbowColor(actualAlpha) else field
+
+    /**
+     * Whether the rainbow mode is enabled. If this value is true, [base] will return a
+     * [generated rainbow color][generateRainbowColor] using the [actualAlpha] value.
+     */
+    var rainbow: Boolean = false
+
+    /**
+     * The RGB value specified by the [base] color.
+     */
+    val rgb: Int
+        get() = base.rgb
 
     /**
      * Getter & Setter for the **red** base value in **integer format**.
@@ -231,7 +255,7 @@ class WidgetColor {
     var red
         get() = base.red
         set(value) {
-            base = Color(value.coerceAtLeast(0).coerceAtMost(255), green, blue, alpha)
+            base = Color(value.coerceIn(0..255), green, blue, alpha)
         }
 
     /**
@@ -242,7 +266,7 @@ class WidgetColor {
     var green
         get() = base.green
         set(value) {
-            base = Color(red, value.coerceAtLeast(0).coerceAtMost(255), blue, alpha)
+            base = Color(red, value.coerceIn(0..255), blue, alpha)
         }
 
     /**
@@ -253,7 +277,7 @@ class WidgetColor {
     var blue
         get() = base.blue
         set(value) {
-            base = Color(red, green, value.coerceAtLeast(0).coerceAtMost(255), alpha)
+            base = Color(red, green, value.coerceIn(0..255), alpha)
         }
 
     /**
@@ -264,7 +288,8 @@ class WidgetColor {
     var alpha
         get() = base.alpha
         set(value) {
-            base = Color(red, green, blue, value.coerceAtLeast(0).coerceAtMost(255))
+            base = Color(red, green, blue, value.coerceIn(0..255))
+            actualAlpha = value.coerceIn(0..255)
         }
 
     /**
@@ -275,7 +300,7 @@ class WidgetColor {
     var redDouble
         get() = base.red / 255.0
         set(value) {
-            base = Color((value.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat() * 255).toInt(), green, blue, alpha)
+            base = Color((value.coerceIn(0.0..1.0).toFloat() * 255).toInt(), green, blue, alpha)
         }
 
     /**
@@ -286,7 +311,7 @@ class WidgetColor {
     var greenDouble
         get() = base.green / 255.0
         set(value) {
-            base = Color(red, (value.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat() * 255).toInt(), blue, alpha)
+            base = Color(red, (value.coerceIn(0.0..1.0).toFloat() * 255).toInt(), blue, alpha)
         }
 
     /**
@@ -297,7 +322,7 @@ class WidgetColor {
     var blueDouble
         get() = base.blue / 255.0
         set(value) {
-            base = Color(red, green, (value.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat() * 255).toInt(), alpha)
+            base = Color(red, green, (value.coerceIn(0.0..1.0).toFloat() * 255).toInt(), alpha)
         }
 
     /**
@@ -308,6 +333,7 @@ class WidgetColor {
     var alphaDouble
         get() = base.alpha / 255.0
         set(value) {
-            base = Color(red, green, blue, (value.coerceAtLeast(0.0).coerceAtMost(1.0).toFloat() * 255).toInt())
+            base = Color(red, green, blue, (value.coerceIn(0.0..1.0).toFloat() * 255).toInt())
+            actualAlpha = (value.coerceIn(0.0..1.0).toFloat() * 255).toInt()
         }
 }
