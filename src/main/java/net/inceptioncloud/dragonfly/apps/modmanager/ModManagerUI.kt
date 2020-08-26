@@ -6,11 +6,9 @@ import net.inceptioncloud.dragonfly.apps.modmanager.controls.TitleControl
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
-import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.MouseData
-import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
