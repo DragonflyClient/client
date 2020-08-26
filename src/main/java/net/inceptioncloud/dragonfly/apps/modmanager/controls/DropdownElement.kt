@@ -16,10 +16,9 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.mc
 import net.minecraft.util.ResourceLocation
-import kotlin.reflect.*
-import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
 
 class DropdownElement(
     property: KMutableProperty0<out Enum<*>>,
@@ -121,12 +120,6 @@ class DropdownElement(
                         color = if (isHovered) DragonflyPalette.accentNormal else DragonflyPalette.background
                     }
                 }
-                clickAction = {
-                    if (isExpanded) {
-                        optionKey.set(value)
-                        collapse()
-                    }
-                }
             }
 
             if (index == 0) continue
@@ -145,6 +138,22 @@ class DropdownElement(
         "selected"<TextField> {
             staticText = newValue.toPrettyString()
         }
+    }
+
+    override fun handleMousePress(data: MouseData) {
+        super.handleMousePress(data)
+        if (!isExpanded) return
+
+        structure.filterKeys { it.startsWith("expanded::value") }
+            .forEach { (id, widget) ->
+                if (widget.isHovered) {
+                    val index = id.removePrefix("expanded::value-").toInt()
+                    val value = allValues[index]
+                    optionKey.set(value)
+                    collapse()
+                    return@forEach
+                }
+            }
     }
 
     private fun expand() {
@@ -198,9 +207,15 @@ class DropdownElement(
         structure.filterKeys { it.startsWith("expanded::") }.values
 
     inner class DropdownFocusHandler : FocusHandler {
-        override fun captureMouseFocus(data: MouseData) = data !in getWidget<RoundedRectangle>("expanded::container")
+        override fun captureMouseFocus(data: MouseData) = true
         override fun captureKeyboardFocus(key: Int) = true
-        override fun handleCapturedMousePress(data: MouseData) = collapse()
+        override fun handleCapturedMousePress(data: MouseData) {
+            if (data in getWidget<RoundedRectangle>("expanded::container")) {
+                handleMousePress(data)
+            } else {
+                collapse()
+            }
+        }
     }
 }
 
