@@ -88,10 +88,10 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         +Image {
             height = this@ModManagerUI.height / 2.0
             width = height
-                x = 400.0 + (contentWidth / 2.0 - width / 2.0)
-                y = this@ModManagerUI.height / 2.5 - height / 2.0
-                resourceLocation = ResourceLocation("dragonflyres/vectors/rocket.png")
-            } id "placeholder-image"
+            x = 400.0 + (contentWidth / 2.0 - width / 2.0)
+            y = this@ModManagerUI.height / 2.5 - height / 2.0
+            resourceLocation = ResourceLocation("dragonflyres/vectors/rocket.png")
+        } id "placeholder-image"
 
         +TextField {
             positionBelow("placeholder-image", 10.0)
