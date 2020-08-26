@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.structure
 
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
+
 /**
  * ## Position Interface
  *
@@ -15,7 +17,7 @@ interface IPosition {
      *
      * @see y
      */
-    var x: Double
+    @Interpolate var x: Double
 
     /**
      * The y-position of the object on the screen.
@@ -25,5 +27,5 @@ interface IPosition {
      *
      * @see x
      */
-    var y: Double
+    @Interpolate var y: Double
 }
