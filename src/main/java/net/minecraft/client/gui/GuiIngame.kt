@@ -9,6 +9,7 @@ import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
+import net.inceptioncloud.dragonfly.mods.KeystrokesMod2
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionKeystrokes
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
@@ -1084,15 +1085,15 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
         stage.clear()
 
-        if (OptionsSectionKeystrokes.switch.invoke()!! == 1) {
+        if (KeystrokesMod2.enabled) {
             for (keyStroke in KeyStrokesManager.keystrokes) {
                 val filter = "keystrokes-${keyStroke.keyDesc}"
 
-                keyStrokesScale[filter] = OptionsSectionKeystrokes.scale.invoke()!!
-                keyStrokesSpace[filter] = OptionsSectionKeystrokes.space.invoke()!!
-                keyStrokesFontSize[filter] = OptionsSectionKeystrokes.fontSize.invoke()!!
-                keyStrokesScaleW[filter] = OptionsSectionKeystrokes.scale.invoke()!!
-                keyStrokesScaleH[filter] = OptionsSectionKeystrokes.scale.invoke()!!
+                keyStrokesScale[filter] = KeystrokesMod2.scale
+                keyStrokesSpace[filter] = KeystrokesMod2.space
+                keyStrokesFontSize[filter] = KeystrokesMod2.fontSize
+                keyStrokesScaleW[filter] = KeystrokesMod2.scale
+                keyStrokesScaleH[filter] = KeystrokesMod2.scale
 
                 var name = ""
 

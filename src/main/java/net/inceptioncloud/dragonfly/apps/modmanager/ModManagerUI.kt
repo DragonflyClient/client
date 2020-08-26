@@ -16,7 +16,10 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionKeystrokes
 import net.inceptioncloud.dragonfly.ui.loader.OneTimeUILoader
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 
@@ -74,7 +77,10 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         +BackNavigation {
             x = 30.0
             y = this@ModManagerUI.height - height - 30.0
-            gui(previousScreen)
+            action {
+                reloadKeystrokesOverlay()
+                previousScreen.switch()
+            }
         } id "back-navigation"
 
         var currentY = 17.0
@@ -165,10 +171,22 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
     override fun keyTyped(typedChar: Char, keyCode: Int) {
         if (keyCode == 1 && canManuallyClose) {
             previousScreen.switch()
+            reloadKeystrokesOverlay()
             return
         }
 
         super.keyTyped(typedChar, keyCode)
+    }
+
+    private fun reloadKeystrokesOverlay() {
+        for (keystroke in KeyStrokesManager.keystrokes) {
+            Minecraft.getMinecraft().ingameGUI.keyStrokesScale["keystrokes-${keystroke.keyDesc}"] = OptionsSectionKeystrokes.scale.invoke()!!
+            Minecraft.getMinecraft().ingameGUI.keyStrokesSpace["keystrokes-${keystroke.keyDesc}"] = OptionsSectionKeystrokes.space.invoke()!!
+            Minecraft.getMinecraft().ingameGUI.keyStrokesFontSize["keystrokes-${keystroke.keyDesc}"] =
+                OptionsSectionKeystrokes.fontSize.invoke()!!
+
+            Minecraft.getMinecraft().ingameGUI.initKeyStrokes(true)
+        }
     }
 
 }
