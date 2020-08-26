@@ -16,12 +16,15 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.mc
 import net.minecraft.util.ResourceLocation
-import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.*
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
 class DropdownElement(
     property: KMutableProperty0<out Enum<*>>,
     name: String,
-    description: String?
+    description: String? = null
 ) : OptionControlElement<Enum<*>>(property, name, description) {
 
     val allValues: List<Enum<*>> = optionKey.typeClass.enumConstants.toList()
@@ -30,7 +33,7 @@ class DropdownElement(
     private val fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 46)
 
     private val containerWidth by lazy {
-        allValues.map { fontRenderer.getStringWidth(it.name) }.max()!!.coerceIn(100..controlWidth.toInt()) + padding * 2 + 50.0
+        allValues.map { fontRenderer.getStringWidth(it.toPrettyString()) }.max()!!.coerceIn(100..controlWidth.toInt()) + padding * 2 + 50.0
     }
     private val containerHeight = 40.0
     private val containerX by lazy { x + width - containerWidth }
@@ -75,7 +78,7 @@ class DropdownElement(
             y = containerY
             width = containerWidth - padding * 2 - 50.0
             height = containerHeight
-            staticText = optionKey.get().name.toLowerCase().capitalize()
+            staticText = optionKey.get().toPrettyString()
             color = DragonflyPalette.foreground
             fontRenderer = this@DropdownElement.fontRenderer
             textAlignVertical = Alignment.CENTER
@@ -110,7 +113,7 @@ class DropdownElement(
                 height = containerHeight
                 width = containerWidth - this@DropdownElement.padding
                 color = DragonflyPalette.background.altered { alphaDouble = 0.0 }
-                staticText = value.name.toLowerCase().capitalize()
+                staticText = value.toPrettyString()
                 textAlignVertical = Alignment.CENTER
                 fontRenderer = this@DropdownElement.fontRenderer
                 hoverAction = {
@@ -119,8 +122,10 @@ class DropdownElement(
                     }
                 }
                 clickAction = {
-                    optionKey.set(value)
-                    collapse()
+                    if (isExpanded) {
+                        optionKey.set(value)
+                        collapse()
+                    }
                 }
             }
 
@@ -138,7 +143,7 @@ class DropdownElement(
 
     override fun react(newValue: Enum<*>) {
         "selected"<TextField> {
-            staticText = newValue.name.toLowerCase().capitalize()
+            staticText = newValue.toPrettyString()
         }
     }
 
@@ -193,4 +198,10 @@ class DropdownElement(
         override fun captureKeyboardFocus(key: Int) = true
         override fun handleCapturedMousePress(data: MouseData) = collapse()
     }
+}
+
+fun <T : Enum<*>> T.toPrettyString(): String {
+    val customName = this::class.memberProperties.singleOrNull { it.name == "customName" } as? KProperty1<T, String>
+    if (customName != null) return customName.get(this)
+    return name.split("_").joinToString(" ") { it.toLowerCase().capitalize() }
 }
