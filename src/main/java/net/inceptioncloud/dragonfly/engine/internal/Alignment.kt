@@ -21,7 +21,9 @@ enum class Alignment
     /**
      * A mathematic function to reverse the calculation that was done by the [calc] function.
      */
-    private val reverse: (coordinate: Double, size: Double) -> Double
+    private val reverse: (coordinate: Double, size: Double) -> Double,
+
+    val customName: String = "huhu"
 ) {
     /**
      * Keeps the input location of the widget. In this case, the widget is drawn on the right/bottom

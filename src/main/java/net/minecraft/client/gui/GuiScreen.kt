@@ -97,6 +97,8 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     private var touchValue = 0
     private var clickedLinkURI: URI? = null
 
+    var focusHandler: FocusHandler? = null
+
     @JvmField
     val stage = WidgetStage(this::class.simpleName!!)
 
@@ -599,6 +601,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         val mouseX = Mouse.getEventX() * width / mc.displayWidth
         val mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1
         val k = Mouse.getEventButton()
+        val mouseData = MouseData(mouseX, mouseY, button = k)
 
         val mouseInputEvent = MouseInputEvent(k)
         eventBus.post(mouseInputEvent)
@@ -606,20 +609,25 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         if (Modal.isModalPresent()) return
 
         if (Mouse.getEventButtonState()) {
+            if (focusHandler?.captureMouseFocus(mouseData) == true) {
+                focusHandler?.handleCapturedMousePress(mouseData)
+                return
+            }
+
             if (mc.gameSettings.touchscreen && touchValue++ > 0) {
                 return
             }
             eventButton = k
             lastMouseEvent = Minecraft.getSystemTime()
             mouseClicked(mouseX, mouseY, eventButton)
-            stage.handleMousePress(MouseData(mouseX, mouseY, button = eventButton))
+            stage.handleMousePress(mouseData)
         } else if (k != -1) {
             if (mc.gameSettings.touchscreen && --touchValue > 0) {
                 return
             }
             eventButton = -1
             mouseReleased(mouseX, mouseY, k)
-            stage.handleMouseRelease(MouseData(mouseX, mouseY, button = k))
+            stage.handleMouseRelease(mouseData)
         } else if (eventButton != -1 && lastMouseEvent > 0L) {
             val timeSinceLastClick = Minecraft.getSystemTime() - lastMouseEvent
             mouseClickMove(mouseX, mouseY, eventButton, timeSinceLastClick)
@@ -641,7 +649,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             return
         }
 
-        if (!Modal.isModalPresent()) {
+        if (!Modal.isModalPresent() && focusHandler?.captureKeyboardFocus(i) != true) {
             if (Keyboard.getEventKeyState()) {
                 val eventCharacter = Keyboard.getEventCharacter()
                 val eventKey = Keyboard.getEventKey()

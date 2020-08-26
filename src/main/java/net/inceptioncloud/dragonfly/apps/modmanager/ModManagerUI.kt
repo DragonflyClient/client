@@ -6,16 +6,15 @@ import net.inceptioncloud.dragonfly.apps.modmanager.controls.TitleControl
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
-import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.MouseData
-import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionKeystrokes
 import net.inceptioncloud.dragonfly.ui.loader.OneTimeUILoader
@@ -35,7 +34,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             .filterKeys { it.startsWith("sidebar-entry") }
             .mapNotNull { it.value as? ModListEntry }
 
-    var selectedEntry: ModListEntry? = null
+    var selectedMod: DragonflyMod? = null
         set(value) {
             if (field == value) return
             field = value
@@ -56,8 +55,6 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         get() = this@ModManagerUI.width - 400.0
 
     override fun initGui() {
-        selectedEntry = null
-
         +Rectangle {
             x = 0.0
             y = 0.0
@@ -119,7 +116,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     private fun updateSidebar() {
         entries.forEach {
-            it.color = if (it == selectedEntry) accentNormal else background
+            it.color = if (it.mod == selectedMod) accentNormal else background
         }
     }
 
@@ -127,8 +124,8 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         val placeholderImage = getWidget<Image>("placeholder-image")
         val placeholderText = getWidget<TextField>("placeholder-text")
 
-        placeholderImage?.isVisible = selectedEntry == null
-        placeholderText?.isVisible = selectedEntry == null
+        placeholderImage?.isVisible = selectedMod == null
+        placeholderText?.isVisible = selectedMod == null
 
         stage.content.filterKeys { it.startsWith("control-") }
             .forEach { (key, value) ->
@@ -136,8 +133,8 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
                 (value as? OptionControlElement<*>)?.removeListener()
             }
 
-        if (selectedEntry != null) {
-            val mod = selectedEntry!!.mod
+        if (selectedMod != null) {
+            val mod = selectedMod!!
             val controls = mod.publishControls()
 
             val controlsWidth = (contentWidth - 600.0).coerceIn(1000.0..1500.0)
@@ -164,7 +161,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         if (data in getWidget<Rectangle>("sidebar-background") &&
             data !in getWidget<BackNavigation>("back-navigation")
         ) {
-            selectedEntry = entries.firstOrNull { data in it }
+            selectedMod = entries.firstOrNull { data in it }?.mod
         }
     }
 

@@ -54,6 +54,11 @@ abstract class Widget<W : Widget<W>>(
     open var isModal = false
 
     /**
+     * Whether this widget ignores the [FocusHandler] of the current screen.
+     */
+    open var overrideFocusHandler = false
+
+    /**
      * The assembled widget that this widget is part of. This value is only non-null if the widget is
      * part of an assembled widget and thus if [isInAssembled] is true.
      */
@@ -198,11 +203,15 @@ abstract class Widget<W : Widget<W>>(
 
         GlStateManager.popMatrix()
 
+        val focusHandler = mc.currentScreen?.takeIf { parentStage == it.stage }?.focusHandler
+        val mouseX = GraphicsEngine.getMouseX()
+        val mouseY = GraphicsEngine.getMouseY()
+        val data = MouseData(mouseX.toInt(), mouseY.toInt())
+
         if (canUpdateHoverState() && !(Modal.isModalPresent() && !isModal)
+            && (focusHandler?.captureMouseFocus(data) != true || overrideFocusHandler)
             && this is IPosition && (this is IDimension || this is ISize)
         ) {
-            val mouseX = GraphicsEngine.getMouseX()
-            val mouseY = GraphicsEngine.getMouseY()
             val (width, height) = Defaults.getSizeOrDimension(this)
 
             if (mouseX in x..x + width && mouseY in y..y + height) {
