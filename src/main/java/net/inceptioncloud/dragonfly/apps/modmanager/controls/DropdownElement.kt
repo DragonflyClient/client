@@ -158,6 +158,7 @@ class DropdownElement(
                 it as IColor
                 it as IPosition
 
+                stagePriority = 100
                 it.detachAnimation<MorphAnimation>()
                 it.morph(
                     30, EaseQuart.OUT,
@@ -186,7 +187,10 @@ class DropdownElement(
                     30, EaseQuart.IN,
                     IColor::color to targetColor,
                     IPosition::y to it.y - 20.0
-                )?.post { _, _ -> isInProgress = false }?.start()
+                )?.post { _, _ ->
+                    isInProgress = false
+                    stagePriority = 0
+                }?.start()
             }
     }
 
