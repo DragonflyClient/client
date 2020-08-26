@@ -16,7 +16,6 @@ object DragonflySettingsApp : TaskbarApp("Dragonfly Settings") {
         OptionsSectionOverlay.init()
         OptionsSectionChat.init()
         OptionsSectionPerformance.init()
-        OptionsSectionKeystrokes.init()
     }
 
     override fun open() = gui(DragonflySettingsUI(Minecraft.getMinecraft().currentScreen))

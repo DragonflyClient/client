@@ -8,9 +8,9 @@ import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.keystrokes.EnumKeystrokesPosition
 import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
 import net.inceptioncloud.dragonfly.mods.KeystrokesMod2
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionKeystrokes
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardTitle
@@ -1044,12 +1044,12 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         var posX: Double
         var posY: Double
 
-        when (OptionsSectionKeystrokes.position.invoke()!!) {
-            0 -> {
+        when (KeystrokesMod2.position) {
+            EnumKeystrokesPosition.TOP_LEFT -> {
                 keyStrokesStartX = 10.0
                 keyStrokesStartY = 10.0
             }
-            1 -> {
+            EnumKeystrokesPosition.TOP_RIGHT -> {
                 val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
                 val scale = keyStrokesScale.values.first()
                 val space = keyStrokesSpace.values.first()
@@ -1057,7 +1057,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
                 keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
                 keyStrokesStartY = 10.0
             }
-            2 -> {
+            EnumKeystrokesPosition.BOTTOM_LEFT -> {
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
                 val scale = keyStrokesScale.values.first()
                 val space = keyStrokesSpace.values.first()
@@ -1065,7 +1065,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
                 keyStrokesStartX = 10.0
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
             }
-            3 -> {
+            EnumKeystrokesPosition.BOTTOM_RIGHT -> {
                 val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
                 val scale = keyStrokesScale.values.first()

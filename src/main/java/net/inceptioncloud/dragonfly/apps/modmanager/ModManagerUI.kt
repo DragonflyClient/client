@@ -16,7 +16,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionKeystrokes
+import net.inceptioncloud.dragonfly.mods.KeystrokesMod2
 import net.inceptioncloud.dragonfly.ui.loader.OneTimeUILoader
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
@@ -177,10 +177,9 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     private fun reloadKeystrokesOverlay() {
         for (keystroke in KeyStrokesManager.keystrokes) {
-            Minecraft.getMinecraft().ingameGUI.keyStrokesScale["keystrokes-${keystroke.keyDesc}"] = OptionsSectionKeystrokes.scale.invoke()!!
-            Minecraft.getMinecraft().ingameGUI.keyStrokesSpace["keystrokes-${keystroke.keyDesc}"] = OptionsSectionKeystrokes.space.invoke()!!
-            Minecraft.getMinecraft().ingameGUI.keyStrokesFontSize["keystrokes-${keystroke.keyDesc}"] =
-                OptionsSectionKeystrokes.fontSize.invoke()!!
+            Minecraft.getMinecraft().ingameGUI.keyStrokesScale["keystrokes-${keystroke.keyDesc}"] = KeystrokesMod2.scale
+            Minecraft.getMinecraft().ingameGUI.keyStrokesSpace["keystrokes-${keystroke.keyDesc}"] = KeystrokesMod2.space
+            Minecraft.getMinecraft().ingameGUI.keyStrokesFontSize["keystrokes-${keystroke.keyDesc}"] = KeystrokesMod2.fontSize
 
             Minecraft.getMinecraft().ingameGUI.initKeyStrokes(true)
         }
