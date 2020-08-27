@@ -4,6 +4,7 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import kotlin.reflect.KMutableProperty0
 
 class ColorControl(
@@ -26,6 +27,9 @@ class ColorControl(
             x = controlX + controlWidth - width
             y = this@ColorControl.y + (this@ColorControl.height - height) / 2.0
             color = optionKey.get()
+            clickAction = {
+                Modal.showModal(ColorPickerModal())
+            }
         }
 
         "hex-code"<TextField> {
