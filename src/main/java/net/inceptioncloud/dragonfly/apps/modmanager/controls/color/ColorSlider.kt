@@ -35,8 +35,8 @@ open class ColorSlider(
     var colorInterpolator: (Double) -> Color = { Color.getHSBColor(it.toFloat(), 1f, 1f) }
     var colorLetter: String by property("H")
 
-    var currentProgress: Int = 20
-        private set(value) {
+    var currentProgress: Int = 0
+        set(value) {
             field = value
             currentColor = colorInterpolator((value - min) / (max - min).toDouble())
         }
@@ -156,7 +156,7 @@ open class ColorSlider(
 
         when {
             data in c -> isDragging = true
-            mouseX in x..x + width && mouseY in y - 20.0..y + height + 20.0 -> updateCurrent()
+            mouseX in x..x + width && mouseY in y - 10.0..y + height + 10.0 -> updateCurrent()
         }
 
         super.handleMousePress(data)
