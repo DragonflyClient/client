@@ -34,3 +34,4 @@ gradle.properties
 /runtime/dragonfly/.secrets/
 /runtime/resourcepacks/
 /runtime/shaderpacks/
+/runtime/dragonfly/accounts.json
