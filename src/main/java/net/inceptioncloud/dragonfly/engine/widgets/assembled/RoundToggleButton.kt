@@ -73,18 +73,24 @@ class RoundToggleButton(
                 Minecraft.getMinecraft().soundHandler.playSound(PositionedSoundRecord.create(ResourceLocation("gui.button.press"), 1.0f))
             }
 
-            isToggled = !isToggled
-            getWidget<RoundedRectangle>("container")?.morph(
-                30, EaseQuad.IN_OUT,
-                RoundedRectangle::color to statefulBackgroundColor()
-            )?.start()
-            getWidget<TextField>("text")?.morph(
-                30, EaseQuad.IN_OUT,
-                TextField::color to statefulTextColor()
-            )?.start()
-
+            toggle()
             onClick()
         }
+    }
+
+    /**
+     * Changes whether the button is currently toggled.
+     */
+    fun toggle() {
+        isToggled = !isToggled
+        getWidget<RoundedRectangle>("container")?.morph(
+            30, EaseQuad.IN_OUT,
+            RoundedRectangle::color to statefulBackgroundColor()
+        )?.start()
+        getWidget<TextField>("text")?.morph(
+            30, EaseQuad.IN_OUT,
+            TextField::color to statefulTextColor()
+        )?.start()
     }
 
     /**

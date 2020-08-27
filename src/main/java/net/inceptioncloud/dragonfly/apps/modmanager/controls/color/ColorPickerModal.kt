@@ -3,9 +3,7 @@ package net.inceptioncloud.dragonfly.apps.modmanager.controls.color
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.toWidgetColor
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import java.awt.Color
 
@@ -22,8 +20,10 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
         }
     }
 
+    val rainbow: Boolean
+        get() = getWidget<RoundToggleButton>("rainbow-toggle")!!.isToggled
     val hue: Float
-        get() = getWidget<ColorSlider>("hue-slider")!!.currentProgress / 360f
+        get() = if (rainbow) WidgetColor.getRainbowHue() else getWidget<ColorSlider>("hue-slider")!!.currentProgress / 360f
     val saturation: Float
         get() = getWidget<ColorSlider>("saturation-slider")!!.currentProgress / 100f
     val brightness: Float
@@ -31,7 +31,7 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
     val alpha: Double
         get() = getWidget<ColorSlider>("alpha-slider")!!.currentProgress / 100.0
     val fullColor: WidgetColor
-        get() = Color.getHSBColor(hue, saturation, brightness).toWidgetColor().also { it.alphaDouble = alpha }
+        get() = WidgetColor(hue, saturation, brightness, (alpha * 255).toInt()).also { it.rainbow = rainbow }
 
     override fun assemble(): Map<String, Widget<*>> {
         val map = mutableMapOf<String, Widget<*>>(
@@ -41,7 +41,10 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             "saturation-slider" to ColorSlider(),
             "brightness-slider" to ColorSlider(),
             "alpha-slider" to ColorSlider(),
-            "color-preview" to ColorPreview()
+            "color-preview" to ColorPreview(),
+            "confirm-button" to RoundButton(),
+            "reset-button" to RoundButton(),
+            "rainbow-toggle" to RoundToggleButton()
         )
 
         for (index in flatColors.indices) {
@@ -73,7 +76,7 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
 
         val title = "title"<TextField> {
             x = this@ColorPickerModal.x
-            y = this@ColorPickerModal.y + 30.0
+            y = this@ColorPickerModal.y + padding
             width = this@ColorPickerModal.width
             adaptHeight = true
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
@@ -84,7 +87,7 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
 
         val hueSlider = "hue-slider"<ColorSlider> {
             x = sliderX
-            y = title.y + title.height + 50.0
+            y = title.y + title.height + 45.0
             width = this@ColorPickerModal.width - 200
             height = 8.0
         }!!
@@ -133,6 +136,50 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             borderSize = 3.0
         }
 
+        "rainbow-toggle"<RoundToggleButton> {
+            width = 115.0
+            height = 37.0
+            x = contentX
+            y = this@ColorPickerModal.y + this@ColorPickerModal.height - height - padding
+            text = "Rainbow"
+            textSize = 50
+            color = DragonflyPalette.background.brighter(0.8)
+            toggleTextColor = color
+            toggleColor = DragonflyPalette.foreground
+            arc = 10.0
+            onClick {
+                if (isToggled) setColor(WidgetColor(1.0, 0.0, 0.0, 1.0))
+            }
+        }
+
+        val confirmButton = "confirm-button"<RoundButton> {
+            width = 110.0
+            height = 37.0
+            x = this@ColorPickerModal.x + this@ColorPickerModal.width - padding - width
+            y = this@ColorPickerModal.y + this@ColorPickerModal.height - height - padding
+            text = "Confirm"
+            textSize = 50
+            color = DragonflyPalette.accentNormal
+            arc = 10.0
+            onClick {
+                println("Confirm the color here")
+            }
+        }!!
+
+        "reset-button"<RoundButton> {
+            width = 100.0
+            height = 37.0
+            x = confirmButton.x - width - 10.0
+            y = this@ColorPickerModal.y + this@ColorPickerModal.height - height - padding
+            text = "Reset"
+            textSize = 50
+            color = DragonflyPalette.background.brighter(0.8)
+            arc = 10.0
+            onClick {
+                println("Reset the color here")
+            }
+        }
+
         updateFlatColors(contentX, alphaSlider.y + 60.0)
         updateDragonflyColors(padding, alphaSlider.y + 60.0)
     }
@@ -147,7 +194,10 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
                 height = 40.0
                 backgroundColor = DragonflyPalette.background
                 borderSize = 2.0
-                clickAction = { setColor(this.color) }
+                clickAction = {
+                    setRainbow(false)
+                    setColor(this.color)
+                }
 
                 if (index % 2 == 0) {
                     y = originY
@@ -169,7 +219,10 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
                 height = 40.0
                 backgroundColor = DragonflyPalette.background
                 borderSize = 2.0
-                clickAction = { setColor(this.color) }
+                clickAction = {
+                    setRainbow(false)
+                    setColor(this.color)
+                }
 
                 if (index % 2 == 0) {
                     y = originY + 50.0
@@ -192,6 +245,14 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
         saturationSlider.updateCurrent((hsb[1] * 100).toInt(), false)
         brightnessSlider.updateCurrent((hsb[2] * 100).toInt(), false)
         alphaSlider.updateCurrent((color.alphaDouble * 100).toInt(), false)
+    }
+
+    /**
+     * Sets whether [rainbow][WidgetColor.rainbow] is enabled for the [WidgetColor].
+     */
+    private fun setRainbow(rainbow: Boolean) {
+        val rainbowToggle = getWidget<RoundToggleButton>("rainbow-toggle")!!
+        if (rainbowToggle.isToggled != rainbow) rainbowToggle.toggle()
     }
 
     override fun update() {
