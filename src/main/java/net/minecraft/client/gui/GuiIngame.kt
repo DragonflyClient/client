@@ -104,6 +104,11 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
      */
     private var remainingHighlightTicks = 0
 
+    private var hotbarX = 0
+    private var hotbarY = 0
+    private var hotbarW = 0
+    private var hotbarH = 0
+
     /**
      * The ItemStack that is currently being highlighted
      */
@@ -340,7 +345,13 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             val i = sr.scaledWidth / 2
             val f = zLevel
             zLevel = -90.0f
-            this.drawTexturedModalRect(i - 91, sr.scaledHeight - 22, 0, 0, 182, 22)
+
+            hotbarX = i - 91
+            hotbarY = sr.scaledHeight - 20
+            hotbarW = 182
+            hotbarH = 22
+
+            this.drawTexturedModalRect(hotbarX, hotbarY, 0, 0, hotbarW, hotbarH)
             this.drawTexturedModalRect(
                 i - 91 - 1 + entityplayer.inventory.currentItem * 20,
                 sr.scaledHeight - 22 - 1,
@@ -1051,16 +1062,16 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             }
             EnumKeystrokesPosition.TOP_RIGHT -> {
                 val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
-                val scale = keyStrokesScale.values.first()
-                val space = keyStrokesSpace.values.first()
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
 
                 keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
                 keyStrokesStartY = 10.0
             }
             EnumKeystrokesPosition.BOTTOM_LEFT -> {
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = keyStrokesScale.values.first()
-                val space = keyStrokesSpace.values.first()
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
 
                 keyStrokesStartX = 10.0
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
@@ -1068,10 +1079,26 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             EnumKeystrokesPosition.BOTTOM_RIGHT -> {
                 val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = keyStrokesScale.values.first()
-                val space = keyStrokesSpace.values.first()
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
 
                 keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
+                keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+            }
+            EnumKeystrokesPosition.HOTBAR_LEFT -> {
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
+
+                keyStrokesStartX = hotbarX - ((scale * 3) + (space * 2)) - 10
+                keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+            }
+            EnumKeystrokesPosition.HOTBAR_RIGHT -> {
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
+
+                keyStrokesStartX = (hotbarX + hotbarW + 10).toDouble()
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
             }
         }
