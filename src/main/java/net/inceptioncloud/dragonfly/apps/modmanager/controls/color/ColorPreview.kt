@@ -15,11 +15,13 @@ class ColorPreview(
     override var height: Double by property(0.0)
     override var color: WidgetColor by property(DragonflyPalette.accentNormal)
 
-    var backgroundColor: WidgetColor by property(WidgetColor(0xE5E5E5))
+    var containerColor: WidgetColor by property(WidgetColor(0xE5E5E5))
+    var backgroundColor: WidgetColor by property(containerColor)
     var arc: Double by property(3.0)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
+        "background" to RoundedRectangle(),
         "color" to RoundedRectangle()
     )
 
@@ -32,6 +34,15 @@ class ColorPreview(
             width = this@ColorPreview.width
             height = this@ColorPreview.height
             arc = this@ColorPreview.arc
+            color = containerColor
+        }
+
+        "background"<RoundedRectangle> {
+            x = this@ColorPreview.x + padding
+            y = this@ColorPreview.y + padding
+            width = this@ColorPreview.width - 2 * padding
+            height = this@ColorPreview.height - 2 * padding
+            arc = this@ColorPreview.arc / 2.0
             color = backgroundColor
         }
 
