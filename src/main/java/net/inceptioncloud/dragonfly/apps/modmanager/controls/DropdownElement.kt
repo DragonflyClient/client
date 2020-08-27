@@ -59,6 +59,7 @@ class DropdownElement(
 
     override fun controlUpdateStructure() {
         val iconSize = 20.0
+        height = height.coerceAtLeast(containerHeight)
 
         "container"<RoundedRectangle> {
             x = containerX

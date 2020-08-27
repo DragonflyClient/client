@@ -11,8 +11,8 @@ class ColorPreview(
 
     override var x: Double by property(0.0)
     override var y: Double by property(0.0)
-    override var width: Double by property(200.0)
-    override var height: Double by property(20.0)
+    override var width: Double by property(0.0)
+    override var height: Double by property(0.0)
     override var color: WidgetColor by property(DragonflyPalette.accentNormal)
 
     var backgroundColor: WidgetColor by property(WidgetColor(0xE5E5E5))
@@ -24,7 +24,7 @@ class ColorPreview(
     )
 
     override fun updateStructure() {
-        val padding = 5.0
+        val padding = 4.0
 
         "container"<RoundedRectangle> {
             x = this@ColorPreview.x
