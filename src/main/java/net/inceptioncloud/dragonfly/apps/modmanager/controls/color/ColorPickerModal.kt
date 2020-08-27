@@ -16,6 +16,10 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
         val flatColors = listOf(
             0xEB3B5A, 0x2D98DA, 0xFA8231, 0x3867D6, 0xF7B731, 0x8854D0, 0x20BF6B, 0xA5B1C2, 0x0FB9B1, 0x4B6584
         ).map { WidgetColor(it) }
+
+        val dragonflyColors = with(DragonflyPalette) {
+            listOf(accentDark, background, accentNormal, foreground, accentBright)
+        }
     }
 
     val hue: Float
@@ -42,6 +46,9 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
 
         for (index in flatColors.indices) {
             map["preset-flat-$index"] = ColorPreview()
+        }
+        for (index in dragonflyColors.indices) {
+            map["preset-drgn-$index"] = ColorPreview()
         }
 
         return map
@@ -110,7 +117,7 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
         }!!
 
         "color-preview"<ColorPreview> {
-            x = this@ColorPickerModal.x + 65.0
+            x = this@ColorPickerModal.x + 55.0
             y = alphaSlider.y + 40.0
             width = 90.0
             height = 90.0
@@ -120,10 +127,11 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
         }
 
         updateFlatColors(alphaSlider.y + 40.0)
+        updateDragonflyColors(alphaSlider.y + 40.0)
     }
 
     private fun updateFlatColors(originY: Double) {
-        var currentX = x + 65.0 + 90.0 + 20.0
+        var currentX = x + 55.0 + 90.0 + 20.0
         for ((index, color) in flatColors.withIndex()) {
             "preset-flat-$index"<ColorPreview> {
                 this.color = color
@@ -139,6 +147,28 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
                 } else {
                     y = originY + 50.0
                     currentX += 50.0
+                }
+            }
+        }
+    }
+
+    private fun updateDragonflyColors(originY: Double) {
+        var currentX = x + width - 55.0 - 40.0
+        for ((index, color) in dragonflyColors.withIndex()) {
+            "preset-drgn-$index"<ColorPreview> {
+                this.color = color
+                x = currentX
+                width = 40.0
+                height = 40.0
+                backgroundColor = DragonflyPalette.background
+                borderSize = 2.0
+                clickAction = { setColor(this.color) }
+
+                if (index % 2 == 0) {
+                    y = originY + 50.0
+                } else {
+                    y = originY
+                    currentX -= 50.0
                 }
             }
         }
