@@ -347,7 +347,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             zLevel = -90.0f
 
             hotbarX = i - 91
-            hotbarY = sr.scaledHeight - 20
+            hotbarY = sr.scaledHeight - 22
             hotbarW = 182
             hotbarH = 22
 
