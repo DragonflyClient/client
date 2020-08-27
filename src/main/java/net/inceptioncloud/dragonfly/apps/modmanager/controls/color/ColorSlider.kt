@@ -67,25 +67,28 @@ open class ColorSlider(
             color = DragonflyPalette.foreground
         }
 
+        // -50
         "color-letter"<TextField> {
-            width = 30.0
+            width = 20.0
             height = 40.0
-            x = this@ColorSlider.x - width - 20.0
+            x = this@ColorSlider.x - width - 30.0
             y = this@ColorSlider.y + (this@ColorSlider.height / 2) - height / 2 - 2.0
             staticText = colorLetter
             textAlignVertical = Alignment.CENTER
-            textAlignHorizontal = Alignment.END
+            textAlignHorizontal = Alignment.START
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45)
             color = DragonflyPalette.foreground
         }
 
+        // +60
         "current-value"<TextField> {
-            width = 50.0
+            width = 40.0
             height = 40.0
             x = this@ColorSlider.x + this@ColorSlider.width + 20.0
             y = this@ColorSlider.y + (this@ColorSlider.height / 2) - height / 2 - 2.0
             staticText = currentProgress.toString()
             textAlignVertical = Alignment.CENTER
+            textAlignHorizontal = Alignment.END
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45)
             color = DragonflyPalette.foreground
         }
