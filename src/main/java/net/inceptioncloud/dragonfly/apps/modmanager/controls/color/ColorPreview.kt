@@ -18,6 +18,7 @@ class ColorPreview(
     var containerColor: WidgetColor by property(WidgetColor(0xE5E5E5))
     var backgroundColor: WidgetColor by property(containerColor)
     var arc: Double by property(3.0)
+    var borderSize: Double by property(4.0)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
@@ -26,8 +27,6 @@ class ColorPreview(
     )
 
     override fun updateStructure() {
-        val padding = 4.0
-
         "container"<RoundedRectangle> {
             x = this@ColorPreview.x
             y = this@ColorPreview.y
@@ -38,19 +37,19 @@ class ColorPreview(
         }
 
         "background"<RoundedRectangle> {
-            x = this@ColorPreview.x + padding
-            y = this@ColorPreview.y + padding
-            width = this@ColorPreview.width - 2 * padding
-            height = this@ColorPreview.height - 2 * padding
+            x = this@ColorPreview.x + borderSize
+            y = this@ColorPreview.y + borderSize
+            width = this@ColorPreview.width - 2 * borderSize
+            height = this@ColorPreview.height - 2 * borderSize
             arc = this@ColorPreview.arc / 2.0
             color = backgroundColor
         }
 
         "color"<RoundedRectangle> {
-            x = this@ColorPreview.x + padding
-            y = this@ColorPreview.y + padding
-            width = this@ColorPreview.width - 2 * padding
-            height = this@ColorPreview.height - 2 * padding
+            x = this@ColorPreview.x + borderSize
+            y = this@ColorPreview.y + borderSize
+            width = this@ColorPreview.width - 2 * borderSize
+            height = this@ColorPreview.height - 2 * borderSize
             arc = this@ColorPreview.arc / 2.0
             color = this@ColorPreview.color
         }
