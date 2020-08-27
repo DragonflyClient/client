@@ -21,7 +21,7 @@ class WidgetColor {
                 addProperty("red", color.red)
                 addProperty("green", color.green)
                 addProperty("blue", color.blue)
-                addProperty("actualAlpha", color.actualAlpha)
+                addProperty("alpha", color.actualAlpha)
                 addProperty("hue", color.hue)
                 addProperty("saturation", color.saturation)
                 addProperty("brightness", color.brightness)
@@ -34,7 +34,7 @@ class WidgetColor {
                 val red = get("red").asInt
                 val green = get("green").asInt
                 val blue = get("blue").asInt
-                val actualAlpha = get("actualAlpha").asInt
+                val actualAlpha = get("alpha").asInt
                 val hue = get("hue").asFloat
                 val saturation = get("saturation").asFloat
                 val brightness = get("brightness").asFloat
