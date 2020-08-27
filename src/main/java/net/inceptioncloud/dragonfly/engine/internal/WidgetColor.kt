@@ -49,6 +49,11 @@ class WidgetColor {
                 }
             }
         }
+
+        fun getRainbowHue(): Float {
+            val cycle = (System.currentTimeMillis() / 15) % 201
+            return cycle / 200.0f
+        }
     }
 
     /**
@@ -216,11 +221,11 @@ class WidgetColor {
 
     /**
      * Generates a rainbow color based on the current time in milliseconds and adds
-     * the given [alpha] value to it.
+     * the given [alpha] value to it. The rainbow color also respects the [saturation]
+     * and [brightness] values.
      */
     private fun generateRainbowColor(): Color {
-        val cycle = (System.currentTimeMillis() / 15) % 201
-        val hsbColor = Color.getHSBColor(cycle / 200.0f, saturation ?: 1f, brightness ?: 1f)
+        val hsbColor = Color.getHSBColor(getRainbowHue(), saturation ?: 1f, brightness ?: 1f)
         return Color(hsbColor.red, hsbColor.green, hsbColor.blue, actualAlpha)
     }
 
@@ -262,13 +267,13 @@ class WidgetColor {
     private var actualAlpha: Int = 255
 
     /** Value for the hue of the color. Only given if the HSBA constructor was used. */
-    private var hue: Float? = null
+    var hue: Float? = null
 
     /** Value for the saturation of the color. Only given if the HSBA constructor was used. */
-    private var saturation: Float? = null
+    var saturation: Float? = null
 
     /** Value for the brightness of the color. Only given if the HSBA constructor was used. */
-    private var brightness: Float? = null
+    var brightness: Float? = null
 
     /**
      * The base color stored in a [java.awt.Color] object.
