@@ -170,14 +170,14 @@ open class ColorSlider(
         super.handleMouseRelease(data)
     }
 
-    private fun updateCurrent(new: Int = calculateMouseValue()) {
+    fun updateCurrent(new: Int = calculateMouseValue(), continueDragging: Boolean = true) {
         if (isDragging) return
         currentProgress = new
 
         "slider-foreground"<FilledCircle> {
             detachAnimation<MorphAnimation>()
             morph(20, EaseQuad.IN_OUT, FilledCircle::x to computeCircleX())
-                ?.post { _, _ -> if (Mouse.isButtonDown(0)) isDragging = true }
+                ?.post { _, _ -> if (Mouse.isButtonDown(0) && continueDragging) isDragging = true }
                 ?.start()
         }
 

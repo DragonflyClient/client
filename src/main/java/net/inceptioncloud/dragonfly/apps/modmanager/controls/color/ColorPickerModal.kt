@@ -11,6 +11,13 @@ import java.awt.Color
 
 class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
 
+    companion object {
+
+        val flatColors = listOf(
+            0xEB3B5A, 0x2D98DA, 0xFA8231, 0x3867D6, 0xF7B731, 0x8854D0, 0x20BF6B, 0xA5B1C2, 0x0FB9B1, 0x4B6584
+        ).map { WidgetColor(it) }
+    }
+
     val hue: Float
         get() = getWidget<ColorSlider>("hue-slider")!!.currentProgress / 360f
     val saturation: Float
@@ -22,15 +29,23 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
     val fullColor: WidgetColor
         get() = Color.getHSBColor(hue, saturation, brightness).toWidgetColor().also { it.alphaDouble = alpha }
 
-    override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
-        "title" to TextField(),
-        "hue-slider" to ColorSlider(),
-        "saturation-slider" to ColorSlider(),
-        "brightness-slider" to ColorSlider(),
-        "alpha-slider" to ColorSlider(),
-        "color-preview" to ColorPreview()
-    )
+    override fun assemble(): Map<String, Widget<*>> {
+        val map = mutableMapOf<String, Widget<*>>(
+            "container" to RoundedRectangle(),
+            "title" to TextField(),
+            "hue-slider" to ColorSlider(),
+            "saturation-slider" to ColorSlider(),
+            "brightness-slider" to ColorSlider(),
+            "alpha-slider" to ColorSlider(),
+            "color-preview" to ColorPreview()
+        )
+
+        for (index in flatColors.indices) {
+            map["preset-flat-$index"] = ColorPreview()
+        }
+
+        return map
+    }
 
     override fun updateStructure() {
         val container = "container"<RoundedRectangle> {
@@ -101,8 +116,45 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             height = 90.0
             color = fullColor
             backgroundColor = container.color
-            borderSize = 2.0
+            borderSize = 3.0
         }
+
+        updateFlatColors(alphaSlider.y + 40.0)
+    }
+
+    private fun updateFlatColors(originY: Double) {
+        var currentX = x + 65.0 + 90.0 + 20.0
+        for ((index, color) in flatColors.withIndex()) {
+            "preset-flat-$index"<ColorPreview> {
+                this.color = color
+                x = currentX
+                width = 40.0
+                height = 40.0
+                backgroundColor = DragonflyPalette.background
+                borderSize = 2.0
+                clickAction = { setColor(this.color) }
+
+                if (index % 2 == 0) {
+                    y = originY
+                } else {
+                    y = originY + 50.0
+                    currentX += 50.0
+                }
+            }
+        }
+    }
+
+    private fun setColor(color: WidgetColor) {
+        val hueSlider = getWidget<ColorSlider>("hue-slider")!!
+        val saturationSlider = getWidget<ColorSlider>("saturation-slider")!!
+        val brightnessSlider = getWidget<ColorSlider>("brightness-slider")!!
+        val alphaSlider = getWidget<ColorSlider>("alpha-slider")!!
+
+        val hsb = Color.RGBtoHSB(color.red, color.green, color.blue, null)
+        hueSlider.updateCurrent((hsb[0] * 360).toInt(), false)
+        saturationSlider.updateCurrent((hsb[1] * 100).toInt(), false)
+        brightnessSlider.updateCurrent((hsb[2] * 100).toInt(), false)
+        alphaSlider.updateCurrent((color.alphaDouble * 100).toInt(), false)
     }
 
     override fun update() {
