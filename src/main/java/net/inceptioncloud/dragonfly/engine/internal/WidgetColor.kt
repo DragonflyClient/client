@@ -17,31 +17,35 @@ class WidgetColor {
         val DEFAULT = WidgetColor(1F, 1F, 1F, 1F)
 
         val serializer = JsonSerializer<WidgetColor> { color, _, _ ->
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("red", color.red)
-            jsonObject.addProperty("green", color.green)
-            jsonObject.addProperty("blue", color.blue)
-            jsonObject.addProperty("alpha", color.alpha)
-            jsonObject
+            JsonObject().apply {
+                addProperty("red", color.red)
+                addProperty("green", color.green)
+                addProperty("blue", color.blue)
+                addProperty("alpha", color.alpha)
+                addProperty("hue", color.hue)
+                addProperty("saturation", color.saturation)
+                addProperty("brightness", color.brightness)
+                addProperty("rainbow", color.rainbow)
+            }
         }
 
         val deserializer = JsonDeserializer<WidgetColor> { jsonElement, _, _ ->
-            val jsonObject = jsonElement.asJsonObject
-            val red = jsonObject.get("red").asInt
-            val green = jsonObject.get("green").asInt
-            val blue = jsonObject.get("blue").asInt
-            val alpha = jsonObject.get("alpha").asInt
-            WidgetColor(red, green, blue, alpha)
-        }
-
-        /**
-         * Generates a rainbow color based on the current time in milliseconds and adds
-         * the given [alpha] value to it.
-         */
-        private fun generateRainbowColor(alpha: Int): Color {
-            val cycle = (System.currentTimeMillis() / 15) % 201
-            val hsbColor = Color.getHSBColor(cycle / 200.0f, 1f, 1f)
-            return Color(hsbColor.red, hsbColor.green, hsbColor.blue, alpha)
+            with(jsonElement.asJsonObject) {
+                val red = get("red").asInt
+                val green = get("green").asInt
+                val blue = get("blue").asInt
+                val alpha = get("alpha").asInt
+                val hue = get("hue").asFloat
+                val saturation = get("saturation").asFloat
+                val brightness = get("brightness").asFloat
+                val rainbow = get("rainbow").asBoolean
+                WidgetColor(red, green, blue, alpha).also {
+                    it.hue = hue
+                    it.saturation = saturation
+                    it.brightness = brightness
+                    it.rainbow = rainbow
+                }
+            }
         }
     }
 
@@ -106,6 +110,20 @@ class WidgetColor {
             a.coerceIn(0.0..1.0).toFloat()
         )
         actualAlpha = (a.coerceIn(0.0..1.0) * 255).toInt()
+    }
+
+    /**
+     * Constructor using [hue], [saturation] and [brightness] (HSB) with a range from
+     * 0.0F to 1.0F and [alpha] from 0 to 255.
+     */
+    constructor(hue: Float, saturation: Float, brightness: Float, alpha: Int) {
+        this.actualAlpha = alpha
+        this.hue = hue
+        this.saturation = saturation
+        this.brightness = brightness
+
+        val hsb = Color.getHSBColor(hue, saturation, brightness)
+        base = Color(hsb.red, hsb.green, hsb.blue, alpha)
     }
 
     /**
@@ -195,6 +213,16 @@ class WidgetColor {
     }
 
     /**
+     * Generates a rainbow color based on the current time in milliseconds and adds
+     * the given [alpha] value to it.
+     */
+    private fun generateRainbowColor(): Color {
+        val cycle = (System.currentTimeMillis() / 15) % 201
+        val hsbColor = Color.getHSBColor(cycle / 200.0f, saturation ?: 1f, brightness ?: 1f)
+        return Color(hsbColor.red, hsbColor.green, hsbColor.blue, actualAlpha)
+    }
+
+    /**
      * Clone of the [Color.brighter] function with a custom [factor].
      */
     fun brighter(factor: Double): WidgetColor {
@@ -230,7 +258,16 @@ class WidgetColor {
      * [generateRainbowColor] if [rainbow] is enabled.
      */
     private var actualAlpha: Int = 255
-    
+
+    /** Value for the hue of the color. Only given if the HSBA constructor was used. */
+    private var hue: Float? = null
+
+    /** Value for the saturation of the color. Only given if the HSBA constructor was used. */
+    private var saturation: Float? = null
+
+    /** Value for the brightness of the color. Only given if the HSBA constructor was used. */
+    private var brightness: Float? = null
+
     /**
      * The base color stored in a [java.awt.Color] object.
      *
@@ -238,7 +275,7 @@ class WidgetColor {
      * Whenever values of the [WidgetColor] object are modified, the changes will be reflected on the base color.
      */
     var base: Color
-        get() = if (rainbow) generateRainbowColor(actualAlpha) else field
+        get() = if (rainbow) generateRainbowColor() else field
 
     /**
      * Whether the rainbow mode is enabled. If this value is true, [base] will return a
