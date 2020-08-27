@@ -14,7 +14,9 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
 import net.minecraft.client.gui.Gui
+import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.input.Mouse
+import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 open class ColorSlider(
@@ -92,6 +94,9 @@ open class ColorSlider(
     override fun render() {
         val partWidth = 1.0
 
+        GlStateManager.pushMatrix()
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0F)
+
         RenderUtils.drawArc(
             x.toFloat(), (y + (height / 2)).toFloat(),
             90, 270,
@@ -112,6 +117,8 @@ open class ColorSlider(
             (height / 2).toFloat(), (height / 2).toFloat(),
             colorInterpolator(1.0)
         )
+
+        GlStateManager.popMatrix()
 
         super.render()
     }
