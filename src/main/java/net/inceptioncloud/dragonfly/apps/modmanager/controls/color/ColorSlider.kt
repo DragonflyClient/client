@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.*
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
@@ -13,6 +14,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
 import net.minecraft.client.gui.Gui
+import org.lwjgl.input.Mouse
 import java.awt.Color
 
 open class ColorSlider(
@@ -26,10 +28,10 @@ open class ColorSlider(
 
     val innerPadding = 2.0
 
-    open val min: Int = 0
-    open val max: Int = 100
-    open val colorInterpolator: (Double) -> Color = { Color.getHSBColor(it.toFloat(), 1f, 1f) }
-    open val colorLetter: String = "H"
+    var min: Int = 0
+    var max: Int = 360
+    var colorInterpolator: (Double) -> Color = { Color.getHSBColor(it.toFloat(), 1f, 1f) }
+    var colorLetter: String by property("H")
 
     var currentProgress: Int = 20
         private set(value) {
@@ -39,7 +41,7 @@ open class ColorSlider(
     var currentColor: Color = Color.WHITE
 
     private val circleSize = 20.0
-    private var dragging = false
+    private var isDragging = false
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "slider-foreground" to FilledCircle(),
@@ -64,8 +66,8 @@ open class ColorSlider(
         }
 
         "color-letter"<TextField> {
-            width = 50.0
-            height = 50.0
+            width = 30.0
+            height = 40.0
             x = this@ColorSlider.x - width - 20.0
             y = this@ColorSlider.y + (this@ColorSlider.height / 2) - height / 2 - 2.0
             staticText = colorLetter
@@ -77,7 +79,7 @@ open class ColorSlider(
 
         "current-value"<TextField> {
             width = 50.0
-            height = 50.0
+            height = 40.0
             x = this@ColorSlider.x + this@ColorSlider.width + 20.0
             y = this@ColorSlider.y + (this@ColorSlider.height / 2) - height / 2 - 2.0
             staticText = currentProgress.toString()
@@ -123,7 +125,7 @@ open class ColorSlider(
     override fun update() {
         super.update()
 
-        if (dragging) {
+        if (isDragging) {
             val newX = GraphicsEngine.getMouseX().coerceIn(x..x + width) - circleSize / 2.0
             currentProgress = calculateMouseValue()
 
@@ -146,7 +148,7 @@ open class ColorSlider(
         val mouseY = data.mouseY.toDouble()
 
         when {
-            data in c -> dragging = true
+            data in c -> isDragging = true
             mouseX in x..x + width && mouseY in y - 20.0..y + height + 20.0 -> updateCurrent()
         }
 
@@ -154,20 +156,22 @@ open class ColorSlider(
     }
 
     override fun handleMouseRelease(data: MouseData) {
-        if (dragging) {
-            dragging = false
+        if (isDragging) {
+            isDragging = false
         }
 
         super.handleMouseRelease(data)
     }
 
     private fun updateCurrent(new: Int = calculateMouseValue()) {
-        if (dragging) return
+        if (isDragging) return
         currentProgress = new
 
         "slider-foreground"<FilledCircle> {
             detachAnimation<MorphAnimation>()
-            morph(20, EaseQuad.IN_OUT, FilledCircle::x to computeCircleX())?.start()
+            morph(20, EaseQuad.IN_OUT, FilledCircle::x to computeCircleX())
+                ?.post { _, _ -> if (Mouse.isButtonDown(0)) isDragging = true }
+                ?.start()
         }
 
         "slider-foreground-inner"<FilledCircle> {

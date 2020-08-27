@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
@@ -12,6 +13,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
 import org.apache.commons.lang3.StringUtils
+import org.lwjgl.input.Mouse
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
@@ -36,7 +38,7 @@ class NumberControl(
     private val sliderHeight = 6.0
     private val circleSize = 16.0
 
-    private var dragging = false
+    private var isDragging = false
 
     private val symbols = DecimalFormatSymbols(Locale.ENGLISH)
     private val format = DecimalFormat("0." + StringUtils.repeat('0', decimalPlaces), symbols)
@@ -84,11 +86,13 @@ class NumberControl(
     }
 
     override fun react(newValue: Number) {
-        if (dragging && liveUpdate) return
+        if (isDragging && liveUpdate) return
 
         "slider-foreground"<FilledCircle> {
             detachAnimation<MorphAnimation>()
-            morph(20, EaseQuad.IN_OUT, FilledCircle::x to computeCircleX())?.start()
+            morph(20, EaseQuad.IN_OUT, FilledCircle::x to computeCircleX())
+                ?.post { _, _ -> if (Mouse.isButtonDown(0)) isDragging = true }
+                ?.start()
         }
 
         "current-value"<TextField> {
@@ -99,7 +103,7 @@ class NumberControl(
     override fun update() {
         super.update()
 
-        if (dragging) {
+        if (isDragging) {
             "slider-foreground"<FilledCircle> {
                 x = GraphicsEngine.getMouseX().coerceIn(sliderX..sliderX + sliderWidth) - circleSize / 2.0
             }
@@ -119,7 +123,7 @@ class NumberControl(
         val mouseY = data.mouseY.toDouble()
 
         when {
-            data in c -> dragging = true
+            data in c -> isDragging = true
             mouseX in b.x..b.x + b.width && mouseY in b.y - 20.0..b.y + b.height + 20.0 -> updateOptionKeyValue()
         }
 
@@ -127,8 +131,8 @@ class NumberControl(
     }
 
     override fun handleMouseRelease(data: MouseData) {
-        if (dragging) {
-            dragging = false
+        if (isDragging) {
+            isDragging = false
             react(updateOptionKeyValue())
         }
 
