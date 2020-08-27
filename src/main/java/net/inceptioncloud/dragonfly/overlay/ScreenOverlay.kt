@@ -175,6 +175,8 @@ object ScreenOverlay {
 
     @Subscribe
     fun onMouseInput(event: MouseInputEvent) {
+        if (event.button == -1) return
+
         val mouseX = getMouseX().toInt()
         val mouseY = getMouseY().toInt()
         if (event.press) {

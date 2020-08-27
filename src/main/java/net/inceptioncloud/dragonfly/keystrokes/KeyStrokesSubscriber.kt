@@ -20,6 +20,7 @@ object KeyStrokesSubscriber {
 
     @Subscribe
     fun buttonPressed(event: MouseInputEvent) {
+        if (event.button == -1) return
         for (keyStroke in KeyStrokesManager.keystrokes) {
             if (keyStroke.keyCode == event.button - 100) {
                 keyStroke.pressed = event.press
