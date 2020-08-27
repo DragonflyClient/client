@@ -64,7 +64,7 @@ object Modal {
             height = screenHeight
             color = WidgetColor(0, 0, 0, 0)
         })
-        modalShadow.morph(75, EaseQuad.OUT, Rectangle::color to WidgetColor(0, 0, 0, 200))?.start()
+        modalShadow.morph(75, EaseQuad.OUT, Rectangle::color to WidgetColor(0, 0, 0, 180))?.start()
 
         ScreenOverlay.addComponent("modal", modal)
 
