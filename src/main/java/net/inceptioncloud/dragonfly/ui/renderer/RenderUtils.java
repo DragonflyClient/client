@@ -243,7 +243,7 @@ public final class RenderUtils {
         glPopMatrix();
     }
 
-    public static void drawArc(float x, float y, int start, int end, int width, int height, Color color) {
+    public static void drawArc(float x, float y, int start, int end, float width, float height, Color color) {
         int factor = 5;
 
         glScaled(1D / factor, 1D / factor, 1D / factor);
