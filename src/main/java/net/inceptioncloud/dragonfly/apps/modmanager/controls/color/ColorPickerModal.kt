@@ -3,11 +3,19 @@ package net.inceptioncloud.dragonfly.apps.modmanager.controls.color
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.toWidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
+import net.inceptioncloud.dragonfly.options.OptionKey
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
+import net.inceptioncloud.dragonfly.overlay.toast.Toast
+import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 
-class ColorPickerModal : ModalWidget("Color Picker", 650.0, 620.0) {
+class ColorPickerModal(
+    val initialColor: WidgetColor,
+    val responder: (WidgetColor) -> Unit
+) : ModalWidget("Color Picker", 650.0, 620.0) {
 
     companion object {
 
@@ -19,6 +27,8 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 620.0) {
             listOf(accentDark, background, accentNormal, foreground, accentBright)
         }
     }
+
+    constructor(optionKey: OptionKey<WidgetColor>) : this(optionKey.get(), { optionKey.set(it) })
 
     val rainbow: Boolean
         get() = getWidget<RoundToggleButton>("rainbow-toggle")!!.isToggled
@@ -240,19 +250,34 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 620.0) {
     }
 
     private fun reset() {
-        TODO("Not yet implemented")
+        setInitialColor()
     }
 
     private fun confirm() {
-        TODO("Not yet implemented")
+        val picked = fullColor
+        responder(picked)
+        Modal.hideModal()
     }
 
     private fun copyHex() {
-        TODO("Not yet implemented")
+        if (!rainbow) {
+            GuiScreen.clipboardString = fullColor.toHexString()
+            Toast.queue("§aThe hex code for the current color has been copied", 300)
+        } else Toast.queue("§cCopying is not supported if rainbow mode is active!", 200)
     }
 
     private fun pasteHex() {
-        TODO("Not yet implemented")
+        val clipboard = GuiScreen.clipboardString ?: return
+        val clean = "#" + clipboard.removePrefix("#")
+
+        try {
+            val color = Color.decode(clean)
+            requireNotNull(color)
+            setRainbow(false)
+            setColor(color.toWidgetColor())
+        } catch (e: Exception) {
+            Toast.queue("§cNo color found in clipboard!", 300)
+        }
     }
 
     private fun updateFlatColors(contentX: Double, originY: Double) {
@@ -326,6 +351,11 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 620.0) {
         if (rainbowToggle.isToggled != rainbow) rainbowToggle.toggle()
     }
 
+    private fun setInitialColor() {
+        setRainbow(initialColor.rainbow)
+        setColor(initialColor)
+    }
+
     override fun update() {
         super.update()
         "color-preview"<ColorPreview> {
@@ -336,5 +366,9 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 620.0) {
     override fun handleMouseRelease(data: MouseData) {
         structure.values.forEach { it.handleMouseRelease(data) }
         super.handleMouseRelease(data)
+    }
+
+    override fun onShow() {
+        setInitialColor()
     }
 }

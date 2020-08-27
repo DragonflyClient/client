@@ -29,7 +29,7 @@ class ColorControl(
             y = this@ColorControl.y + (this@ColorControl.height - height) / 2.0
             color = optionKey.get()
             clickAction = {
-                Modal.showModal(ColorPickerModal())
+                Modal.showModal(ColorPickerModal(optionKey))
             }
         }
 
@@ -52,7 +52,7 @@ class ColorControl(
         }
 
         "hex-code"<TextField> {
-            color = DragonflyPalette.background.altered { alphaDouble = 0.6 }
+            staticText = optionKey.get().toHexString()
         }
     }
 }
