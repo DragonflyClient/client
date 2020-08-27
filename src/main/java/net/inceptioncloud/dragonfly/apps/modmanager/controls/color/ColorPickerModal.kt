@@ -15,7 +15,7 @@ import java.awt.Color
 class ColorPickerModal(
     val initialColor: WidgetColor,
     val responder: (WidgetColor) -> Unit
-) : ModalWidget("Color Picker", 650.0, 620.0) {
+) : ModalWidget("Color Picker", 620.0, 630.0) {
 
     companion object {
 
@@ -102,7 +102,7 @@ class ColorPickerModal(
 
         val hueSlider = "hue-slider"<ColorSlider> {
             x = sliderX
-            y = title.y + title.height + 45.0
+            y = title.y + title.height + 55.0
             width = this@ColorPickerModal.width - 200
             height = 8.0
         }!!
@@ -141,21 +141,11 @@ class ColorPickerModal(
             height = 8.0
         }!!
 
-        val colorPreview = "color-preview"<ColorPreview> {
-            x = contentX
-            y = alphaSlider.y + 60.0
-            width = 90.0
-            height = 90.0
-            color = fullColor
-            backgroundColor = container.color
-            borderSize = 3.0
-        }!!
-
         val hexContainerBorder = "hex-container-border"<RoundedRectangle> {
             width = this@ColorPickerModal.width / 2
             height = 37.0
             x = contentX
-            y = colorPreview.y + colorPreview.height + 40
+            y = alphaSlider.y + 45
             color = DragonflyPalette.foreground
             arc = 5.0
         }!!
@@ -205,6 +195,16 @@ class ColorPickerModal(
             onClick { copyHex() }
         }
 
+        val colorPreview = "color-preview"<ColorPreview> {
+            x = contentX
+            y = hexContainerBorder.y + hexContainerBorder.height + 80
+            width = 90.0
+            height = 90.0
+            color = fullColor
+            backgroundColor = container.color
+            borderSize = 3.0
+        }!!
+
         "rainbow-toggle"<RoundToggleButton> {
             width = 115.0
             height = 37.0
@@ -245,8 +245,8 @@ class ColorPickerModal(
             onClick { reset() }
         }
 
-        updateFlatColors(contentX, alphaSlider.y + 60.0)
-        updateDragonflyColors(padding, alphaSlider.y + 60.0)
+        updateFlatColors(contentX, colorPreview.y)
+        updateDragonflyColors(padding, colorPreview.y)
     }
 
     private fun reset() {
