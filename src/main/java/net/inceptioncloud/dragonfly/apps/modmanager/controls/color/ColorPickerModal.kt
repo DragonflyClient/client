@@ -2,8 +2,7 @@ package net.inceptioncloud.dragonfly.apps.modmanager.controls.color
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.internal.Alignment
-import net.inceptioncloud.dragonfly.engine.internal.Widget
+import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
@@ -12,7 +11,8 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
-        "title" to TextField()
+        "title" to TextField(),
+        "hue-slider" to ColorSlider()
     )
 
     override fun updateStructure() {
@@ -25,7 +25,7 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             arc = 10.0
         }
 
-        "title"<TextField> {
+        val title = "title"<TextField> {
             x = this@ColorPickerModal.x
             y = this@ColorPickerModal.y + 35.0
             width = this@ColorPickerModal.width
@@ -35,5 +35,17 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             textAlignHorizontal = Alignment.CENTER
             color = DragonflyPalette.foreground
         }!!.also { it.adaptHeight() }
+
+        "hue-slider"<ColorSlider> {
+            x = this@ColorPickerModal.x + 100
+            y = title.y + title.height + 50.0
+            width = this@ColorPickerModal.width - 200
+            height = 8.0
+        }
+    }
+
+    override fun handleMouseRelease(data: MouseData) {
+        structure.values.forEach { it.handleMouseRelease(data) }
+        super.handleMouseRelease(data)
     }
 }
