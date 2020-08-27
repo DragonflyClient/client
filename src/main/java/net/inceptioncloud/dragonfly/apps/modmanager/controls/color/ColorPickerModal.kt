@@ -55,6 +55,13 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
     }
 
     override fun updateStructure() {
+        val sliderWidth = this@ColorPickerModal.width - 200
+        val actualSliderWidth = sliderWidth + 110.0
+        val contentX = x + (width / 2) - (actualSliderWidth / 2)
+        val sliderX = contentX + 50.0
+        val padding = contentX - x
+        val sliderDistance = 40.0
+
         val container = "container"<RoundedRectangle> {
             x = this@ColorPickerModal.x
             y = this@ColorPickerModal.y
@@ -66,7 +73,7 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
 
         val title = "title"<TextField> {
             x = this@ColorPickerModal.x
-            y = this@ColorPickerModal.y + 35.0
+            y = this@ColorPickerModal.y + 30.0
             width = this@ColorPickerModal.width
             adaptHeight = true
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
@@ -75,34 +82,34 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             color = DragonflyPalette.foreground
         }!!.also { it.adaptHeight() }
 
-        "hue-slider"<ColorSlider> {
-            x = this@ColorPickerModal.x + 100
+        val hueSlider = "hue-slider"<ColorSlider> {
+            x = sliderX
             y = title.y + title.height + 50.0
             width = this@ColorPickerModal.width - 200
             height = 8.0
-        }
+        }!!
 
-        "saturation-slider"<ColorSlider> {
+        val saturationSlider = "saturation-slider"<ColorSlider> {
             max = 100
             colorLetter = "S"
             colorInterpolator = { Color.getHSBColor(hue, it.toFloat(), 1f) }
 
-            x = this@ColorPickerModal.x + 100
-            y = title.y + title.height + 90.0
+            x = sliderX
+            y = hueSlider.y + sliderDistance
             width = this@ColorPickerModal.width - 200
             height = 8.0
-        }
+        }!!
 
-        "brightness-slider"<ColorSlider> {
+        val brightnessSlider = "brightness-slider"<ColorSlider> {
             max = 100
             colorLetter = "B"
             colorInterpolator = { Color.getHSBColor(hue, saturation, it.toFloat()) }
 
-            x = this@ColorPickerModal.x + 100
-            y = title.y + title.height + 130.0
+            x = sliderX
+            y = saturationSlider.y + sliderDistance
             width = this@ColorPickerModal.width - 200
             height = 8.0
-        }
+        }!!
 
         val alphaSlider = "alpha-slider"<ColorSlider> {
             max = 100
@@ -110,15 +117,15 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             colorLetter = "A"
             colorInterpolator = { fullColor.altered { alphaDouble = it }.base }
 
-            x = this@ColorPickerModal.x + 100
-            y = title.y + title.height + 170.0
+            x = sliderX
+            y = brightnessSlider.y + sliderDistance
             width = this@ColorPickerModal.width - 200
             height = 8.0
         }!!
 
         "color-preview"<ColorPreview> {
-            x = this@ColorPickerModal.x + 55.0
-            y = alphaSlider.y + 40.0
+            x = contentX
+            y = alphaSlider.y + 60.0
             width = 90.0
             height = 90.0
             color = fullColor
@@ -126,12 +133,12 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             borderSize = 3.0
         }
 
-        updateFlatColors(alphaSlider.y + 40.0)
-        updateDragonflyColors(alphaSlider.y + 40.0)
+        updateFlatColors(contentX, alphaSlider.y + 60.0)
+        updateDragonflyColors(padding, alphaSlider.y + 60.0)
     }
 
-    private fun updateFlatColors(originY: Double) {
-        var currentX = x + 55.0 + 90.0 + 20.0
+    private fun updateFlatColors(contentX: Double, originY: Double) {
+        var currentX = contentX + 90.0 + 20.0
         for ((index, color) in flatColors.withIndex()) {
             "preset-flat-$index"<ColorPreview> {
                 this.color = color
@@ -152,8 +159,8 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
         }
     }
 
-    private fun updateDragonflyColors(originY: Double) {
-        var currentX = x + width - 55.0 - 40.0
+    private fun updateDragonflyColors(padding: Double, originY: Double) {
+        var currentX = x + width - padding - 40.0
         for ((index, color) in dragonflyColors.withIndex()) {
             "preset-drgn-$index"<ColorPreview> {
                 this.color = color
