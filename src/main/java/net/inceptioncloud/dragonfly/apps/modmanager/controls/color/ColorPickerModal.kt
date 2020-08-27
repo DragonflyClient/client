@@ -7,7 +7,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import java.awt.Color
 
-class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
+class ColorPickerModal : ModalWidget("Color Picker", 650.0, 620.0) {
 
     companion object {
 
@@ -42,6 +42,11 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             "brightness-slider" to ColorSlider(),
             "alpha-slider" to ColorSlider(),
             "color-preview" to ColorPreview(),
+            "hex-container-border" to RoundedRectangle(),
+            "hex-container" to RoundedRectangle(),
+            "hex-text" to TextField(),
+            "hex-button-copy" to RoundButton(),
+            "hex-button-paste" to RoundButton(),
             "confirm-button" to RoundButton(),
             "reset-button" to RoundButton(),
             "rainbow-toggle" to RoundToggleButton()
@@ -126,7 +131,7 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             height = 8.0
         }!!
 
-        "color-preview"<ColorPreview> {
+        val colorPreview = "color-preview"<ColorPreview> {
             x = contentX
             y = alphaSlider.y + 60.0
             width = 90.0
@@ -134,6 +139,60 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             color = fullColor
             backgroundColor = container.color
             borderSize = 3.0
+        }!!
+
+        val hexContainerBorder = "hex-container-border"<RoundedRectangle> {
+            width = this@ColorPickerModal.width / 2
+            height = 37.0
+            x = contentX
+            y = colorPreview.y + colorPreview.height + 40
+            color = DragonflyPalette.foreground
+            arc = 5.0
+        }!!
+
+        val hexContainer = "hex-container"<RoundedRectangle> {
+            val borderSize = 2
+            width = hexContainerBorder.width - borderSize * 2
+            height = hexContainerBorder.height - borderSize * 2
+            x = hexContainerBorder.x + borderSize
+            y = hexContainerBorder.y + borderSize
+            color = DragonflyPalette.background
+            arc = 4.0
+        }!!
+
+        "hex-text"<TextField> {
+            width = hexContainer.width - 5
+            height = hexContainer.height - 1
+            x = hexContainer.x + 5
+            y = hexContainer.y - 1
+            color = DragonflyPalette.foreground
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+            dynamicText = { fullColor.toHexString() }
+            textAlignVertical = Alignment.CENTER
+        }
+
+        val hexButtonPaste = "hex-button-paste"<RoundButton> {
+            width = 85.0
+            height = hexContainerBorder.height
+            x = this@ColorPickerModal.x + this@ColorPickerModal.width - width - padding
+            y = hexContainerBorder.y
+            text = "Paste"
+            textSize = 50
+            color = DragonflyPalette.background.brighter(0.8)
+            arc = 10.0
+            onClick { pasteHex() }
+        }!!
+
+        "hex-button-copy"<RoundButton> {
+            width = 80.0
+            height = hexContainerBorder.height
+            x = hexButtonPaste.x - width - 10.0
+            y = hexContainerBorder.y
+            text = "Copy"
+            textSize = 50
+            color = DragonflyPalette.background.brighter(0.8)
+            arc = 10.0
+            onClick { copyHex() }
         }
 
         "rainbow-toggle"<RoundToggleButton> {
@@ -155,19 +214,17 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
         val confirmButton = "confirm-button"<RoundButton> {
             width = 110.0
             height = 37.0
-            x = this@ColorPickerModal.x + this@ColorPickerModal.width - padding - width
+            x = this@ColorPickerModal.x + this@ColorPickerModal.width - width - padding
             y = this@ColorPickerModal.y + this@ColorPickerModal.height - height - padding
             text = "Confirm"
             textSize = 50
             color = DragonflyPalette.accentNormal
             arc = 10.0
-            onClick {
-                println("Confirm the color here")
-            }
+            onClick { confirm() }
         }!!
 
         "reset-button"<RoundButton> {
-            width = 100.0
+            width = 85.0
             height = 37.0
             x = confirmButton.x - width - 10.0
             y = this@ColorPickerModal.y + this@ColorPickerModal.height - height - padding
@@ -175,13 +232,27 @@ class ColorPickerModal : ModalWidget("Color Picker", 650.0, 550.0) {
             textSize = 50
             color = DragonflyPalette.background.brighter(0.8)
             arc = 10.0
-            onClick {
-                println("Reset the color here")
-            }
+            onClick { reset() }
         }
 
         updateFlatColors(contentX, alphaSlider.y + 60.0)
         updateDragonflyColors(padding, alphaSlider.y + 60.0)
+    }
+
+    private fun reset() {
+        TODO("Not yet implemented")
+    }
+
+    private fun confirm() {
+        TODO("Not yet implemented")
+    }
+
+    private fun copyHex() {
+        TODO("Not yet implemented")
+    }
+
+    private fun pasteHex() {
+        TODO("Not yet implemented")
     }
 
     private fun updateFlatColors(contentX: Double, originY: Double) {

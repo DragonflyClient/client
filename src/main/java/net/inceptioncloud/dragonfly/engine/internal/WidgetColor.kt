@@ -202,7 +202,7 @@ class WidgetColor {
     /**
      * Converts the color to a hex string in the format #000000.
      */
-    fun toHexString() = String.format("#%06X", Integer.valueOf(rgb and 0x00FFFFFF))
+    fun toHexString() = if (rainbow) "Rainbow" else String.format("#%06X", Integer.valueOf(rgb and 0x00FFFFFF))
 
     /**
      * Returns an exact copy of this color object.
