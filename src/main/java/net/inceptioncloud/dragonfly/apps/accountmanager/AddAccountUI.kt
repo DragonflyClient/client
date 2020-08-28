@@ -70,9 +70,19 @@ class AddAccountUI(val previousScreen: GuiScreen) : GuiScreen() {
                     val account = AccountManagerApp.authenticate(email.realText, password.realText)
 
                     if (account != null) {
-                        Toast.queue("§aAccount added!", 400)
-                        AccountManagerApp.accounts.add(account)
-                        AccountManagerApp.storeAccounts()
+
+                        var duplicateAccount: Account? = null
+
+                        if (AccountManagerApp.accounts.any { it.also { duplicateAccount = it }.uuid == account.uuid }) {
+                            Toast.queue("§6You are already logged in this account!", 400)
+                            AccountManagerApp.accounts.remove(duplicateAccount!!)
+                            AccountManagerApp.accounts.add(account)
+                            AccountManagerApp.storeAccounts()
+                        } else {
+                            Toast.queue("§aAccount added!", 400)
+                            AccountManagerApp.accounts.add(account)
+                            AccountManagerApp.storeAccounts()
+                        }
 
                         mc.session = account.toSession()
                         LinkBridge.showModalForAccount(account)
