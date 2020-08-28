@@ -1,32 +1,24 @@
 package net.inceptioncloud.dragonfly.mods
 
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
-import net.inceptioncloud.dragonfly.engine.internal.Alignment
+import net.inceptioncloud.dragonfly.mods.keystrokes.EnumKeystrokesPosition
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
-import net.minecraft.entity.player.EnumPlayerModelParts
-import net.minecraft.util.EnumChatFormatting
 
 object KeystrokesMod : DragonflyMod("Keystrokes") {
 
     var enabled by option(true)
-    var space by option(2.0) { it in 0.0..1.0 }
-    var color by option(EnumPlayerModelParts.LEFT_PANTS_LEG)
+    var scale by option(15.0) { it in 10.0..20.0 }
+    var fontSize by option(15.0) { it in 10.0..20.0 }
+    var space by option(3.0) { it in 0.0..5.0 }
+    var position by option(EnumKeystrokesPosition.TOP_LEFT)
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
         BooleanControl(::enabled, "Enable mod"),
         TitleControl("Appearance", "Customize the appearance of the keystrokes on your screen"),
-        NumberControl(::space, "Space", "The space between the keystroke boxes", min = 0.0, max = 1.0, decimalPlaces = 2, liveUpdate = true),
-        DropdownElement(::color, "Color"),
-        TitleControl("General"),
-        BooleanControl(::enabled, "Enable mod"),
-        TitleControl("Appearance", "Customize the appearance of the keystrokes on your screen"),
-        NumberControl(::space, "Space", "The space between the keystroke boxes", min = 0.0, max = 1.0, decimalPlaces = 2, liveUpdate = true),
-        DropdownElement(::color, "Color"),
-        TitleControl("General"),
-        BooleanControl(::enabled, "Enable mod"),
-        TitleControl("Appearance", "Customize the appearance of the keystrokes on your screen"),
-        NumberControl(::space, "Space", "The space between the keystroke boxes", min = 0.0, max = 1.0, decimalPlaces = 2, liveUpdate = true),
-        DropdownElement(::color, "Color")
+        NumberControl(::scale, "Scale", "The scale of the keystroke boxes", min = 10.0, max = 20.0, decimalPlaces = 2, liveUpdate = true),
+        NumberControl(::fontSize, "FontSize", "The size of the text in the keystroke boxes", min = 10.0, max = 20.0, decimalPlaces = 2, liveUpdate = true),
+        NumberControl(::space, "Space", "The space between the keystroke boxes", min = 0.0, max = 5.0, decimalPlaces = 2, liveUpdate = true),
+        DropdownElement(::position, "Position")
     )
 }

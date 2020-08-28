@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.keystrokes
+package net.inceptioncloud.dragonfly.mods.keystrokes
 
 enum class EnumKeystrokesPosition {
     TOP_LEFT,

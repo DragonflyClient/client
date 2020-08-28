@@ -2,8 +2,7 @@ package net.minecraft.client.settings;
 
 import com.google.common.collect.*;
 import com.google.gson.Gson;
-import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager;
-import net.inceptioncloud.dragonfly.keystrokes.KeyStroke;
+import net.inceptioncloud.dragonfly.mods.keystrokes.KeyStrokesManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiNewChat;

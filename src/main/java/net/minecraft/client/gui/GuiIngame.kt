@@ -8,9 +8,9 @@ import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
-import net.inceptioncloud.dragonfly.keystrokes.EnumKeystrokesPosition
-import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
-import net.inceptioncloud.dragonfly.mods.KeystrokesMod2
+import net.inceptioncloud.dragonfly.mods.keystrokes.EnumKeystrokesPosition
+import net.inceptioncloud.dragonfly.mods.keystrokes.KeyStrokesManager
+import net.inceptioncloud.dragonfly.mods.KeystrokesMod
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardTitle
@@ -1064,23 +1064,23 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         var posX: Double
         var posY: Double
 
-        when (KeystrokesMod2.position) {
+        when (KeystrokesMod.position) {
             EnumKeystrokesPosition.TOP_LEFT -> {
                 keyStrokesStartX = 10.0
                 keyStrokesStartY = 10.0
             }
             EnumKeystrokesPosition.TOP_RIGHT -> {
                 val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
-                val scale = KeystrokesMod2.scale
-                val space = KeystrokesMod2.space
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
 
                 keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
                 keyStrokesStartY = 10.0
             }
             EnumKeystrokesPosition.BOTTOM_LEFT -> {
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = KeystrokesMod2.scale
-                val space = KeystrokesMod2.space
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
 
                 keyStrokesStartX = 10.0
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
@@ -1088,24 +1088,24 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             EnumKeystrokesPosition.BOTTOM_RIGHT -> {
                 val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = KeystrokesMod2.scale
-                val space = KeystrokesMod2.space
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
 
                 keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
             }
             EnumKeystrokesPosition.HOTBAR_LEFT -> {
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = KeystrokesMod2.scale
-                val space = KeystrokesMod2.space
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
 
                 keyStrokesStartX = hotbarX - ((scale * 3) + (space * 2)) - 10
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
             }
             EnumKeystrokesPosition.HOTBAR_RIGHT -> {
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = KeystrokesMod2.scale
-                val space = KeystrokesMod2.space
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
 
                 keyStrokesStartX = (hotbarX + hotbarW + 10).toDouble()
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
@@ -1121,15 +1121,15 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
         stage.clear()
 
-        if (KeystrokesMod2.enabled) {
+        if (KeystrokesMod.enabled) {
             for (keyStroke in KeyStrokesManager.keystrokes) {
                 val filter = "keystrokes-${keyStroke.keyDesc}"
 
-                keyStrokesScale[filter] = KeystrokesMod2.scale
-                keyStrokesSpace[filter] = KeystrokesMod2.space
-                keyStrokesFontSize[filter] = KeystrokesMod2.fontSize
-                keyStrokesScaleW[filter] = KeystrokesMod2.scale
-                keyStrokesScaleH[filter] = KeystrokesMod2.scale
+                keyStrokesScale[filter] = KeystrokesMod.scale
+                keyStrokesSpace[filter] = KeystrokesMod.space
+                keyStrokesFontSize[filter] = KeystrokesMod.fontSize
+                keyStrokesScaleW[filter] = KeystrokesMod.scale
+                keyStrokesScaleH[filter] = KeystrokesMod.scale
 
                 var name = ""
 

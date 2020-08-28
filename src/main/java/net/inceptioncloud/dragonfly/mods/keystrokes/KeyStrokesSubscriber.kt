@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.keystrokes
+package net.inceptioncloud.dragonfly.mods.keystrokes
 
 import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.event.client.ResizeEvent

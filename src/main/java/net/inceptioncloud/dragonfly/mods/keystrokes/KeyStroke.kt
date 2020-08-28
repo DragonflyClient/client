@@ -1,6 +1,5 @@
-package net.inceptioncloud.dragonfly.keystrokes
+package net.inceptioncloud.dragonfly.mods.keystrokes
 
-import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.minecraft.client.Minecraft
 

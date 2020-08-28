@@ -1,9 +1,8 @@
-package net.inceptioncloud.dragonfly.keystrokes
+package net.inceptioncloud.dragonfly.mods.keystrokes
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import khttp.get
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import java.io.File
 
