@@ -10,9 +10,7 @@ gradle.properties
 /.gradle/
 
 # Runtime
-/runtime/resourcepacks
 /runtime/saves
-/runtime/shaderpacks
 /runtime/authentication.txt
 /runtime/options.txt
 /runtime/optionsof.txt
@@ -34,3 +32,6 @@ gradle.properties
 
 # Dragonfly Secrets
 /runtime/dragonfly/.secrets/
+/runtime/resourcepacks/
+/runtime/shaderpacks/
+/runtime/dragonfly/accounts.json

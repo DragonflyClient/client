@@ -1483,6 +1483,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 this.displayHeight = this.tempDisplayHeight;
             }
 
+            final ToggleFullscreenEvent toggleFullscreenEvent = new ToggleFullscreenEvent(this.displayWidth, this.displayHeight, new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth(), new ScaledResolution(Minecraft.getMinecraft()).getScaledHeight(), !this.isFullScreen());
+            Dragonfly.getEventBus().post(toggleFullscreenEvent);
+
             if (this.displayWidth <= 0) {
                 this.displayWidth = 1;
             }

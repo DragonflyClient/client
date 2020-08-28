@@ -43,7 +43,7 @@ object DragonflyVersion {
     /**
      * The location of the Dragonfly local storage in the appdata directory.
      */
-    private val localStorage = System.getenv("appdata") + "\\Dragonfly"
+    private val localStorage = getStorageFolder() + "Dragonfly"
 
     /**
      * Compares the [first] version to the [second] version based on the [channel][getChannel].
@@ -105,7 +105,7 @@ object DragonflyVersion {
      * null, if the file doesn't exist or if the identifier is invalid.
      */
     fun getChannel(): UpdateChannel? {
-        val properties = File("${localStorage}\\installation_properties.json")
+        val properties = File("${localStorage}${File.separator}installation_properties.json")
         return properties.takeIf { it.exists() }?.reader()?.use {
             val json = JsonParser().parse(it)?.asJsonObject
             json?.get("channel")?.asString?.let { channel -> UpdateChannel.getByIdentifier(channel) }
@@ -116,4 +116,20 @@ object DragonflyVersion {
      * Returns the version from the [update].
      */
     private fun getRemoteVersionString(): String? = update?.version
+
+    private fun getStorageFolder(): String {
+        when {
+            System.getProperty("os.name").toLowerCase().contains("windows") -> {
+                return System.getenv("appdata") + File.separator
+            }
+            System.getProperty("os.name").toLowerCase().contains("linux") -> {
+                return System.getProperty("user.home") + File.separator
+            }
+            System.getProperty("os.name").toLowerCase().contains("os") -> {
+                return "/Users/" + System.getProperty("user.name") + "/Library/Application Support/"
+            }
+        }
+        return "ERROR"
+    }
+
 }

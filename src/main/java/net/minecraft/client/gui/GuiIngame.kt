@@ -8,8 +8,9 @@ import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.keystrokes.EnumKeystrokesPosition
 import net.inceptioncloud.dragonfly.keystrokes.KeyStrokesManager
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionKeystrokes
+import net.inceptioncloud.dragonfly.mods.KeystrokesMod2
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardTitle
@@ -102,6 +103,11 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
      * Remaining ticks the item highlight should be visible
      */
     private var remainingHighlightTicks = 0
+
+    private var hotbarX = 0
+    private var hotbarY = 0
+    private var hotbarW = 0
+    private var hotbarH = 0
 
     /**
      * The ItemStack that is currently being highlighted
@@ -332,6 +338,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     }
 
     protected fun renderTooltip(sr: ScaledResolution, partialTicks: Float) {
+
         if (mc.renderViewEntity is EntityPlayer) {
             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
             mc.textureManager.bindTexture(widgetsTexPath)
@@ -339,7 +346,15 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             val i = sr.scaledWidth / 2
             val f = zLevel
             zLevel = -90.0f
-            this.drawTexturedModalRect(i - 91, sr.scaledHeight - 22, 0, 0, 182, 22)
+
+            val reInitKeystrokesOverlay = hotbarX != (i - 91)
+
+            hotbarX = i - 91
+            hotbarY = sr.scaledHeight - 22
+            hotbarW = 182
+            hotbarH = 22
+
+            this.drawTexturedModalRect(hotbarX, hotbarY, 0, 0, hotbarW, hotbarH)
             this.drawTexturedModalRect(
                 i - 91 - 1 + entityplayer.inventory.currentItem * 20,
                 sr.scaledHeight - 22 - 1,
@@ -361,6 +376,11 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             RenderHelper.disableStandardItemLighting()
             GlStateManager.disableRescaleNormal()
             GlStateManager.disableBlend()
+
+            if(reInitKeystrokesOverlay) {
+                initKeyStrokes(true)
+            }
+
         }
     }
 
@@ -1040,37 +1060,54 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     val keyStrokesScaleH = HashMap<String, Double>()
 
     fun initKeyStrokes(overrideColors: Boolean) {
+
         var posX: Double
         var posY: Double
 
-        when (OptionsSectionKeystrokes.position.invoke()!!) {
-            0 -> {
+        when (KeystrokesMod2.position) {
+            EnumKeystrokesPosition.TOP_LEFT -> {
                 keyStrokesStartX = 10.0
                 keyStrokesStartY = 10.0
             }
-            1 -> {
+            EnumKeystrokesPosition.TOP_RIGHT -> {
                 val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
-                val scale = keyStrokesScale.values.first()
-                val space = keyStrokesSpace.values.first()
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
 
                 keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
                 keyStrokesStartY = 10.0
             }
-            2 -> {
+            EnumKeystrokesPosition.BOTTOM_LEFT -> {
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = keyStrokesScale.values.first()
-                val space = keyStrokesSpace.values.first()
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
 
                 keyStrokesStartX = 10.0
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
             }
-            3 -> {
+            EnumKeystrokesPosition.BOTTOM_RIGHT -> {
                 val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
                 val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = keyStrokesScale.values.first()
-                val space = keyStrokesSpace.values.first()
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
 
                 keyStrokesStartX = width - ((scale * 3) + (space * 2)) - 10
+                keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+            }
+            EnumKeystrokesPosition.HOTBAR_LEFT -> {
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
+
+                keyStrokesStartX = hotbarX - ((scale * 3) + (space * 2)) - 10
+                keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+            }
+            EnumKeystrokesPosition.HOTBAR_RIGHT -> {
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = KeystrokesMod2.scale
+                val space = KeystrokesMod2.space
+
+                keyStrokesStartX = (hotbarX + hotbarW + 10).toDouble()
                 keyStrokesStartY = height - ((scale * 4) + (space * 3)) - 10
             }
         }
@@ -1084,15 +1121,15 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
         stage.clear()
 
-        if (OptionsSectionKeystrokes.switch.invoke()!! == 1) {
+        if (KeystrokesMod2.enabled) {
             for (keyStroke in KeyStrokesManager.keystrokes) {
                 val filter = "keystrokes-${keyStroke.keyDesc}"
 
-                keyStrokesScale[filter] = OptionsSectionKeystrokes.scale.invoke()!!
-                keyStrokesSpace[filter] = OptionsSectionKeystrokes.space.invoke()!!
-                keyStrokesFontSize[filter] = OptionsSectionKeystrokes.fontSize.invoke()!!
-                keyStrokesScaleW[filter] = OptionsSectionKeystrokes.scale.invoke()!!
-                keyStrokesScaleH[filter] = OptionsSectionKeystrokes.scale.invoke()!!
+                keyStrokesScale[filter] = KeystrokesMod2.scale
+                keyStrokesSpace[filter] = KeystrokesMod2.space
+                keyStrokesFontSize[filter] = KeystrokesMod2.fontSize
+                keyStrokesScaleW[filter] = KeystrokesMod2.scale
+                keyStrokesScaleH[filter] = KeystrokesMod2.scale
 
                 var name = ""
 

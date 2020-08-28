@@ -89,8 +89,8 @@ object Inspector {
             System.setProperty("prism.lcdtext", "false")
             System.setProperty("prism.text", "t2k")
 
-            Font.loadFont(File("dragonfly\\assets\\fonts\\SF Pro Display Medium.ttf").inputStream(), 15.0)
-            Font.loadFont(File("dragonfly\\assets\\fonts\\SF Pro Display.ttf").inputStream(), 15.0)
+            Font.loadFont(File("dragonfly${File.separator}assets${File.separator}fonts${File.separator}SF Pro Display Medium.ttf").inputStream(), 15.0)
+            Font.loadFont(File("dragonfly${File.separator}assets${File.separator}fonts${File.separator}SF Pro Display.ttf").inputStream(), 15.0)
 
             launch<InspectorApp>()
         }
