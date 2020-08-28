@@ -338,6 +338,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     }
 
     protected fun renderTooltip(sr: ScaledResolution, partialTicks: Float) {
+
         if (mc.renderViewEntity is EntityPlayer) {
             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
             mc.textureManager.bindTexture(widgetsTexPath)
@@ -345,6 +346,8 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             val i = sr.scaledWidth / 2
             val f = zLevel
             zLevel = -90.0f
+
+            val reInitKeystrokesOverlay = hotbarX != (i - 91)
 
             hotbarX = i - 91
             hotbarY = sr.scaledHeight - 22
@@ -373,6 +376,11 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             RenderHelper.disableStandardItemLighting()
             GlStateManager.disableRescaleNormal()
             GlStateManager.disableBlend()
+
+            if(reInitKeystrokesOverlay) {
+                initKeyStrokes(true)
+            }
+
         }
     }
 
@@ -1052,6 +1060,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     val keyStrokesScaleH = HashMap<String, Double>()
 
     fun initKeyStrokes(overrideColors: Boolean) {
+
         var posX: Double
         var posY: Double
 
