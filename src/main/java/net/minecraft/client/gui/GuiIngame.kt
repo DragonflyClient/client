@@ -1114,8 +1114,8 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
         if (overrideColors) {
             for (keystroke in KeyStrokesManager.keystrokes) {
-                keyStrokesTextColor["keystrokes-${keystroke.keyDesc}"] = KeyStrokesManager.colorTextInactive
-                keyStrokesBackgroundColor["keystrokes-${keystroke.keyDesc}"] = KeyStrokesManager.colorBgInactive
+                keyStrokesTextColor["keystrokes-${keystroke.keyDesc}"] = KeystrokesMod.textInactiveColor
+                keyStrokesBackgroundColor["keystrokes-${keystroke.keyDesc}"] = KeystrokesMod.bgInactiveColor
             }
         }
 
