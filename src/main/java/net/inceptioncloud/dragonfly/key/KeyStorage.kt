@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.key
 
 import net.inceptioncloud.dragonfly.Dragonfly
+import org.apache.logging.log4j.LogManager
 import java.io.File
 
 /**
@@ -23,8 +24,18 @@ object KeyStorage {
      * Returns the key stored in the [keyFile] as a string. If the file doesn't exist or if
      * the key is corrupted (= doesn't match the regex), this function will return null.
      */
-    fun getStoredKey(): String? = keyFile.takeIf { it.exists() }
-        ?.readText()?.takeIf { isRegexMatching(it) }
+    fun getStoredKey(): String? {
+        val oldKeyFile = File("dragonfly/alpha.key")
+
+        if(oldKeyFile.exists()) {
+            LogManager.getLogger().info("Moving alpha.key to ${File(Dragonfly.secretsDirectory, "alpha.key").absolutePath}...")
+            oldKeyFile.copyTo(File(Dragonfly.secretsDirectory, "alpha.key"), true)
+            oldKeyFile.delete()
+        }
+
+        return keyFile.takeIf { it.exists() }
+            ?.readText()?.takeIf { isRegexMatching(it) }
+    }
 
     /**
      * Checks if the [input] String matches the key regex.
