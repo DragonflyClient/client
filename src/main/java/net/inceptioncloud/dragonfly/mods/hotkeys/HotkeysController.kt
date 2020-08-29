@@ -16,7 +16,7 @@ class HotkeysController {
     /**
      * Contains all keys which are pressed and the time when they were pressed
      */
-    private val pressedKeys = HashMap<Int, Long>()
+    val pressedKeys = HashMap<Int, Long>()
 
     /**
      * File where all hotkeys are saved for a new game session
@@ -54,39 +54,23 @@ class HotkeysController {
     }
 
     fun updateKeys() {
-        for (hotkey in hotkeys) {
+        val modifierKeys = listOf(Keyboard.KEY_LCONTROL, Keyboard.KEY_LSHIFT, Keyboard.KEY_LMENU)
 
-            val primary = hotkey.data.key
-            val secondary = hotkey.data.modifierKey
-
-            if (secondary == null) {
-                if (primary.isKeyPressed() && !Keyboard.KEY_LSHIFT.isKeyPressed() && !Keyboard.KEY_LCONTROL.isKeyPressed() && !Keyboard.KEY_LMENU.isKeyPressed()) {
-                    hotkey.progressForward()
-                } else {
-                    if (!hotkey.transition.isAtStart) {
-                        hotkey.progressBackward()
-                    }
-                }
+        modifierKeys.forEach { updateKeyState(it) }
+        hotkeys.forEach {
+            if (it.isSatisfied()) {
+                it.progressForward()
             } else {
-                if (primary.isKeyPressed() && !pressedKeys.containsKey(primary)) {
-                    pressedKeys[primary] = System.currentTimeMillis()
-                } else if (secondary.isKeyPressed() && !pressedKeys.containsKey(secondary)) {
-                    pressedKeys[secondary] = System.currentTimeMillis()
-                } else if (!primary.isKeyPressed() && !secondary.isKeyPressed()) {
-                    pressedKeys.remove(primary)
-                    pressedKeys.remove(secondary)
-                }
-
-                if (primary.isKeyPressed() && secondary.isKeyPressed()) {
-                    if (pressedKeys.containsKey(primary) && pressedKeys.containsKey(secondary)) {
-                        if (pressedKeys[primary]!! > pressedKeys[secondary]!!) {
-                            hotkey.progressForward()
-                        }
-                    }
-                } else {
-                    hotkey.progressBackward()
-                }
+                it.progressBackward()
             }
+        }
+    }
+
+    fun updateKeyState(key: Int) {
+        if (key.isKeyPressed() && !pressedKeys.containsKey(key)) {
+            pressedKeys[key] = System.currentTimeMillis()
+        } else if (!key.isKeyPressed() && pressedKeys.containsKey(key)) {
+            pressedKeys.remove(key)
         }
     }
 
@@ -117,10 +101,9 @@ class HotkeysController {
             hotkeys = mutableListOf()
         }
     }
-
-    /**
-     * Function which is used to check if the key (Key index as Int) is pressed
-     */
-    private fun Int.isKeyPressed(): Boolean = Keyboard.isKeyDown(this)
-
 }
+
+/**
+ * Function which is used to check if the key (Key index as Int) is pressed
+ */
+fun Int.isKeyPressed(): Boolean = Keyboard.isKeyDown(this)

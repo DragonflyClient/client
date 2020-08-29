@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.ScaledResolution
+import org.lwjgl.input.Keyboard
 import java.util.*
 
 abstract class Hotkey(val data: HotkeyData) {
@@ -99,6 +100,26 @@ abstract class Hotkey(val data: HotkeyData) {
      */
     fun progressBackward() {
         transition.setBackward()
+    }
+
+    fun isSatisfied(): Boolean = with(data) {
+        HotkeysMod.controller.updateKeyState(key)
+
+        if (!key.isKeyPressed()) return false
+        if (requireCtrl != Keyboard.KEY_LCONTROL pressedBefore key) return false
+        if (requireShift != Keyboard.KEY_LSHIFT pressedBefore key) return false
+        if (requireAlt != Keyboard.KEY_LMENU pressedBefore key) return false
+
+        return true
+    }
+
+    private infix fun Int.pressedBefore(primary: Int): Boolean {
+        with(HotkeysMod.controller) {
+            if (!pressedKeys.containsKey(this@pressedBefore)) return false
+            if (!pressedKeys.containsKey(primary)) return true
+
+            return pressedKeys[this@pressedBefore]!! < pressedKeys[primary]!!
+        }
     }
 
     /**

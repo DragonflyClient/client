@@ -19,7 +19,9 @@ import net.inceptioncloud.dragonfly.mods.hotkeys.Hotkey
 data class HotkeyData (
     val type: EnumHotkeyType,
     val key: Int,
-    val modifierKey: Int?,
+    val requireCtrl: Boolean,
+    val requireShift: Boolean,
+    val requireAlt: Boolean,
     val time: Double,
     val delay: Double,
     val color: WidgetColor,
