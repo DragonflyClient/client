@@ -2,7 +2,7 @@ package net.minecraft.client.settings;
 
 import com.google.common.collect.*;
 import com.google.gson.Gson;
-import net.inceptioncloud.dragonfly.mods.keystrokes.KeyStrokesManager;
+import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiNewChat;
@@ -983,8 +983,8 @@ public class GameSettings {
                         if (astring[0].equals("key_" + keybinding.getKeyDescription())) {
                             keybinding.setKeyCode(Integer.parseInt(astring[1]));
 
-                            // ICMM - KeyStrokes Register
-                            KeyStrokesManager.registerKeyStrokes(keybinding.getKeyDescription(), keybinding.getKeyCode());
+                            // ICMM - Keystrokes Register
+                            KeystrokesManager.registerKeystrokes(keybinding.getKeyDescription(), keybinding.getKeyCode());
 
                         }
                     }
