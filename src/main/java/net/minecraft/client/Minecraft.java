@@ -13,6 +13,7 @@ import net.inceptioncloud.dragonfly.event.control.*;
 import net.inceptioncloud.dragonfly.event.gui.*;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
 import net.inceptioncloud.dragonfly.hotkeys.HotkeyController;
+import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
 import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker;
 import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
@@ -402,7 +403,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
                         } catch (OutOfMemoryError var10) {
                             this.freeMemory();
                             this.displayGuiScreen(new GuiMemoryErrorScreen());
-                            System.gc();
+                            EnhancedGameExperienceMod.tryExplicitGC();
                         }
                     } else {
                         this.displayCrashReport(this.crashReporter);
@@ -938,7 +939,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             }
         }
 
-        System.gc();
+        EnhancedGameExperienceMod.tryExplicitGC();
     }
 
     /**
@@ -1110,12 +1111,12 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         }
 
         try {
-            System.gc();
+            EnhancedGameExperienceMod.tryExplicitGC();
             this.loadWorld(null);
         } catch (Throwable ignored) {
         }
 
-        System.gc();
+        EnhancedGameExperienceMod.tryExplicitGC();
     }
 
     /**
@@ -1888,7 +1889,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         if (launchEvent.isCancelled()) return;
 
         this.loadWorld(null);
-        System.gc();
+        EnhancedGameExperienceMod.tryExplicitGC();
         ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
         WorldInfo worldinfo = isavehandler.loadWorldInfo();
 
@@ -2009,7 +2010,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.thePlayer = null;
         }
 
-        System.gc();
+        EnhancedGameExperienceMod.tryExplicitGC();
         this.systemTime = 0L;
     }
 
