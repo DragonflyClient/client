@@ -19,6 +19,9 @@ object EnhancedGameExperienceMod : DragonflyMod("Enhanced Game Experience") {
     var fixPlayerRotation by option(true)
 
     @JvmStatic
+    var fixRidingHand by option(true)
+
+    @JvmStatic
     fun tryExplicitGC() {
         if (!disableExplicitGC) System.gc()
     }
