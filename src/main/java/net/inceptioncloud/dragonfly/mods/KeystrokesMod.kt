@@ -55,11 +55,11 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
         BooleanControl(::enabled, "Enable mod"),
-        TitleControl("Appearance", "Customize the appearance of the keystrokes on your screen"),
+        TitleControl("Appearance", "Customize the appearance of the keystrokes mod on your screen"),
         NumberControl(
             ::scale,
             "Scale",
-            "The scale of the keystroke boxes",
+            "The size of the keystroke boxes",
             min = 10.0,
             max = 20.0,
             decimalPlaces = 2,
@@ -67,7 +67,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
         ),
         NumberControl(
             ::fontSize,
-            "FontSize",
+            "Font size",
             "The size of the text in the keystroke boxes",
             min = 10.0,
             max = 20.0,
@@ -86,23 +86,23 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
         DropdownElement(::position, "Position", "Position of the keystroke boxes"),
         ColorControl(
             ::textActiveColor,
-            "Text Active Color",
-            "Color of the text in the keystroke boxes if the button of the box is clicked"
+            "Text color (pressed)",
+            "Color of the text in the keystroke boxes if the button is held down"
         ),
         ColorControl(
             ::textInactiveColor,
-            "Text Inactive Color",
-            "Color of the text in the keystroke boxes if the button of the box is not clicked"
+            "Text color (released)",
+            "Color of the text in the keystroke boxes if the button is not held down"
         ),
         ColorControl(
             ::bgActiveColor,
-            "Background Active Color",
-            "Color of the box in the keystroke boxes if the button of the box is clicked"
+            "Background color (pressed)",
+            "Color of the box in the keystroke boxes if the button is held down"
         ),
         ColorControl(
             ::bgInactiveColor,
-            "Background Inactive Color",
-            "Color of the box in the keystroke boxes if the button of the box is not clicked"
+            "Background color (released)",
+            "Color of the box in the keystroke boxes if the button is not held down"
         )
     )
 
