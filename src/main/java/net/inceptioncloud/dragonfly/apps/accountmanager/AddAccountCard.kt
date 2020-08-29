@@ -12,6 +12,7 @@ import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.mc
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.minecraft.util.ResourceLocation
 
 class AddAccountCard(
@@ -72,7 +73,7 @@ class AddAccountCard(
 
     override fun handleMousePress(data: MouseData) {
         if (data in this) {
-            AddAccountUI(mc.currentScreen).switch()
+            Modal.showModal(AddAccountModal())
         }
     }
 }

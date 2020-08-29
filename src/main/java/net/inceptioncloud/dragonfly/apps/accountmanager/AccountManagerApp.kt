@@ -33,17 +33,26 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
     val accounts: MutableList<Account> = kotlin.run {
         val fromFile = readFromAccountsFile() ?: listOf()
         val fromLauncher = readFromLauncher() ?: listOf()
-
-        val total = fromFile.filter {
-            val isValid = runBlocking { it.validate() }
-            if (!isValid) LogManager.getLogger().info("Account ${it.displayName} in accounts.json is invalid! Skipping...")
-            isValid
-        }.toMutableList()
+        val total = fromFile.distinctBy { it.uuid }.toMutableList()
 
         fromLauncher // add accounts from launcher that aren't in the file
-            .filter { l -> total.none { it.uuid == l.uuid } }
+            .distinctBy { it.uuid }
+            .filter {
+                runBlocking {
+                    val fileClone = total.firstOrNull { f -> f.uuid == it.uuid }
+                    fileClone == null || !fileClone.validateWithRefresh()
+                }
+            }
             .also { LogManager.getLogger().info("Importing ${it.size} account(s) from launcher..."); }
-            .forEach { total.add(it) }
+            .forEach {
+                if (total.removeAll { f -> f.uuid == it.uuid }) {
+                    LogManager.getLogger().info("Replaced ${it.displayName} with account from launcher")
+                } else {
+                    LogManager.getLogger().info("Added ${it.displayName} from launcher")
+                }
+
+                total.add(it)
+            }
 
         total.forEach { runBlocking { it.retrieveSkull() } } // preload skulls
 
