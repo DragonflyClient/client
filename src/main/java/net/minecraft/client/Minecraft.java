@@ -12,7 +12,7 @@ import net.inceptioncloud.dragonfly.event.client.*;
 import net.inceptioncloud.dragonfly.event.control.*;
 import net.inceptioncloud.dragonfly.event.gui.*;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
-import net.inceptioncloud.dragonfly.hotkeys.HotkeyController;
+import net.inceptioncloud.dragonfly.mods.hotkeys.*;
 import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
 import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker;
@@ -1875,7 +1875,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.systemTime = getSystemTime();
 
         // ICMM - Hotkeys type
-        HotkeyController.updateKeys();
+        HotkeysMod.getController().updateKeys();
 
     }
 

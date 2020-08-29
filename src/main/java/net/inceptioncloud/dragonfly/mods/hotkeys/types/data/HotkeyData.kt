@@ -1,8 +1,8 @@
-package net.inceptioncloud.dragonfly.hotkeys.types.data
+package net.inceptioncloud.dragonfly.mods.hotkeys.types.data
 
 import com.google.gson.JsonObject
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
-import net.inceptioncloud.dragonfly.hotkeys.Hotkey
+import net.inceptioncloud.dragonfly.mods.hotkeys.Hotkey
 
 /**
  * This class holds the data about a hotkey and is used as an interface between the hotkey code

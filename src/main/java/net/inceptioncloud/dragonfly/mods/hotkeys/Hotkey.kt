@@ -1,6 +1,6 @@
-package net.inceptioncloud.dragonfly.hotkeys
+package net.inceptioncloud.dragonfly.mods.hotkeys
 
-import net.inceptioncloud.dragonfly.hotkeys.types.data.HotkeyData
+import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyData
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui

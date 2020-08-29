@@ -8,7 +8,7 @@ import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
-import net.inceptioncloud.dragonfly.hotkeys.HotkeyController
+import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysMod
 import net.inceptioncloud.dragonfly.mods.keystrokes.*
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
@@ -62,7 +62,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     /**
      * Controller for all set hotkeys
      */
-    var controller = HotkeyController
+    var controller = HotkeysMod.controller
 
     /**
      * The spectator GUI for this in-game GUI instance

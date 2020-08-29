@@ -1,21 +1,16 @@
-package net.inceptioncloud.dragonfly.hotkeys
+package net.inceptioncloud.dragonfly.mods.hotkeys
 
-import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.hotkeys.types.ChatHotkey
-import net.inceptioncloud.dragonfly.hotkeys.types.config.ChatHotkeyConfig
-import net.inceptioncloud.dragonfly.hotkeys.types.data.*
-import net.inceptioncloud.dragonfly.mods.HotkeysMod
+import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.*
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 import java.io.File
 import kotlin.reflect.full.primaryConstructor
 
-object HotkeyController {
+class HotkeysController {
 
     /**
      * Contains all registered hotkeys
      */
-    @JvmStatic
     lateinit var hotkeys: MutableList<Hotkey>
 
     /**
@@ -58,7 +53,6 @@ object HotkeyController {
         repository.remove(hotkey.data)
     }
 
-    @JvmStatic
     fun updateKeys() {
         for (hotkey in hotkeys) {
 
