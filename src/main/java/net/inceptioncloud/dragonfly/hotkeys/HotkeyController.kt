@@ -40,7 +40,7 @@ object HotkeyController {
     /**
      * File where all hotkeys are saved for a new game session
      */
-    val configFile = File("dragonfly/hotkeys/hotkeysDB.json")
+    val configFile = File("dragonfly/mods/hotkeys/hotkeysDB.json")
 
     init {
         registerHotkeys()
@@ -187,12 +187,6 @@ object HotkeyController {
                     modifierKey = currentModifierKey.asInt
                 }
 
-                println("-")
-                println(data.get("key").asInt)
-                println(modifierKey)
-                println(currentModifierKey)
-                println("-")
-
                 if (obj.get("type").asString == "HotkeyTypeChat") {
                     hotkeys.add(
                         HotkeyTypeChat(
@@ -207,12 +201,6 @@ object HotkeyController {
                     )
                 }
 
-            }
-
-            for(hotkey in hotkeys) {
-                if(hotkey is HotkeyTypeChat) {
-                    println("${hotkey.message} ${hotkey.key} ${hotkey.modifierKey}")
-                }
             }
 
         } else {
