@@ -151,7 +151,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
                 stage.add("control-element-$index" to control)
 
-                currentY += control.height + 10.0
+                currentY += control.height + 13.0
             }
         }
     }
