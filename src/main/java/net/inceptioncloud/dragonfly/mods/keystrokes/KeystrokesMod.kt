@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.mods
+package net.inceptioncloud.dragonfly.mods.keystrokes
 
 import javafx.beans.value.ChangeListener
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorControl
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
-import net.inceptioncloud.dragonfly.mods.keystrokes.EnumKeystrokesPosition
 import net.minecraft.client.Minecraft
 import kotlin.reflect.jvm.isAccessible
 
@@ -34,19 +33,19 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
 
     init {
 
-        val textColorAcProp = ::textActiveColor
+        val textColorAcProp = KeystrokesMod::textActiveColor
         textColorAcProp.isAccessible = true
         (textColorAcProp.getDelegate() as OptionDelegate<*>).optionKey.objectProperty.addListener(listener)
 
-        val textColorInProp = ::textInactiveColor
+        val textColorInProp = KeystrokesMod::textInactiveColor
         textColorInProp.isAccessible = true
         (textColorInProp.getDelegate() as OptionDelegate<*>).optionKey.objectProperty.addListener(listener)
 
-        val bgColorAcProp = ::bgActiveColor
+        val bgColorAcProp = KeystrokesMod::bgActiveColor
         bgColorAcProp.isAccessible = true
         (bgColorAcProp.getDelegate() as OptionDelegate<*>).optionKey.objectProperty.addListener(listener)
 
-        val bgColorInProp = ::bgInactiveColor
+        val bgColorInProp = KeystrokesMod::bgInactiveColor
         bgColorInProp.isAccessible = true
         (bgColorInProp.getDelegate() as OptionDelegate<*>).optionKey.objectProperty.addListener(listener)
 
@@ -54,10 +53,10 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
-        BooleanControl(::enabled, "Enable mod"),
+        BooleanControl(KeystrokesMod::enabled, "Enable mod"),
         TitleControl("Appearance", "Customize the appearance of the keystrokes mod on your screen"),
         NumberControl(
-            ::scale,
+            KeystrokesMod::scale,
             "Scale",
             "The size of the keystroke boxes",
             min = 10.0,
@@ -66,7 +65,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
             liveUpdate = true
         ),
         NumberControl(
-            ::fontSize,
+            KeystrokesMod::fontSize,
             "Font size",
             "The size of the text in the keystroke boxes",
             min = 10.0,
@@ -75,7 +74,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
             liveUpdate = true
         ),
         NumberControl(
-            ::space,
+            KeystrokesMod::space,
             "Space",
             "The space between the keystroke boxes",
             min = 0.0,
@@ -83,13 +82,13 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
             decimalPlaces = 2,
             liveUpdate = true
         ),
-        DropdownElement(::position, "Position", "Position of the keystroke boxes"),
+        DropdownElement(KeystrokesMod::position, "Position", "Position of the keystroke boxes"),
         TitleControl("Colors (pressed)", "Set the colors of the keystroke box if the corresponding key/button is pressed"),
-        ColorControl(::textActiveColor, "Text"),
-        ColorControl(::bgActiveColor, "Background"),
+        ColorControl(KeystrokesMod::textActiveColor, "Text"),
+        ColorControl(KeystrokesMod::bgActiveColor, "Background"),
         TitleControl("Colors (released)", "Set the colors of the keystroke box if the corresponding key/button is not pressed"),
-        ColorControl(::textInactiveColor, "Text"),
-        ColorControl(::bgInactiveColor, "Background")
+        ColorControl(KeystrokesMod::textInactiveColor, "Text"),
+        ColorControl(KeystrokesMod::bgInactiveColor, "Background")
     )
 
 }
