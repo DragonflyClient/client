@@ -39,6 +39,7 @@ class OutlineButton(
     override var width: Double by property(200.0)
     override var height: Double by property(20.0)
     override var color: WidgetColor by property(DragonflyPalette.background)
+    var hoverColor: WidgetColor by property(DragonflyPalette.background.brighter(0.8))
 
     var text: String by property("Button")
     var outlineStroke: Double by property(2.0)
@@ -89,7 +90,7 @@ class OutlineButton(
             container?.morph(
                 60,
                 EaseQuad.IN_OUT,
-                Rectangle::color to color.brighter(0.8)
+                Rectangle::color to hoverColor
             )?.start()
         } else {
             container?.detachAnimation<MorphAnimation>()
