@@ -8,18 +8,17 @@ import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.hotkeys.HotkeyController
+import net.inceptioncloud.dragonfly.mods.KeystrokesMod
 import net.inceptioncloud.dragonfly.mods.keystrokes.EnumKeystrokesPosition
 import net.inceptioncloud.dragonfly.mods.keystrokes.KeyStrokesManager
-import net.inceptioncloud.dragonfly.mods.KeystrokesMod
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardTitle
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition
-import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward
 import net.minecraft.block.material.Material
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiScreen.Companion.sendChatMessage
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.renderer.Tessellator
@@ -44,7 +43,6 @@ import optifine.Config
 import optifine.CustomColors
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
-import java.awt.Color
 import java.util.*
 import java.util.stream.Collectors
 import kotlin.collections.HashMap
@@ -64,22 +62,17 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     private val overlayDebug: GuiOverlayDebug
 
     /**
+     * Controller for all set hotkeys
+     */
+    var controller = HotkeyController
+
+    /**
      * The spectator GUI for this in-game GUI instance
      */
     @JvmField
     val spectatorGui: GuiSpectator
 
     val tabList: GuiPlayerTabOverlay
-    private val goodGameProcess = SmoothDoubleTransition.builder()
-        .fadeIn(0).stay(50).fadeOut(100)
-        .start(0.0).end(1.0)
-        .autoTransformator(ForwardBackward {
-            Keyboard.isCreated() && Keyboard.isKeyDown(
-                Keyboard.KEY_G
-            ) && !GuiNewChat.isChatOpen()
-        })
-        .reachEnd { sendChatMessage("gg", false) }
-        .build()
 
     /**
      * Previous frame vignette brightness (slowly changes by 1% each frame)
@@ -322,13 +315,12 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             scoreboard,
             scoreobjective1
         )
-        drawRect(
-            0.0,
-            scaledHeight - 1.toDouble(),
-            goodGameProcess.get() * scaledWidth,
-            scaledHeight.toDouble(),
-            Color(0x26de81).rgb
-        )
+
+        // ICMM Hotkey Draw
+        for (key in controller.hotkeys) {
+            key.draw()
+        }
+
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
         GlStateManager.disableLighting()
         GlStateManager.enableAlpha()
@@ -377,7 +369,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             GlStateManager.disableRescaleNormal()
             GlStateManager.disableBlend()
 
-            if(reInitKeystrokesOverlay) {
+            if (reInitKeystrokesOverlay) {
                 initKeyStrokes(true)
             }
 
