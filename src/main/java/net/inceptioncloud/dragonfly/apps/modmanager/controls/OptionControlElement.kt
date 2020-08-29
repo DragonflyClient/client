@@ -70,7 +70,7 @@ abstract class OptionControlElement<T>(
         } else {
             val descriptionWidget = "description"<TextField> {
                 x = this@OptionControlElement.x
-                y = nameWidget.y + nameWidget.height
+                y = nameWidget.y + nameWidget.height + 2.0
                 width = this@OptionControlElement.width * (2 / 3.0)
                 adaptHeight = true
                 fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
@@ -78,7 +78,7 @@ abstract class OptionControlElement<T>(
                 staticText = description
             }!!.also { it.adaptHeight() }
 
-            height = nameWidget.height + descriptionWidget.height
+            height = nameWidget.height + descriptionWidget.height + 2.0
         }
 
         controlUpdateStructure()

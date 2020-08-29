@@ -29,7 +29,7 @@ class DropdownElement(
     val allValues: List<Enum<*>> = optionKey.typeClass.enumConstants.toList()
 
     private val padding = 10.0
-    private val fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 46)
+    private val fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
 
     private val containerWidth by lazy {
         allValues.map { fontRenderer.getStringWidth(it.toPrettyString()) }.max()!!.coerceIn(100..controlWidth.toInt()) + padding * 2 + 50.0

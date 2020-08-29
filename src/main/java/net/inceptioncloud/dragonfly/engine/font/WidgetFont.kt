@@ -32,8 +32,6 @@ class WidgetFont @JvmOverloads constructor(
         FontWeight.MEDIUM to medium
     )
 
-    private val threadPool = newFixedThreadPoolContext(4, "Font-$familyName")
-
     /**
      * Cache for already created font renderer.
      */
@@ -71,6 +69,7 @@ class WidgetFont @JvmOverloads constructor(
         return if (cachedFontRenderer.containsKey(fingerprint) && cachedFontRenderer[fingerprint] !is ScaledFontRenderer) {
             cachedFontRenderer[fingerprint]!!
         } else {
+            println("$familyName: $fingerprint")
             GlyphFontRenderer.create(
                 fontWeights[fingerprint.fontWeight],
                 fingerprint.size,
