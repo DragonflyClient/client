@@ -226,7 +226,7 @@ class AccountCard(
          * the provider and appending four wildcards to the username (eg. abc****@gmail.com).
          */
         fun censorEmail(email: String): String {
-            if ("@" !in email) return email
+            if ("@" !in email) return ""
 
             val provider = email.split("@").last()
             val username = email.removeSuffix("@$provider").toCharArray()
