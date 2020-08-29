@@ -50,9 +50,9 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         )
     }
 
-    val contentX = 400.0
+    val contentX = 500.0
     val contentWidth: Double
-        get() = this@ModManagerUI.width - 400.0
+        get() = this@ModManagerUI.width - contentX
 
     override fun initGui() {
         +Rectangle {
@@ -86,6 +86,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             +ModListEntry(mod) {
                 x = 15.0
                 y = currentY
+                width = contentX - (2 * x)
             } id "sidebar-entry-${mod.cleanName}"
 
             currentY += 61.0
@@ -94,7 +95,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         +Image {
             height = this@ModManagerUI.height / 2.0
             width = height
-            x = 400.0 + (contentWidth / 2.0 - width / 2.0)
+            x = contentX + (contentWidth / 2.0 - width / 2.0)
             y = this@ModManagerUI.height / 2.5 - height / 2.0
             resourceLocation = ResourceLocation("dragonflyres/vectors/rocket.png")
         } id "placeholder-image"
