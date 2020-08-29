@@ -84,26 +84,12 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
             liveUpdate = true
         ),
         DropdownElement(::position, "Position", "Position of the keystroke boxes"),
-        ColorControl(
-            ::textActiveColor,
-            "Text color (pressed)",
-            "Color of the text in the keystroke boxes if the button is held down"
-        ),
-        ColorControl(
-            ::textInactiveColor,
-            "Text color (released)",
-            "Color of the text in the keystroke boxes if the button is not held down"
-        ),
-        ColorControl(
-            ::bgActiveColor,
-            "Background color (pressed)",
-            "Color of the box in the keystroke boxes if the button is held down"
-        ),
-        ColorControl(
-            ::bgInactiveColor,
-            "Background color (released)",
-            "Color of the box in the keystroke boxes if the button is not held down"
-        )
+        TitleControl("Colors (pressed)", "Set the colors of the keystroke box if the corresponding key/button is pressed"),
+        ColorControl(::textActiveColor, "Text"),
+        ColorControl(::bgActiveColor, "Background"),
+        TitleControl("Colors (released)", "Set the colors of the keystroke box if the corresponding key/button is not pressed"),
+        ColorControl(::textInactiveColor, "Text"),
+        ColorControl(::bgInactiveColor, "Background")
     )
 
 }
