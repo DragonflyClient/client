@@ -92,7 +92,7 @@ public abstract class AbstractResourcePack implements IResourcePack
     {
         BufferedImage bufferedImage = TextureUtil.readBufferedImage(this.getInputStreamByName("pack.png"));
         if (EnhancedGameExperienceMod.getScaleResourcePackIcons()) {
-            bufferedImage = EnhancedGameExperienceMod.scalePackImage(bufferedImage);
+            bufferedImage = EnhancedGameExperienceMod.scalePackIcon(bufferedImage);
         }
         return bufferedImage;
     }
