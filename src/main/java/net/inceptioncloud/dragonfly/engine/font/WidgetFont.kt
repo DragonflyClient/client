@@ -69,7 +69,6 @@ class WidgetFont @JvmOverloads constructor(
         return if (cachedFontRenderer.containsKey(fingerprint) && cachedFontRenderer[fingerprint] !is ScaledFontRenderer) {
             cachedFontRenderer[fingerprint]!!
         } else {
-            println("$familyName: $fingerprint")
             GlyphFontRenderer.create(
                 fontWeights[fingerprint.fontWeight],
                 fingerprint.size,
