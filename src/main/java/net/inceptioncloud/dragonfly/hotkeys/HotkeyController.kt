@@ -40,7 +40,7 @@ object HotkeyController {
     /**
      * File where all hotkeys are saved for a new game session
      */
-    val configFile = File("dragonfly/hotkeys.json")
+    val configFile = File("dragonfly/hotkeys/hotkeysDB.json")
 
     init {
         registerHotkeys()
