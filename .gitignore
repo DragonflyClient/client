@@ -35,3 +35,9 @@ gradle.properties
 /runtime/resourcepacks/
 /runtime/shaderpacks/
 /runtime/dragonfly/accounts.json
+
+/runtime/dragonfly/alpha.key
+/runtime/shaderpacks/
+/runtime/resourcepacks/
+/runtime/crash-reports/
+/runtime/assets/objects/
