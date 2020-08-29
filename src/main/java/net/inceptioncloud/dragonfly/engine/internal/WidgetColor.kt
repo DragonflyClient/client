@@ -35,9 +35,9 @@ class WidgetColor {
                 val green = get("green").asInt
                 val blue = get("blue").asInt
                 val actualAlpha = get("alpha").asInt
-                val hue = get("hue").asFloat
-                val saturation = get("saturation").asFloat
-                val brightness = get("brightness").asFloat
+                val hue = getOrNull("hue")?.asFloat
+                val saturation = getOrNull("saturation")?.asFloat
+                val brightness = getOrNull("brightness")?.asFloat
                 val rainbow = get("rainbow").asBoolean
                 WidgetColor(red, green, blue).also {
                     it.hue = hue
@@ -54,6 +54,8 @@ class WidgetColor {
             val cycle = (System.currentTimeMillis() / 15) % 201
             return cycle / 200.0f
         }
+
+        private fun JsonObject.getOrNull(key: String) = if (has(key)) get(key) else null
     }
 
     /**
