@@ -100,6 +100,11 @@ data class Account(
     }
 
     /**
+     * Validates the account trying to [refresh] it if needed.
+     */
+    suspend fun validateWithRefresh(): Boolean = validate() || refresh()
+
+    /**
      * Downloads the player skull texture using the craftatar api or returns the [skull]
      * if it isn't null.
      */
