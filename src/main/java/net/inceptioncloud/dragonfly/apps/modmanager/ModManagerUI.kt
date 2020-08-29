@@ -142,7 +142,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             var currentY = 40.0
 
             for ((index, control) in controls.withIndex()) {
-                if (control is TitleControl && index != 0) currentY += 20.0
+                if (control is TitleControl && index != 0) currentY += 15.0
 
                 control.x = controlsX
                 control.y = currentY
@@ -150,7 +150,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
                 stage.add("control-element-$index" to control)
 
-                currentY += control.height + 15.0
+                currentY += control.height + 10.0
             }
         }
     }
