@@ -131,7 +131,6 @@ class ColorPickerModal(
 
         val alphaSlider = "alpha-slider"<ColorSlider> {
             max = 100
-            currentProgress = 100
             colorLetter = "A"
             colorInterpolator = { fullColor.altered { alphaDouble = it }.base }
 
