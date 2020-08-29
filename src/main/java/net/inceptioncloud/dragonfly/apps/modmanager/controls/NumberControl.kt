@@ -74,7 +74,7 @@ class NumberControl(
             staticText = formatString(transformer(optionKey.get()))
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.END
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
             color = DragonflyPalette.background.altered { alphaDouble = 0.6 }
         }
     }
