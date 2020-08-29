@@ -316,7 +316,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
         // ICMM Hotkey Draw
         for (key in controller.hotkeys) {
-            key.draw()
+            key.drawProgress()
         }
 
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
