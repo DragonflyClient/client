@@ -30,9 +30,7 @@ class OptionKey<T>(
      * @see OptionsBase.getValue
      */
     fun get(): T {
-        val value = optionsBase.getValue(this)
-        objectProperty.get()
-        return value
+        return optionsBase.getValue(this)
     }
 
     /**
