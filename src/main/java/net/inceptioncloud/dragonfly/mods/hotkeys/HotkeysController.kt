@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
-import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.*
+import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyData
+import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyRepository
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 import java.io.File
@@ -37,6 +38,7 @@ class HotkeysController {
         readRepository()
         LogManager.getLogger().info("Parsed ${hotkeys.size} hotkey(s) from the repository")
     }
+
     /**
      * Adds the [hotkey] to the [hotkeys] collection and to the [repository].
      */
@@ -54,16 +56,19 @@ class HotkeysController {
     }
 
     fun updateKeys() {
-        val modifierKeys = listOf(Keyboard.KEY_LCONTROL, Keyboard.KEY_LSHIFT, Keyboard.KEY_LMENU)
+        if (HotkeysMod.enabled) {
+            val modifierKeys = listOf(Keyboard.KEY_LCONTROL, Keyboard.KEY_LSHIFT, Keyboard.KEY_LMENU)
 
-        modifierKeys.forEach { updateKeyState(it) }
-        hotkeys.forEach {
-            if (it.isSatisfied()) {
-                it.progressForward()
-            } else {
-                it.progressBackward()
+            modifierKeys.forEach { updateKeyState(it) }
+            hotkeys.forEach {
+                if (it.isSatisfied()) {
+                    it.progressForward()
+                } else {
+                    it.progressBackward()
+                }
             }
         }
+
     }
 
     fun updateKeyState(key: Int) {
