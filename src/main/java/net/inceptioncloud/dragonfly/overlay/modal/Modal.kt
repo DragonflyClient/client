@@ -57,14 +57,16 @@ object Modal {
         val screenWidth = ScreenOverlay.dimensions.getWidth()
         val screenHeight = ScreenOverlay.dimensions.getHeight()
 
-        val modalShadow = ScreenOverlay.addComponent("modal-shadow", Rectangle().apply {
-            x = 0.0
-            y = 0.0
-            width = screenWidth
-            height = screenHeight
-            color = WidgetColor(0, 0, 0, 0)
-        })
-        modalShadow.morph(75, EaseQuad.OUT, Rectangle::color to WidgetColor(0, 0, 0, 180))?.start()
+        if (stage["modal-shadow"] == null) {
+            val modalShadow = ScreenOverlay.addComponent("modal-shadow", Rectangle().apply {
+                x = 0.0
+                y = 0.0
+                width = screenWidth
+                height = screenHeight
+                color = WidgetColor(0, 0, 0, 0)
+            })
+            modalShadow.morph(75, EaseQuad.OUT, Rectangle::color to WidgetColor(0, 0, 0, 180))?.start()
+        }
 
         ScreenOverlay.addComponent("modal", modal)
 
@@ -100,10 +102,12 @@ object Modal {
         modal as IDimension
         val modalShadow = stage["modal-shadow"]!!
 
-        GraphicsEngine.runAfter(125) {
-            modalShadow.detachAnimation<MorphAnimation>()
-            modalShadow.morph(75, EaseQuad.IN, Rectangle::color to WidgetColor(0, 0, 0, 0))
-                ?.post { _, _ -> stage.remove("modal-shadow") }?.start()
+        if (queue.isEmpty()) {
+            GraphicsEngine.runAfter(125) {
+                modalShadow.detachAnimation<MorphAnimation>()
+                modalShadow.morph(75, EaseQuad.IN, Rectangle::color to WidgetColor(0, 0, 0, 0))
+                    ?.post { _, _ -> stage.remove("modal-shadow") }?.start()
+            }
         }
 
         modal.detachAnimation<MorphAnimation>()
