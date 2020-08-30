@@ -9,7 +9,9 @@ import kotlin.properties.Delegates
 
 class ButtonControl(
     val name: String,
-    val description: String? = null
+    val description: String? = null,
+    val text: String = "",
+    val onClick: () -> Unit
 ) : ControlElement<ButtonControl>() {
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -26,8 +28,9 @@ class ButtonControl(
             this@ButtonControl.height = height
             x = this@ButtonControl.x + this@ButtonControl.width - 200.0
             y = this@ButtonControl.y
-            text = "Configure"
+            text = this@ButtonControl.text
             hoverColor = DragonflyPalette.accentNormal
+            onClick(onClick)
         }
 
         val nameWidget = "name"<TextField> {
