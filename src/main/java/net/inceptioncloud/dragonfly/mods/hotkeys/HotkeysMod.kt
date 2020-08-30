@@ -20,7 +20,7 @@ object HotkeysMod : DragonflyMod("Hotkeys") {
         add(TitleControl("General"))
         add(BooleanControl(HotkeysMod::enabled, "Enable mod"))
         add(TitleControl("Actions", "List of all hotkey actions."))
-        add(ButtonControl("Add Hotkey", "Click the button to add a new Hotkey.", "Add", ::openAddPopup))
+        add(ButtonControl("Add Hotkey", "", "Add", ::openAddPopup))
         add(TitleControl("Hotkeys", "List of all set hotkeys."))
 
         for(hotkey in HotkeysController().hotkeys) {
