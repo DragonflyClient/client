@@ -51,16 +51,16 @@ class CheckBox(
         }
 
         "check"<Image> {
-            x = this@CheckBox.x + 1.5
-            y = this@CheckBox.y + 1.5
-            width = this@CheckBox.width - 3.0
-            height = this@CheckBox.height - 3.0
+            x = this@CheckBox.x + 2.5
+            y = this@CheckBox.y + 2.5
+            width = this@CheckBox.width - 5.0
+            height = this@CheckBox.height - 5.0
             resourceLocation = this@CheckBox.resourceLocation
             color = checkColor.altered {
                 alphaDouble = if (isChecked) {
-                    0.0
-                } else {
                     1.0
+                } else {
+                    0.0
                 }
             }
         }
@@ -93,9 +93,9 @@ class CheckBox(
             30, EaseQuad.IN_OUT,
             Image::color to checkColor.altered {
                 alphaDouble = if (isChecked) {
-                    0.0
-                } else {
                     1.0
+                } else {
+                    0.0
                 }
             }
         )?.start()
