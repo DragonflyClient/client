@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.apps.modmanager.controls.DropdownElement
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.Widget
@@ -22,6 +23,10 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         "ctrl-checkbox" to CheckBox(),
         "alt-text" to TextField(),
         "alt-checkbox" to CheckBox(),
+        "type-text" to TextField(),
+        "type-dropdown" to TextField(),
+        "message-text" to TextField(),
+        "message-textfield" to InputTextField(),
         "save-button" to RoundButton(),
         "cancel-button" to RoundButton()
     )
@@ -59,7 +64,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
 
         "key-textfield"<InputTextField> {
             x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 120.0 - padding
-            y = this@AddHotkeyModal.y + (3 * paddingTop) - 14
+            y = this@AddHotkeyModal.y + (3 * paddingTop) - 10
             width = 120.0
             height = 40.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
@@ -109,6 +114,40 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
             y = this@AddHotkeyModal.y + (6.5 * paddingTop)
             width = 25.0
             height = 25.0
+        }
+
+        "type-text"<TextField> {
+            x = this@AddHotkeyModal.x + padding
+            y = this@AddHotkeyModal.y + (9 * paddingTop)
+            width = 60.0
+            staticText = "Type"
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+        }
+
+        "type-dropdown"<TextField> {
+            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 60.0 - padding
+            y = this@AddHotkeyModal.y + (9 * paddingTop)
+            width = 120.0
+            height = 40.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 42, useScale = false)
+            staticText = "Chat"
+        }
+
+        "message-text"<TextField> {
+            x = this@AddHotkeyModal.x + padding
+            y = this@AddHotkeyModal.y + (10 * paddingTop)
+            width = 120.0
+            staticText = "Message"
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+        }
+
+        "message-textfield"<InputTextField> {
+            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 250.0 - padding
+            y = this@AddHotkeyModal.y + (10 * paddingTop) - 10
+            width = 250.0
+            height = 40.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
+            label = "Type Message"
         }
 
         val saveButton = "save-button"<RoundButton> {
