@@ -65,7 +65,7 @@ class OutlineButton(
             outlineColor = this@OutlineButton.outlineColor
         }
 
-        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt())
+        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt(), useScale = false)
 
         "text"<TextField> {
             x = this@OutlineButton.x
