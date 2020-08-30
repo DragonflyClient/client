@@ -12,7 +12,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.ResourceLocation
-import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import kotlin.math.cos
 import kotlin.math.sin
@@ -20,23 +20,15 @@ import kotlin.math.sin
 
 class CosmeticWings(renderPlayer: RenderPlayer) : Cosmetic(renderPlayer) {
 
-    private val resource = ResourceLocation("dragonflyres/metal-wings.png")
-
     private val modelWings = ModelWings(renderPlayer)
 
     override fun render(player: AbstractClientPlayer, partialTicks: Float, data: CosmeticRenderData) {
-
         GlStateManager.pushMatrix()
-
-        renderPlayer.bindTexture(resource)
-        if (player.isSneaking)
-            GlStateManager.translate(0.0, 0.225, 0.0)
-
         GlStateManager.color(1.0F, 1.0F, 1.0F)
+
         modelWings.render(player, data)
 
         GlStateManager.popMatrix()
-
     }
 
     private class ModelWings(renderPlayer: RenderPlayer) : CosmeticModel(renderPlayer) {
@@ -76,49 +68,68 @@ class CosmeticWings(renderPlayer: RenderPlayer) : Cosmetic(renderPlayer) {
         }
 
         private fun renderWings(player: EntityPlayer, partialTicks: Float, data: CosmeticRenderData) {
-            val scale: Double = 70 / 100.0
+            val enableBlending = false
+            val enableShadows = false
+            val color = DragonflyPalette.accentNormal
+            val scale = 0.7 // 0.4 - 1.0
+            val tilt = 15.0 // 0.0 - 15.0
+            val height = 0.25 // 0.15 - 0.3
+            val rotationX = 0.4 // 0.0 - 0.4
+            val rotationY = 0.2 // 0.0 - 0.4
+            val rotationZ = 1.0 // 0.5 - 1.0
+            val wingTipRotation = 0.6 // 0.0 - 1.0
+
             val rotate = player.cameraYaw.toDouble()
-            GL11.glPushMatrix()
-            GL11.glScaled(-scale, scale, -scale)
-            GL11.glRotated(180 + rotate, 0.0, 1.0, 0.0) // Rotate the wings to be with the player.
-            GL11.glTranslated(0.0, 0.1 / scale, 0.0) // Move wings correct amount up.
-            GL11.glTranslated(0.0, 0.0, 0.2 / scale)
+
+            glPushMatrix()
+            glScaled(-scale, scale, -scale)
+            glRotated(180 + rotate, 0.0, 1.0, 0.0) // Rotate the wings to be with the player.
+            glRotated(tilt / scale, 1.0, 0.0, 0.0)
+            glTranslated(0.0, height / scale, 0.0) // Move wings correct amount up.
+            glTranslated(0.0, 0.0, 0.10)
             if (player.isSneaking) {
-                GL11.glTranslated(0.0, 0.125 / scale, 0.0)
+                glTranslated(0.0, 0.25, 0.15)
+                glRotated(-tilt / scale, 1.0, 0.0, 0.0)
+                glRotated(20.0, 1.0, 0.0, 0.0)
             }
             mc!!.textureManager.bindTexture(location)
 
-            val speed = 3000
-            val percent = System.currentTimeMillis() % speed / speed.toFloat()
-            val rainbowColor = Color.getHSBColor(percent, 1f, 1f)
-            rainbowColor.toWidgetColor().glBindColor()
+            color.glBindColor()
+
+            if (enableShadows) {
+                GlStateManager.enableLighting()
+            } else {
+                GlStateManager.disableLighting()
+            }
+
+            if (enableBlending) {
+                GlStateManager.blendFunc(GL_ONE, GL_ONE)
+            } else {
+                GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            }
+
+            GlStateManager.alphaFunc(GL_GREATER, 0.0f)
+            GlStateManager.enableBlend()
 
             for (j in 0..1) {
-                GL11.glEnable(GL11.GL_CULL_FACE)
+                glEnable(GL_CULL_FACE)
+
                 val f11 = System.currentTimeMillis() % 1000 / 1000f * Math.PI.toFloat() * 2.0f
-                wing!!.rotateAngleX = Math.toRadians(-80.0).toFloat() - cos(f11.toDouble()).toFloat() * 0.2f
-                wing!!.rotateAngleY = Math.toRadians(20.0).toFloat() + sin(f11.toDouble()).toFloat() * 0.4f
-                wing!!.rotateAngleZ = Math.toRadians(20.0).toFloat()
-                wingTip!!.rotateAngleZ = -(sin((f11 + 2.0f).toDouble()) + 0.5).toFloat() * 0.35f
+                wing!!.rotateAngleX = Math.toRadians(-80.0).toFloat() - cos(f11.toDouble()).toFloat() * rotationX.toFloat()
+                wing!!.rotateAngleY = Math.toRadians(20.0).toFloat() + sin(f11.toDouble()).toFloat() * rotationY.toFloat()
+                wing!!.rotateAngleZ = Math.toRadians(20.0).toFloat() * rotationZ.toFloat()
+                wingTip!!.rotateAngleZ = -(sin((f11 + 2.0f).toDouble()) + 0.5).toFloat() * wingTipRotation.toFloat()
                 wing!!.render(0.0625f)
-                GL11.glScalef(-1.0f, 1.0f, 1.0f)
+                glScalef(-1.0f, 1.0f, 1.0f)
                 if (j == 0) {
-                    GL11.glCullFace(1028)
+                    glCullFace(1028)
                 }
             }
 
-            GL11.glCullFace(1029)
-            GL11.glDisable(GL11.GL_CULL_FACE)
-            GL11.glColor3f(255f, 255f, 255f)
-            GL11.glPopMatrix()
-        }
-
-        private fun interpolate(yaw1: Float, yaw2: Float, percent: Float): Float {
-            var f = (yaw1 + (yaw2 - yaw1) * percent) % 360
-            if (f < 0) {
-                f += 360f
-            }
-            return f
+            glCullFace(1029)
+            glDisable(GL_CULL_FACE)
+            glColor3f(255f, 255f, 255f)
+            glPopMatrix()
         }
 
         override fun setLivingAnimations(entitylivingbaseIn: EntityLivingBase?, p_78086_2_: Float, p_78086_3_: Float, partialTickTime: Float) {
