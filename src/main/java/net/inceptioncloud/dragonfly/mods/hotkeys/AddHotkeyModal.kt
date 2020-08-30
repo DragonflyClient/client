@@ -183,4 +183,13 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         Toast.queue("§aSaved hotkey!", 400)
     }
 
+    override fun handleKeyTyped(char: Char, keyCode: Int) {
+        super.handleKeyTyped(char, keyCode)
+
+        structure.values.forEach {
+            it.handleKeyTyped(char, keyCode)
+        }
+
+    }
+
 }
