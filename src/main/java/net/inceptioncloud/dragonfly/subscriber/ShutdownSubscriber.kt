@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.subscriber
 
 import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
+import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysMod
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -10,6 +11,8 @@ object ShutdownSubscriber {
     @Subscribe
     fun clientShutdown(event: ClientShutdownEvent) {
         val temporaryDirectory = File(Minecraft.getMinecraft().mcDataDir, "temp")
+
+        HotkeysMod.controller.commit()
 
         if (temporaryDirectory.exists()) {
             temporaryDirectory.deleteRecursively()
