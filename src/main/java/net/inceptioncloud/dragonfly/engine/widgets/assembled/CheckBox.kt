@@ -36,7 +36,6 @@ class CheckBox(
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
-        "overlay" to RoundedRectangle(),
         "check" to Image()
     )
 
