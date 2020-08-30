@@ -19,6 +19,9 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         "shift-text" to TextField(),
         "shift-checkbox" to CheckBox(),
         "ctrl-text" to TextField(),
+        "ctrl-checkbox" to CheckBox(),
+        "alt-text" to TextField(),
+        "alt-checkbox" to CheckBox(),
         "save-button" to RoundButton(),
         "cancel-button" to RoundButton()
     )
@@ -56,7 +59,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
 
         "key-textfield"<InputTextField> {
             x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 120.0 - padding
-            y = this@AddHotkeyModal.y + (3 * paddingTop)
+            y = this@AddHotkeyModal.y + (3 * paddingTop) - 14
             width = 120.0
             height = 40.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
@@ -65,7 +68,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
 
         "shift-text"<TextField> {
             x = this@AddHotkeyModal.x + padding + 10.0
-            y = this@AddHotkeyModal.y + (5 * paddingTop)
+            y = this@AddHotkeyModal.y + (4.5 * paddingTop)
             width = 60.0
             staticText = "Shift"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
@@ -73,17 +76,39 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
 
         "shift-checkbox"<CheckBox> {
             x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 50.0 - padding
-            y = this@AddHotkeyModal.y + (5 * paddingTop)
+            y = this@AddHotkeyModal.y + (4.5 * paddingTop)
             width = 25.0
             height = 25.0
         }
 
         "ctrl-text"<TextField> {
             x = this@AddHotkeyModal.x + padding + 10.0
-            y = this@AddHotkeyModal.y + (6 * paddingTop)
+            y = this@AddHotkeyModal.y + (5.5 * paddingTop)
             width = 60.0
             staticText = "Ctrl"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+        }
+
+        "ctrl-checkbox"<CheckBox> {
+            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 50.0 - padding
+            y = this@AddHotkeyModal.y + (5.5 * paddingTop)
+            width = 25.0
+            height = 25.0
+        }
+
+        "alt-text"<TextField> {
+            x = this@AddHotkeyModal.x + padding + 10.0
+            y = this@AddHotkeyModal.y + (6.5 * paddingTop)
+            width = 60.0
+            staticText = "Alt"
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+        }
+
+        "alt-checkbox"<CheckBox> {
+            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 50.0 - padding
+            y = this@AddHotkeyModal.y + (6.5 * paddingTop)
+            width = 25.0
+            height = 25.0
         }
 
         val saveButton = "save-button"<RoundButton> {
