@@ -60,6 +60,8 @@ class InputTextField(
     var isEnabled: Boolean by property(true)
     var maxStringLength: Int by property(200)
 
+    @Interpolate var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
+
     /**
      * Whether the text field is currently focused. If it is, typed keys will be passed on to the input field
      * and a cursor will be active. When this property changes, the [focusedStateChanged] function will be called.
@@ -207,7 +209,7 @@ class InputTextField(
             it.height = height / 20.0
             it.x = x
             it.y = y + height - it.height
-            it.color = DEFAULT_TEXT_COLOR
+            it.color = lineColor
         }
 
         (structure["bottom-line-overlay"] as Rectangle).also {
