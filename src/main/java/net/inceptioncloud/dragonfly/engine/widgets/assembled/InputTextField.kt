@@ -96,7 +96,7 @@ class InputTextField(
     var realText: String = ""
 
     /** Whether the text label is raised due to present input text or focus state. */
-    private val isLabelRaised: Boolean
+    var isLabelRaised: Boolean = false
         get() = isFocused || inputText.isNotEmpty()
 
     /** The position of the cursor as well as the start of the text selection*/

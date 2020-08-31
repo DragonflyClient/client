@@ -22,7 +22,7 @@ object HotkeysMod : DragonflyMod("Hotkeys") {
         add(ButtonControl("Add Hotkey", "", "Add", ::openAddPopup))
         add(TitleControl("Hotkeys", "List of all set hotkeys."))
 
-        for(hotkey in HotkeysController().hotkeys) {
+        for(hotkey in controller.hotkeys) {
             add(hotkey.convertToButtonControl())
         }
 
@@ -30,7 +30,7 @@ object HotkeysMod : DragonflyMod("Hotkeys") {
 
     private fun Hotkey.convertToButtonControl(): ButtonControl {
 
-        val name = "${this.data.key} + ${if (this.data.requireAlt) "ALT" else ""} + ${if (this.data.requireCtrl) "CTRL" else ""} + ${if (this.data.requireShift) "SHIFT" else ""}"
+        val name = "${this.data.key}"
         val type = when(this.data.type) {
             EnumHotkeyType.CHAT -> "CHAT"
         }
@@ -46,7 +46,7 @@ object HotkeysMod : DragonflyMod("Hotkeys") {
     }
 
     private fun openEditPopup(hotkey: Hotkey) {
-
+        Modal.showModal(EditHotkeyModal(hotkey))
     }
 
 }

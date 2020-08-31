@@ -17,7 +17,7 @@ import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import org.lwjgl.input.Keyboard
 
-class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
+class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 578.0, 548.0) {
 
     lateinit var keySelector: KeySelector
     lateinit var shiftCheckBox: CheckBox
@@ -28,6 +28,8 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
     lateinit var delayTextField: InputTextField
     lateinit var fadeOutCheckBox: CheckBox
     var colorPickerValue = WidgetColor(1.0, 1.0, 1.0, 1.0)
+
+    var updateValuesBool = true
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
@@ -53,7 +55,8 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         "color-text" to TextField(),
         "color-picker" to ColorPreview(),
         "save-button" to RoundButton(),
-        "cancel-button" to RoundButton()
+        "cancel-button" to RoundButton(),
+        "delete-button" to RoundButton()
     )
 
     override fun updateStructure() {
@@ -61,35 +64,35 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         val padding = 50.0
 
         "container"<RoundedRectangle> {
-            x = this@AddHotkeyModal.x
-            y = this@AddHotkeyModal.y
-            width = this@AddHotkeyModal.width
-            height = this@AddHotkeyModal.height
+            x = this@EditHotkeyModal.x
+            y = this@EditHotkeyModal.y
+            width = this@EditHotkeyModal.width
+            height = this@EditHotkeyModal.height
             color = DragonflyPalette.background
             arc = 10.0
         }!!
 
         "title"<TextField> {
-            x = this@AddHotkeyModal.x
-            y = this@AddHotkeyModal.y + height
-            width = this@AddHotkeyModal.width
+            x = this@EditHotkeyModal.x
+            y = this@EditHotkeyModal.y + height
+            width = this@EditHotkeyModal.width
             adaptHeight = true
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
-            staticText = this@AddHotkeyModal.name
+            staticText = this@EditHotkeyModal.name
             textAlignHorizontal = Alignment.CENTER
             color = DragonflyPalette.foreground
         }!!.also { it.adaptHeight() }
 
         "key-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (3 * paddingTop)
+            x = this@EditHotkeyModal.x + padding
+            y = this@EditHotkeyModal.y + (3 * paddingTop)
             staticText = "Key"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }
 
         keySelector = "key-selector"<KeySelector> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 60.0 - padding
-            y = this@AddHotkeyModal.y + (3 * paddingTop) - 10
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 60.0 - padding
+            y = this@EditHotkeyModal.y + (3 * paddingTop) - 10
             width = 60.0
             height = 40.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
@@ -98,61 +101,61 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         }!!
 
         "shift-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding + 10.0
-            y = this@AddHotkeyModal.y + (4.5 * paddingTop)
+            x = this@EditHotkeyModal.x + padding + 10.0
+            y = this@EditHotkeyModal.y + (4.5 * paddingTop)
             width = 60.0
             staticText = "Shift"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }
 
         shiftCheckBox = "shift-checkbox"<CheckBox> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 50.0 - padding
-            y = this@AddHotkeyModal.y + (4.5 * paddingTop)
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 50.0 - padding
+            y = this@EditHotkeyModal.y + (4.5 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
         "ctrl-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding + 10.0
-            y = this@AddHotkeyModal.y + (5.5 * paddingTop)
+            x = this@EditHotkeyModal.x + padding + 10.0
+            y = this@EditHotkeyModal.y + (5.5 * paddingTop)
             width = 60.0
             staticText = "Ctrl"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }
 
         ctrlCheckBox = "ctrl-checkbox"<CheckBox> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 50.0 - padding
-            y = this@AddHotkeyModal.y + (5.5 * paddingTop)
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 50.0 - padding
+            y = this@EditHotkeyModal.y + (5.5 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
         "alt-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding + 10.0
-            y = this@AddHotkeyModal.y + (6.5 * paddingTop)
+            x = this@EditHotkeyModal.x + padding + 10.0
+            y = this@EditHotkeyModal.y + (6.5 * paddingTop)
             width = 60.0
             staticText = "Alt"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }
 
         altCheckBox = "alt-checkbox"<CheckBox> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 50.0 - padding
-            y = this@AddHotkeyModal.y + (6.5 * paddingTop)
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 50.0 - padding
+            y = this@EditHotkeyModal.y + (6.5 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
         "type-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (9 * paddingTop)
+            x = this@EditHotkeyModal.x + padding
+            y = this@EditHotkeyModal.y + (9 * paddingTop)
             width = 60.0
             staticText = "Type"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }
 
         "type-dropdown"<TextField> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 60.0 - padding
-            y = this@AddHotkeyModal.y + (9 * paddingTop)
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 60.0 - padding
+            y = this@EditHotkeyModal.y + (9 * paddingTop)
             width = 120.0
             height = 40.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 42, useScale = false)
@@ -160,16 +163,16 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         }
 
         "message-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (10 * paddingTop)
+            x = this@EditHotkeyModal.x + padding
+            y = this@EditHotkeyModal.y + (10 * paddingTop)
             width = 120.0
             staticText = "Message"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }!!
 
         messageTextField = "message-textfield"<InputTextField> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 260.0 - padding
-            y = this@AddHotkeyModal.y + (10 * paddingTop) - 10
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 260.0 - padding
+            y = this@EditHotkeyModal.y + (10 * paddingTop) - 10
             width = 250.0
             height = 30.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
@@ -177,16 +180,16 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         }!!
 
         "time-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (11 * paddingTop)
+            x = this@EditHotkeyModal.x + padding
+            y = this@EditHotkeyModal.y + (11 * paddingTop)
             width = 120.0
             staticText = "Time"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }
 
         timeTextField = "time-textfield"<InputTextField> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 110.0 - padding
-            y = this@AddHotkeyModal.y + (11 * paddingTop)
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 110.0 - padding
+            y = this@EditHotkeyModal.y + (11 * paddingTop)
             width = 100.0
             height = 30.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
@@ -196,16 +199,16 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         }!!
 
         "delay-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (12 * paddingTop)
+            x = this@EditHotkeyModal.x + padding
+            y = this@EditHotkeyModal.y + (12 * paddingTop)
             width = 120.0
             staticText = "Delay"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }
 
         delayTextField = "delay-textfield"<InputTextField> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 110.0 - padding
-            y = this@AddHotkeyModal.y + (12 * paddingTop)
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 110.0 - padding
+            y = this@EditHotkeyModal.y + (12 * paddingTop)
             width = 100.0
             height = 30.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
@@ -215,23 +218,23 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         }!!
 
         "fadeOut-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (13 * paddingTop)
+            x = this@EditHotkeyModal.x + padding
+            y = this@EditHotkeyModal.y + (13 * paddingTop)
             width = 300.0
             staticText = "FadeOut Animation"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }
 
         fadeOutCheckBox = "fadeOut-checkbox"<CheckBox> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 38.0 - padding
-            y = this@AddHotkeyModal.y + (13.2 * paddingTop)
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 38.0 - padding
+            y = this@EditHotkeyModal.y + (13.2 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
         "color-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (14 * paddingTop)
+            x = this@EditHotkeyModal.x + padding
+            y = this@EditHotkeyModal.y + (14 * paddingTop)
             width = 120.0
             staticText = "Color"
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
@@ -240,12 +243,12 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         "color-picker"<ColorPreview> {
             width = 25.0
             height = 25.0
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 38.0 - padding
-            y = this@AddHotkeyModal.y + (14.2 * paddingTop)
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 38.0 - padding
+            y = this@EditHotkeyModal.y + (14.2 * paddingTop)
             color = colorPickerValue
             clickAction = {
                 Modal.showModal(ColorPickerModal(colorPickerValue) {
-                    Modal.showModal(this@AddHotkeyModal)
+                    Modal.showModal(this@EditHotkeyModal)
                     colorPickerValue = it
                 })
                 Modal.hideModal()
@@ -255,8 +258,8 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         val saveButton = "save-button"<RoundButton> {
             width = 110.0
             height = 37.0
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - width - padding
-            y = this@AddHotkeyModal.y + this@AddHotkeyModal.height - height - padding + 25.0
+            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - width - padding
+            y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding + 25.0
             text = "Save"
             textSize = 50
             color = DragonflyPalette.accentNormal
@@ -268,7 +271,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
             width = 85.0
             height = 37.0
             x = saveButton.x - width - 10.0
-            y = this@AddHotkeyModal.y + this@AddHotkeyModal.height - height - padding + 25.0
+            y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding + 25.0
             text = "Cancel"
             textSize = 50
             color = DragonflyPalette.background.brighter(0.8)
@@ -276,15 +279,42 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
             onClick { Modal.hideModal() }
         }
 
+        "delete-button"<RoundButton> {
+            width = 85.0
+            height = 37.0
+            x = this@EditHotkeyModal.x + padding
+            y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding + 25.0
+            text = "Delete"
+            textSize = 50
+            color = DragonflyPalette.accentDark
+            arc = 10.0
+            onClick { performDelete() }
+        }
+
+        if(updateValuesBool) {
+            updateValues()
+            updateValuesBool = false
+        }
+
     }
 
     private fun performSave() {
-        Toast.queue("Saving hotkey...", 100)
-        Modal.hideModal()
+        Toast.queue("Saving changes...", 100)
 
+        Modal.hideModal()
+        HotkeysMod.controller.removeHotkey(originalHotkey)
         HotkeysMod.controller.addHotkey(convertThisToHotkey())
 
-        Toast.queue("§aSaved hotkey!", 400)
+        Toast.queue("§aChanges saved!", 400)
+    }
+
+    private fun performDelete() {
+        Toast.queue("Deleting hotkey...", 100)
+
+        Modal.hideModal()
+        HotkeysMod.controller.removeHotkey(originalHotkey)
+
+        Toast.queue("§aDeleted hotkey!", 400)
     }
 
     override fun handleKeyTyped(char: Char, keyCode: Int) {
@@ -315,6 +345,29 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         val hotkey = ChatHotkey(data, config)
 
         return hotkey
+    }
+
+    private fun updateValues() {
+        keySelector.currentText = originalHotkey.data.key.toString()
+        if(originalHotkey.data.requireShift) {
+            shiftCheckBox.toggle()
+        }
+        if(originalHotkey.data.requireCtrl) {
+            ctrlCheckBox.toggle()
+        }
+        if(originalHotkey.data.requireAlt) {
+            altCheckBox.toggle()
+        }
+        messageTextField.writeText((originalHotkey as ChatHotkey).config.message)
+        messageTextField.isLabelRaised = true
+        timeTextField.writeText(originalHotkey.data.time.toString())
+        timeTextField.isLabelRaised = true
+        delayTextField.writeText(originalHotkey.data.delay.toString())
+        delayTextField.isLabelRaised = true
+        if(originalHotkey.data.fadeOut) {
+            fadeOutCheckBox.toggle()
+        }
+        colorPickerValue = originalHotkey.data.color
     }
 
 }
