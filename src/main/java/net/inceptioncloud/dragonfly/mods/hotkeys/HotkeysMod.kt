@@ -19,7 +19,6 @@ object HotkeysMod : DragonflyMod("Hotkeys") {
     override fun publishControls(): List<ControlElement<*>> = buildList {
         add(TitleControl("General"))
         add(BooleanControl(HotkeysMod::enabled, "Enable mod"))
-        add(TitleControl("Actions", "List of all hotkey actions."))
         add(ButtonControl("Add Hotkey", "", "Add", ::openAddPopup))
         add(TitleControl("Hotkeys", "List of all set hotkeys."))
 
@@ -36,7 +35,7 @@ object HotkeysMod : DragonflyMod("Hotkeys") {
             EnumHotkeyType.CHAT -> "CHAT"
         }
         val info = when(this.data.type) {
-            EnumHotkeyType.CHAT -> (this.data as ChatHotkey).config.message
+            EnumHotkeyType.CHAT -> (this as ChatHotkey).config.message
         }
 
         return ButtonControl(name, "$type | $info", "Configure") { openEditPopup(this) }

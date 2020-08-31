@@ -54,6 +54,8 @@ class InputTextField(
     var fontRenderer: IFontRenderer? by property(null)
     @Interpolate var padding: Double by property(2.0)
 
+    var allowList = listOf<Int>()
+
     var label: String by property("Input Label")
     var isEnabled: Boolean by property(true)
     var maxStringLength: Int by property(200)
@@ -290,7 +292,7 @@ class InputTextField(
     }
 
     override fun handleKeyTyped(char: Char, keyCode: Int) {
-        if (!isFocused)
+        if (!isFocused || (allowList.isNotEmpty() && !allowList.contains(keyCode)))
             return
 
         when {
