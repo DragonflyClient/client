@@ -8,6 +8,7 @@ import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.ChatHotkey
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.EnumHotkeyType
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
+import org.lwjgl.input.Keyboard
 
 object HotkeysMod : DragonflyMod("Hotkeys") {
 
@@ -30,15 +31,17 @@ object HotkeysMod : DragonflyMod("Hotkeys") {
 
     private fun Hotkey.convertToButtonControl(): ButtonControl {
 
-        val name = "${this.data.key}"
-        val type = when(this.data.type) {
-            EnumHotkeyType.CHAT -> "CHAT"
-        }
-        val info = when(this.data.type) {
+        val key = Keyboard.getKeyName(this.data.key)
+        val ctrl = this.data.requireCtrl
+        val shift = this.data.requireShift
+        val alt = this.data.requireAlt
+
+        val message = when(this.data.type) {
             EnumHotkeyType.CHAT -> (this as ChatHotkey).config.message
         }
+        val info = "${if(ctrl) "CTRL +" else "" }${if(shift) " SHIFT +" else "" }${if(alt) " ALT +" else "" }$key"
 
-        return ButtonControl(name, "$type | $info", "Configure") { openEditPopup(this) }
+        return ButtonControl(message.cutToNChars(16), info, "Configure") { openEditPopup(this) }
     }
 
     private fun openAddPopup() {
@@ -47,6 +50,16 @@ object HotkeysMod : DragonflyMod("Hotkeys") {
 
     private fun openEditPopup(hotkey: Hotkey) {
         Modal.showModal(EditHotkeyModal(hotkey))
+    }
+
+    private fun String.cutToNChars(charsCount: Int): String {
+        var result = this
+
+        if(this.length > charsCount) {
+            result = "${this.take(charsCount - 1)}..."
+        }
+
+        return result
     }
 
 }

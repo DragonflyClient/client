@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.apps.modmanager.ModManagerApp
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPickerModal
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPreview
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
@@ -15,6 +16,7 @@ import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyData
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
+import net.minecraft.client.Minecraft
 import org.lwjgl.input.Keyboard
 
 class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
@@ -283,6 +285,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         Modal.hideModal()
 
         HotkeysMod.controller.addHotkey(convertThisToHotkey())
+        Minecraft.getMinecraft().currentScreen.refresh()
 
         Toast.queue("§aSaved hotkey!", 400)
     }

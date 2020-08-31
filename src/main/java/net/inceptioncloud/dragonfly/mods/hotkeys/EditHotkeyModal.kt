@@ -15,6 +15,7 @@ import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyData
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
+import net.minecraft.client.Minecraft
 import org.lwjgl.input.Keyboard
 
 class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 578.0, 548.0) {
@@ -304,6 +305,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         Modal.hideModal()
         HotkeysMod.controller.removeHotkey(originalHotkey)
         HotkeysMod.controller.addHotkey(convertThisToHotkey())
+        Minecraft.getMinecraft().currentScreen.refresh()
 
         Toast.queue("§aChanges saved!", 400)
     }
@@ -313,6 +315,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
 
         Modal.hideModal()
         HotkeysMod.controller.removeHotkey(originalHotkey)
+        Minecraft.getMinecraft().currentScreen.refresh()
 
         Toast.queue("§aDeleted hotkey!", 400)
     }
@@ -348,7 +351,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
     }
 
     private fun updateValues() {
-        keySelector.currentText = originalHotkey.data.key.toString()
+        keySelector.currentText = Keyboard.getKeyName(originalHotkey.data.key)
         if(originalHotkey.data.requireShift) {
             shiftCheckBox.toggle()
         }
@@ -360,10 +363,16 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         }
         messageTextField.writeText((originalHotkey as ChatHotkey).config.message)
         messageTextField.isLabelRaised = true
-        timeTextField.writeText(originalHotkey.data.time.toString())
+        messageTextField.isFocused = true
+        messageTextField.isFocused = false
+        timeTextField.writeText(originalHotkey.data.time.toInt().toString())
         timeTextField.isLabelRaised = true
-        delayTextField.writeText(originalHotkey.data.delay.toString())
+        timeTextField.isFocused = true
+        timeTextField.isFocused = false
+        delayTextField.writeText(originalHotkey.data.delay.toInt().toString())
         delayTextField.isLabelRaised = true
+        delayTextField.isFocused = true
+        delayTextField.isFocused = false
         if(originalHotkey.data.fadeOut) {
             fadeOutCheckBox.toggle()
         }
