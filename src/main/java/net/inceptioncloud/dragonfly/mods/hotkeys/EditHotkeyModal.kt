@@ -4,9 +4,13 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPickerModal
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPreview
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.ChatHotkey
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.config.ChatHotkeyConfig
@@ -16,6 +20,7 @@ import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.Minecraft
+import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 
 class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 578.0, 548.0) {
@@ -292,7 +297,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             onClick { performDelete() }
         }
 
-        if(updateValuesBool) {
+        if (updateValuesBool) {
             updateValues()
             updateValuesBool = false
         }
@@ -301,22 +306,26 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
 
     private fun performSave() {
         Toast.queue("Saving changes...", 100)
+        if (validateForms()) {
+            Modal.hideModal()
 
-        Modal.hideModal()
-        HotkeysMod.controller.removeHotkey(originalHotkey)
-        HotkeysMod.controller.addHotkey(convertThisToHotkey())
-        Minecraft.getMinecraft().currentScreen.refresh()
+            HotkeysMod.controller.removeHotkey(originalHotkey)
+            HotkeysMod.controller.addHotkey(convertThisToHotkey())
 
-        Toast.queue("§aChanges saved!", 400)
+            Minecraft.getMinecraft().currentScreen.refresh()
+            Toast.queue("§aChanges saved!", 400)
+        } else {
+            Toast.queue("§cPlease check your settings!", 300)
+        }
     }
 
     private fun performDelete() {
         Toast.queue("Deleting hotkey...", 100)
-
         Modal.hideModal()
-        HotkeysMod.controller.removeHotkey(originalHotkey)
-        Minecraft.getMinecraft().currentScreen.refresh()
 
+        HotkeysMod.controller.removeHotkey(originalHotkey)
+
+        Minecraft.getMinecraft().currentScreen.refresh()
         Toast.queue("§aDeleted hotkey!", 400)
     }
 
@@ -352,13 +361,13 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
 
     private fun updateValues() {
         keySelector.currentText = Keyboard.getKeyName(originalHotkey.data.key)
-        if(originalHotkey.data.requireShift) {
+        if (originalHotkey.data.requireShift) {
             shiftCheckBox.toggle()
         }
-        if(originalHotkey.data.requireCtrl) {
+        if (originalHotkey.data.requireCtrl) {
             ctrlCheckBox.toggle()
         }
-        if(originalHotkey.data.requireAlt) {
+        if (originalHotkey.data.requireAlt) {
             altCheckBox.toggle()
         }
         messageTextField.writeText((originalHotkey as ChatHotkey).config.message)
@@ -373,10 +382,39 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         delayTextField.isLabelRaised = true
         delayTextField.isFocused = true
         delayTextField.isFocused = false
-        if(originalHotkey.data.fadeOut) {
+        if (originalHotkey.data.fadeOut) {
             fadeOutCheckBox.toggle()
         }
         colorPickerValue = originalHotkey.data.color
+    }
+
+    private fun validateForms(): Boolean {
+
+        if (keySelector.currentText == "") {
+            LogManager.getLogger().info("Error property 'Key' was not set by the user!")
+
+            keySelector.apply {
+                keySelector.morph(25, EaseQuad.IN, KeySelector::lineColor to DragonflyPalette.accentDark)?.post { animation, widget ->
+                    keySelector.detachAnimation<MorphAnimation>()
+                    morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.post { animation, widget ->
+                        keySelector.detachAnimation<MorphAnimation>()
+                        keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { animation, widget ->
+                            keySelector.detachAnimation<MorphAnimation>()
+                            keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 20.0))?.post { animation, widget ->
+                                keySelector.detachAnimation<MorphAnimation>()
+                                keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { animation, widget ->
+                                    keySelector.detachAnimation<MorphAnimation>()
+                                    keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.start()
+                                }?.start()
+                            }?.start()
+                        }?.start()
+                    }?.start()
+                }?.start()
+            }
+            return false
+        }
+
+        return false
     }
 
 }

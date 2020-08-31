@@ -19,6 +19,7 @@ import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
 import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
 import net.inceptioncloud.dragonfly.mods.hotkeys.AddHotkeyModal;
+import net.inceptioncloud.dragonfly.mods.hotkeys.EditHotkeyModal;
 import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysMod;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
 import net.inceptioncloud.dragonfly.overlay.modal.Modal;
@@ -2675,12 +2676,18 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.connectedToRealms = connectedToRealms;
     }
 
-    //ICMM useShortcuts() Method
+    // ICMM useShortcuts() Method
     private Boolean useShortcuts() {
         ModalWidget current = Modal.INSTANCE.getCurrentModal();
 
-        if (current != null && current instanceof AddHotkeyModal) {
-            return !((AddHotkeyModal) current).keySelector.isFocused();
+        if (current != null) {
+            if (current instanceof AddHotkeyModal) {
+                return !((AddHotkeyModal) current).keySelector.isFocused();
+            }else {
+                if (current instanceof EditHotkeyModal) {
+                    return !((EditHotkeyModal) current).keySelector.isFocused();
+                }
+            }
         }
 
         return true;

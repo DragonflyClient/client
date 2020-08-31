@@ -15,7 +15,7 @@ class KeySelector(
     initializerBlock: (KeySelector.() -> Unit)? = null
 ) : AssembledWidget<KeySelector>(initializerBlock), IPosition, IDimension, IAlign, IColor {
 
-    override var x: Double by property(0.0)
+    @Interpolate override var x: Double by property(0.0)
     override var y: Double by property(0.0)
     override var width: Double by property(100.0)
     override var height: Double by property(20.0)
@@ -25,7 +25,7 @@ class KeySelector(
     override var color: WidgetColor by property(DragonflyPalette.accentNormal)
     var backgroundColor: WidgetColor by property(DragonflyPalette.background)
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
-    var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
+    @Interpolate var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
 
     var fontRenderer: IFontRenderer? by property(null)
 
