@@ -12,11 +12,13 @@ import net.inceptioncloud.dragonfly.overlay.toast.Toast
 
 class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
 
+    lateinit var keySelector: KeySelector
+
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
         "title" to TextField(),
         "key-text" to TextField(),
-        "key-textfield" to InputTextField(),
+        "key-selector" to KeySelector(),
         "shift-text" to TextField(),
         "shift-checkbox" to CheckBox(),
         "ctrl-text" to TextField(),
@@ -28,7 +30,8 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         "message-text" to TextField(),
         "message-textfield" to InputTextField(),
         "save-button" to RoundButton(),
-        "cancel-button" to RoundButton()
+        "cancel-button" to RoundButton(),
+        "delete-button" to RoundButton()
     )
 
     override fun updateStructure() {
@@ -62,14 +65,15 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
         }
 
-        "key-textfield"<InputTextField> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 120.0 - padding
+        keySelector = "key-selector"<KeySelector> {
+            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 60.0 - padding
             y = this@AddHotkeyModal.y + (3 * paddingTop) - 10
-            width = 120.0
+            width = 60.0
             height = 40.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
-            label = "Press key"
-        }
+            blockKeys = listOf(42, 29, 56)
+            clearKeys = listOf(14, 1)
+        }!!
 
         "shift-text"<TextField> {
             x = this@AddHotkeyModal.x + padding + 10.0
@@ -173,7 +177,19 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
             arc = 10.0
             onClick { Modal.hideModal() }
         }
-        
+
+        "delete-button"<RoundButton> {
+            width = 85.0
+            height = 37.0
+            x = this@AddHotkeyModal.x + padding
+            y = this@AddHotkeyModal.y + this@AddHotkeyModal.height - height - padding
+            text = "Delete"
+            textSize = 50
+            color = DragonflyPalette.accentDark
+            arc = 10.0
+            onClick { Modal.hideModal() }
+        }
+
     }
 
     private fun performSave() {

@@ -2554,6 +2554,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
         if (i != 0 && !Keyboard.isRepeatEvent()) {
             if (!(this.currentScreen instanceof GuiControls) || ((GuiControls) this.currentScreen).time <= getSystemTime() - 20L) {
+                // ICMM useShortcuts() Invokation
                 if (Keyboard.getEventKeyState() && useShortcuts()) {
                     if (i == this.gameSettings.keyBindStreamStartStop.getKeyCode()) {
                         if (this.getTwitchStream().isBroadcasting()) {
@@ -2674,6 +2675,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.connectedToRealms = connectedToRealms;
     }
 
+    //ICMM useShortcuts() Method
     private Boolean useShortcuts() {
         ModalWidget current = Modal.INSTANCE.getCurrentModal();
 
