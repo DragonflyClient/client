@@ -1,7 +1,9 @@
 package net.minecraft.client;
 
 import com.google.common.collect.*;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFutureTask;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
@@ -9,76 +11,123 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService;
 import net.inceptioncloud.dragonfly.event.client.*;
-import net.inceptioncloud.dragonfly.event.control.*;
-import net.inceptioncloud.dragonfly.event.gui.*;
+import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent;
+import net.inceptioncloud.dragonfly.event.control.KeyInputEvent;
+import net.inceptioncloud.dragonfly.event.control.MouseInputEvent;
+import net.inceptioncloud.dragonfly.event.gui.GuiScreenDisplayEvent;
+import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
-import net.inceptioncloud.dragonfly.mods.hotkeys.*;
 import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
+import net.inceptioncloud.dragonfly.mods.hotkeys.AddHotkeyModal;
+import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysMod;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
+import net.inceptioncloud.dragonfly.overlay.modal.Modal;
+import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget;
 import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker;
 import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.audio.*;
+import net.minecraft.client.audio.MusicTicker;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.achievement.GuiAchievement;
-import net.minecraft.client.gui.inventory.*;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.gui.stream.GuiStreamUnavailable;
 import net.minecraft.client.main.GameConfiguration;
-import net.minecraft.client.multiplayer.*;
-import net.minecraft.client.network.*;
+import net.minecraft.client.multiplayer.GuiConnecting;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.NetHandlerLoginClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.chunk.RenderChunk;
-import net.minecraft.client.renderer.entity.*;
-import net.minecraft.client.renderer.texture.*;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.*;
 import net.minecraft.client.resources.data.*;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.client.settings.*;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.client.stream.*;
-import net.minecraft.crash.*;
-import net.minecraft.entity.*;
+import net.minecraft.client.stream.IStream;
+import net.minecraft.client.stream.NullStream;
+import net.minecraft.client.stream.TwitchStream;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLeashKnot;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.item.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.init.*;
-import net.minecraft.item.*;
-import net.minecraft.nbt.*;
-import net.minecraft.network.*;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Bootstrap;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.EnumConnectionState;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.network.play.client.C16PacketClientStatus;
-import net.minecraft.profiler.*;
+import net.minecraft.profiler.IPlayerUsage;
+import net.minecraft.profiler.PlayerUsageSnooper;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.stats.*;
+import net.minecraft.stats.AchievementList;
+import net.minecraft.stats.StatFileWriter;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Timer;
 import net.minecraft.util.Util;
 import net.minecraft.util.*;
-import net.minecraft.world.*;
+import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.WorldProviderEnd;
+import net.minecraft.world.WorldProviderHell;
+import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.storage.AnvilSaveConverter;
-import net.minecraft.world.storage.*;
+import net.minecraft.world.storage.ISaveFormat;
+import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.*;
-import org.lwjgl.*;
-import org.lwjgl.input.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.glu.GLU;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.*;
-import java.nio.*;
-import java.text.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Proxy;
+import java.net.SocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 public class Minecraft implements IThreadListener, IPlayerUsage {
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
@@ -612,8 +661,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         }
     }
 
-    private void setInitialDisplayMode () throws LWJGLException
-    {
+    private void setInitialDisplayMode() throws LWJGLException {
         System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
         Display.setDisplayMode(new DisplayMode(400, 500));
         Display.setResizable(false);
@@ -2506,7 +2554,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
         if (i != 0 && !Keyboard.isRepeatEvent()) {
             if (!(this.currentScreen instanceof GuiControls) || ((GuiControls) this.currentScreen).time <= getSystemTime() - 20L) {
-                if (Keyboard.getEventKeyState()) {
+                if (Keyboard.getEventKeyState() && useShortcuts()) {
                     if (i == this.gameSettings.keyBindStreamStartStop.getKeyCode()) {
                         if (this.getTwitchStream().isBroadcasting()) {
                             this.getTwitchStream().stopBroadcasting();
@@ -2625,4 +2673,15 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     public void setConnectedToRealms(boolean connectedToRealms) {
         this.connectedToRealms = connectedToRealms;
     }
+
+    private Boolean useShortcuts() {
+        ModalWidget current = Modal.INSTANCE.getCurrentModal();
+
+        if (current != null && current instanceof AddHotkeyModal) {
+            return !((AddHotkeyModal) current).keySelector.isFocused();
+        }
+
+        return true;
+    }
+
 }
