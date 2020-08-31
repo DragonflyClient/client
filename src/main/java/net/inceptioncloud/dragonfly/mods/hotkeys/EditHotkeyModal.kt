@@ -371,15 +371,12 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             altCheckBox.toggle()
         }
         messageTextField.writeText((originalHotkey as ChatHotkey).config.message)
-        messageTextField.isLabelRaised = true
         messageTextField.isFocused = true
         messageTextField.isFocused = false
         timeTextField.writeText(originalHotkey.data.time.toInt().toString())
-        timeTextField.isLabelRaised = true
         timeTextField.isFocused = true
         timeTextField.isFocused = false
         delayTextField.writeText(originalHotkey.data.delay.toInt().toString())
-        delayTextField.isLabelRaised = true
         delayTextField.isFocused = true
         delayTextField.isFocused = false
         if (originalHotkey.data.fadeOut) {
