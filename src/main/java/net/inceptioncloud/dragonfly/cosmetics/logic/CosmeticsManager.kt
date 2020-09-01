@@ -32,7 +32,7 @@ object CosmeticsManager {
     init {
         LogManager.getLogger().info("Loading database models for cosmetics...")
         cosmetics = cosmetics.filter { cosmetic ->
-            val fetched = databaseModels?.firstOrNull { model -> model.get("cosmeticId").asInt == cosmetic.cosmeticId }
+            val fetched = getDatabaseModelById(cosmetic.cosmeticId)
 
             if (fetched != null) {
                 cosmetic.databaseModel = fetched
@@ -69,6 +69,11 @@ object CosmeticsManager {
 
         return null
     }
+
+    /**
+     * Returns a database model in the form of a [JsonObject] for the given [cosmeticId].
+     */
+    fun getDatabaseModelById(cosmeticId: Int) = databaseModels?.firstOrNull { model -> model.get("cosmeticId").asInt == cosmeticId }
 
     /**
      * Asynchronously loads the cosmetics by calling [fetchCosmetics] using the given [player].

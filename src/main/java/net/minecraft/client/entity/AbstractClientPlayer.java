@@ -2,6 +2,9 @@ package net.minecraft.client.entity;
 
 import com.mojang.authlib.GameProfile;
 import java.io.File;
+
+import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager;
+import net.inceptioncloud.dragonfly.cosmetics.types.capes.CapeManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.ImageBufferDownload;
@@ -17,7 +20,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
-import optifine.CapeUtils;
 import optifine.Config;
 import optifine.PlayerConfigurations;
 import optifine.Reflector;
@@ -39,8 +41,18 @@ public abstract class AbstractClientPlayer extends EntityPlayer
             this.nameClear = StringUtils.stripControlCodes(this.nameClear);
         }
 
-        CapeUtils.downloadCape(this);
         PlayerConfigurations.getPlayerConfiguration(this);
+
+        CosmeticsManager.loadCosmetics(this, (cosmeticData) -> {
+            this.cosmetics = cosmeticData;
+            onCosmeticsLoaded();
+        });
+    }
+
+    @Override
+    public void onCosmeticsLoaded() {
+        super.onCosmeticsLoaded();
+        CapeManager.downloadCape(this);
     }
 
     /**
@@ -90,11 +102,7 @@ public abstract class AbstractClientPlayer extends EntityPlayer
 
     public ResourceLocation getLocationCape()
     {
-        if (!Config.isShowCapes())
-        {
-            return null;
-        }
-        else if (this.locationOfCape != null)
+        if (this.locationOfCape != null)
         {
             return this.locationOfCape;
         }

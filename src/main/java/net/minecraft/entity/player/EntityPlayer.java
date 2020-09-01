@@ -176,7 +176,7 @@ public abstract class EntityPlayer extends EntityLivingBase
      */
     public EntityFishHook fishEntity;
 
-    private CosmeticDataList cosmetics = null;
+    protected CosmeticDataList cosmetics = null;
 
     public EntityPlayer(World worldIn, GameProfile gameProfileIn)
     {
@@ -189,8 +189,6 @@ public abstract class EntityPlayer extends EntityLivingBase
         this.setLocationAndAngles((double)blockpos.getX() + 0.5D, (double)(blockpos.getY() + 1), (double)blockpos.getZ() + 0.5D, 0.0F, 0.0F);
         this.field_70741_aB = 180.0F;
         this.fireResistance = 20;
-
-        CosmeticsManager.loadCosmetics(this, (cosmeticData) -> this.cosmetics = cosmeticData);
     }
 
     protected void applyEntityAttributes()
@@ -1478,6 +1476,11 @@ public abstract class EntityPlayer extends EntityLivingBase
     public CosmeticDataList getCosmetics() {
         return cosmetics;
     }
+
+    /**
+     * Called when the cosmetics for the player were loaded.
+     */
+    public void onCosmeticsLoaded() {}
 
     /**
      * Checks if this entity is inside of an opaque block
