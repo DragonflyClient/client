@@ -61,6 +61,7 @@ class CosmeticWingsModel : CosmeticModel() {
         val rotationY = config.rotationY
         val rotationZ = config.rotationZ
         val wingTipRotation = config.wingTipRotation
+        val speed = config.speed
 
         val rotate = player.cameraYaw.toDouble()
 
@@ -97,7 +98,9 @@ class CosmeticWingsModel : CosmeticModel() {
         for (j in 0..1) {
             GL11.glEnable(GL11.GL_CULL_FACE)
 
-            val f11 = System.currentTimeMillis() % 1000 / 1000f * Math.PI.toFloat() * 2.0f
+            val modifier = 2000f - (speed * 1600f)
+            val progress = System.currentTimeMillis() % modifier / modifier
+            val f11 = progress * Math.PI.toFloat() * 2.0f
             wing!!.rotateAngleX = Math.toRadians(-80.0).toFloat() - cos(f11.toDouble()).toFloat() * rotationX.toFloat()
             wing!!.rotateAngleY = Math.toRadians(20.0).toFloat() + sin(f11.toDouble()).toFloat() * rotationY.toFloat()
             wing!!.rotateAngleZ = Math.toRadians(20.0).toFloat() * rotationZ.toFloat()

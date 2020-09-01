@@ -18,4 +18,5 @@ class CosmeticWingsConfig(jsonObject: JsonObject) : CosmeticConfig(jsonObject) {
     var rotationY by double(0.2) { it in 0.0..0.4 }
     var rotationZ by double(1.0) { it in 0.5..1.0 }
     var wingTipRotation by double(0.6) { it in 0.0..1.0 }
+    var speed by double(0.6) { it in 0.0..1.0 }
 }
