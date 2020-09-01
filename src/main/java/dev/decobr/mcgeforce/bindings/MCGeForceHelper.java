@@ -59,10 +59,10 @@ public class MCGeForceHelper {
         Boolean isShadowPlayRunning = isProcessRunning("nvsphelper64.exe");
 
         if (os.toLowerCase().contains("windows") && isShadowPlayRunning) {
-            LogManager.getLogger().info(prefix + "System is qualified! ('" + os + "' - 'nvsphelper64.exe: true')");
+            LogManager.getLogger().info(prefix + "System is qualified! ('" + os + "' - nvsphelper64.exe: 'true')");
             return true;
         } else {
-            LogManager.getLogger().info(prefix + "System is not qualified! ('" + os + "' - 'nvsphelper64.exe: " + isShadowPlayRunning +  "')");
+            LogManager.getLogger().info(prefix + "System is not qualified! ('" + os + "' - nvsphelper64.exe: '" + isShadowPlayRunning +  "')");
             return false;
         }
     }
@@ -132,7 +132,7 @@ public class MCGeForceHelper {
 
     private static void queryAmountOfHighlights() {
         if (isSystemValid) {
-            getNumOfHighlights(handlePtr, "mcgeforcemod");
+            getNumOfHighlights(handlePtr, "mcdragonfly");
         }
     }
 
@@ -140,8 +140,8 @@ public class MCGeForceHelper {
 
     public void deleteCachedHighlights() {
         if (isSystemValid) {
-            instance.closeGroup(handlePtr, "mcgeforcemod", true);
-            instance.addGroup(handlePtr, "mcgeforcemod", "MCGeForce");
+            instance.closeGroup(handlePtr, "mcdragonfly", true);
+            instance.addGroup(handlePtr, "mcdragonfly", "Dragonfly");
             instance.highlights = 0;
         }
     }
@@ -156,14 +156,15 @@ public class MCGeForceHelper {
 
     public void saveHighlight(EnumHighlightType highlightType) {
         if (isSystemValid) {
-            instance.setVideoHighlight(handlePtr, highlightType.getId(), "mcgeforcemod", highlightType.getTime(), 1000);
+            System.out.println("Saving highlight...");
+            instance.setVideoHighlight(handlePtr, highlightType.getId(), "mcdragonfly", -(highlightType.getTime() * 1000), 1000);
             queryAmountOfHighlights();
         }
     }
 
     public void showHighlights() {
         if (isSystemValid) {
-            instance.showHighlightsEditor(handlePtr, "mcgeforcemod");
+            instance.showHighlightsEditor(handlePtr, "mcdragonfly");
         }
     }
 

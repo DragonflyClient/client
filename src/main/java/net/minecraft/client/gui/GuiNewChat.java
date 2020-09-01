@@ -1,6 +1,7 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
+import dev.decobr.mcgeforce.utils.EnumHighlightType;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
@@ -24,51 +25,43 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.IntSupplier;
 
-public class GuiNewChat extends Gui
-{
+public class GuiNewChat extends Gui {
     private static final Logger logger = LogManager.getLogger();
 
     private static int targetHeight = 0;
     private static double height = 0;
-
-    /**
-     * The transition that moves the title text.
-     */
-    private static final SmoothDoubleTransition titleText = SmoothDoubleTransition.builder().start(0).end(1).fadeIn(0).stay(15).fadeOut(15)
-        .autoTransformator(new IntSupplier()
-        {
-            @Override
-            public int getAsInt ()
-            {
-                if (!isChatOpen() || GuiChat.getDirection() == -1)
-                    return -1;
-
-                if (GuiChat.getDirection() == 1 && titleBackground.isAtEnd())
-                    return 1;
-
-                return 0;
-            }
-        }).build();
-
     /**
      * The transition that draws the title background.
      */
     private static final DoubleTransition titleBackground = DoubleTransition.builder().start(0).end(1).amountOfSteps(15)
-        .autoTransformator(new IntSupplier()
-        {
-            @Override
-            public int getAsInt ()
-            {
-                if (!isChatOpen() || ( GuiChat.getDirection() == -1 && titleText.isAtStart() ))
-                    return -1;
+            .autoTransformator(new IntSupplier() {
+                @Override
+                public int getAsInt() {
+                    if (!isChatOpen() || (GuiChat.getDirection() == -1 && titleText.isAtStart()))
+                        return -1;
 
-                if (GuiChat.getDirection() == 1 && Math.abs(targetHeight - height) < 10)
-                    return 1;
+                    if (GuiChat.getDirection() == 1 && Math.abs(targetHeight - height) < 10)
+                        return 1;
 
-                return 0;
-            }
-        }).build();
+                    return 0;
+                }
+            }).build();
+    /**
+     * The transition that moves the title text.
+     */
+    private static final SmoothDoubleTransition titleText = SmoothDoubleTransition.builder().start(0).end(1).fadeIn(0).stay(15).fadeOut(15)
+            .autoTransformator(new IntSupplier() {
+                @Override
+                public int getAsInt() {
+                    if (!isChatOpen() || GuiChat.getDirection() == -1)
+                        return -1;
 
+                    if (GuiChat.getDirection() == 1 && titleBackground.isAtEnd())
+                        return 1;
+
+                    return 0;
+                }
+            }).build();
     private final Minecraft mc;
     private final List<String> sentMessages = Lists.newArrayList();
     private final List<ChatLine> chatMessages = Lists.newArrayList();
@@ -76,42 +69,37 @@ public class GuiNewChat extends Gui
     private int scrollPos;
     private boolean isScrolled;
 
-    public GuiNewChat (Minecraft mcIn)
-    {
+    public GuiNewChat(Minecraft mcIn) {
         this.mc = mcIn;
     }
 
-    public static int calculateChatboxWidth (float chatWidthSetting)
-    {
+    public static int calculateChatboxWidth(float chatWidthSetting) {
         int i = 320;
         int j = 40;
 
         // 1F * 280 + 40
-        return MathHelper.floor_float(chatWidthSetting * ( float ) ( i - j ) + ( float ) j);
+        return MathHelper.floor_float(chatWidthSetting * (float) (i - j) + (float) j);
     }
 
-    public static int calculateChatboxHeight (float chatHeightSetting)
-    {
+    public static int calculateChatboxHeight(float chatHeightSetting) {
         int i = 180;
         int j = 20;
-        return MathHelper.floor_float(chatHeightSetting * ( float ) ( i - j ) + ( float ) j);
+        return MathHelper.floor_float(chatHeightSetting * (float) (i - j) + (float) j);
     }
 
     /**
      * Returns true if the chat GUI is open
      */
-    public static boolean isChatOpen ()
-    {
+    public static boolean isChatOpen() {
         return Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen instanceof GuiChat;
     }
 
-    public void drawChat (int updateTimes)
-    {
+    public void drawChat(int updateTimes) {
         final double difference = Math.abs(targetHeight - height);
         final double factor = 0.05;
 
         if (difference > factor)
-            height += targetHeight > height ? difference * factor : -( difference * factor );
+            height += targetHeight > height ? difference * factor : -(difference * factor);
         else
             height = targetHeight;
 
@@ -130,7 +118,7 @@ public class GuiNewChat extends Gui
                 }
 
                 float f1 = this.getChatScale();
-                int l = MathHelper.ceiling_float_int(( float ) this.getChatWidth() / f1);
+                int l = MathHelper.ceiling_float_int((float) this.getChatWidth() / f1);
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(2.0F, 20.0F, 0.0F);
                 GlStateManager.scale(f1, f1, 1.0F);
@@ -140,25 +128,25 @@ public class GuiNewChat extends Gui
 
                 List<Runnable> stringsToDraw = new ArrayList<>();
 
-                for (int i1 = 0 ; i1 + this.scrollPos < this.seperateChatLines.size() && i1 < amountOfLines ; ++i1) {
+                for (int i1 = 0; i1 + this.scrollPos < this.seperateChatLines.size() && i1 < amountOfLines; ++i1) {
                     ChatLine chatline = this.seperateChatLines.get(i1 + this.scrollPos);
 
                     if (chatline != null) {
                         int updatedCounter = updateTimes - chatline.getUpdatedCounter();
 
                         if (updatedCounter < 200 || chatOpen) /* Message times out if the chat isn't opened */ {
-                            double d0 = ( double ) updatedCounter / 200.0D;
+                            double d0 = (double) updatedCounter / 200.0D;
                             d0 = 1.0D - d0;
                             d0 = d0 * 10.0D;
                             d0 = MathHelper.clamp_double(d0, 0.0D, 1.0D); // Changes the value to be at least 0 and max 1
                             d0 = d0 * d0;
-                            int l1 = ( int ) ( 255.0D * d0 );
+                            int l1 = (int) (255.0D * d0);
 
                             if (chatOpen) {
                                 l1 = 255;
                             }
 
-                            l1 = ( int ) ( ( float ) l1 * f );
+                            l1 = (int) ((float) l1 * f);
                             ++visibleChatLines;
 
                             if (l1 > 3) {
@@ -168,7 +156,7 @@ public class GuiNewChat extends Gui
 
                                 final int min = -fontRenderer.getStringWidth(s);
                                 final int add = -min + getBorderAmount() - 2;
-                                final int stringX = ( int ) ( min + ( ( add ) * chatline.getLocation().get() ) );
+                                final int stringX = (int) (min + ((add) * chatline.getLocation().get()));
                                 final int copyCurrentY = currentY;
 
                                 Color fontColor = new Color(255, 255, 255, chatline.getOpacity().castToInt());
@@ -184,7 +172,7 @@ public class GuiNewChat extends Gui
 //                                    );
                                 });
 
-                                currentY -= ( int ) ( fontRenderer.getHeight() * chatline.getLocation().get() );
+                                currentY -= (int) (fontRenderer.getHeight() * chatline.getLocation().get());
                                 currentHeight += fontRenderer.getHeight();
                             }
                         }
@@ -195,18 +183,18 @@ public class GuiNewChat extends Gui
 
                 /* Draw the chat background rectangle */
                 {
-                    int border = ( int ) Math.min(getBorderAmount(), ( height / 10 ) * getBorderAmount());
+                    int border = (int) Math.min(getBorderAmount(), (height / 10) * getBorderAmount());
 
                     Color rectColor = new Color(0, 0, 0, 80);
-                    drawRect(-2, ( int ) -height - border, l + 4, border, rectColor.getRGB());
+                    drawRect(-2, (int) -height - border, l + 4, border, rectColor.getRGB());
                 }
 
                 /* Open-Chat Title */
                 {
-                    int border = ( int ) Math.min(getBorderAmount(), ( height / 10 ) * getBorderAmount());
+                    int border = (int) Math.min(getBorderAmount(), (height / 10) * getBorderAmount());
 
                     Color lineColor = new Color(0, 0, 0, 200);
-                    drawRect(-2, ( int ) ( ( -height - border ) - ( titleBackground.get() * 15 ) ), l + 4, ( int ) ( -height - border ), lineColor.getRGB());
+                    drawRect(-2, (int) ((-height - border) - (titleBackground.get() * 15)), l + 4, (int) (-height - border), lineColor.getRGB());
 
                     GlStateManager.enableBlend();
                     GlStateManager.enableAlpha();
@@ -216,7 +204,7 @@ public class GuiNewChat extends Gui
                     String whole = s1 + s2;
                     String date = new SimpleDateFormat("HH:mm:ss").format(System.currentTimeMillis());
 
-                    final int alphaValue = Math.min(10 + ( int ) ( titleText.get() * 245 ), 255);
+                    final int alphaValue = Math.min(10 + (int) (titleText.get() * 245), 255);
                     final Color alpha = new Color(255, 255, 255, alphaValue);
 
                     final WidgetColor color1 = DragonflyPalette.getAccentNormal().clone();
@@ -226,20 +214,20 @@ public class GuiNewChat extends Gui
 
                     int base = -fontRenderer.getStringWidth(whole);
                     int addition = fontRenderer.getStringWidth(whole) + getBorderAmount() - 2;
-                    int textX = base + ( int ) ( addition * titleText.get() );
+                    int textX = base + (int) (addition * titleText.get());
 
                     // If the title box is wide enough to display the cloud name
                     if (l + 2 >= fontRenderer.getStringWidth(whole)) {
-                        fontRenderer.drawString(s1, textX, ( int ) ( -height - border - 10 ), color1.getRgb(), true);
-                        fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), ( int ) ( -height - border - 10 ), alpha.getRGB(), true);
+                        fontRenderer.drawString(s1, textX, (int) (-height - border - 10), color1.getRgb(), true);
+                        fontRenderer.drawString(s2, textX + fontRenderer.getStringWidth(s1), (int) (-height - border - 10), alpha.getRGB(), true);
                     }
 
                     // If the title box is wide enough to display the time
                     if (l + 2 >= fontRenderer.getStringWidth(whole + "     " + date)) {
                         base = -fontRenderer.getStringWidth("00:00:00");
                         addition = l + 4 - getBorderAmount();
-                        textX = base + ( int ) ( addition * titleText.get() );
-                        fontRenderer.drawString(date, textX, ( int ) ( -height - border - 10 ), color2.getRgb(), true);
+                        textX = base + (int) (addition * titleText.get());
+                        fontRenderer.drawString(date, textX, (int) (-height - border - 10), color2.getRgb(), true);
                     }
                 }
 
@@ -254,7 +242,7 @@ public class GuiNewChat extends Gui
                     GlStateManager.translate(-3.0F, 0.0F, 0.0F);
                     int totalHeight = amountOfSeperateLines * fontHeight + amountOfSeperateLines;
                     int visibleHeight = visibleChatLines * fontHeight + visibleChatLines;
-                    int yPosition = ( int ) ( this.scrollPos * visibleHeight / amountOfSeperateLines * 0.9 );
+                    int yPosition = (int) (this.scrollPos * visibleHeight / amountOfSeperateLines * 0.9);
                     int scrollBarHeight = visibleHeight * visibleHeight / totalHeight;
 
                     if (totalHeight != visibleHeight) {
@@ -270,8 +258,7 @@ public class GuiNewChat extends Gui
     /**
      * Clears the chat.
      */
-    public void clearChatMessages ()
-    {
+    public void clearChatMessages() {
         this.seperateChatLines.forEach(ChatLine::destroy);
         this.chatMessages.forEach(ChatLine::destroy);
 
@@ -280,32 +267,28 @@ public class GuiNewChat extends Gui
         this.sentMessages.clear();
     }
 
-    public void printChatMessage (IChatComponent p_146227_1_)
-    {
+    public void printChatMessage(IChatComponent p_146227_1_) {
         this.printChatMessageWithOptionalDeletion(p_146227_1_, 0);
     }
 
-    public int getBorderAmount ()
-    {
+    public int getBorderAmount() {
         return 5;
     }
 
     /**
      * prints the ChatComponent to Chat. If the ID is not 0, deletes an existing Chat Line of that ID from the GUI
      */
-    public void printChatMessageWithOptionalDeletion (IChatComponent component, int id)
-    {
+    public void printChatMessageWithOptionalDeletion(IChatComponent component, int id) {
         this.setChatLine(component, id, this.mc.ingameGUI.getUpdateCounter(), false);
         logger.info("[CHAT] " + component.getUnformattedText());
     }
 
-    private void setChatLine (IChatComponent component, int id, int updateCounter, boolean displayOnly)
-    {
+    private void setChatLine(IChatComponent component, int id, int updateCounter, boolean displayOnly) {
         if (id != 0) {
             this.deleteChatLine(id);
         }
 
-        int i = MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale());
+        int i = MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale());
         List<IChatComponent> list = GuiUtilRenderComponents.splitText(component, i, Dragonfly.getFontManager().getRegular(), false, false);
         boolean chatOpen = isChatOpen();
 
@@ -333,27 +316,24 @@ public class GuiNewChat extends Gui
         }
     }
 
-    public void refreshChat ()
-    {
+    public void refreshChat() {
         this.seperateChatLines.clear();
         this.resetScroll();
 
-        for (int i = this.chatMessages.size() - 1 ; i >= 0 ; --i) {
+        for (int i = this.chatMessages.size() - 1; i >= 0; --i) {
             ChatLine chatline = this.chatMessages.get(i);
             this.setChatLine(chatline.getChatComponent(), chatline.getChatLineID(), chatline.getUpdatedCounter(), true);
         }
     }
 
-    public List<String> getSentMessages ()
-    {
+    public List<String> getSentMessages() {
         return this.sentMessages;
     }
 
     /**
      * Adds this string to the list of sent messages, for recall using the up/down arrow keys
      */
-    public void addToSentMessages (String p_146239_1_)
-    {
+    public void addToSentMessages(String p_146239_1_) {
         if (this.sentMessages.isEmpty() || !this.sentMessages.get(this.sentMessages.size() - 1).equals(p_146239_1_)) {
             this.sentMessages.add(p_146239_1_);
         }
@@ -362,8 +342,7 @@ public class GuiNewChat extends Gui
     /**
      * Resets the chat scroll (executed when the GUI is closed, among others)
      */
-    public void resetScroll ()
-    {
+    public void resetScroll() {
         this.scrollPos = 0;
         this.isScrolled = false;
     }
@@ -371,8 +350,7 @@ public class GuiNewChat extends Gui
     /**
      * Scrolls the chat by the given number of lines.
      */
-    public void scroll (int p_146229_1_)
-    {
+    public void scroll(int p_146229_1_) {
         this.scrollPos += p_146229_1_;
         int i = this.seperateChatLines.size();
 
@@ -389,21 +367,20 @@ public class GuiNewChat extends Gui
     /**
      * Gets the chat component under the mouse
      */
-    public IChatComponent getChatComponent (int p1, int p2)
-    {
+    public IChatComponent getChatComponent(int p1, int p2) {
         if (isChatOpen()) {
             ScaledResolution scaledresolution = new ScaledResolution(this.mc);
             int i = scaledresolution.getScaleFactor();
             float f = this.getChatScale();
             int j = p1 / i - 3;
             int k = p2 / i - 27;
-            j = MathHelper.floor_float(( float ) j / f);
-            k = MathHelper.floor_float(( float ) k / f);
+            j = MathHelper.floor_float((float) j / f);
+            k = MathHelper.floor_float((float) k / f);
 
             if (j >= 0 && k >= 0) {
                 int l = Math.min(this.getLineCount(), this.seperateChatLines.size());
 
-                if (j <= MathHelper.floor_float(( float ) this.getChatWidth() / this.getChatScale()) && k < Dragonfly.getFontManager().getRegular().getHeight() * l + l) {
+                if (j <= MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale()) && k < Dragonfly.getFontManager().getRegular().getHeight() * l + l) {
                     int i1 = k / Dragonfly.getFontManager().getRegular().getHeight() + this.scrollPos;
 
                     if (i1 >= 0 && i1 < this.seperateChatLines.size()) {
@@ -412,7 +389,7 @@ public class GuiNewChat extends Gui
 
                         for (IChatComponent ichatcomponent : chatline.getChatComponent()) {
                             if (ichatcomponent instanceof ChatComponentText) {
-                                j1 += Dragonfly.getFontManager().getRegular().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(( ( ChatComponentText ) ichatcomponent ).getChatComponentText_TextValue(), false));
+                                j1 += Dragonfly.getFontManager().getRegular().getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(((ChatComponentText) ichatcomponent).getChatComponentText_TextValue(), false));
 
                                 if (j1 > j) {
                                     return ichatcomponent;
@@ -430,8 +407,7 @@ public class GuiNewChat extends Gui
     /**
      * finds and deletes a Chat line by ID
      */
-    public void deleteChatLine (int chatLineID)
-    {
+    public void deleteChatLine(int chatLineID) {
         Iterator<ChatLine> iterator = this.seperateChatLines.iterator();
 
         while (iterator.hasNext()) {
@@ -456,26 +432,22 @@ public class GuiNewChat extends Gui
         }
     }
 
-    public int getChatWidth ()
-    {
+    public int getChatWidth() {
         return calculateChatboxWidth(this.mc.gameSettings.chatWidth);
     }
 
-    public int getChatHeight ()
-    {
+    public int getChatHeight() {
         return calculateChatboxHeight(isChatOpen() ? this.mc.gameSettings.chatHeightFocused : this.mc.gameSettings.chatHeightUnfocused);
     }
 
     /**
      * Returns the chatscale from mc.gameSettings.chatScale
      */
-    public float getChatScale ()
-    {
+    public float getChatScale() {
         return this.mc.gameSettings.chatScale;
     }
 
-    public int getLineCount ()
-    {
+    public int getLineCount() {
         return this.getChatHeight() / 9;
     }
 }
