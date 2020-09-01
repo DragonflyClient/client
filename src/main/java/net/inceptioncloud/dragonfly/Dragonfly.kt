@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly
 
+import dev.decobr.mcgeforce.bindings.MCGeForceHelper
 import net.inceptioncloud.dragonfly.account.*
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
@@ -82,6 +83,9 @@ object Dragonfly {
      * there is no connected Dragonfly account.
      */
     var account: DragonflyAccount? = null
+
+    @JvmStatic
+    lateinit var geforceHelper: MCGeForceHelper
 
     /**
      * Dragonfly Initializer Block

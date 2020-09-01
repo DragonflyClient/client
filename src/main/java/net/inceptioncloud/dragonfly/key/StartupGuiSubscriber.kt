@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent
 import net.inceptioncloud.dragonfly.key.ui.AttachingKeyUI
 import net.inceptioncloud.dragonfly.key.ui.EnterKeyUI
 import dev.decobr.mcgeforce.bindings.MCGeForceHelper
+import net.inceptioncloud.dragonfly.Dragonfly
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -28,6 +29,7 @@ object StartupGuiSubscriber {
             event.target = EnterKeyUI()
         }
 
-        MCGeForceHelper.instance.initialise()
+        Dragonfly.geforceHelper = MCGeForceHelper()
+
     }
 }
