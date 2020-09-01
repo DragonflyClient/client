@@ -29,7 +29,8 @@ object StartupGuiSubscriber {
             event.target = EnterKeyUI()
         }
 
-        Dragonfly.geforceHelper = MCGeForceHelper()
+        Dragonfly.geforceHelper =
+            MCGeForceHelper()
 
     }
 }

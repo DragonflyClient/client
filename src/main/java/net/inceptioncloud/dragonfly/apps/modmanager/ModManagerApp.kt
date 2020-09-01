@@ -3,7 +3,7 @@ package net.inceptioncloud.dragonfly.apps.modmanager
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysMod
 import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod
-import net.inceptioncloud.dragonfly.mods.geforcehighlights.GeForceHighlightsMod
+import net.inceptioncloud.dragonfly.mods.geforceexperience.GeForceHighlightsMod
 import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesMod
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 

@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.mods.geforcehighlights
+package net.inceptioncloud.dragonfly.mods.geforceexperience
 
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
