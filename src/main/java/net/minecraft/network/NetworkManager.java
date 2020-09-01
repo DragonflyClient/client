@@ -14,6 +14,7 @@ import io.netty.handler.timeout.TimeoutException;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
 import net.minecraft.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
@@ -102,7 +103,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet>
             protected void initChannel (Channel p_initChannel_1_)
             {
                 try {
-                    p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, Boolean.TRUE);
+                    p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, EnhancedGameExperienceMod.getTcpNoDelay());
                 } catch (ChannelException ignored) {
                 }
 

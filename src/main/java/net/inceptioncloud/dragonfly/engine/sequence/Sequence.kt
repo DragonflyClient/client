@@ -16,7 +16,7 @@ const val SEQUENCE_ALREADY_BEGUN = "The sequence has already begun! Changes to t
  * @param T the type of the sequence, can be any object
  */
 abstract class Sequence<T>
-(
+    (
     /**
      * The value that the sequence starts with.
      *
@@ -39,8 +39,7 @@ abstract class Sequence<T>
      * Given in amount of mod ticks when 200 ticks correspond to one second.
      */
     val duration: Int
-)
-{
+) {
     /**
      * Returns `true` if the sequence has completely run through it's lifecycle and
      * is now at the end. This is the case when the [time] is equal to the [duration].
@@ -110,10 +109,8 @@ abstract class Sequence<T>
      * it by invoking the [easing] function, the interpolation will be executed and the value
      * will be stored in the [current] variable.
      */
-    fun next()
-    {
-        if (time == 0)
-        {
+    fun next() {
+        if (time == 0) {
             // Fire the start hook
             startHook?.invoke(this)
         }
@@ -183,8 +180,7 @@ abstract class Sequence<T>
     /**
      * @see startHook
      */
-    fun withStartHook(function: Sequence<T>.() -> Unit): Sequence<T>
-    {
+    fun withStartHook(function: Sequence<T>.() -> Unit): Sequence<T> {
         if (time != 0)
             throw IllegalStateException(SEQUENCE_ALREADY_BEGUN)
 
@@ -195,8 +191,7 @@ abstract class Sequence<T>
     /**
      * @see endHook
      */
-    fun withEndHook(function: Sequence<T>.() -> Unit): Sequence<T>
-    {
+    fun withEndHook(function: Sequence<T>.() -> Unit): Sequence<T> {
         if (time != 0)
             throw IllegalStateException(SEQUENCE_ALREADY_BEGUN)
 

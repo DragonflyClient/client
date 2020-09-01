@@ -26,7 +26,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
 
     override var backgroundFill: WidgetColor? = WidgetColor(30, 30, 30, 255)
 
-    override var backgroundImage: SizedImage? = SizedImage("dragonflyres/ingame_background_2.png", 3840.0, 2160.0)
+    override var backgroundImage: SizedImage? = SizedImage(ImageResource("dragonflyres/ingame_background_2.png"), 3840.0, 2160.0)
 
     override var canManuallyClose: Boolean = false
 
@@ -35,7 +35,6 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             getWidget<TextField>("message")?.apply {
                 isVisible = value != null
                 staticText = value ?: ""
-                stateChanged(this)
             }
             field = value
         }
@@ -44,53 +43,57 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
         Keyboard.enableRepeatEvents(true)
         val headerFR = Dragonfly.fontManager.defaultFont.fontRenderer(size = 30, fontWeight = FontWeight.MEDIUM)
 
-        val keyImage = +Image(
-            x = width / 2 - headerFR.getStringWidth("Activate Dragonfly") / 2 - 15.0,
-            y = 10.0,
-            width = 20.0,
-            height = 20.0,
+        val keyImage = +Image {
+            x = this@EnterKeyUI.width / 2 - headerFR.getStringWidth("Activate Dragonfly") / 2 - 15.0
+            y = 10.0
+            width = 20.0
+            height = 20.0
             resourceLocation = ResourceLocation("dragonflyres/icons/key.png")
-        ) id "key-image"
+        } id "key-image"
 
-        +TextRenderer(
-            x = keyImage.x + 30.0,
-            y = 10.0,
-            fontRenderer = headerFR,
+        +TextRenderer {
+            x = keyImage.x + 30.0
+            y = 10.0
+            fontRenderer = headerFR
             text = "Activate Dragonfly"
-        ) id "header"
+        } id "header"
 
-        val description = +TextField(
-            x = width / 2.0 - (width * 0.3).toInt().coerceAtMost(150).toDouble(),
-            y = height * 0.15,
-            width = (width * 0.6).toInt().coerceAtMost(300).toDouble(),
-            height = 90.0,
-            textAlignHorizontal = Alignment.CENTER,
-            textAlignVertical = Alignment.CENTER,
+        val description = +TextField {
+            x = this@EnterKeyUI.width / 2.0 - (this@EnterKeyUI.width * 0.3).toInt().coerceAtMost(150).toDouble()
+            y = this@EnterKeyUI.height * 0.15
+            width = (this@EnterKeyUI.width * 0.6).toInt().coerceAtMost(300).toDouble()
+            height = 90.0
+            textAlignHorizontal = Alignment.CENTER
+            textAlignVertical = Alignment.CENTER
             staticText = "Please enter your Dragonfly key or press the button next to the input field to paste it from your clipboard.\n\n" +
                     "Note that by redeeming your key, it is attached to your machine and cannot be used on any other device.\n\n" +
                     "If you don't already have a key, consider applying for our alpha program on our Discord server."
-        ) id "description"
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer()
+        } id "description"
 
-        +TextField(
-            x = description.x,
-            y = description.y + description.height + 10,
-            width = description.width,
-            height = 18.0,
-            textAlignHorizontal = Alignment.CENTER,
-            textAlignVertical = Alignment.END,
-            staticText = message ?: "",
+        +TextField {
+            x = description.x
+            y = description.y + description.height + 10
+            width = description.width
+            height = 18.0
+            textAlignHorizontal = Alignment.CENTER
+            textAlignVertical = Alignment.END
+            staticText = message ?: ""
             color = DragonflyPalette.accentNormal
-        ).apply { isVisible = message != null } id "message"
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer()
+            isVisible = message != null
+        } id "message"
 
-        val keyInput = +InputTextField(
-            x = width / 2.0 - 110.0,
-            y = description.y + description.height + 35.0,
-            color = DragonflyPalette.accentNormal,
-            width = 200.0,
-            height = 20.0,
-            label = "32-digit key with hyphens",
+        val keyInput = +InputTextField().apply {
+            x = this@EnterKeyUI.width / 2.0 - 110.0
+            y = description.y + description.height + 35.0
+            color = DragonflyPalette.accentNormal
+            width = 200.0
+            height = 20.0
+            label = "32-digit key with hyphens"
             maxStringLength = 32
-        ) id "key-input"
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer()
+        } id "key-input"
 
         with(buttonList) {
             add(ImageButton(
@@ -156,7 +159,6 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
                 this@EnterKeyUI.getWidget<TextField>("message")?.apply {
                     isVisible = true
                     staticText = "The key you entered does not match the Dragonfly key format."
-                    stateChanged(this)
                 }
             }
         }

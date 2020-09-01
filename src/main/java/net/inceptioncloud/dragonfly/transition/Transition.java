@@ -3,12 +3,8 @@ package net.inceptioncloud.dragonfly.transition;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.transition.color.*;
 import net.inceptioncloud.dragonfly.transition.number.*;
-import net.inceptioncloud.dragonfly.transition.string.SubstringTransition;
-import net.inceptioncloud.dragonfly.transition.string.SubstringTransitionBuilder;
-import net.inceptioncloud.dragonfly.transition.string.TransitionTypeString;
-import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton;
-import net.inceptioncloud.dragonfly.ui.components.button.SimpleButton;
-import net.inceptioncloud.dragonfly.ui.components.button.TransparentButton;
+import net.inceptioncloud.dragonfly.transition.string.*;
+import net.inceptioncloud.dragonfly.ui.components.button.*;
 import net.inceptioncloud.dragonfly.utils.RuntimeUtils;
 import net.minecraft.client.gui.GuiButton;
 
@@ -21,8 +17,7 @@ import java.util.function.IntSupplier;
  * The transition superclass represents any transition.
  * It can be a {@link TransitionTypeNumber number}-, {@link TransitionTypeString string}- or {@link TransitionTypeColor color}-transition.
  */
-public abstract class Transition
-{
+public abstract class Transition {
     /**
      * The runnable whose {@link Runnable#run()} method is invoked when the transition reaches it's end.
      */
@@ -61,35 +56,35 @@ public abstract class Transition
     /**
      * The default transition constructor.
      */
-    public Transition (final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
-    {
+    public Transition(final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator) {
         this.reachEnd = reachEnd;
         this.reachStart = reachStart;
         this.autoTransformator = autoTransformator;
 
-        final StackTraceElement stackTrace = RuntimeUtils.getStackTrace(Transition.class,
-            TransitionTypeNumber.class,
-            TransitionTypeColor.class,
-            TransitionTypeString.class,
-            DoubleTransition.class,
-            ColorTransition.class,
-            SubstringTransition.class,
-            FloatingDoubleTransition.class,
-            FloatingColorTransition.class,
-            OverflowDoubleTransition.class,
-            SmoothDoubleTransition.class,
-            DoubleTransitionBuilder.class,
-            ColorTransitionBuilder.class,
-            SubstringTransitionBuilder.class,
-            FloatingDoubleTransitionBuilder.class,
-            FloatingColorTransitionBuilder.class,
-            OverflowDoubleTransitionBuilder.class,
-            SmoothDoubleTransitionBuilder.class,
+        final StackTraceElement stackTrace = RuntimeUtils.getStackTrace(
+                Transition.class,
+                TransitionTypeNumber.class,
+                TransitionTypeColor.class,
+                TransitionTypeString.class,
+                DoubleTransition.class,
+                ColorTransition.class,
+                SubstringTransition.class,
+                FloatingDoubleTransition.class,
+                FloatingColorTransition.class,
+                OverflowDoubleTransition.class,
+                SmoothDoubleTransition.class,
+                DoubleTransitionBuilder.class,
+                ColorTransitionBuilder.class,
+                SubstringTransitionBuilder.class,
+                FloatingDoubleTransitionBuilder.class,
+                FloatingColorTransitionBuilder.class,
+                OverflowDoubleTransitionBuilder.class,
+                SmoothDoubleTransitionBuilder.class,
 
-            TransparentButton.class,
-            SimpleButton.class,
-            GuiButton.class,
-            ConfirmationButton.class
+                TransparentButton.class,
+                SimpleButton.class,
+                GuiButton.class,
+                ConfirmationButton.class
         );
 
         String[] split = Objects.requireNonNull(stackTrace).getClassName().split("\\.");
@@ -102,32 +97,28 @@ public abstract class Transition
     /**
      * Set the direction to forward.
      */
-    public void setForward ()
-    {
+    public void setForward() {
         direction = 1;
     }
 
     /**
      * Set the direction to backward.
      */
-    public void setBackward ()
-    {
+    public void setBackward() {
         direction = -1;
     }
 
     /**
      * Set the direction to nothing.
      */
-    public void setNothing ()
-    {
+    public void setNothing() {
         direction = 0;
     }
 
     /**
      * The default tick method.
      */
-    public final void tick ()
-    {
+    public final void tick() {
         if (autoTransformator != null) {
             int direction = autoTransformator.getAsInt();
 
@@ -151,8 +142,7 @@ public abstract class Transition
     /**
      * The default tick method.
      */
-    public final void directedUpdate ()
-    {
+    public final void directedUpdate() {
         int direction = getDirection();
 
         switch (direction) {
@@ -172,66 +162,58 @@ public abstract class Transition
     /**
      * Destroys the transition.
      */
-    public void destroy ()
-    {
+    public void destroy() {
         Dragonfly.stopTransition(this);
     }
 
     /**
      * Does the forward transition.
      */
-    protected abstract void doForward ();
+    protected abstract void doForward();
 
     /**
      * Does the backward transition.
      */
-    protected abstract void doBackward ();
+    protected abstract void doBackward();
 
     /**
      * @return Whether the current value is at the end.
      */
-    public abstract boolean isAtEnd ();
+    public abstract boolean isAtEnd();
 
     /**
      * @return Whether the current value is at the start.
      */
-    public abstract boolean isAtStart ();
+    public abstract boolean isAtStart();
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "Transition{" +
-               "originStackTrace=" + originStackTrace +
-               '}';
+                "originStackTrace=" + originStackTrace +
+                '}';
     }
 
-    public Runnable getReachEnd ()
-    {
+    public Runnable getReachEnd() {
         return reachEnd;
     }
 
-    public Runnable getReachStart ()
-    {
+    public Runnable getReachStart() {
         return reachStart;
     }
 
-    public IntSupplier getAutoTransformator ()
-    {
+    public IntSupplier getAutoTransformator() {
         return autoTransformator;
     }
 
-    public String getOriginClass ()
-    {
+    public String getOriginClass() {
         return originClass;
     }
 
-    public StackTraceElement getOriginStackTrace ()
-    {
+    public StackTraceElement getOriginStackTrace() {
         return originStackTrace;
     }
 
-    public int getDirection ()
-    {
+    public int getDirection() {
         return direction;
     }
 }

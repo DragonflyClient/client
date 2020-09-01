@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.structure
 
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 
 /**
  * ## Colorable Interface
@@ -8,10 +9,9 @@ import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
  * By implementing this interface, the graphics object can receive a color that will
  * be applied during the drawing process.
  */
-interface IColor
-{
+interface IColor {
     /**
      * The color of the object represented by a [WidgetColor] wrapper.
      */
-    var color: WidgetColor
+    @Interpolate var color: WidgetColor
 }

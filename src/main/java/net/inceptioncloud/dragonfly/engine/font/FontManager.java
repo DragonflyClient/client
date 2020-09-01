@@ -1,13 +1,10 @@
 package net.inceptioncloud.dragonfly.engine.font;
 
-import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer;
-import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
+import net.inceptioncloud.dragonfly.engine.font.renderer.*;
 
 import java.awt.*;
 import java.awt.font.TextAttribute;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * This class is used to build new Font Renderers or use the already created ones.
@@ -22,8 +19,14 @@ public class FontManager {
      * The default {@link WidgetFont} instance that is used by the graphics engine.
      */
     private final WidgetFont defaultFont = new WidgetFont(
-            getFontFamily(), getFontFamily() + " Light", getFontFamily(),
-            getFontFamily() + " Medium", -0.035
+            getFontFamily(), getFontFamily() + " Light", getFontFamily(), getFontFamily() + " Medium", -0.035
+    );
+
+    /**
+     * The default monospace {@link WidgetFont} instance that is used by the graphics engine.
+     */
+    private final WidgetFont monospaceFont = new WidgetFont(
+            "JetBrains Mono", "JetBrains Mono", "JetBrains Mono", "JetBrains Mono Medium", 0.0
     );
 
     /**
@@ -31,6 +34,10 @@ public class FontManager {
      */
     public WidgetFont getDefaultFont() {
         return defaultFont;
+    }
+
+    public WidgetFont getMonospaceFont() {
+        return monospaceFont;
     }
 
     /**
@@ -56,8 +63,7 @@ public class FontManager {
         if (cache.containsKey(info))
             return cache.get(info);
 
-        final GlyphFontRenderer fontRenderer =
-                GlyphFontRenderer.create(info.name, info.size, info.letterSpacing);
+        final GlyphFontRenderer fontRenderer = GlyphFontRenderer.create(info.name, info.size, info.letterSpacing, true);
         cache.put(info, fontRenderer);
 
         return fontRenderer;

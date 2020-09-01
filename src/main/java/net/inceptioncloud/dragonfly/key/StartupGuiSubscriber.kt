@@ -4,7 +4,6 @@ import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent
 import net.inceptioncloud.dragonfly.key.ui.AttachingKeyUI
 import net.inceptioncloud.dragonfly.key.ui.EnterKeyUI
-import net.minecraft.client.gui.GuiMainMenu
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -18,7 +17,6 @@ object StartupGuiSubscriber {
             val result = KeyController.validateStoredKey()
             if (result.success) {
                 LogManager.getLogger().info("Validation successful!")
-                event.target = GuiMainMenu()
             } else {
                 LogManager.getLogger().info("Validation failed: ${result.message}")
                 event.target = EnterKeyUI("Error while validating stored key: " + result.message)

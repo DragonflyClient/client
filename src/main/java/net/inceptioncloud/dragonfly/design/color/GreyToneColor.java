@@ -5,8 +5,7 @@ import java.awt.*;
 /**
  * All available grey tone colors.
  */
-public class GreyToneColor
-{
+public class GreyToneColor {
     /**
      * The brightest white.
      */

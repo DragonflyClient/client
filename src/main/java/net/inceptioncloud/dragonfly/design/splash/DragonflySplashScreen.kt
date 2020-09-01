@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.design.splash
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.Dragonfly.fontManager
-import net.inceptioncloud.dragonfly.design.color.*
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.font.renderer.UnicodeFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
@@ -10,12 +10,10 @@ import net.inceptioncloud.dragonfly.utils.RuntimeUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.client.renderer.texture.TextureManager
 import net.minecraft.client.shader.Framebuffer
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11
 import java.awt.*
-import java.text.DecimalFormat
 
 /**
  * The customized InceptionCloud Mod Splash Screen.
@@ -57,7 +55,7 @@ class DragonflySplashScreen {
         targetPercentage = (percentage + 1.0 / 20).coerceIn(0.0..1.0)
         action = if (element == null) "..." else element.className.split(".").last() + " - " + element.methodName
 
-        if (Dragonfly.isDeveloperMode /* improve startup performance in developer mode */ ) {
+        if (Dragonfly.isDeveloperMode /* improve startup performance in developer mode */) {
             percentage = targetPercentage
         } else {
             val start = System.currentTimeMillis()

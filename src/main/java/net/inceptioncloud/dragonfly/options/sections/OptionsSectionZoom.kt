@@ -12,8 +12,7 @@ import kotlin.math.roundToInt
  *
  * Allows the customization of the Optifine zoom.
  */
-object OptionsSectionZoom
-{
+object OptionsSectionZoom {
     /**
      * ## Animation
      * Whether the zoom should be animated.
@@ -72,8 +71,7 @@ object OptionsSectionZoom
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
-    fun init()
-    {
+    fun init() {
         optionSection {
             title = "Zoom"
 

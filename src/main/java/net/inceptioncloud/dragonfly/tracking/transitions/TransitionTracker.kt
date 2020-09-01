@@ -17,8 +17,7 @@ import javax.swing.JFrame
 /**
  * Tracks the amount of transition by origin and generates a .csv file if needed.
  */
-object TransitionTracker
-{
+object TransitionTracker {
     /**
      * List that contains all data.
      */
@@ -37,8 +36,7 @@ object TransitionTracker
     /**
      * Generates a .csv file with the tracked data.
      */
-    fun generateFile()
-    {
+    fun generateFile() {
         val folder = File("transition-tracker")
         val file = File("transition-tracker/${SimpleDateFormat("dd-MM-yyyy_HH-mm-ss").format(System.currentTimeMillis())}.csv")
 
@@ -66,8 +64,7 @@ object TransitionTracker
     /**
      * Builds the UI for the live transition tracking.
      */
-    fun initUI()
-    {
+    fun initUI() {
         val dataset = loadDataset()
         val chart = buildChart(dataset)
 
@@ -84,16 +81,14 @@ object TransitionTracker
         frame.iconImage = ImageIO.read(File("dragonfly/assets/img/icon_32x.png"))
     }
 
-    fun toggle ()
-    {
+    fun toggle() {
         frame.isVisible = !frame.isVisible
     }
 
     /**
      * Updates the UI when receiving new data.
      */
-    fun updateUI()
-    {
+    fun updateUI() {
         if (!frame.isVisible)
             return
 
@@ -106,8 +101,7 @@ object TransitionTracker
     /**
      * Loads the available data into a dataset for the chart.
      */
-    private fun loadDataset(): XYDataset
-    {
+    private fun loadDataset(): XYDataset {
         val dataset = XYSeriesCollection()
         val total = XYSeries("total")
         val allOrigins = data.map { it.groupedAmounts }.flatMap { it.keys }.distinct()
@@ -128,17 +122,16 @@ object TransitionTracker
     /**
      * Finally builds the chart with the dataset.
      */
-    private fun buildChart(dataset: XYDataset): JFreeChart
-    {
+    private fun buildChart(dataset: XYDataset): JFreeChart {
         val chart = ChartFactory.createXYLineChart(
-                "Transitions by origin during playtime",
-                "Tracking Point (^= 5 seconds)",
-                "Amount of Transitions",
-                dataset,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
+            "Transitions by origin during playtime",
+            "Tracking Point (^= 5 seconds)",
+            "Amount of Transitions",
+            dataset,
+            PlotOrientation.VERTICAL,
+            true,
+            true,
+            false
         )
 
         val plot = chart.xyPlot
@@ -168,8 +161,7 @@ object TransitionTracker
 /**
  * Represents data that has been tracked over the time.
  */
-class TrackingData(val trackingPoint: Long, val groupedAmounts: Map<String, Int>)
-{
+class TrackingData(val trackingPoint: Long, val groupedAmounts: Map<String, Int>) {
     /**
      * Quick function to access the total amount of transitions.
      */

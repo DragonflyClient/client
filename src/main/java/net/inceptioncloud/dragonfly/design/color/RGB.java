@@ -5,8 +5,7 @@ import java.awt.*;
 /**
  * This utility class allows the easy transformation of color values.
  */
-public class RGB
-{
+public class RGB {
     /**
      * The color that is being transformed.
      */
@@ -17,8 +16,7 @@ public class RGB
      *
      * @param rgb The RGB integer value
      */
-    private RGB (int rgb)
-    {
+    private RGB(int rgb) {
         color = new Color(rgb);
     }
 
@@ -30,8 +28,7 @@ public class RGB
      * @param b The blue integer value
      * @param a The alpha integer value
      */
-    private RGB (int r, int g, int b, int a)
-    {
+    private RGB(int r, int g, int b, int a) {
         color = new Color(r, g, b, a);
     }
 
@@ -43,40 +40,35 @@ public class RGB
      * @param b The blue float value
      * @param a The alpha float value
      */
-    private RGB (float r, float g, float b, float a)
-    {
+    private RGB(float r, float g, float b, float a) {
         color = new Color(r, g, b, a);
     }
 
     /**
      * @see RGB#RGB(int) Constructor that will be called
      */
-    public static RGB of (int rgb)
-    {
+    public static RGB of(int rgb) {
         return new RGB(rgb);
     }
 
     /**
      * @see RGB#RGB(int, int, int, int) Constructor that will be called
      */
-    public static RGB of (int r, int g, int b, int a)
-    {
+    public static RGB of(int r, int g, int b, int a) {
         return new RGB(r, g, b, a);
     }
 
     /**
      * @see RGB#RGB(float, float, float, float) Constructor that will be called
      */
-    public static RGB of (float r, float g, float b, float a)
-    {
+    public static RGB of(float r, float g, float b, float a) {
         return new RGB(r, g, b, a);
     }
 
     /**
      * @see RGB#RGB(int)  Constructor that will be called
      */
-    public static RGB of (Color color)
-    {
+    public static RGB of(Color color) {
         return new RGB(color.getRGB());
     }
 
@@ -85,8 +77,7 @@ public class RGB
      *
      * @param alpha The integer alpha
      */
-    public RGB alpha (int alpha)
-    {
+    public RGB alpha(int alpha) {
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
@@ -100,8 +91,7 @@ public class RGB
      *
      * @param alpha The float alpha
      */
-    public RGB alpha (float alpha)
-    {
+    public RGB alpha(float alpha) {
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
@@ -115,30 +105,27 @@ public class RGB
      *
      * @param percent The percent of the alpha value
      */
-    public RGB modifyAlphaRelative (float percent)
-    {
+    public RGB modifyAlphaRelative(float percent) {
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
         int a = color.getAlpha();
 
-        color = new Color(r / 255F, g / 255F, b / 255F, ( a / 255F ) * percent);
+        color = new Color(r / 255F, g / 255F, b / 255F, (a / 255F) * percent);
         return this;
     }
 
     /**
      * @return The RGB value of the color
      */
-    public int rgb ()
-    {
+    public int rgb() {
         return color.getRGB();
     }
 
     /**
      * @return The AWT color.
      */
-    public Color toColor ()
-    {
+    public Color toColor() {
         return color;
     }
 }

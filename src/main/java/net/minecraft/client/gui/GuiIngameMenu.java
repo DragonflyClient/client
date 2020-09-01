@@ -1,19 +1,16 @@
 package net.minecraft.client.gui;
 
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.design.color.CloudColor;
-import net.inceptioncloud.dragonfly.design.color.GreyToneColor;
+import net.inceptioncloud.dragonfly.apps.about.AboutDragonflyUI;
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI;
+import net.inceptioncloud.dragonfly.design.color.*;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
-import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
-import net.inceptioncloud.dragonfly.transition.supplier.ForwardNothing;
-import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton;
-import net.inceptioncloud.dragonfly.ui.components.button.SimpleButton;
+import net.inceptioncloud.dragonfly.transition.supplier.*;
+import net.inceptioncloud.dragonfly.ui.components.button.*;
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils;
-import net.inceptioncloud.dragonfly.ui.screens.AboutUI;
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI;
-import net.minecraft.client.gui.achievement.GuiAchievements;
-import net.minecraft.client.gui.achievement.GuiStats;
+import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
+import net.minecraft.client.gui.achievement.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.realms.RealmsBridge;
 import org.lwjgl.input.Mouse;
@@ -105,8 +102,8 @@ public class GuiIngameMenu extends GuiScreen
             this.buttonList.add(new SimpleButton(0, this.width / 2 - 100, this.height / 4 + 84, "Options"));
         }
 
-        /* Mod Options */
-        this.buttonList.add(new SimpleButton(7, this.width / 2 - 100, this.height / 4 + 108, "Mod Options"));
+        /* Dragonfly Settings */
+        this.buttonList.add(new SimpleButton(7, this.width / 2 - 100, this.height / 4 + 108, "Dragonfly Settings"));
         /* Quit World */
         this.buttonList.add(new ConfirmationButton(this, 1, this.width / 2 - 100, this.height / 4 + 132, this.mc.isIntegratedServerRunning() ? "Save and Quit to Title" : "Disconnect"));
     }
@@ -129,12 +126,12 @@ public class GuiIngameMenu extends GuiScreen
                 this.mc.loadWorld(null);
 
                 if (flag) {
-                    this.mc.displayGuiScreen(new GuiMainMenu());
+                    this.mc.displayGuiScreen(new MainMenuUI());
                 } else if (flag1) {
                     RealmsBridge realmsbridge = new RealmsBridge();
-                    realmsbridge.switchToRealms(new GuiMainMenu());
+                    realmsbridge.switchToRealms(new MainMenuUI());
                 } else {
-                    this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
+                    this.mc.displayGuiScreen(new GuiMultiplayer(new MainMenuUI()));
                 }
 
             case 2:
@@ -155,7 +152,7 @@ public class GuiIngameMenu extends GuiScreen
                 break;
 
             case 7:
-                mc.displayGuiScreen(new ModOptionsUI(this));
+                mc.displayGuiScreen(new DragonflySettingsUI(this));
                 break;
 
             case 9:
@@ -264,7 +261,7 @@ public class GuiIngameMenu extends GuiScreen
         final IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
         if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString)
             && mouseY >= 5 && mouseY <= 5 + fontRenderer.getHeight()) {
-            this.mc.displayGuiScreen(new AboutUI(this));
+            this.mc.displayGuiScreen(new AboutDragonflyUI(this));
         }
 
         super.mouseClicked(mouseX, mouseY, mouseButton);

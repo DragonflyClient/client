@@ -99,13 +99,6 @@ public class GuiPlayerTabOverlay extends Gui {
         }
 
         this.isBeingRendered = willBeRendered;
-
-        // ICMM - Hotkey Display
-
-        int x = mc.displayWidth / 2 - hotkeyFlyIn.castToInt();
-        int y = mc.displayHeight / 2 - 50;
-        drawRect(x - 3, y - 3, mc.displayWidth / 2, y + 20, new Color(0, 0, 0, 50).getRGB());
-        HotkeyRenderer.render(Dragonfly.getFontManager().retrieveOrBuild("", 20), KeyEvent.VK_P, "Open Indicator Menu", x, y);
     }
 
     /**

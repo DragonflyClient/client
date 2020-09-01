@@ -1,69 +1,71 @@
 package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.design.color.BluePalette
-import net.inceptioncloud.dragonfly.engine.animation.Animation
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.WidgetFont
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.*
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
-import net.inceptioncloud.dragonfly.engine.sequence.types.DoubleSequence
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.toWidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiScreen.Companion.isCtrlKeyDown
 import net.minecraft.client.gui.GuiScreen.Companion.isShiftKeyDown
 import net.minecraft.util.ChatAllowedCharacters
+import org.apache.commons.lang3.StringUtils
 import org.lwjgl.input.Keyboard.*
 import java.awt.Color
 import kotlin.math.abs
-import kotlin.properties.Delegates
 
-val DEFAULT_TEXT_COLOR = WidgetColor(0xababab)
+val DEFAULT_TEXT_COLOR
+        get() = DragonflyPalette.background.brighter(0.4)
 
 /**
  * A simple text field that the user can write to. Supports common operations like copying, pasting,
  * cutting and selecting with shift + arrow key.
  *
- * @param label a short text that describes what the user should write into the field
- * @param isEnabled if the field is enabled, the user can write text to it
- * @param maxStringLength the maximum amount of characters that fit into the field
- * @param color the color that is used for the cursor and other highlighted parts of the field
+ * @property label a short text that describes what the user should write into the field
+ * @property isEnabled if the field is enabled, the user can write text to it
+ * @property maxStringLength the maximum amount of characters that fit into the field
+ * @property color the color that is used for the cursor and other highlighted parts of the field
  */
 class InputTextField(
-    @property:State var font: WidgetFont = Dragonfly.fontManager.defaultFont,
-    @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
-    @property:Interpolate var fontSize: Double = 18.0,
-    @property:Interpolate var padding: Double = 2.0,
+    initializerBlock: (InputTextField.() -> Unit)? = null
+) : AssembledWidget<InputTextField>(initializerBlock), IPosition, IDimension, IAlign, IColor {
 
-    @property:State var label: String = "Input Label",
-    @property:State var isEnabled: Boolean = true,
-    @property:State var maxStringLength: Int = 200,
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var width: Double by property(100.0)
+    @Interpolate override var height: Double by property(20.0)
+    override var horizontalAlignment: Alignment by property(Alignment.START)
+    override var verticalAlignment: Alignment by property(Alignment.START)
 
-    x: Double = 0.0,
-    y: Double = 0.0,
-    @property:Interpolate override var width: Double = 100.0,
-    @property:Interpolate override var height: Double = 20.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor(BluePalette.PRIMARY),
-    @property:State override var horizontalAlignment: Alignment = Alignment.START,
-    @property:State override var verticalAlignment: Alignment = Alignment.START
-) : AssembledWidget<InputTextField>(), IPosition, IDimension, IAlign, IColor {
+    @Interpolate override var color: WidgetColor by property(DragonflyPalette.accentNormal)
+    @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
+    @Interpolate var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
 
-    @Interpolate
-    override var x: Double by Delegates.notNull()
+    var fontRenderer: IFontRenderer? by property(null)
+    @Interpolate var padding: Double by property(2.0)
 
-    @Interpolate
-    override var y: Double by Delegates.notNull()
+    var allowList = listOf<Int>()
+
+    var label: String by property("Input Label")
+    var isEnabled: Boolean by property(true)
+    var maxStringLength: Int by property(200)
+
+    @Interpolate var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
 
     /**
      * Whether the text field is currently focused. If it is, typed keys will be passed on to the input field
      * and a cursor will be active. When this property changes, the [focusedStateChanged] function will be called.
      */
-    @Info
     var isFocused = false
         set(value) {
             if (field == value)
@@ -73,12 +75,30 @@ class InputTextField(
             focusedStateChanged(value)
         }
 
+    /**
+     * Whether the input text should be replaced with wildcards (called password-mode).
+     */
+    var isPassword by property(false)
+
     /** The currently entered input text. */
-    @Info
     var inputText: String = ""
+        set(value) {
+            realText = value
+            field = if (isPassword) {
+                StringUtils.repeat('*', value.length)
+            } else {
+                value
+            }
+        }
+
+    /**
+     * The real content of the input text field. This only differs from [inputText] if [isPassword]
+     * is true.
+     */
+    var realText: String = ""
 
     /** Whether the text label is raised due to present input text or focus state. */
-    private val isLabelRaised: Boolean
+    var isLabelRaised: Boolean = false
         get() = isFocused || inputText.isNotEmpty()
 
     /** The position of the cursor as well as the start of the text selection*/
@@ -93,19 +113,13 @@ class InputTextField(
     /** The time in milliseconds the cursor has moved lately */
     private var timeCursorMoved = 0L
 
+    private var labelHeight: Double? = null
+    private var labelY: Double? = null
+
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
         this.x = alignedX
         this.y = alignedY
-
-        GlobalScope.launch {
-            DoubleSequence(fontSize, fontSize / 1.8, 20).also {
-                for (i in 0..20) {
-                    it.next()
-                    font.fontRenderer(size = it.current.toInt(), fontWeight = this@InputTextField.fontWeight)
-                }
-            }
-        }
     }
 
     /**
@@ -116,25 +130,22 @@ class InputTextField(
         val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
             ?: error("Structure should contain bottom line overlay!")
 
-        label.attachAnimation(
-            MorphAnimation(label.clone().also {
-                it.fontSize = if (isLabelRaised) fontSize / 1.8 else fontSize
-                it.height = if (isLabelRaised) height / 2.5 else height
-                it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
-            }, 20)
-        ) { start() }
+        label.detachAnimation<MorphAnimation>()
+        label.morph(
+            30, EaseQuad.IN_OUT,
+            label::scaleFactor to if (isLabelRaised) 0.5 else 1.0,
+            label::x to if (isLabelRaised) x + padding * 0.5 else x,
+            label::y to if (isLabelRaised) y + padding * 0.5 else labelY,
+            label::height to if (isLabelRaised) height / 2.5 else labelHeight,
+            label::color to if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
+        )?.start()
 
-        lineOverlay.attachAnimation(
-            MorphAnimation(lineOverlay.clone().also {
-                it.width = if (focused) width else 0.0
-            }, 60, EaseCubic.IN_OUT)
-        ) { start() }
+        lineOverlay.detachAnimation<MorphAnimation>()
+        lineOverlay.morph(
+            30, EaseCubic.IN_OUT,
+            lineOverlay::width to if (focused) width else 0.0
+        )?.start()
     }
-
-    /**
-     * Builds a font renderer based on the [font], [fontSize] and [fontWeight].
-     */
-    private fun getFontRenderer() = (structure["input-text"] as TextField).fontRenderer
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "box-round" to RoundedRectangle(),
@@ -153,8 +164,8 @@ class InputTextField(
             it.y = y
             it.width = width
             it.height = height
-            it.arc = 2.0
-            it.color = WidgetColor(0xF5F5F5)
+            it.arc = width / 100.0
+            it.color = backgroundColor
         }
 
         (structure["box-sharp"] as Rectangle).also {
@@ -167,38 +178,38 @@ class InputTextField(
 
         val inputText = (structure["input-text"] as TextField).also {
             it.staticText = ""
-            it.font = font
-            it.fontSize = fontSize
-            it.fontWeight = fontWeight
-            it.color = WidgetColor(Color.BLACK)
+            it.fontRenderer = fontRenderer
+            it.color = foregroundColor
             it.width = width
-            it.height = height - 2
+            it.height = height - height / 5.0
             it.x = x
-            it.y = y + 2
+            it.y = y + height / (if (isPassword) 3.0 else 5.0)
             it.padding = padding
             it.textAlignVertical = Alignment.CENTER
         }
 
         (structure["label"] as TextField).also {
             it.staticText = label
-            it.font = font
-            it.fontSize = fontSize
-            it.fontWeight = fontWeight
+            it.fontRenderer = fontRenderer
             it.color = DEFAULT_TEXT_COLOR
             it.width = width
-            it.height = height
+            it.adaptHeight = true
             it.x = x
-            it.y = y
+            it.y = y + (height - it.height) / 2.0
             it.padding = padding
-            it.textAlignVertical = Alignment.CENTER
+
+            if (!isLabelRaised) {
+                labelHeight = it.height
+                labelY = it.y
+            }
         }
 
         val bottomLine = (structure["bottom-line"] as Rectangle).also {
             it.width = width
-            it.height = 1.0
+            it.height = height / 20.0
             it.x = x
             it.y = y + height - it.height
-            it.color = DEFAULT_TEXT_COLOR
+            it.color = lineColor
         }
 
         (structure["bottom-line-overlay"] as Rectangle).also {
@@ -210,18 +221,17 @@ class InputTextField(
         }
 
         (structure["cursor"] as Rectangle).also {
-            it.height = inputText.fontRenderer.height.toDouble()
-            it.width = 0.6
+            it.height = inputText.fontRenderer?.height?.toDouble() ?: 0.0
+            it.width = height / 33.3
             it.color = color
             it.y = y + height - it.height - bottomLine.height - 1
         }
     }
 
     override fun render() {
-        val fontRenderer = getFontRenderer()
         val cursorPos = cursorPosition - lineScrollOffset
         val maxStringSize = (width - padding * 2).toInt()
-        val visibleText = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringSize)
+        val visibleText = fontRenderer?.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringSize) ?: ""
         val end = (selectionEnd - lineScrollOffset).coerceAtMost(visibleText.length)
         val cursorInBounds = cursorPos >= 0 && cursorPos <= visibleText.length
         val cursorVisible = isFocused && ((System.currentTimeMillis() / 500) % 2 == 0L
@@ -230,18 +240,18 @@ class InputTextField(
 
         if (visibleText.isNotEmpty()) {
             val string = if (cursorInBounds) visibleText.substring(0, cursorPos) else visibleText
-            val stringWidth = fontRenderer.getStringWidth(string)
+            val stringWidth = fontRenderer?.getStringWidth(string) ?: 0
             x1 = x + stringWidth
         }
 
         val cursorNotAtEnd = cursorPosition < inputText.length || inputText.length >= maxStringLength
         var cursorX = x1 + padding
         val closedRange = 0..visibleText.length
-        val selectionWidth: Double = fontRenderer.getStringWidth(
+        val selectionWidth: Double = fontRenderer?.getStringWidth(
             visibleText.substring(
                 cursorPos.coerceAtMost(end).coerceIn(closedRange), end.coerceAtLeast(cursorPos).coerceIn(closedRange)
             )
-        ).toDouble()
+        )?.toDouble() ?: 0.0
 
         if (!cursorInBounds) {
             cursorX = if (cursorPos > 0) x + width else x
@@ -252,28 +262,22 @@ class InputTextField(
         cursorX += 0.5
 
         val cursor = (structure["cursor"] as Rectangle)
-        val destinationCursorX = (cursor.findAnimation<MorphAnimation>()?.destination as? Rectangle)?.x
+        val destinationCursorX = cursor.findAnimation<MorphAnimation>()?.updates?.find { it.first == cursor::x }?.second
         cursor.isVisible = cursorVisible
 
         if (cursor.x != cursorX && destinationCursorX != cursorX) {
             timeCursorMoved = System.currentTimeMillis()
-            cursor.findAnimation<MorphAnimation>()?.let { cursor.detachAnimation(it) }
-            cursor.attachAnimation(
-                MorphAnimation(
-                    cursor.clone().apply { x = cursorX }, duration = (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20)
-                )
-            ) {
-                start()
-                post { animation: Animation, widget: Widget<*> ->
-                    widget.detachAnimation(animation)
-                }
-            }
+            cursor.detachAnimation<MorphAnimation>()
+            cursor.morph(
+                (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20), null,
+                cursor::x to cursorX
+            )?.post { animation, widget -> widget.detachAnimation(animation) }?.start()
         }
 
         (structure["input-text"] as TextField).also {
             if (it.staticText != visibleText) {
                 it.staticText = visibleText
-                it.updateStructure()
+                it.runStructureUpdate()
             }
         }
 
@@ -290,7 +294,7 @@ class InputTextField(
     }
 
     override fun handleKeyTyped(char: Char, keyCode: Int) {
-        if (!isFocused)
+        if (!isFocused || (allowList.isNotEmpty() && !allowList.contains(keyCode)))
             return
 
         when {
@@ -347,22 +351,14 @@ class InputTextField(
     }
 
     override fun handleMousePress(data: MouseData) {
-        isFocused = isHovered
+        isFocused = data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
 
         if (isFocused && data.button == 0) {
-            val fontRenderer = getFontRenderer()
             val i: Int = (data.mouseX - x - padding).toInt() // TODO: -4 can be removed
-            val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), (width - padding * 2).toInt())
-            setCursorPosition(fontRenderer.trimStringToWidth(s, i).length + lineScrollOffset)
+            val s: String = fontRenderer?.trimStringToWidth(inputText.substring(lineScrollOffset), (width - padding * 2).toInt()) ?: ""
+            setCursorPosition(fontRenderer?.trimStringToWidth(s, i)?.length ?: 0 + lineScrollOffset)
         }
     }
-
-    override fun clone() = InputTextField(
-        font, fontWeight, fontSize, padding, label, isEnabled, maxStringLength,
-        x, y, width, height, color, horizontalAlignment, verticalAlignment
-    )
-
-    override fun newInstance() = InputTextField()
 
     /* == Input Text Field Utility */
 
@@ -393,8 +389,8 @@ class InputTextField(
         val k: Int = maxStringLength - inputText.length - (i - j)
         val l: Int
 
-        if (inputText.isNotEmpty()) {
-            result += inputText.substring(0, i)
+        if (realText.isNotEmpty()) {
+            result += realText.substring(0, i)
         }
 
         if (k < allowedCharacters.length) {
@@ -405,8 +401,8 @@ class InputTextField(
             l = allowedCharacters.length
         }
 
-        if (inputText.isNotEmpty() && j < inputText.length) {
-            result += inputText.substring(j)
+        if (realText.isNotEmpty() && j < realText.length) {
+            result += realText.substring(j)
         }
 
         inputText = result
@@ -430,7 +426,7 @@ class InputTextField(
         if (!isEnabled && !force)
             return
 
-        if (inputText.isNotEmpty()) {
+        if (realText.isNotEmpty()) {
             if (selectionEnd != cursorPosition) {
                 writeText("")
             } else {
@@ -439,10 +435,10 @@ class InputTextField(
                 val start = if (toLeft) cursorPosition else cursorPosition + amount
                 var result = ""
                 if (end >= 0) {
-                    result = inputText.substring(0, end)
+                    result = realText.substring(0, end)
                 }
-                if (start < inputText.length) {
-                    result += inputText.substring(start)
+                if (start < realText.length) {
+                    result += realText.substring(start)
                 }
                 inputText = result
                 if (toLeft) {
@@ -454,7 +450,6 @@ class InputTextField(
 
     private fun setSelectionPos(pos: Int) {
         val i: Int = inputText.length
-        val fontRenderer = getFontRenderer()
         var position = pos
 
         if (position > i) {
@@ -471,10 +466,10 @@ class InputTextField(
             this.lineScrollOffset = i
         }
         val maxStringWidth: Int = (width - padding * 2).toInt()
-        val s: String = fontRenderer.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringWidth)
+        val s: String = fontRenderer?.trimStringToWidth(inputText.substring(lineScrollOffset), maxStringWidth) ?: ""
         val k: Int = s.length + lineScrollOffset
         if (position == lineScrollOffset) {
-            lineScrollOffset -= fontRenderer.trimStringToWidth(inputText, maxStringWidth, true).length
+            lineScrollOffset -= fontRenderer?.trimStringToWidth(inputText, maxStringWidth, true)?.length ?: 0
         }
         if (position > k) {
             lineScrollOffset += position - k

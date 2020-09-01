@@ -15,8 +15,7 @@ import net.inceptioncloud.dragonfly.engine.structure.*
  * @property easing an optional easing function
  */
 open class FloatAnimationIn(val duration: Int, val distance: Double = 40.0, val easing: ((Double) -> Double)? = null)
-    : Animation()
-{
+    : Animation() {
     /**
      * A sequence that provides the transition for the alpha and y values.
      */
@@ -24,24 +23,19 @@ open class FloatAnimationIn(val duration: Int, val distance: Double = 40.0, val 
         .withEasing(easing)
         .withEndHook { finish() }
 
-    override fun applyToShape(scratchpad: Widget<*>, base: Widget<*>)
-    {
-        scratchpad as IColor
-        scratchpad as IPosition
+    override fun applyToShape(base: Widget<*>) {
         base as IColor
         base as IPosition
 
-        scratchpad.color.alphaDouble = base.color.alphaDouble * sequence.current
-        scratchpad.y = base.y + distance - (distance * sequence.current)
+        base.color.alphaDouble = base.color.alphaDouble * sequence.current
+        base.y = base.y + distance - (distance * sequence.current)
 
-        if (scratchpad is IOutline && base is IOutline)
-        {
-            scratchpad.outlineColor.alphaDouble = base.outlineColor.alphaDouble * sequence.current
+        if (base is IOutline) {
+            base.outlineColor.alphaDouble = base.outlineColor.alphaDouble * sequence.current
         }
     }
 
-    override fun tick()
-    {
+    override fun tick() {
         if (!running)
             return
 

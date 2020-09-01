@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.event.control
 
 import net.inceptioncloud.dragonfly.event.Cancellable
+import net.inceptioncloud.dragonfly.event.Event
 import org.lwjgl.input.Keyboard
 
 /**
@@ -14,5 +15,9 @@ import org.lwjgl.input.Keyboard
  */
 data class KeyInputEvent @JvmOverloads constructor(
     val key: Int,
-    val press: Boolean = try { Keyboard.isKeyDown(key) } catch (e: Exception) { false }
-) : Cancellable()
+    val press: Boolean = try {
+        Keyboard.isKeyDown(key)
+    } catch (e: Exception) {
+        false
+    }
+) : Cancellable(), Event

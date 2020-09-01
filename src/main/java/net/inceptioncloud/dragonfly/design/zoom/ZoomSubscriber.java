@@ -14,19 +14,18 @@ import optifine.Config;
 /**
  * Listens to the {@link ZoomEvent} to provide a zoom animation if enabled.
  */
-public class ZoomSubscriber
-{
+public class ZoomSubscriber {
     /**
      * The transition that animates the OptiFine zoom.
      */
-    private final SmoothDoubleTransition zoomProgress = SmoothDoubleTransition.builder().start(0.0).end(1.0).fadeIn(0).stay(20).fadeOut(15).autoTransformator((ForwardBackward) () -> Config.zoomMode).build();
+    private final SmoothDoubleTransition zoomProgress = SmoothDoubleTransition.builder().start(0.0).end(1.0).fadeIn(0).stay(20).fadeOut(15)
+            .autoTransformator((ForwardBackward) () -> Config.zoomMode).build();
 
     /**
      * {@link ZoomEvent} Subscriber
      */
     @Subscribe
-    public void zoom (ZoomEvent event)
-    {
+    public void zoom(ZoomEvent event) {
         final Minecraft mc = Minecraft.getMinecraft();
         final EntityRenderer entityRenderer = mc.entityRenderer;
 

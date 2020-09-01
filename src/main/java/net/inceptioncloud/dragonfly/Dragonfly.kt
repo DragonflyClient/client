@@ -1,24 +1,30 @@
 package net.inceptioncloud.dragonfly
 
-import net.inceptioncloud.dragonfly.design.DesignSubscribers
+import net.inceptioncloud.dragonfly.account.*
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
 import net.inceptioncloud.dragonfly.engine.font.FontManager
-import net.inceptioncloud.dragonfly.event.ModEventBus
-import net.inceptioncloud.dragonfly.event.client.ClientShutdownEvent
-import net.inceptioncloud.dragonfly.event.client.ClientTickEvent
-import net.inceptioncloud.dragonfly.options.Options
-import net.inceptioncloud.dragonfly.options.OptionsManager
+import net.inceptioncloud.dragonfly.event.*
+import net.inceptioncloud.dragonfly.event.client.*
+import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
+import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.state.GameStateManager
 import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers
 import net.inceptioncloud.dragonfly.transition.Transition
+import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.lwjgl.opengl.Display
+import java.io.File
+import java.nio.file.*
 import java.util.*
+
+/*
+ *   🎇   🔥300🔥   🎆
+ */
 
 /**
  * The main class of the Inception Cloud Dragonfly Modification.
@@ -54,12 +60,6 @@ object Dragonfly {
     val transitions: MutableList<Transition> = Collections.synchronizedList(ArrayList())
 
     /**
-     * The last amount of mod ticks per second.
-     */
-    @JvmStatic
-    var lastTPS = 0
-
-    /**
      * Whether the developer mode is currently enabled.
      * It provides several features for developers or users to find, identify and fix bugs.
      */
@@ -67,19 +67,21 @@ object Dragonfly {
     var isDeveloperMode = false
 
     /**
-     * The [Timer] that performs the mod ticks.
+     * The directory in which secret Dragonfly files are stored.
      */
-    private lateinit var tickTimer: Timer
+    @JvmStatic
+    val secretsDirectory = File("dragonfly/.secrets").also {
+        if(it.mkdirs()) {
+            val path: Path = FileSystems.getDefault().getPath("dragonfly/.secrets")
+            Files.setAttribute(path, "dos:hidden", true)
+        }
+    }
 
     /**
-     * The amount of ticks that have been executed in the current second.
+     * The Dragonfly account with which the user is currently authenticated or null if
+     * there is no connected Dragonfly account.
      */
-    private var ticks = 0
-
-    /**
-     * When the first tick of the second was recorded. Used for calculating reasons.
-     */
-    private var firstTick: Long = 0
+    var account: DragonflyAccount? = null
 
     /**
      * Dragonfly Initializer Block
@@ -90,9 +92,8 @@ object Dragonfly {
     fun init() {
         Display.setTitle("Dragonfly ${DragonflyVersion.string} for Minecraft 1.8.8")
 
-        OptionsManager.loadOptions()
+        Taskbar
         DefaultSubscribers.register(eventBus)
-        DesignSubscribers.register(eventBus)
 
         fontManager = FontManager()
         splashScreen = DragonflySplashScreen()
@@ -111,11 +112,29 @@ object Dragonfly {
             }
         }, 0, 5)
 
-        Runtime.getRuntime().addShutdownHook(Thread(Runnable {
+        try {
+            LogManager.getLogger().info("Checking for authenticated Dragonfly account...")
+            val stored = AuthenticationBridge.validateStoredToken()
+
+            stored?.token = AuthenticationBridge.readStoredToken()
+            account = stored
+
+            if (stored == null) LogManager.getLogger().info("No Dragonfly account token stored!")
+            else LogManager.getLogger().info("Successfully authenticated with Dragonfly")
+        } catch (e: Exception) {
+            LogManager.getLogger().warn("Failed to authenticate with Dragonfly:")
+            e.printStackTrace()
+        } finally {
+            if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
+                AuthenticationBridge.showLoginModal()
+            }
+        }
+
+        Runtime.getRuntime().addShutdownHook(Thread {
             // EVENTBUS - ClientShutdownEvent when the game is being closed
             val event = ClientShutdownEvent()
             eventBus.post(event)
-        }))
+        })
     }
 
     /**
@@ -132,9 +151,30 @@ object Dragonfly {
      */
     @JvmStatic
     fun reload() {
-        Options.contentSave()
+        DragonflyOptions.contentSave()
         fontManager.clearCache()
     }
+
+    /**
+     * The [Timer] that performs the mod ticks.
+     */
+    private lateinit var tickTimer: Timer
+
+    /**
+     * The amount of ticks that have been executed in the current second.
+     */
+    private var ticks = 0
+
+    /**
+     * When the first tick of the second was recorded. Used for calculating reasons.
+     */
+    private var firstTick: Long = 0
+
+    /**
+     * The last amount of mod ticks per second.
+     */
+    @JvmStatic
+    var lastTPS = 0
 
     /**
      * Record the procedure of the tick for the debug screen.
@@ -173,13 +213,19 @@ object Dragonfly {
     private fun tick() {
         synchronized(this) {
             transitions.toTypedArray().forEach { it.tick() }
-            ScreenOverlay.buffer.update()
+            ScreenOverlay.stage.update()
+            Minecraft.getMinecraft().ingameGUI?.stage?.update()
 
-            if (Minecraft.getMinecraft().currentScreen != null)
-                Minecraft.getMinecraft().currentScreen.buffer.update()
+            Minecraft.getMinecraft().currentScreen?.stage?.update()
 
             val tickEvent = ClientTickEvent()
             eventBus.post(tickEvent)
         }
     }
 }
+
+/**
+ * Convenient access to the Minecraft instance.
+ */
+val Any.mc: Minecraft
+    get() = Minecraft.getMinecraft()

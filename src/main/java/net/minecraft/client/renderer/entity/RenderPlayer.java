@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer.entity;
 
+import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
 import net.inceptioncloud.dragonfly.cosmetics.types.*;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -172,6 +173,11 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
         this.setModelVisibilities(clientPlayer);
         modelplayer.swingProgress = 0.0F;
         modelplayer.isSneak = false;
+
+        if (EnhancedGameExperienceMod.getFixRidingHand()) {
+            modelplayer.isRiding = false;
+        }
+
         modelplayer.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, clientPlayer);
         modelplayer.renderRightArm();
     }

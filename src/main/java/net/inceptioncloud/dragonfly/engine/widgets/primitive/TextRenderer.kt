@@ -1,12 +1,12 @@
 package net.inceptioncloud.dragonfly.engine.widgets.primitive
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.engine.font.*
+import net.inceptioncloud.dragonfly.engine.font.FontWeight
+import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
-import net.inceptioncloud.dragonfly.engine.internal.annotations.State
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.minecraft.client.gui.Gui
 import java.awt.Color
@@ -17,27 +17,27 @@ import java.awt.Color
  * A simple widget whose only purpose is to render text with the given font renderer.
  * The width and height properties are updated based on the space that the text needs.
  *
- * @param text the text to be rendered
- * @param dropShadow whether the text should have a shadow
- * @param fontRenderer the font renderer that draws the text
+ * @property text the text to be rendered
+ * @property dropShadow whether the text should have a shadow
+ * @property fontRenderer the font renderer that draws the text
  */
 class TextRenderer(
-    @property:Interpolate var text: String = "Default Text",
-    @property:Interpolate var dropShadow: Boolean = false,
+    initializerBlock: (TextRenderer.() -> Unit)? = null
+) : Widget<TextRenderer>(initializerBlock), IPosition, IColor, IDimension {
 
-    @property:State var fontRenderer: IFontRenderer = Dragonfly.fontManager.regular,
-    @property:State var font: WidgetFont? = null,
-    @property:State var fontWeight: FontWeight = FontWeight.REGULAR,
-    @property:Interpolate var fontSize: Double = 19.0,
+    var text: String by property("Default Text")
+    var showBounds: Boolean by property(false)
+    var dropShadow: Boolean by property(false)
+    var shadowColor: WidgetColor? by property(null)
+    var shadowDistance: Double? by property(null)
 
-    @property:State var showBounds: Boolean = false,
+    var fontRenderer: IFontRenderer? by property(null)
 
-    @property:Interpolate override var x: Double = 0.0,
-    @property:Interpolate override var y: Double = 0.0,
-    @property:Interpolate override var width: Double = 0.0,
-    @property:Interpolate override var height: Double = 0.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT
-) : Widget<TextRenderer>(), IPosition, IColor, IDimension {
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var width: Double = 0.0
+    @Interpolate override var height: Double = 0.0
+    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
     override fun preRender() {
         /* kept empty since the render preparations would break the font-rendering */
@@ -51,60 +51,61 @@ class TextRenderer(
         if (color.alphaDouble <= 0.1)
             return
 
-        if (font != null) {
-            fontRenderer = font?.fontRenderer(
-                fontWeight = this@TextRenderer.fontWeight,
-                size = fontSize.toInt()
-            ) ?: fontRenderer
-        }
+        if (fontRenderer == null)
+            return
 
         val posX = x.toFloat()
         val posY = if (fontRenderer is GlyphFontRenderer) y.toFloat() + 3F else y.toFloat()
 
         color.glBindColor()
-        height = fontRenderer.height.toDouble()
-        width = fontRenderer.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
+        height = fontRenderer!!.height.toDouble()
+        width = if (dropShadow) {
+            fontRenderer!!.drawStringWithCustomShadow(
+                text, posX.toInt(), posY.toInt(), color.rgb,
+                shadowColor?.rgb ?: WidgetColor(0.0, 0.0, 0.0, 0.5).rgb,
+                shadowDistance?.toFloat() ?: 1F
+            ).toDouble() - posX
+        } else {
+            fontRenderer!!.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
+        }
 
         if (showBounds) {
             Gui.drawRect(posX.toInt(), posY.toInt(), (posX + width).toInt(), (posY + height).toInt(), Color(0, 0, 0, 50).rgb)
         }
     }
 
-    override fun stateChanged(new: Widget<*>) {
+    override fun stateChanged() {
+        if (fontRenderer == null)
+            return
+
         // override to support aligning in assembled widgets
-        height = fontRenderer.height.toDouble()
-        width = fontRenderer.getStringWidth(text).toDouble()
+        height = fontRenderer!!.height.toDouble()
+        width = fontRenderer!!.getStringWidth(text).toDouble()
     }
 
     /**
      * Puts a widget to the right of the text.
      */
-    fun <E : Widget<E>> right(sibling: Widget<E>) {
+    fun <W : Widget<W>> right(sibling: Widget<W>) {
         sibling as IPosition
         sibling.x = this.x + this.width
         sibling.y = this.y
 
         val (siblingWidth, _) = Defaults.getSizeOrDimension(sibling)
         @Suppress("UNCHECKED_CAST")
-        Defaults.setSizeOrDimension(sibling as E, this.height, siblingWidth)
+        Defaults.setSizeOrDimension(sibling as W, this.height, siblingWidth)
     }
 
     /**
      * Puts a widget below the text.
      */
-    fun <E : Widget<E>> below(sibling: Widget<E>) {
+    fun <W : Widget<W>> below(sibling: Widget<W>) {
         sibling as IPosition
         sibling.x = this.x
         sibling.y = this.y + this.height
 
         val (_, siblingHeight) = Defaults.getSizeOrDimension(sibling)
         @Suppress("UNCHECKED_CAST")
-        Defaults.setSizeOrDimension(sibling as E, siblingHeight, this.width)
+        Defaults.setSizeOrDimension(sibling as W, siblingHeight, this.width)
     }
-
-    override fun clone() = TextRenderer(
-        text, dropShadow, fontRenderer, font, fontWeight, fontSize, showBounds, x, y, width, height, color
-    )
-
-    override fun newInstance() = TextRenderer()
 }

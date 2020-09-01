@@ -7,14 +7,12 @@ import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker.gener
 /**
  * Listens to the Client Shutdown Event to save the Tracking File.
  */
-class FileSaveSubscriber
-{
+class FileSaveSubscriber {
     /**
      * [ClientShutdownEvent] Subscriber
      */
     @Subscribe
-    fun clientShutdown(event: ClientShutdownEvent?)
-    {
+    fun clientShutdown(event: ClientShutdownEvent?) {
         generateFile()
     }
 }

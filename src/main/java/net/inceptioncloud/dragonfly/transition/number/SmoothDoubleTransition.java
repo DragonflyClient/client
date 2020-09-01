@@ -1,19 +1,15 @@
 package net.inceptioncloud.dragonfly.transition.number;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
+import java.text.*;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * <h2>Double Transition</h2>
  * <p>
  * The transition that supplies a double value that transforms from the start value to the end value in only that direction.
  */
-public class SmoothDoubleTransition extends TransitionTypeNumber
-{
+public class SmoothDoubleTransition extends TransitionTypeNumber {
     /**
      * A simple object that the constructor and non-thread-safe methods are synchronized on.
      * The content of this object is never used and it is never updated or accessed.
@@ -110,9 +106,10 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
      * @param reachEnd   {@link #reachEnd}
      * @param reachStart {@link #reachStart}
      */
-    SmoothDoubleTransition (final double start, final double end, final int fadeIn, final int stay, final int fadeOut
-        , final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator)
-    {
+    SmoothDoubleTransition(
+            final double start, final double end, final int fadeIn, final int stay, final int fadeOut
+            , final Runnable reachEnd, final Runnable reachStart, final IntSupplier autoTransformator
+    ) {
         super(reachEnd, reachStart, autoTransformator);
 
         synchronized (threadLock) {
@@ -135,10 +132,10 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
             Function<Double, Double> fadeOutFunction = x -> perStep - (x * (perStep / fadeOut));
             Function<Double, Double> fadeInFunction = x -> perStep - (x * (perStep / fadeIn));
 
-            for (int x = 1 ; x <= fadeOut ; x++)
+            for (int x = 1; x <= fadeOut; x++)
                 fadeOutDistance += fadeOutFunction.apply((double) x);
 
-            for (int x = 1 ; x <= fadeIn ; x++)
+            for (int x = 1; x <= fadeIn; x++)
                 fadeInDistance += fadeInFunction.apply((double) x);
 
             double stayStart = start + (negative ? -fadeInDistance : fadeInDistance);
@@ -147,8 +144,7 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
         }
     }
 
-    public static SmoothDoubleTransitionBuilder builder ()
-    {
+    public static SmoothDoubleTransitionBuilder builder() {
         return new SmoothDoubleTransitionBuilder();
     }
 
@@ -156,8 +152,7 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
      * The step-forward method for the double transition.
      */
     @Override
-    public void doForward ()
-    {
+    public void doForward() {
         synchronized (threadLock) {
             // If the value is already at the end, interrupt the step
             if (isAtEnd())
@@ -189,8 +184,7 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
      * The step-backward method for the double transition.
      */
     @Override
-    public void doBackward ()
-    {
+    public void doBackward() {
         synchronized (threadLock) {
             // If the value is already at the start, interrupt the step
             if (isAtStart())
@@ -222,8 +216,7 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
      * @return Whether the current value is at the end.
      */
     @Override
-    public boolean isAtEnd ()
-    {
+    public boolean isAtEnd() {
         return getPhase() == 3 && getPhasePerStep() == 0.0D;
 //        return negative ? getDistance() - (getDistance() / 100) <= end : getValidatedValue() + (getDistance() / 100) >= end;
     }
@@ -232,8 +225,7 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
      * @return Whether the current value is at the start.
      */
     @Override
-    public boolean isAtStart ()
-    {
+    public boolean isAtStart() {
         return getPhase() == 1 && getPhasePerStep() == 0.0D;
 //        return negative ? current + (getDistance() / 100)>= start : current - (getDistance() / 100) <= start;
     }
@@ -242,8 +234,7 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
      * @return The current double value
      */
     @Override
-    public double get ()
-    {
+    public double get() {
         keepInBounds();
         return current;
     }
@@ -252,8 +243,7 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
      * @return The current double value casted to an integer.
      */
     @Override
-    public int castToInt ()
-    {
+    public int castToInt() {
         return (int) get();
     }
 
@@ -262,17 +252,16 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
      *
      * @param end The end value
      */
-    public void setEnd (final double end)
-    {
+    public void setEnd(final double end) {
         this.end = end;
-        this.perStep = (Math.max(start, end) - Math.min(start, end)) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
+        this.perStep = (Math.max(start, end) - Math
+                .min(start, end)) / amountOfSteps; // Calculate the value with which the current value is modified when processing a step
     }
 
     /**
      * Makes sure the value doesn't run out of bounds.
      */
-    public void keepInBounds ()
-    {
+    public void keepInBounds() {
         if (negative)
             current = Math.min(start, Math.max(current, end));
         else
@@ -284,8 +273,7 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
      * <p>
      * 1 - fadeIn<br/> 2 - stay<br/> 3 - fadeOut<br/>
      */
-    public int getPhase ()
-    {
+    public int getPhase() {
         if (currentStep < fadeIn)
             return 1;
         else if (currentStep >= fadeIn + stay)
@@ -296,14 +284,13 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
     /**
      * Calculates the current distance a step should take.
      */
-    public synchronized double getPhasePerStep ()
-    {
+    public synchronized double getPhasePerStep() {
         try {
             int phase = getPhase();
             return
-                phase == 1 ? Objects.requireNonNull(fadeInTransition).get()
-                : phase == 3 ? Objects.requireNonNull(fadeOutTransition).get()
-                : perStepStay;
+                    phase == 1 ? Objects.requireNonNull(fadeInTransition).get()
+                            : phase == 3 ? Objects.requireNonNull(fadeOutTransition).get()
+                            : perStepStay;
         } catch (NullPointerException exception) {
             exception.printStackTrace();
             System.out.println(getOriginStackTrace());
@@ -315,35 +302,31 @@ public class SmoothDoubleTransition extends TransitionTypeNumber
     /**
      * Returns the transition that is responsible for the current phase of the animation.
      */
-    public Optional<DoubleTransition> getPhaseTransition ()
-    {
+    public Optional<DoubleTransition> getPhaseTransition() {
         int phase = getPhase();
         return phase == 1 ? Optional.of(fadeInTransition) :
-            phase == 3 ? Optional.of(fadeOutTransition) : Optional.empty();
+                phase == 3 ? Optional.of(fadeOutTransition) : Optional.empty();
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "SmoothDoubleTransition{" +
-               "originStackTrace=" + originStackTrace +
-               '}';
+                "originStackTrace=" + originStackTrace +
+                '}';
     }
 
     /**
      * better readable toString()
      */
-    public String getState ()
-    {
+    public String getState() {
         NumberFormat format = new DecimalFormat("000.00");
         return "SmoothDoubleTransition -> val: " + format.format(current) + " (" + currentStep + "/" + amountOfSteps +
-               ") during phase " + getPhase() + " with " + format.format(getPhasePerStep()) + " {fod=" +
-               fadeOutDistance + "}";
+                ") during phase " + getPhase() + " with " + format.format(getPhasePerStep()) + " {fod=" +
+                fadeOutDistance + "}";
     }
 
     @Override
-    public void destroy ()
-    {
+    public void destroy() {
         fadeInTransition.destroy();
         fadeOutTransition.destroy();
 

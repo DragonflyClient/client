@@ -1,16 +1,16 @@
 package net.inceptioncloud.dragonfly.engine
 
 import kotlinx.coroutines.*
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
-import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.structure.IPosition
-import net.inceptioncloud.dragonfly.ui.renderer.RectangleRenderer
+import net.inceptioncloud.dragonfly.engine.internal.MouseData
+import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.*
+import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.BufferUtils
-import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -28,13 +28,7 @@ object GraphicsEngine {
     /**
      * A stack that contains all currently applied scale factors.
      */
-    private val scaleStack: Stack<Pair<Double, Double>> = Stack()
-
-    /**
-     * The colors used by the debug overlays. The first color has the highest priority while the last
-     * one has the least priority. If all colors are used, it starts all over again.
-     */
-    private val debugColors = arrayOf(0x27ae60, 0xf39c12, 0x2980b9)
+    private val scaleStack: Stack<Double> = Stack()
 
     /**
      * All characters that can be rendered by the [GlyphFontRenderer].
@@ -43,97 +37,23 @@ object GraphicsEngine {
     val CHARACTERS = ((32..126) + (161..252)).map { it.toChar() }.toCharArray()
 
     /**
-     * Renders the debug overlay for the given widgets and their identifiers.
-     */
-    fun renderDebugOverlay(mapped: Map<String, Widget<*>>) {
-        val content = mapped.values
-        val uppermostWidget = mapped.entries.lastOrNull { it.value.isHovered }
-
-        var index = 0
-        content.filter { it.isHovered && it != uppermostWidget }
-            .forEach { widget ->
-                val x = (widget as IPosition).x
-                val y = (widget as IPosition).y
-                val (width, height) = Defaults.getSizeOrDimension(widget)
-
-                Gui.drawRect(x, y, x + width, y + height, Color(0, 0, 0, 20).rgb)
-                RectangleRenderer.renderOutline(
-                    x, y, x + width, y + height,
-                    Color(debugColors[index % (debugColors.size)]), 0.7
-                )
-                index++
-            }
-
-        uppermostWidget?.let { widget ->
-            if (widget.value is AssembledWidget<*> && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
-                renderDebugOverlay((widget.value as AssembledWidget<*>).structure.mapKeys { widget.key + "/" + it.key })
-                return@let
-            }
-
-            val x = (uppermostWidget.value as IPosition).x
-            val y = (uppermostWidget.value as IPosition).y
-            val (width, height) = Defaults.getSizeOrDimension(uppermostWidget.value)
-
-            RectangleRenderer.renderOutline(x, y, x + width, y + height, Color(0xc0392b), 0.8)
-
-            val titleRenderer = Dragonfly.fontManager.retrieveOrBuild(" Medium", 12)
-            val fontRenderer = Dragonfly.fontManager.retrieveOrBuild("", 10)
-            val title = "${uppermostWidget.value::class.simpleName} #${widget.key}"
-            val info = uppermostWidget.value.toInfo().toMutableList()
-                .apply {
-                    add("scratchpad = ${uppermostWidget.value.scratchpad != null}")
-                    add("animations = ${uppermostWidget.value.animationStack.size}")
-                }
-            val infoHeight = 2 + titleRenderer.height + (fontRenderer.height + 0.5) * info.size
-            val infoWidth = 4 + (titleRenderer.getStringWidth(title))
-                .coerceAtLeast(info.map { fontRenderer.getStringWidth(it.replaceFirst("--state", "> ")) }.max()!!).toDouble()
-            val infoX = (getMouseX().toDouble() + 5.0)
-                .coerceIn(0.0, Minecraft.getMinecraft().currentScreen.width - infoWidth)
-            val infoY = (getMouseY().toDouble() + 5.0)
-                .coerceIn(0.0, Minecraft.getMinecraft().currentScreen.height - infoHeight)
-
-            val avgColor = readAveragePixelColor(infoX.toInt(), infoY.toInt(), infoWidth.toInt(), infoHeight.toInt())
-            val backgroundColor = avgColor.selectHighestContrast(WidgetColor(0, 0, 0, 170), WidgetColor(255, 255, 255, 170))
-            val contrastColor = if (backgroundColor.red == 0) WidgetColor(255, 255, 255) else WidgetColor(0, 0, 0)
-
-            Gui.drawRect(
-                infoX, infoY,
-                infoX + infoWidth, infoY + infoHeight,
-                backgroundColor.rgb
-            )
-
-            var infoTextY = infoY + 4 + titleRenderer.height
-            val infoTextX = infoX + 1
-
-            titleRenderer.drawString(title, infoTextX.toInt(), (infoY + 3).toInt(), contrastColor.rgb)
-            info.forEach {
-                val string = it.replaceFirst("--state", "> ")
-                fontRenderer.drawString(string, infoTextX.toInt(), infoTextY.toInt(), contrastColor.rgb)
-                infoTextY += fontRenderer.height + 0.5
-            }
-
-            GlStateManager.color(1F, 1F, 1F, 1F)
-        }
-    }
-
-    /**
      * Gets the current scale factor defined in [ScaledResolution.scaleFactor]. If the [Minecraft.currentScreen]
      * doesn't have a [GuiScreen.scaleFactor] set, a new scaled resolution is instantiated and the scale factor
      * is read from it.
      */
     @JvmStatic
-    fun getScaleFactor(): Int {
-        return Minecraft.getMinecraft().currentScreen?.scaleFactor
-            ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor
+    fun getScaleFactor(): Double {
+        return (Minecraft.getMinecraft().currentScreen?.scaleFactor
+            ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor.toDouble())
     }
 
     /**
      * Pushes a scale to the [scaleStack] and applies it using [GlStateManager.scale].
      */
     @JvmStatic
-    fun pushScale(factor: Pair<Double, Double>) {
+    fun pushScale(factor: Double) {
         scaleStack.push(factor)
-        GlStateManager.scale(factor.first, factor.second, 1.0)
+        GlStateManager.scale(factor, factor, 1.0)
     }
 
     /**
@@ -142,15 +62,15 @@ object GraphicsEngine {
     @JvmStatic
     fun popScale() {
         val factor = scaleStack.pop()
-        GlStateManager.scale(1 / factor.first, 1 / factor.second, 1.0)
+        GlStateManager.scale(1 / factor, 1 / factor, 1.0)
     }
 
     /**
      * Gets the current mouse x position or 0, if the [Minecraft.currentScreen] is null.
      */
     @JvmStatic
-    fun getMouseX(): Int {
-        if (Minecraft.getMinecraft().currentScreen == null) return 0
+    fun getMouseX(): Double {
+        if (Minecraft.getMinecraft().currentScreen == null) return 0.0
         return Mouse.getX() / getScaleFactor()
     }
 
@@ -158,22 +78,22 @@ object GraphicsEngine {
      * Gets the current mouse y position or 0, if the [Minecraft.currentScreen] is null.
      */
     @JvmStatic
-    fun getMouseY(): Int {
-        if (Minecraft.getMinecraft().currentScreen == null) return 0
+    fun getMouseY(): Double {
+        if (Minecraft.getMinecraft().currentScreen == null) return 0.0
         return Minecraft.getMinecraft().currentScreen.height - Mouse.getY() / getScaleFactor()
     }
 
     /**
-     * Reads the color of a specific pixel from the current frame buffer at the [xIn],[yIn] position and
+     * Reads the color of a specific pixel from the current frame stage at the [xIn],[yIn] position and
      * returns it as a [WidgetColor].
      */
     @JvmStatic
     fun readPixelColor(xIn: Int, yIn: Int): WidgetColor {
         val sf = getScaleFactor()
-        val x = xIn * sf
-        val y = yIn * sf
+        val x = (xIn * sf * sf).toInt()
+        val y = (yIn * sf * sf).toInt()
         val buffer = (BufferUtils.createByteBuffer(2196).position(0).limit(64) as ByteBuffer).asFloatBuffer()
-        GL11.glReadPixels(x * sf, y * sf, 1, 1, GL11.GL_RGBA, GL11.GL_FLOAT, buffer)
+        GL11.glReadPixels(x, y, 1, 1, GL11.GL_RGBA, GL11.GL_FLOAT, buffer)
 
         return WidgetColor(buffer.get(0), buffer.get(1), buffer.get(2), buffer.get(3))
     }
@@ -185,10 +105,10 @@ object GraphicsEngine {
     @JvmStatic
     fun readAveragePixelColor(xIn: Int, yIn: Int, widthIn: Int, heightIn: Int): WidgetColor {
         val sf = getScaleFactor()
-        val x = xIn * sf
-        val y = yIn * sf
-        val width = widthIn * sf
-        val height = heightIn * sf
+        val x = (xIn * sf).toInt()
+        val y = (yIn * sf).toInt()
+        val width = (widthIn * sf).toInt()
+        val height = (heightIn * sf).toInt()
         val buffer = (BufferUtils.createByteBuffer(width * height * 4 * 4).position(0).limit(width * height * 4 * 4) as ByteBuffer).asFloatBuffer()
 
         GL11.glReadPixels(x, y, width, height, GL11.GL_RGBA, GL11.GL_FLOAT, buffer)
@@ -215,6 +135,25 @@ object GraphicsEngine {
 }
 
 /**
+ * Switches to the screen using the switch overlay.
+ */
+fun GuiScreen.switch() {
+    ScreenOverlay.displayGui(this)
+}
+
+/**
  * A simple extension function that converts a [java.awt.Color] to a [WidgetColor].
  */
 fun Color.toWidgetColor(): WidgetColor = WidgetColor(this)
+
+/**
+ * Extension function to conveniently check if a mouse position is within the bounds of a widget.
+ */
+operator fun <W> W?.contains(data: MouseData): Boolean where W : IDimension, W : IPosition =
+    if (this == null) false else data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
+
+/**
+ * Extension function to conveniently check if a mouse position is within the bounds of a widget.
+ */
+operator fun <W> W.contains(data: MouseData): Boolean where W : ISize, W : IPosition =
+    data.mouseX.toDouble() in x..x + size && data.mouseY.toDouble() in y..y + size

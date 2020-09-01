@@ -9,14 +9,24 @@ import org.apache.logging.log4j.LogManager
 import org.lwjgl.opengl.GL11.*
 
 class Line(
-    @property:Interpolate override var x: Double = 0.0,
-    @property:Interpolate override var y: Double = 0.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
+    initializerBlock: (Line.() -> Unit)? = null
+) : Widget<Line>(initializerBlock), IPosition, IColor, IDimension {
 
-    @property:Interpolate var endX: Double = 10.0,
-    @property:Interpolate var endY: Double = 10.0,
-    @property:Interpolate var lineWidth: Double = 1.0
-) : Widget<Line>(), IPosition, IColor, IDimension {
+    @Interpolate override var x: Double by property(0.0)
+    @Interpolate override var y: Double by property(0.0)
+    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+
+    @Interpolate var endX: Double by property(10.0)
+    @Interpolate var endY: Double by property(10.0)
+    @Interpolate var lineWidth: Double by property(1.0)
+
+    override var width: Double
+        get() = (endX - x).also { supplyDimensionWarning() }
+        set(value) {}
+
+    override var height: Double
+        get() = (endY - y).also { supplyDimensionWarning() }
+        set(value) {}
 
     override fun render() {
         color.glBindColor()
@@ -30,10 +40,6 @@ class Line(
         glEnd()
     }
 
-    override fun clone() = Line(x, y, color.clone(), endX, endY, lineWidth)
-
-    override fun newInstance() = Line()
-
     /**
      * Checks if the two points are able to create a dimension.
      * If this isn't possible, a warning will be sent to the console.
@@ -46,12 +52,4 @@ class Line(
             LogManager.getLogger().warn("[Line] The endY should be greater than the y value, but $y > $endY")
         }
     }
-
-    override var width: Double
-        get() = (endX - x).also { supplyDimensionWarning() }
-        set(value) {}
-
-    override var height: Double
-        get() = (endY - y).also { supplyDimensionWarning() }
-        set(value) {}
 }

@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.options.entries.util
 
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
@@ -11,8 +11,7 @@ import net.minecraft.util.ResourceLocation
 /**
  * An interface that can be implemented in option entries that support external appliers.
  */
-interface ExternalApplier<T>
-{
+interface ExternalApplier<T> {
     /**
      * An external apply function.
      *
@@ -20,7 +19,7 @@ interface ExternalApplier<T>
      * entry value is modified. Instead, it will be saved when the "Save and Exit" button
      * in the options screen is pressed.
      *
-     * @see ModOptionsUI
+     * @see DragonflySettingsUI
      */
     var externalApplier: ((T, OptionKey<T>) -> Unit)?
 
@@ -45,15 +44,14 @@ interface ExternalApplier<T>
      * It is called when the "Save and Exit" button is pressed thus the value should be
      * applied.
      */
-    fun applyExternally ()
+    fun applyExternally()
 
     /**
      * Renders an icon to the left of the entry text that indicates that is has to be
      * saved externally. This icon only appears if the value isn't the same as the
      * key value.
      */
-    fun renderChangeState (x: Int, y: Int, height: Int, width: Int, key: OptionKey<T>, value: T): Boolean
-    {
+    fun renderChangeState(x: Int, y: Int, height: Int, width: Int, key: OptionKey<T>, value: T): Boolean {
         val f = 3.0
         val resource = ResourceLocation("dragonflyres/icons/save.png")
         Minecraft.getMinecraft().textureManager.bindTexture(resource)
@@ -66,14 +64,14 @@ interface ExternalApplier<T>
         val centerY = ((y + height / 2) * f).toInt()
 
         Gui.drawModalRectWithCustomSizedTexture(
-                centerX - size / 2,
-                centerY - size / 2,
-                0F,
-                0F,
-                size,
-                size,
-                size.toFloat(),
-                size.toFloat()
+            centerX - size / 2,
+            centerY - size / 2,
+            0F,
+            0F,
+            size,
+            size,
+            size.toFloat(),
+            size.toFloat()
         )
 
         GlStateManager.scale(f, f, f)

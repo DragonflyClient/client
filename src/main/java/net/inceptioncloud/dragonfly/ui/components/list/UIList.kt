@@ -12,65 +12,36 @@ import org.lwjgl.opengl.GL11.*
 
 /**
  * A modern scrollable list with a set of [UIListEntry] instances.
+ *
+ * @param mc Minecraft Client Instance
+ * @param width Width of the entire list
+ * @param height Height of the entire list
+ * @param x X position of the entire list
+ * @param y Y position of the entire list
+ * @param entryHeight Height of the single entry slots
+ * @param entryWidth Width of the single entry slots
+ * @param entries List of all entries
+ * @param scrollHook A hook that is called whenever the list is scrolled.
  */
 class UIList(
+    mc: Minecraft?,
+    width: Int,
+    height: Int,
+    val x: Int,
+    val y: Int,
+    entryHeight: Int,
+    private val entryWidth: Int,
+    val entries: List<UIListEntry>,
+    var scrollHook: () -> Unit = {}
+) : GuiSlot(mc, width, height, y, y + height, entryHeight) {
 
-        /**
-         * Minecraft Client Instance
-         */
-        mc: Minecraft?,
-
-        /**
-         * Width of the entire list
-         */
-        width: Int,
-
-        /**
-         * Height of the entire list
-         */
-        height: Int,
-
-        /**
-         * X position of the entire list
-         */
-        val x: Int,
-
-        /**
-         * Y position of the entire list
-         */
-        val y: Int,
-
-        /**
-         * Height of the single entry slots
-         */
-        entryHeight: Int,
-
-        /**
-         * Width of the single entry slots
-         */
-        private val entryWidth: Int,
-
-        /**
-         * List of all entries
-         */
-        val entries: List<UIListEntry>
-
-) : GuiSlot(mc, width, height, y, y + height, entryHeight)
-{
     /**
      * Init Block for optimizing constructor parameters.
      */
-    init
-    {
+    init {
         left = x
         right = left + width
     }
-
-    /** The time when the last mouse event was performed. */
-    private var lastMouseEvent: Long = 0
-
-    /** The last used mouse button. */
-    private var eventButton: Int = 0
 
     /** Distance that has already been scrolled with the mouse but has to be applied to the content and scroll bar. */
     private var toScroll: Int = 0
@@ -79,14 +50,12 @@ class UIList(
     override fun getSize(): Int = entries.size
 
     /** Overrides the default constant with the proper with variable. */
-    override fun getListWidth(): Int
-    {
+    override fun getListWidth(): Int {
         return width
     }
 
     /** Called when the list should draw a specific entry slot. */
-    override fun drawSlot(index: Int, x: Int, y: Int, height: Int, mouseXIn: Int, mouseYIn: Int)
-    {
+    override fun drawSlot(index: Int, x: Int, y: Int, height: Int, mouseXIn: Int, mouseYIn: Int) {
         entries[index].cacheLocation(x, y)
         entries[index].drawEntry(x, y, height, entryWidth)
     }
@@ -95,34 +64,28 @@ class UIList(
     override fun isSelected(index: Int): Boolean = entries[index].selected
 
     /** The element in the slot that was clicked, boolean for whether it was double clicked or not */
-    override fun elementClicked(index: Int, isDoubleClick: Boolean, mouseX: Int, mouseY: Int)
-    {
+    override fun elementClicked(index: Int, isDoubleClick: Boolean, mouseX: Int, mouseY: Int) {
         val target = entries[index]
         target.clicked(isDoubleClick, mouseX - target.x, mouseY - target.y, entryWidth, entryHeight)
     }
 
     /** Empty method so the UIList has no background. */
-    override fun drawBackground()
-    {
+    override fun drawBackground() {
     }
 
     /** Draws all slots and the selection box. */
-    override fun drawSlots(x: Int, y: Int, mouseXIn: Int, mouseYIn: Int)
-    {
+    override fun drawSlots(x: Int, y: Int, mouseXIn: Int, mouseYIn: Int) {
         val size = this.size
 
-        for (index in 0 until size)
-        {
+        for (index in 0 until size) {
             val topY = y + (index * entryHeight)
             val targetHeight = entryHeight
 
-            if (topY > bottom || topY + targetHeight < top)
-            {
+            if (topY > bottom || topY + targetHeight < top) {
                 updateItemPos(index, x, topY)
             }
 
-            if (showSelectionBox && isSelected(index))
-            {
+            if (showSelectionBox && isSelected(index)) {
                 entries[index].drawSelectionEffect(x, x + entryWidth, topY, targetHeight)
             }
 
@@ -131,19 +94,19 @@ class UIList(
     }
 
     /** Called when the mouse scrolls a certain distance. */
-    override fun scrollBy(amount: Int)
-    {
+    override fun scrollBy(amount: Int) {
         toScroll += amount
     }
 
     /** Improved screen drawing method. */
-    override fun drawScreen(mouseXIn: Int, mouseYIn: Int, partialTicks: Float)
-    {
-        if (visible)
-        {
-            val scroll = toScroll / 15
-            toScroll -= scroll
-            amountScrolled += scroll
+    override fun drawScreen(mouseXIn: Int, mouseYIn: Int, partialTicks: Float) {
+        if (visible) {
+            if (toScroll != 0) {
+                val scroll = toScroll / 15
+                toScroll -= scroll
+                amountScrolled += scroll
+                scrollHook()
+            }
 
             mouseX = mouseXIn
             mouseY = mouseYIn
@@ -182,15 +145,13 @@ class UIList(
             GlStateManager.disableTexture2D()
 
             val maxScroll = this.maxScroll
-            if (maxScroll > 0)
-            {
+            if (maxScroll > 0) {
                 val backgroundColor = RGB.of(BluePalette.FOREGROUND).alpha(0.4F).toColor()
                 val barColor = BluePalette.PRIMARY
                 val barHeight = MathHelper.clamp_int(height * height / this.contentHeight, 32, height - 8)
                 var barTop = getAmountScrolled() * (height - barHeight) / maxScroll + top
 
-                if (barTop < top)
-                {
+                if (barTop < top) {
                     barTop = top
                 }
 
@@ -203,11 +164,9 @@ class UIList(
                 Gui.drawRect(barLeft, barTop + 1, barRight, barTop + barHeight - 1, barColor.rgb)
 
                 // Bar corner fill
-                if (bottom == barTop + barHeight)
-                {
+                if (bottom == barTop + barHeight) {
                     Gui.drawRect(barLeft, barTop + barHeight - 1, barRight, bottom, barColor.rgb)
-                } else if (amountScrolled == 0F)
-                {
+                } else if (amountScrolled == 0F) {
                     Gui.drawRect(barLeft, barTop, barRight, barTop + 1, barColor.rgb)
                 }
             }
@@ -223,21 +182,16 @@ class UIList(
     /**
      * Improved mouse input method.
      */
-    override fun handleMouseInput()
-    {
-        if (Mouse.isButtonDown(0) && enabled)
-        {
-            if (initialClickY == -1)
-            {
+    override fun handleMouseInput() {
+        if (Mouse.isButtonDown(0) && enabled) {
+            if (initialClickY == -1) {
                 var flag1 = true
-                if (mouseY in top..bottom)
-                {
+                if (mouseY in top..bottom) {
                     val listBoundLeft = x
                     val listBoundRight = x + listWidth
                     val l2 = mouseY - top - headerPadding + amountScrolled.toInt() - 4
                     val i1 = l2 / entryHeight
-                    if (i1 < this.size && mouseX >= listBoundLeft && mouseX <= listBoundRight && i1 >= 0 && l2 >= 0)
-                    {
+                    if (i1 < this.size && mouseX >= listBoundLeft && mouseX <= listBoundRight && i1 >= 0 && l2 >= 0) {
                         val flag = entries[i1].selected && Minecraft.getSystemTime() - lastClicked < 250L
                         elementClicked(i1, flag, mouseX, mouseY)
 
@@ -245,57 +199,45 @@ class UIList(
                         entries.filter { it != entries[i1] }.forEach { it.updateSelectionState(false) }
 
                         lastClicked = Minecraft.getSystemTime()
-                    } else if (mouseX in listBoundLeft..listBoundRight && l2 < 0)
-                    {
+                    } else if (mouseX in listBoundLeft..listBoundRight && l2 < 0) {
                         clickedHeader(mouseX - listBoundLeft, mouseY - top + amountScrolled.toInt() - 4)
                         flag1 = false
                     }
                     val i3 = this.scrollBarX
                     val j1 = i3 + 6
-                    if (mouseX in i3..j1)
-                    {
+                    if (mouseX in i3..j1) {
                         scrollMultiplier = -1.0f
                         var k1 = this.maxScroll
-                        if (k1 < 1)
-                        {
+                        if (k1 < 1) {
                             k1 = 1
                         }
                         var l1 = (((bottom - top) * (bottom - top)).toFloat() / this.contentHeight.toFloat()).toInt()
                         l1 = MathHelper.clamp_int(l1, 32, bottom - top - 8)
                         scrollMultiplier /= (bottom - top - l1).toFloat() / k1.toFloat()
-                    } else
-                    {
+                    } else {
                         scrollMultiplier = 1.0f
                     }
-                    initialClickY = if (flag1)
-                    {
+                    initialClickY = if (flag1) {
                         mouseY
-                    } else
-                    {
+                    } else {
                         -2
                     }
-                } else
-                {
+                } else {
                     initialClickY = -2
                 }
-            } else if (initialClickY >= 0)
-            {
+            } else if (initialClickY >= 0) {
                 val distance = (-(mouseY - initialClickY)).toFloat() * scrollMultiplier
                 scrollBy(distance.toInt())
                 initialClickY = mouseY
             }
-        } else
-        {
+        } else {
             initialClickY = -1
         }
         var i2 = Mouse.getEventDWheel()
-        if (i2 != 0)
-        {
-            i2 = if (i2 > 0)
-            {
+        if (i2 != 0) {
+            i2 = if (i2 > 0) {
                 -1
-            } else
-            {
+            } else {
                 1
             }
             val distance = i2 * entryHeight / 2f
@@ -308,8 +250,7 @@ class UIList(
      *
      * This method fires whenever the action is performed on the screen. It doesn't have to be on the list or on any entry.
      */
-    fun mouseDragged(mouseX: Int, mouseY: Int, eventButton: Int, duration: Long)
-    {
+    fun mouseDragged(mouseX: Int, mouseY: Int, eventButton: Int, duration: Long) {
         entries.forEach { it.mouseDragged(mouseX, mouseY, eventButton, duration) }
     }
 
@@ -319,8 +260,7 @@ class UIList(
      * This method fires whenever the action is performed on the screen.
      * It doesn't have to be on the list or on any entry.
      */
-    fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int)
-    {
+    fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int) {
         entries.forEach { it.mouseReleased(mouseX, mouseY, eventButton) }
     }
 
@@ -330,16 +270,14 @@ class UIList(
      * This method fires whenever the action is performed on the screen.
      * It doesn't have to be on the list or on any entry.
      */
-    fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int)
-    {
+    fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int) {
         entries.forEach { it.mousePressed(mouseX, mouseY, eventButton) }
     }
 
     /**
      * Getter with the proper scroll bar position.
      */
-    override fun getScrollBarX(): Int
-    {
+    override fun getScrollBarX(): Int {
         return right
     }
 
@@ -349,8 +287,7 @@ class UIList(
      * This method fires whenever the action is performed on the screen.
      * It doesn't have to be on the list or on any entry.
      */
-    fun keyTyped(typedChar: Char, keyCode: Int)
-    {
+    fun keyTyped(typedChar: Char, keyCode: Int) {
         entries.forEach { it.keyTyped(typedChar, keyCode) }
     }
 }

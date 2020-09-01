@@ -4,7 +4,7 @@ import net.inceptioncloud.dragonfly.options.entries.OptionEntry
 import net.inceptioncloud.dragonfly.options.entries.TitleEntry
 import net.inceptioncloud.dragonfly.options.sections.OptionList.all
 import net.inceptioncloud.dragonfly.options.sections.OptionSectionFactory.Companion.optionSection
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI
 
 /**
  * A static accessible object that keeps all created option sections.
@@ -14,8 +14,7 @@ import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
  *
  * @see net.inceptioncloud.dragonfly.ui.ModOptionsUI
  */
-object OptionList
-{
+object OptionList {
     /**
      * This is the list where all [Option Sections][OptionSection] are kept in.
      * The adding process is automatically done by the [factory][OptionSectionFactory].
@@ -29,7 +28,7 @@ object OptionList
  * These sections are displayed in the options menu and start with a title under which all
  * option entries are rendered.
  *
- * @see ModOptionsUI
+ * @see DragonflySettingsUI
  * @see TitleEntry
  *
  * @property title the title of the section that should describe the area to which the options apply
@@ -43,8 +42,7 @@ data class OptionSection(val title: String, val entries: List<OptionEntry<*>>)
  * To start the creation, call the [optionSection] function and put the content into the parameter function.
  * The [finish] method is called after the init function was executed and the [OptionSection] will be stored in [OptionList.all].
  */
-class OptionSectionFactory
-{
+class OptionSectionFactory {
     /**
      * The title of the section that should describe the area to which the options apply.
      *
@@ -62,8 +60,7 @@ class OptionSectionFactory
     /**
      * A companion object that allows static access on [optionSection].
      */
-    companion object
-    {
+    companion object {
         /**
          * The function that starts the factory.
          *
@@ -73,8 +70,7 @@ class OptionSectionFactory
          * @param init a function as a parameter that will be executed on the [OptionSectionFactory] receiver
          */
         @JvmStatic
-        fun optionSection(init: OptionSectionFactory.() -> Unit)
-        {
+        fun optionSection(init: OptionSectionFactory.() -> Unit) {
             val factory = OptionSectionFactory()
             factory.init()
 
@@ -95,8 +91,7 @@ class OptionSectionFactory
      *  }
      * ```
      */
-    operator fun OptionEntry<*>.unaryPlus()
-    {
+    operator fun OptionEntry<*>.unaryPlus() {
         list.add(this)
     }
 
@@ -105,8 +100,7 @@ class OptionSectionFactory
      *
      * This function is automatically called after the factory processed.
      */
-    private fun finish(): OptionSection
-    {
+    private fun finish(): OptionSection {
         return OptionSection(title, list)
     }
 }

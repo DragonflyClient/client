@@ -7,8 +7,12 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.Dragonfly.eventBus
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.structure.IDimension
+import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
+import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.ui.components.button.ConfirmationButton
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
 import net.minecraft.client.Minecraft
@@ -93,8 +97,10 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     private var touchValue = 0
     private var clickedLinkURI: URI? = null
 
+    var focusHandler: FocusHandler? = null
+
     @JvmField
-    var buffer = WidgetBuffer()
+    val stage = WidgetStage(this::class.simpleName!!)
 
     /**
      * The color that is used in the [drawBackgroundFill] function to color the background.
@@ -110,6 +116,11 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * Whether the screen can be manually closed using the ESC key.
      */
     open var canManuallyClose: Boolean = true
+
+    /**
+     * A custom scale factor that is only applied to this gui.
+     */
+    open var customScaleFactor: () -> Double? = { null }
 
     /**
      * Draws a gradient background with the default colors.
@@ -131,7 +142,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
     open fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        buffer.render()
+        stage.render()
         for (guiButton in ArrayList(buttonList)) {
             guiButton.drawButton(mc, mouseX, mouseY)
         }
@@ -147,7 +158,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     @Throws(IOException::class)
     protected open fun keyTyped(typedChar: Char, keyCode: Int) {
 
-        buffer.handleKeyTyped(typedChar, keyCode)
+        stage.handleKeyTyped(typedChar, keyCode)
 
         if (keyCode == 1 && canManuallyClose) {
             mc.displayGuiScreen(null)
@@ -160,14 +171,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             // ICMM: Developer Mode Hotkeys
             when (keyCode) {
                 Keyboard.KEY_F5 -> {
-                    val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
-                    val scaledWidth = scaledResolution.scaledWidth
-                    val scaledHeight = scaledResolution.scaledHeight
-
-                    buttonList.clear()
-                    buffer.clear()
-                    onGuiClosed()
-                    setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
+                    refresh()
                 }
                 Keyboard.KEY_F7 -> {
                     val input = JOptionPane.showInputDialog("Enter the full qualified name of the GUI.")
@@ -181,6 +185,20 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
                 }
             }
         }
+    }
+
+    /**
+     * Refreshes the gui screen.
+     */
+    fun refresh() {
+        val scaledResolution = ScaledResolution(Minecraft.getMinecraft())
+        val scaledWidth = scaledResolution.scaledWidth
+        val scaledHeight = scaledResolution.scaledHeight
+
+        buttonList.clear()
+        stage.clear()
+        onGuiClosed()
+        setWorldAndResolution(Minecraft.getMinecraft(), scaledWidth, scaledHeight)
     }
 
     protected open fun renderToolTip(stack: ItemStack, x: Int, y: Int) {
@@ -458,30 +476,43 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      */
     open fun setWorldAndResolution(mc: Minecraft, width: Int, height: Int) {
         this.mc = mc
-        this.width = width
-        this.height = height
+
+        if (customScaleFactor() != null) {
+            this.scaleFactor = customScaleFactor()!!
+            this.width = (mc.displayWidth / customScaleFactor()!!).toInt()
+            this.height = (mc.displayHeight / customScaleFactor()!!).toInt()
+        } else {
+            this.width = width
+            this.height = height
+            this.scaleFactor = ScaledResolution(mc).scaleFactor.toDouble()
+        }
 
         itemRender = mc.renderItem
         fontRendererObj = mc.fontRendererObj
-        scaleFactor = ScaledResolution(mc).scaleFactor
         buttonList.clear()
+        stage.clear()
 
         backgroundImage?.let {
-            +ResponsiveImage(
-                x = 0.0,
-                y = 0.0,
-                width = width.toDouble(),
-                height = height.toDouble(),
-                originalWidth = it.width,
-                originalHeight = it.height,
-                resourceLocation = ResourceLocation(it.resourceLocation),
+            +ResponsiveImage {
+                x = 0.0
+                y = 0.0
+                this.width = this@GuiScreen.width.toDouble()
+                this.height = this@GuiScreen.height.toDouble()
+                originalWidth = it.width
+                originalHeight = it.height
+                resourceLocation = it.image.resourceLocation
+                dynamicTexture = it.image.dynamicTexture
                 color = backgroundFill ?: WidgetColor.DEFAULT
-            ) id "background"
+            } id "background"
         }
+
         initGui()
     }
 
-    var scaleFactor = 0
+    /**
+     * Cache for the scale factor that is used in this gui screen.
+     */
+    var scaleFactor = 0.0
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
@@ -570,25 +601,37 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         val mouseX = Mouse.getEventX() * width / mc.displayWidth
         val mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1
         val k = Mouse.getEventButton()
+        val mouseData = MouseData(mouseX, mouseY, button = k)
+
+        val mouseInputEvent = MouseInputEvent(k)
+        eventBus.post(mouseInputEvent)
+
+        if (Modal.isModalPresent()) return
+
         if (Mouse.getEventButtonState()) {
+            if (focusHandler?.captureMouseFocus(mouseData) == true) {
+                focusHandler?.handleCapturedMousePress(mouseData)
+                return
+            }
+
             if (mc.gameSettings.touchscreen && touchValue++ > 0) {
                 return
             }
             eventButton = k
             lastMouseEvent = Minecraft.getSystemTime()
             mouseClicked(mouseX, mouseY, eventButton)
-            buffer.handleMousePress(MouseData(mouseX, mouseY, button = eventButton))
+            stage.handleMousePress(mouseData)
         } else if (k != -1) {
             if (mc.gameSettings.touchscreen && --touchValue > 0) {
                 return
             }
             eventButton = -1
             mouseReleased(mouseX, mouseY, k)
-            buffer.handleMouseRelease(MouseData(mouseX, mouseY, button = k))
+            stage.handleMouseRelease(mouseData)
         } else if (eventButton != -1 && lastMouseEvent > 0L) {
             val timeSinceLastClick = Minecraft.getSystemTime() - lastMouseEvent
             mouseClickMove(mouseX, mouseY, eventButton, timeSinceLastClick)
-            buffer.handleMouseDrag(MouseData(mouseX, mouseY, button = k, draggingDuration = timeSinceLastClick))
+            stage.handleMouseDrag(MouseData(mouseX, mouseY, button = k, draggingDuration = timeSinceLastClick))
         }
     }
 
@@ -606,10 +649,12 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
             return
         }
 
-        if (Keyboard.getEventKeyState()) {
-            val eventCharacter = Keyboard.getEventCharacter()
-            val eventKey = Keyboard.getEventKey()
-            keyTyped(eventCharacter, eventKey)
+        if (!Modal.isModalPresent() && focusHandler?.captureKeyboardFocus(i) != true) {
+            if (Keyboard.getEventKeyState()) {
+                val eventCharacter = Keyboard.getEventCharacter()
+                val eventKey = Keyboard.getEventKey()
+                keyTyped(eventCharacter, eventKey)
+            }
         }
 
         mc.dispatchKeypresses()
@@ -691,23 +736,56 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     }
 
     /**
-     * An operator function that allows adding widgets to the buffer. After providing the widget,
+     * An operator function that allows adding widgets to the stage. After providing the widget,
      * an id for it must be specified with the infix function [WidgetIdBuilder.id].
      */
     operator fun <W : Widget<W>> W.unaryPlus(): WidgetIdBuilder<W> {
-        return WidgetIdBuilder<W>(buffer, widget = this)
+        return WidgetIdBuilder(stage, widget = this)
     }
 
-    operator fun String.unaryMinus(): Widget<*>? {
-        return buffer[this]
+    /**
+     * An operator function that allows adding widgets to the stage of the gui screen from outside
+     * of the screen class.
+     */
+    operator fun <W : Widget<W>> plus(widget: W): WidgetIdBuilder<W> {
+        return WidgetIdBuilder(stage, widget)
     }
+
+    /**
+     * Calculate a relative position for based on the [width] of the gui screen. The [good] parameter
+     * represents a value that fits good with the [total] screen width. The relative relationship between
+     * these two values is then applied to the current [width] of the gui screen.
+     */
+    fun relativeH(good: Number, total: Number = 1920.0): Double = width * (good.toDouble() / total.toDouble())
+
+    /**
+     * Calculate a relative position for based on the [height] of the gui screen. The [good] parameter
+     * represents a value that fits good with the [total] screen height. The relative relationship between
+     * these two values is then applied to the current [height] of the gui screen.
+     */
+    fun relativeV(good: Number, total: Number = 1080.0): Double = height * (good.toDouble() / total.toDouble())
 
     /**
      * Tries to get a widget and additionally cast it to the specified type. This will return
      * null if the widget was not found or cannot be cast.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <W : Widget<W>> getWidget(identifier: String): W? = buffer[identifier] as? W
+    fun <W : Widget<W>> getWidget(identifier: String): W? = stage[identifier] as? W
+
+    /**
+     * Positions the widget below another widget that is retrieved by its [id][thatId] while
+     * leaving the given [amount of vertical space][margin] between them.
+     */
+    fun <W> W.positionBelow(thatId: String, margin: Double) where W : IPosition, W : IDimension {
+        val that = stage[thatId] ?: return
+        if (that !is IPosition) return
+        if (that !is IDimension) return
+
+        this.x = that.x
+        this.y = that.y + that.height + margin
+        this.width = that.width
+        this.height = that.height
+    }
 
     companion object {
         private val LOGGER = LogManager.getLogger()

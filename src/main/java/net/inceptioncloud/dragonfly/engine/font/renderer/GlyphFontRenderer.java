@@ -1,26 +1,29 @@
 package net.inceptioncloud.dragonfly.engine.font.renderer;
 
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine;
-import net.inceptioncloud.dragonfly.engine.font.FontManager;
-import net.inceptioncloud.dragonfly.engine.font.GlyphPage;
+import net.inceptioncloud.dragonfly.engine.font.*;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.*;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.*;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glScaled;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
 
 /**
  * The Glyph Page Font Renderer creates Glyph Pages of different fonts to easily render them ingame.
@@ -44,8 +47,6 @@ public class GlyphFontRenderer implements IFontRenderer {
      * The different Glyph Pages
      */
     private final GlyphPage pageRegular, pageBold, pageItalic, pageBoldItalic;
-
-    private final GlyphPage unscaledPageRegular, unscaledPageBold, unscaledPageItalic, unscaledPageBoldItalic;
 
     /**
      * Random used for generating chars when the {@link #randomStyle} is enabled.
@@ -107,6 +108,8 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     private float blue;
 
+    private boolean useScale;
+
     /**
      * Default Constructor
      */
@@ -115,20 +118,13 @@ public class GlyphFontRenderer implements IFontRenderer {
             GlyphPage pageBold,
             GlyphPage pageItalic,
             GlyphPage pageBoldItalic,
-            GlyphPage unscaledPageRegular,
-            GlyphPage unscaledPageBold,
-            GlyphPage unscaledPageItalic,
-            GlyphPage unscaledPageBoldItalic
+            boolean useScale
     ) {
         this.pageRegular = pageRegular;
         this.pageBold = pageBold;
         this.pageItalic = pageItalic;
         this.pageBoldItalic = pageBoldItalic;
-
-        this.unscaledPageRegular = unscaledPageRegular;
-        this.unscaledPageBold = unscaledPageBold;
-        this.unscaledPageItalic = unscaledPageItalic;
-        this.unscaledPageBoldItalic = unscaledPageBoldItalic;
+        this.useScale = useScale;
 
         for (int i = 0; i < 32; ++i) {
             int j = (i >> 3 & 1) * 85;
@@ -157,7 +153,8 @@ public class GlyphFontRenderer implements IFontRenderer {
     public static GlyphFontRenderer create(
             String fontName,
             int size,
-            double letterSpacing
+            double letterSpacing,
+            boolean useScale
     ) {
         // If the font isn't already loaded, import it from a .ttf file
         if (!LOADED_FONTS.contains(fontName)) {
@@ -172,43 +169,34 @@ public class GlyphFontRenderer implements IFontRenderer {
             }
         }
 
+        final double quality = Math.round(OptionsSectionPerformance.getFontQuality().invoke() * 10.0) / 10.0;
         final char[] chars = GraphicsEngine.CHARACTERS;
-        final int scaledSize = (int) (size * getFontQualityScale());
+        final int scaledSize = useScale ? (int) (size * quality) : size;
 
         GlyphPage regularPage = new GlyphPage(makeFont(fontName, Font.PLAIN, scaledSize, letterSpacing));
         regularPage.generateGlyphPage(chars);
 
-        GlyphPage unscaledRegular = new GlyphPage(makeFont(fontName, Font.PLAIN, size, letterSpacing));
-        unscaledRegular.generateGlyphPage(chars);
-
         GlyphPage boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, scaledSize, letterSpacing));
         boldPage.generateGlyphPage(chars);
-
-        GlyphPage unscaledBold = new GlyphPage(makeFont(fontName, Font.BOLD, size, letterSpacing));
-        unscaledBold.generateGlyphPage(chars);
 
         GlyphPage italicPage = new GlyphPage(makeFont(fontName, Font.ITALIC, scaledSize, letterSpacing));
         italicPage.generateGlyphPage(chars);
 
-        GlyphPage unscaledItalic = new GlyphPage(makeFont(fontName, Font.ITALIC, size, letterSpacing));
-        unscaledItalic.generateGlyphPage(chars);
-
         GlyphPage boldItalicPage = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, scaledSize, letterSpacing));
         boldItalicPage.generateGlyphPage(chars);
 
-        GlyphPage unscaledBoldItalic = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, size, letterSpacing));
-        unscaledBoldItalic.generateGlyphPage(chars);
-
         return new GlyphFontRenderer(
-                regularPage, boldPage, italicPage, boldItalicPage,
-                unscaledRegular, unscaledBold, unscaledItalic, unscaledBoldItalic
+                regularPage, boldPage, italicPage, boldItalicPage, useScale
         );
     }
 
     /**
      * Quick Method to access {@link OptionsSectionPerformance#getFontQuality()}
      */
-    public static double getFontQualityScale() {
+    public double getFontQualityScale() {
+        if (!useScale)
+            return 1.0;
+
         final double quality = OptionsSectionPerformance.getFontQuality().invoke();
         return Math.round(quality * 10.0) / 10.0;
     }
@@ -368,7 +356,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     @Override
     public int getHeight() {
-        return (int) (unscaledPageRegular.getMaxFontHeight() / 2.2D);
+        return (int) (pageRegular.getMaxFontHeight() / (getFontQualityScale() * 2.2D));
     }
 
     /**
@@ -379,7 +367,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     @Override
     public float getCharWidthFloat(final char ch) {
-        GlyphPage.Glyph glyph = unscaledPageRegular.glyphCharacterMap.get(ch == '▏' ? '|' : ch);
+        GlyphPage.Glyph glyph = pageRegular.glyphCharacterMap.get(ch == '▏' ? '|' : ch);
 
         if (glyph == null) {
             return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch) * 2;
@@ -738,7 +726,7 @@ public class GlyphFontRenderer implements IFontRenderer {
                     break;
 
                 case '§':
-                    if (index + 7 < length) {
+                    if (index + 7 < length && text.charAt(index + 1) == '#') {
                         index += 7;
                     } else if (index + 1 < length) {
                         ++index;

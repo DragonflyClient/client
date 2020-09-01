@@ -18,15 +18,14 @@ import kotlin.math.roundToInt
  * @property typeKey the key that is associated with the option
  */
 class OptionEntryRangeDouble(
-        name: String,
-        description: String,
-        private val typeKey: OptionKey<Double>,
-        minValue: Double,
-        maxValue: Double,
-        formatterIn: ((Double) -> String)?,
-        override var externalApplier: ((Double, OptionKey<Double>) -> Unit)? = null
-) : OptionEntry<Double>(name, description), ExternalApplier<Double>
-{
+    name: String,
+    description: String,
+    private val typeKey: OptionKey<Double>,
+    minValue: Double,
+    maxValue: Double,
+    formatterIn: ((Double) -> String)?,
+    override var externalApplier: ((Double, OptionKey<Double>) -> Unit)? = null
+) : OptionEntry<Double>(name, description), ExternalApplier<Double> {
     /**
      * The non-nullable version of the formatter constructor parameter.
      *
@@ -39,8 +38,7 @@ class OptionEntryRangeDouble(
      *
      * If the input formatter is null, a default one will be used.
      */
-    init
-    {
+    init {
         formatter = formatterIn ?: { value ->
             val round = (value * 100).roundToInt() / 100.0
             val nf: NumberFormat = NumberFormat.getNumberInstance(Locale.US)
@@ -59,26 +57,24 @@ class OptionEntryRangeDouble(
      * the slider.
      */
     private val slider: UISlider = UISlider(0, 0, 0, minValue, maxValue, typeKey.get(),
-            { value ->
-                if (externalApplier == null)
-                    typeKey.set(value)
-                else
-                    valueCache = value
-            }, formatter)
+        { value ->
+            if (externalApplier == null)
+                typeKey.set(value)
+            else
+                valueCache = value
+        }, formatter)
 
     /**
      * Called when the entry is drawn at a certain position with the given height and with.
      */
-    override fun drawContent(x: Int, y: Int, height: Int, width: Int)
-    {
+    override fun drawContent(x: Int, y: Int, height: Int, width: Int) {
         slider.width = 61
         slider.x = x + width - 7 - slider.width
         slider.y = y + height / 2
 
         slider.draw()
 
-        if (externalApplier != null)
-        {
+        if (externalApplier != null) {
             valueChanged = renderChangeState(x, y, height, width, typeKey, valueCache)
             textOffset = ((height - 7) * transitionExternalApplier.get()).toInt()
         }
@@ -87,8 +83,7 @@ class OptionEntryRangeDouble(
     /**
      * Called when the entry is (double-) clicked.
      */
-    override fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int, entryHeight: Int)
-    {
+    override fun clicked(isDoubleClick: Boolean, mouseOnEntryX: Int, mouseOnEntryY: Int, entryWidth: Int, entryHeight: Int) {
     }
 
     /**
@@ -99,10 +94,8 @@ class OptionEntryRangeDouble(
      * @see UISlider.isMouseDown
      * @see UISlider.sliderPosition
      */
-    override fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int)
-    {
-        if (eventButton == 0)
-        {
+    override fun mousePressed(mouseX: Int, mouseY: Int, eventButton: Int) {
+        if (eventButton == 0) {
             slider.mousePressed(mouseX, mouseY)
         }
     }
@@ -116,10 +109,8 @@ class OptionEntryRangeDouble(
      * @see UISlider.isMouseDown
      * @see UISlider.changeResponder
      */
-    override fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int)
-    {
-        if (eventButton == 0)
-        {
+    override fun mouseReleased(mouseX: Int, mouseY: Int, eventButton: Int) {
+        if (eventButton == 0) {
             slider.mouseReleased(mouseX, mouseY)
         }
     }
@@ -127,16 +118,14 @@ class OptionEntryRangeDouble(
     /**
      * Called by the list when a key is pressed.
      */
-    override fun keyTyped(typedChar: Char, keyCode: Int)
-    {
+    override fun keyTyped(typedChar: Char, keyCode: Int) {
         slider.keyTyped(typedChar, keyCode)
     }
 
     /**
      * Function to be overridden in order to return the key.
      */
-    fun getKey(): OptionKey<Double>
-    {
+    fun getKey(): OptionKey<Double> {
         return typeKey
     }
 
@@ -151,8 +140,7 @@ class OptionEntryRangeDouble(
      * It is called when the "Save and Exit" button is pressed thus the value should be
      * applied.
      */
-    override fun applyExternally()
-    {
+    override fun applyExternally() {
         if (valueCache != typeKey.get())
             externalApplier?.invoke(valueCache, typeKey)
     }

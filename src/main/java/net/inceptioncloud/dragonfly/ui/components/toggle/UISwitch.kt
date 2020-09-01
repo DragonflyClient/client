@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.ui.components.toggle
 
 import net.inceptioncloud.dragonfly.design.color.BluePalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.transition.color.ColorTransition
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward
@@ -26,8 +27,7 @@ import java.util.function.Consumer
  * @see net.inceptioncloud.dragonfly.options.OptionKey
  */
 class UISwitch(var x: Int, var y: Int, var width: Int, var height: Int,
-               private val valueGetter: () -> Boolean, private val valueSetter: (Boolean) -> Unit)
-{
+               private val valueGetter: () -> Boolean, private val valueSetter: (Boolean) -> Unit) {
     /**
      * The boolean value that was active when the switch was created.
      *
@@ -85,15 +85,14 @@ class UISwitch(var x: Int, var y: Int, var width: Int, var height: Int,
      * Provides the transition between **green** (value is `true`) and **red** (value is `false`).
      */
     private val transitionColor = ColorTransition.builder()
-        .start(Color(0x34c464)).end(Color(0xff6663))
+        .start(DragonflyPalette.accentBright.base).end(DragonflyPalette.accentDark.base)
         .amountOfSteps(50)
         .autoTransformator(ForwardBackward { !valueGetter.invoke() }).build()
 
     /**
      * Draws the switch into the current UI.
      */
-    fun draw()
-    {
+    fun draw() {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F)
 
         val valueLeft = if (ignoreTransition) 1.0 else transitionLeft.get()
@@ -106,9 +105,9 @@ class UISwitch(var x: Int, var y: Int, var width: Int, var height: Int,
 
         RenderUtils.drawRoundRect(x, y, width, height, height, BluePalette.FOREGROUND)
         RenderUtils.drawRoundRect(
-                innerLeft, y + height / 2 - innerSize / 2,
-                innerRight - innerLeft, innerSize,
-                10, transitionColor.get()
+            innerLeft, y + height / 2 - innerSize / 2,
+            innerRight - innerLeft, innerSize,
+            10, transitionColor.get()
         )
     }
 
@@ -116,8 +115,7 @@ class UISwitch(var x: Int, var y: Int, var width: Int, var height: Int,
      * Called on every registered mouse input. This method checks if the input is valid (in the switch bounds)
      * and then changes the value using the [valueSetter] to the opposite of the current value of the [valueGetter].
      */
-    fun mouseClicked(mouseX: Int, mouseY: Int)
-    {
+    fun mouseClicked(mouseX: Int, mouseY: Int) {
         if (mouseX in x..(x + width) && mouseY in y..(y + height))
             valueSetter.invoke(!valueGetter.invoke())
     }

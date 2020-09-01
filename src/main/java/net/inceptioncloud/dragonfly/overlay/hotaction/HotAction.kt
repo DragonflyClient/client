@@ -7,12 +7,10 @@ import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import org.lwjgl.input.Keyboard
-import java.lang.IllegalStateException
 import java.util.concurrent.LinkedBlockingQueue
 
 /**
@@ -32,7 +30,13 @@ object HotAction {
         if (!OptionsSectionOverlay.enableHotActions.getKey().get())
             return
 
-        queue.offer(HotActionWidget(title, message, duration, actions, allowMultipleActions))
+        queue.offer(HotActionWidget(
+            title,
+            message,
+            duration,
+            actions,
+            allowMultipleActions
+        ))
         displayNext()
     }
 
@@ -41,19 +45,21 @@ object HotAction {
      * a smooth fly-in animation
      */
     fun displayNext() {
-        if (ScreenOverlay.buffer["hot-action"] != null || queue.isEmpty())
+        if (ScreenOverlay.stage["hot-action"] != null || queue.isEmpty())
             return
 
         val next = queue.poll()
 
-        next.updateStructure()
+        next.runStructureUpdate()
         next.x = -next.width - 5.0
-        next.updateStructure()
+        next.runStructureUpdate()
 
         ScreenOverlay.addComponent("hot-action", next)
-        next.morph(duration = 70, easing = EaseCubic.IN_OUT) {
-            x = 0.0
-        }?.start()
+        next.morph(
+            70,
+            EaseCubic.IN_OUT,
+            next::x to 0.0
+        )?.start()
     }
 
     /**
@@ -63,19 +69,20 @@ object HotAction {
     fun finish(hotAction: HotActionWidget): Unit = with(hotAction) {
         expired = true
 
-        morph(duration = 70, easing = EaseCubic.IN_OUT) {
-            x = -width - 5.0
-        }?.post { _, _ ->
-            ScreenOverlay.buffer.content.remove("hot-action")
+        morph(
+            70,
+            EaseCubic.IN_OUT,
+            ::x to -width - 5.0
+        )?.post { _, _ ->
+            ScreenOverlay.stage.remove("hot-action")
             displayNext()
-        }?.companion { scratchpad, base ->
-            (scratchpad as AssembledWidget).getWidget<Rectangle>("timer")?.isVisible = false
+        }?.companion { base ->
             (base as AssembledWidget).getWidget<Rectangle>("timer")?.isVisible = false
         }?.start()
     }
 
     /**
-     * Listens to the [KeyDispatchEvent] to execute the actions when the dedicated trigger
+     * Listens to the [KeyInputEvent] to execute the actions when the dedicated trigger
      * is activated
      */
     @Subscribe
@@ -83,7 +90,7 @@ object HotAction {
         if (!event.press)
             return
 
-        val current = ScreenOverlay.buffer["hot-action"] as? HotActionWidget ?: return
+        val current = ScreenOverlay.stage["hot-action"] as? HotActionWidget ?: return
         val target = getTargetAction(event.key) ?: return
 
         current.actions.getOrNull(target - 1)?.perform?.let {

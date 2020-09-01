@@ -1,11 +1,9 @@
 package net.inceptioncloud.dragonfly.engine.font
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.engine.font.renderer.*
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
-import net.minecraft.client.gui.*
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -37,12 +35,12 @@ class WidgetFont @JvmOverloads constructor(
     /**
      * Cache for already created font renderer.
      */
-    val cachedFontRenderer = mutableMapOf<FontRendererBuilder, IFontRenderer>()
+    val cachedFontRenderer = mutableMapOf<FontRendererFingerprint, IFontRenderer>()
 
     /**
      * A cache with all running async productions and already built font renderers.
      */
-    val asyncBuilding = mutableMapOf<FontRendererBuilder, IFontRenderer?>()
+    val asyncBuilding = mutableMapOf<FontRendererFingerprint, IFontRenderer?>()
 
     /**
      * Clears both caches when changing the font quality.
@@ -63,18 +61,20 @@ class WidgetFont @JvmOverloads constructor(
     fun fontRenderer(
         fontWeight: FontWeight = FontWeight.REGULAR,
         size: Int = 19,
-        letterSpacing: Double? = null
+        letterSpacing: Double? = null,
+        useScale: Boolean = true
     ): IFontRenderer {
-        val builder = FontRendererBuilder(fontWeight, size, letterSpacing ?: this.letterSpacing)
+        val fingerprint = FontRendererFingerprint(fontWeight, size, letterSpacing ?: this.letterSpacing, useScale)
 
-        return if (cachedFontRenderer.containsKey(builder) && cachedFontRenderer[builder] !is ScaledFontRenderer) {
-            cachedFontRenderer[builder]!!
+        return if (cachedFontRenderer.containsKey(fingerprint) && cachedFontRenderer[fingerprint] !is ScaledFontRenderer) {
+            cachedFontRenderer[fingerprint]!!
         } else {
             GlyphFontRenderer.create(
-                fontWeights[builder.fontWeight],
-                builder.size,
-                builder.letterSpacing
-            ).also { cachedFontRenderer[builder] = it }
+                fontWeights[fingerprint.fontWeight],
+                fingerprint.size,
+                fingerprint.letterSpacing,
+                useScale
+            ).also { cachedFontRenderer[fingerprint] = it }
         }
     }
 
@@ -91,40 +91,41 @@ class WidgetFont @JvmOverloads constructor(
         fontWeight: FontWeight = FontWeight.REGULAR,
         size: Int = 19,
         letterSpacing: Double? = null,
+        useScale: Boolean = true,
         callback: ((IFontRenderer) -> Unit)? = null
     ): IFontRenderer? {
-        val builder = FontRendererBuilder(fontWeight, size, letterSpacing ?: this.letterSpacing)
+        val fingerprint = FontRendererFingerprint(fontWeight, size, letterSpacing ?: this.letterSpacing, useScale)
 
         // if a cached version is available
-        if (cachedFontRenderer.containsKey(builder)) {
-            val stored = cachedFontRenderer[builder]
+        if (cachedFontRenderer.containsKey(fingerprint)) {
+            val stored = cachedFontRenderer[fingerprint]
             stored?.takeIf { it !is ScaledFontRenderer }?.let { callback?.invoke(it) }
             return stored
-        } else if (asyncBuilding.containsKey(builder)) {
-            val stored = asyncBuilding[builder]
+        } else if (asyncBuilding.containsKey(fingerprint)) {
+            val stored = asyncBuilding[fingerprint]
             stored?.let { callback?.invoke(it) }
             return stored
         }
 
-        val scaled = findScaled(builder)
+        val scaled = findScaled(fingerprint)
 
         // store 'null' to indicate that a build is running
-        asyncBuilding[builder] = null
+        asyncBuilding[fingerprint] = null
 
         // build the font renderer in a new coroutine
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             LogManager.getLogger().debug(
-                "${Thread.currentThread().name} is building font renderer for ${this@WidgetFont.familyName} with $builder"
+                "${Thread.currentThread().name} is building font renderer for ${this@WidgetFont.familyName} with $fingerprint"
             )
 
-            val fontRenderer = fontRenderer(fontWeight, size, letterSpacing)
-            asyncBuilding.remove(builder)
-            cachedFontRenderer[builder] = fontRenderer
+            val fontRenderer = fontRenderer(fontWeight, size, letterSpacing, useScale)
+            asyncBuilding.remove(fingerprint)
+            cachedFontRenderer[fingerprint] = fontRenderer
             callback?.invoke(fontRenderer)
         }
 
         if (scaled != null) {
-            cachedFontRenderer[builder] = scaled
+            cachedFontRenderer[fingerprint] = scaled
             return scaled
         }
 
@@ -134,23 +135,15 @@ class WidgetFont @JvmOverloads constructor(
     /**
      * Preloads some commonly used font renderers for this font.
      */
-    fun preload(screen: GuiScreen) {
+    fun preload() {
         splashScreen.update()
 
         if (OptionsSectionPerformance.preloadFontRenderers() != true)
             return
 
-        fontRenderer(fontWeight = FontWeight.REGULAR, size = 16)
-        fontRenderer(fontWeight = FontWeight.MEDIUM, size = 20)
-        fontRenderer()
-
-        if (screen is GuiMainMenu) {
-            val percent = (screen.height / 3).coerceAtMost(300) / 280.0
-
-            fontRenderer(fontWeight = FontWeight.MEDIUM, size = (25 + percent * 60).toInt())
-            fontRenderer(fontWeight = FontWeight.REGULAR, size = (15 + percent * 40).toInt())
-            fontRenderer(fontWeight = FontWeight.REGULAR, size = (10 + percent * 30).toInt())
-        }
+        fontRenderer(fontWeight = FontWeight.REGULAR, size = 30)
+        fontRenderer(fontWeight = FontWeight.MEDIUM, size = 30)
+        fontRenderer(fontWeight = FontWeight.LIGHT, size = 30)
     }
 
     /**
@@ -158,15 +151,15 @@ class WidgetFont @JvmOverloads constructor(
      * This will return a [ScaledFontRenderer] object which uses the base font renderer while applying a
      * scale to adapt to the target font size.
      */
-    private fun findScaled(builder: FontRendererBuilder) =
+    private fun findScaled(fingerprint: FontRendererFingerprint) =
         if (OptionsSectionPerformance.useScaledFontRenderers() != true) {
             null
         } else {
             cachedFontRenderer.toList()
-                .filter { (other, _) -> other.fontWeight == builder.fontWeight && other.letterSpacing == builder.letterSpacing }
+                .filter { (other, _) -> other.fontWeight == fingerprint.fontWeight && other.letterSpacing == fingerprint.letterSpacing }
                 .sortedBy { (other, _) -> other.size }
-                .firstOrNull { (other, _) -> other.size / builder.size.toDouble() in 1.0..2.0 }
-                ?.let { (other, base) -> ScaledFontRenderer(base, (other.size / builder.size.toDouble())) }
+                .firstOrNull { (other, _) -> other.size / fingerprint.size.toDouble() in 1.0..2.0 }
+                ?.let { (other, base) -> ScaledFontRenderer(base, (other.size / fingerprint.size.toDouble())) }
         }
 
 

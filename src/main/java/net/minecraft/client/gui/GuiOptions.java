@@ -27,7 +27,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
         this.parentScreen = parentScreen;
         this.gameSettings = gameSettings;
 
-        // TODO [24.01.2020]: Add Language Button to Options
+        // TODO [24.01.2020]: Add Language Button to options
         // this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, j + 72 + 12));
         // -> this.mc.displayGuiScreen(new GuiLanguage(this, this.mc.gameSettings, this.mc.getLanguageManager()));
     }

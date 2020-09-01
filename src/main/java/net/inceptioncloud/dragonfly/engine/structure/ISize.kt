@@ -6,8 +6,7 @@ package net.inceptioncloud.dragonfly.engine.structure
  * The size interface is used for widgets that have the same width and height. This value is
  * specified by the [size] variable.
  */
-interface ISize
-{
+interface ISize {
     /**
      * The size of the object.
      *
