@@ -72,9 +72,13 @@ object CosmeticsManager {
      */
     @JvmStatic
     fun loadCosmetics(player: EntityPlayer, callback: Consumer<CosmeticDataList?>) {
+        if (player.gameProfile.id == null) return
+
         LogManager.getLogger().info("Loading cosmetics for ${player.gameProfile.name}...")
         GlobalScope.launch(Dispatchers.IO) {
-            callback.accept(fetchCosmetics(player))
+            val cosmetics = fetchCosmetics(player)
+            callback.accept(cosmetics)
+            LogManager.getLogger().info("Cosmetics for ${player.gameProfile.name} loaded: $cosmetics")
         }
     }
 

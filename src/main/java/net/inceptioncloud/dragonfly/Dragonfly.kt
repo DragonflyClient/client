@@ -67,6 +67,7 @@ object Dragonfly {
         .registerTypeAdapter(WidgetColor::class.java, WidgetColor.serializer)
         .registerTypeAdapter(WidgetColor::class.java, WidgetColor.deserializer)
         .setPrettyPrinting()
+        .serializeNulls()
         .create()
 
     /**
@@ -108,8 +109,6 @@ object Dragonfly {
     fun init() {
         Display.setTitle("Dragonfly ${DragonflyVersion.string} for Minecraft 1.8.8")
 
-        Taskbar
-        CosmeticsManager
         DefaultSubscribers.register(eventBus)
 
         fontManager = FontManager()
@@ -129,6 +128,9 @@ object Dragonfly {
             }
         }, 0, 5)
         httpClient = OkHttpClient.Builder().build()
+
+        Taskbar
+        CosmeticsManager
 
         try {
             LogManager.getLogger().info("Checking for authenticated Dragonfly account...")

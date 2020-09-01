@@ -21,7 +21,7 @@ open class Cosmetic(
         GlStateManager.pushMatrix()
         GlStateManager.color(1.0F, 1.0F, 1.0F)
 
-        models.forEach { it.render(player, properties) }
+        models.forEach { it.render(player, properties, cosmeticData) }
 
         GlStateManager.popMatrix()
     }
