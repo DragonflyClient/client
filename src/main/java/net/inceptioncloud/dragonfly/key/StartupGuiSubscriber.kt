@@ -4,12 +4,14 @@ import com.google.common.eventbus.Subscribe
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent
 import net.inceptioncloud.dragonfly.key.ui.AttachingKeyUI
 import net.inceptioncloud.dragonfly.key.ui.EnterKeyUI
+import dev.decobr.mcgeforce.bindings.MCGeForceHelper
 import org.apache.logging.log4j.LogManager
 
 /**
  * Listens to the [StartupGuiEvent] and changes the target gui to the [AttachingKeyUI].
  */
 object StartupGuiSubscriber {
+
     @Subscribe
     fun onStartupGui(event: StartupGuiEvent) {
         if (KeyStorage.isKeySaved()) {
@@ -25,5 +27,7 @@ object StartupGuiSubscriber {
             LogManager.getLogger().info("Asking for Dragonfly key...")
             event.target = EnterKeyUI()
         }
+
+        MCGeForceHelper.instance.initialise()
     }
 }
