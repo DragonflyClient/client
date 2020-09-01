@@ -23,16 +23,13 @@ package dev.decobr.mcgeforce.bindings;
  * SOFTWARE.
  */
 
-import com.profesorfalken.jsensors.JSensors;
-import com.profesorfalken.jsensors.model.components.Components;
-import com.profesorfalken.jsensors.model.components.Gpu;
+import dev.decobr.mcgeforce.utils.EnumHighlightType;
 import dev.decobr.mcgeforce.utils.NVGSDK;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
 
 public class MCGeForceHelper {
 
@@ -59,32 +56,15 @@ public class MCGeForceHelper {
         LogManager.getLogger().info(prefix + "Checking if system is qualified...");
 
         String os = System.getProperty("os.name");
-        String gpu = getGraphicsCardName();
         Boolean isShadowPlayRunning = isProcessRunning("nvsphelper64.exe");
 
-        if (os.toLowerCase().contains("windows") && gpu.toLowerCase().contains("geforce") && isShadowPlayRunning) {
-            LogManager.getLogger().info(prefix + "System is qualified! ('" + os + "' - '" + gpu + "' - 'true')");
+        if (os.toLowerCase().contains("windows") && isShadowPlayRunning) {
+            LogManager.getLogger().info(prefix + "System is qualified! ('" + os + "' - 'nvsphelper64.exe: true')");
             return true;
         } else {
-            LogManager.getLogger().info(prefix + "System is not qualified! ('" + os + "' - '" + gpu + "' - '" + isShadowPlayRunning + "')");
+            LogManager.getLogger().info(prefix + "System is not qualified! ('" + os + "' - 'nvsphelper64.exe: " + isShadowPlayRunning +  "')");
             return false;
         }
-    }
-
-    private static String getGraphicsCardName() {
-        String result = "";
-
-        Components hardware = JSensors.get.components();
-        List<Gpu> gpus = hardware.gpus;
-
-        if (gpus != null) {
-            for (final Gpu gpu : gpus) {
-                result = gpu.name;
-            }
-        }
-
-
-        return result;
     }
 
     private static Boolean isProcessRunning(String processName) {
@@ -174,9 +154,9 @@ public class MCGeForceHelper {
         }
     }
 
-    public void saveHighlight(String id, int start, int end) {
+    public void saveHighlight(EnumHighlightType highlightType) {
         if (isSystemValid) {
-            instance.setVideoHighlight(handlePtr, id, "mcgeforcemod", start, end);
+            instance.setVideoHighlight(handlePtr, highlightType.getId(), "mcgeforcemod", highlightType.getTime(), 1000);
             queryAmountOfHighlights();
         }
     }
