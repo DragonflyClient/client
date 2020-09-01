@@ -12,6 +12,9 @@ import org.lwjgl.opengl.GL11.*
 import kotlin.math.cos
 import kotlin.math.sin
 
+/**
+ * The base class for the "wings" cosmetic.
+ */
 object CosmeticWings : Cosmetic(1) {
 
     override val models = listOf(CosmeticWingsModel())

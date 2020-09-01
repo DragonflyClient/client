@@ -10,6 +10,10 @@ import okhttp3.Request
 import org.apache.logging.log4j.LogManager
 import java.util.function.Consumer
 
+/**
+ * Handles the communication between the client and the server for loading
+ * Dragonfly cosmetics from the database.
+ */
 object CosmeticsManager {
 
     /**

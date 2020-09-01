@@ -13,9 +13,16 @@ import org.lwjgl.opengl.GL11
 import kotlin.math.cos
 import kotlin.math.sin
 
+/**
+ * The model for the [wings][CosmeticWings] cosmetic
+ */
 class CosmeticWingsModel : CosmeticModel() {
 
+    /**
+     * Resource location for the wings texture
+     */
     private val location: ResourceLocation = ResourceLocation("dragonflyres/wings.png")
+
     private var wing: ModelRenderer? = null
     private var wingTip: ModelRenderer? = null
 
