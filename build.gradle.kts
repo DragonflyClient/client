@@ -21,6 +21,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
     implementation("org.reflections:reflections:0.9.12")
+    implementation("com.squareup.okhttp3:okhttp:4.3.1")
 
     // only required for inspector extension
     implementation("no.tornado:tornadofx:1.7.20")

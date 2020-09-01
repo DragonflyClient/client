@@ -6,6 +6,8 @@ import com.mojang.authlib.GameProfile;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+
+import net.inceptioncloud.dragonfly.cosmetics.logic.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDirectional;
@@ -74,6 +76,7 @@ import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.LockCode;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("incomplete-switch")
 public abstract class EntityPlayer extends EntityLivingBase
@@ -173,6 +176,8 @@ public abstract class EntityPlayer extends EntityLivingBase
      */
     public EntityFishHook fishEntity;
 
+    private CosmeticDataList cosmetics = null;
+
     public EntityPlayer(World worldIn, GameProfile gameProfileIn)
     {
         super(worldIn);
@@ -184,6 +189,8 @@ public abstract class EntityPlayer extends EntityLivingBase
         this.setLocationAndAngles((double)blockpos.getX() + 0.5D, (double)(blockpos.getY() + 1), (double)blockpos.getZ() + 0.5D, 0.0F, 0.0F);
         this.field_70741_aB = 180.0F;
         this.fireResistance = 20;
+
+        CosmeticsManager.loadCosmetics(this, (cosmeticData) -> this.cosmetics = cosmeticData);
     }
 
     protected void applyEntityAttributes()
@@ -1465,6 +1472,11 @@ public abstract class EntityPlayer extends EntityLivingBase
         {
             this.openContainer.onContainerClosed(this);
         }
+    }
+
+    @Nullable
+    public CosmeticDataList getCosmetics() {
+        return cosmetics;
     }
 
     /**

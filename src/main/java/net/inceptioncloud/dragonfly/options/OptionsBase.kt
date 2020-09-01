@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.options
 
 import com.google.gson.*
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.Dragonfly.eventBus
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import org.apache.logging.log4j.LogManager
@@ -26,11 +27,7 @@ open class OptionsBase(val optionsFile: File) {
     /**
      * The Gson instance that allows the (de-)serialization of objects.
      */
-    val gson: Gson = GsonBuilder()
-        .registerTypeAdapter(WidgetColor::class.java, WidgetColor.serializer)
-        .registerTypeAdapter(WidgetColor::class.java, WidgetColor.deserializer)
-        .setPrettyPrinting()
-        .create()
+    val gson: Gson = Dragonfly.gson
 
     /**
      * The last read content (via [.contentUpdate]) in JSON-Format.

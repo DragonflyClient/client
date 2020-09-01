@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import net.inceptioncloud.dragonfly.account.*
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
@@ -7,6 +9,8 @@ import net.inceptioncloud.dragonfly.engine.font.FontManager
 import net.inceptioncloud.dragonfly.event.*
 import net.inceptioncloud.dragonfly.event.client.*
 import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
+import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
+import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.state.GameStateManager
@@ -15,6 +19,7 @@ import net.inceptioncloud.dragonfly.transition.Transition
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.minecraft.client.Minecraft
+import okhttp3.OkHttpClient
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.lwjgl.opengl.Display
@@ -48,10 +53,21 @@ object Dragonfly {
         private set
 
     @JvmStatic
+    lateinit var httpClient: OkHttpClient
+        private set
+
+    @JvmStatic
     val eventBus: ModEventBus = ModEventBus()
 
     @JvmStatic
     val logger: Logger = LogManager.getLogger()
+
+    @JvmStatic
+    val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(WidgetColor::class.java, WidgetColor.serializer)
+        .registerTypeAdapter(WidgetColor::class.java, WidgetColor.deserializer)
+        .setPrettyPrinting()
+        .create()
 
     /**
      * All transitions handled by the mod.
@@ -93,6 +109,7 @@ object Dragonfly {
         Display.setTitle("Dragonfly ${DragonflyVersion.string} for Minecraft 1.8.8")
 
         Taskbar
+        CosmeticsManager
         DefaultSubscribers.register(eventBus)
 
         fontManager = FontManager()
@@ -111,6 +128,7 @@ object Dragonfly {
                 }
             }
         }, 0, 5)
+        httpClient = OkHttpClient.Builder().build()
 
         try {
             LogManager.getLogger().info("Checking for authenticated Dragonfly account...")
