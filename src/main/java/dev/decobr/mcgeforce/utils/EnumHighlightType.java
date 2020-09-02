@@ -3,10 +3,8 @@ package dev.decobr.mcgeforce.utils;
 public enum EnumHighlightType {
 
     KILL("mcdrgn_kill"),
-    KILLSTREAK("mcdrgn_killstreak"),
     WIN("mcdrgn_win"),
-    DEATH("mcdrgn_death"),
-    LOSE("mcdrgn_lose");
+    DEATH("mcdrgn_death");
 
     private final String id;
 

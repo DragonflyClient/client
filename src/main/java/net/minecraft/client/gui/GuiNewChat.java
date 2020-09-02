@@ -283,6 +283,7 @@ public class GuiNewChat extends Gui {
     public void printChatMessageWithOptionalDeletion(IChatComponent component, int id) {
         this.setChatLine(component, id, this.mc.ingameGUI.getUpdateCounter(), false);
         logger.info("[CHAT] " + component.getUnformattedText());
+        NvidiaHighlightsMod.INSTANCE.checkMessage(component.getUnformattedText());
     }
 
     private void setChatLine(IChatComponent component, int id, int updateCounter, boolean displayOnly) {

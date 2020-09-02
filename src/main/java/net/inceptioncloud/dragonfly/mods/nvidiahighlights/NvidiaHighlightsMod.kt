@@ -1,15 +1,23 @@
 package net.inceptioncloud.dragonfly.mods.nvidiahighlights
 
+import dev.decobr.mcgeforce.utils.EnumHighlightType
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
+import net.minecraft.client.Minecraft
 import java.util.*
 
 object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
 
+    val gommehd = HashMap<String, String>()
+
     var enabled by option(true)
     var length by option(30)
+
+    init {
+        registerMap()
+    }
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
@@ -29,8 +37,48 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
                      */
                     Toast.queue("§cSeems like you don't have any saved Highlight!", 400)
                 }
-            },1000)
+            }, 1000)
         }
     )
+
+    private fun registerMap() {
+        gommehd["highlights.bedwars.kill.en"] = "[BedWars] You have killed"
+        gommehd["highlights.bedwars.death.en"] = "[BedWars] You were killed by"
+        gommehd["highlights.bedwars.win.en"] = "[BedWars] You have won"
+        gommehd["highlights.bedwars.kill.de"] = "[BedWars] Du hast"
+        gommehd["highlights.bedwars.death.de"] = "[BedWars] Du wurdest von"
+        gommehd["highlights.bedwars.win.de"] = "[BedWars] Du hast die Runde gewonnen"
+    }
+
+    fun checkMessage(message: String): Boolean {
+        if (!Minecraft.getMinecraft().isSingleplayer) {
+            val serverIp = Minecraft.getMinecraft().currentServerData.serverIP
+            val playerName = Minecraft.getMinecraft().session.username
+
+            if(serverIp.toLowerCase().endsWith("gommehd.net")) {
+                for(entry in gommehd.keys) {
+                    if(message.startsWith(gommehd[entry]!!)) {
+
+                        when {
+                            entry.startsWith("highlights.bedwars.kill") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.KILL)
+                                return true
+                            }
+                            entry.startsWith("highlights.bedwars.death") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.DEATH)
+                                return true
+                            }
+                            entry.startsWith("highlights.bedwars.win") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.WIN)
+                                return true
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return false
+    }
 
 }
