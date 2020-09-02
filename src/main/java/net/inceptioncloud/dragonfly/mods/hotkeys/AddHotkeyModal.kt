@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.modmanager.ModManagerApp
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPickerModal
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPreview
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
@@ -321,13 +320,10 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
             timeTextField.realText.toDouble(),
             delayTextField.realText.toDouble(),
             colorPickerValue,
-            fadeOutCheckBox.isChecked,
             config.toJsonObject()
         )
 
-        val hotkey = ChatHotkey(data, config)
-
-        return hotkey
+        return ChatHotkey(data, config)
     }
 
     private fun validateForms(): Boolean {

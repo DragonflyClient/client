@@ -311,7 +311,6 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
 
             HotkeysMod.controller.removeHotkey(originalHotkey)
             HotkeysMod.controller.addHotkey(convertThisToHotkey())
-8
             Minecraft.getMinecraft().currentScreen.refresh()
             Toast.queue("§aChanges saved!", 400)
         } else {
@@ -350,13 +349,10 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             timeTextField.realText.toDouble(),
             delayTextField.realText.toDouble(),
             colorPickerValue,
-            fadeOutCheckBox.isChecked,
             config.toJsonObject()
         )
 
-        val hotkey = ChatHotkey(data, config)
-
-        return hotkey
+        return ChatHotkey(data, config)
     }
 
     private fun readValuesFromParameter() {
@@ -379,9 +375,6 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         delayTextField.writeText(originalHotkey.data.delay.toInt().toString())
         delayTextField.isFocused = true
         delayTextField.isFocused = false
-        if (originalHotkey.data.fadeOut) {
-            fadeOutCheckBox.toggle()
-        }
         colorPickerValue = originalHotkey.data.color
     }
 

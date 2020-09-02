@@ -16,6 +16,12 @@ abstract class Hotkey(val data: HotkeyData) {
     var isOnDelay = false
 
     /**
+     * Whether the transition is currently in its fading out state. This means that the
+     * hotkey should not be able to be activated.
+     */
+    private var inFadeOut = false
+
+    /**
      * Hold-Time progress bar animation
      */
     var transition: SmoothDoubleTransition = SmoothDoubleTransition.builder()
@@ -23,11 +29,6 @@ abstract class Hotkey(val data: HotkeyData) {
         .start(0.0).end(1.0)
         .reachEnd { execute() }
         .build()
-
-    /**
-     * Whether the transition should be recreated when set forward the next time.
-     */
-    private var shouldRecreateTransition = false
 
     /**
      * Function which is called after the time has expired (on key/keys hold)
@@ -44,12 +45,8 @@ abstract class Hotkey(val data: HotkeyData) {
         actionPerformed()
         activateDelay()
 
-        if (data.fadeOut) {
-            progressBackward()
-            shouldRecreateTransition = true
-        } else {
-            recreateTransition()
-        }
+        progressBackward()
+        inFadeOut = true
     }
 
     /**
@@ -89,9 +86,10 @@ abstract class Hotkey(val data: HotkeyData) {
      * Progresses forward in the hotkey activation process checking whether the hotkey [isOnDelay].
      */
     fun progressForward() {
-        if (isOnDelay) return
-        if (shouldRecreateTransition) recreateTransition()
+        if (isOnDelay) return // don't activate when on delay
+        if (inFadeOut && !transition.isAtStart) return // don't activate during fade out
 
+        inFadeOut = false
         transition.setForward()
     }
 
@@ -102,36 +100,15 @@ abstract class Hotkey(val data: HotkeyData) {
         transition.setBackward()
     }
 
-    fun isSatisfied(): Boolean = with(data) {
-        HotkeysMod.controller.updateKeyState(key)
-
-        if (!key.isKeyPressed()) return false
-        if (requireCtrl != Keyboard.KEY_LCONTROL pressedBefore key) return false
-        if (requireShift != Keyboard.KEY_LSHIFT pressedBefore key) return false
-        if (requireAlt != Keyboard.KEY_LMENU pressedBefore key) return false
+    /**
+     * Returns true if the state of the modifier keys are the same as they are expected by the
+     * hotkey configuration to be.
+     */
+    fun areModifiersSatisfied(): Boolean = with(data) {
+        if (requireCtrl != Keyboard.KEY_LCONTROL.isKeyPressed()) return false
+        if (requireShift != Keyboard.KEY_LSHIFT.isKeyPressed()) return false
+        if (requireAlt != Keyboard.KEY_LMENU.isKeyPressed()) return false
 
         return true
-    }
-
-    private infix fun Int.pressedBefore(primary: Int): Boolean {
-        with(HotkeysMod.controller) {
-            if (!pressedKeys.containsKey(this@pressedBefore)) return false
-            if (!pressedKeys.containsKey(primary)) return true
-
-            return pressedKeys[this@pressedBefore]!! < pressedKeys[primary]!!
-        }
-    }
-
-    /**
-     * Recreates and resets the transition.
-     */
-    private fun recreateTransition() {
-        transition.destroy()
-        transition = SmoothDoubleTransition.builder()
-            .fadeIn(0).stay((data.time * 180).toInt()).fadeOut((data.time * 20).toInt())
-            .start(0.0).end(1.0)
-            .reachEnd { execute() }
-            .build()
-        shouldRecreateTransition = false
     }
 }

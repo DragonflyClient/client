@@ -13,7 +13,7 @@ import org.lwjgl.input.Keyboard
 object HotkeysMod : DragonflyMod("Hotkeys") {
 
     @JvmStatic
-    val controller = HotkeysController()
+    val controller = HotkeysController
 
     var enabled by option(true)
 
