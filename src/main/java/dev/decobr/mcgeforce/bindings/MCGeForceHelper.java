@@ -34,7 +34,7 @@ import java.io.InputStreamReader;
 public class MCGeForceHelper {
 
     public static final MCGeForceHelper instance = new MCGeForceHelper();
-    private static final String prefix = "[GeForce Experience Helper] ";
+    private static final String prefix = "[GeForce Helper] ";
     public static boolean isSystemValid;
     private static long handlePtr;
 
