@@ -25,6 +25,7 @@ package dev.decobr.mcgeforce.bindings;
 
 import dev.decobr.mcgeforce.utils.EnumHighlightType;
 import dev.decobr.mcgeforce.utils.NVGSDK;
+import net.inceptioncloud.dragonfly.mods.nvidiahighlights.NvidiaHighlightsMod;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
@@ -59,10 +60,10 @@ public class MCGeForceHelper {
         Boolean isShadowPlayRunning = isProcessRunning("nvsphelper64.exe");
 
         if (os.toLowerCase().contains("windows") && isShadowPlayRunning) {
-            LogManager.getLogger().info(prefix + "System is qualified! ('" + os + "' - nvsphelper64.exe: 'true')");
+            LogManager.getLogger().info(prefix + "System is qualified! (OS: '" + os + "' - nvsphelper64.exe: 'true')");
             return true;
         } else {
-            LogManager.getLogger().info(prefix + "System is not qualified! ('" + os + "' - nvsphelper64.exe: '" + isShadowPlayRunning +  "')");
+            LogManager.getLogger().info(prefix + "System is not qualified! (OS: '" + os + "' - nvsphelper64.exe: '" + isShadowPlayRunning +  "')");
             return false;
         }
     }
@@ -156,8 +157,8 @@ public class MCGeForceHelper {
 
     public void saveHighlight(EnumHighlightType highlightType) {
         if (isSystemValid) {
-            System.out.println("Saving highlight...");
-            instance.setVideoHighlight(handlePtr, highlightType.getId(), "mcdragonfly", -(highlightType.getTime() * 1000), 1000);
+            LogManager.getLogger().info("Saving Highlight...");
+            instance.setVideoHighlight(handlePtr, highlightType.getId(), "mcdragonfly", -(NvidiaHighlightsMod.INSTANCE.getLength() * 1000), 1000);
             queryAmountOfHighlights();
         }
     }

@@ -1,11 +1,13 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
+import dev.decobr.mcgeforce.bindings.MCGeForceHelper;
 import dev.decobr.mcgeforce.utils.EnumHighlightType;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor;
+import net.inceptioncloud.dragonfly.mods.nvidiahighlights.NvidiaHighlightsMod;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion;

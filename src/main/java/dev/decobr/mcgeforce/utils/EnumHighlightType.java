@@ -2,21 +2,18 @@ package dev.decobr.mcgeforce.utils;
 
 public enum EnumHighlightType {
 
-    KILL("mcdrgn_kill",10),
-    KILLSTREAK("mcdrgn_killstreak",10),
-    WIN("mcdrgn_win",10),
-    DEATH("mcdrgn_death",10),
-    LOSE("mcdrgn_lose",10);
+    KILL("mcdrgn_kill"),
+    KILLSTREAK("mcdrgn_killstreak"),
+    WIN("mcdrgn_win"),
+    DEATH("mcdrgn_death"),
+    LOSE("mcdrgn_lose");
 
     private final String id;
-    private final int time;
 
-    EnumHighlightType(final String newId, final int newTime) {
+    EnumHighlightType(final String newId) {
         id = newId;
-        time = newTime;
     }
 
     public String getId() { return id; }
-    public int getTime() { return time; }
 
 }
