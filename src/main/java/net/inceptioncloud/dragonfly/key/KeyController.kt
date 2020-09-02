@@ -39,7 +39,7 @@ object KeyController {
             val key = KeyStorage.getStoredKey() ?: return Result(false, "No key stored on local machine!")
             val response = khttp.post(
                 url = "https://api.playdragonfly.net/keys/validate",
-                timeout = 10.0,
+                timeout = 30.0,
                 json = mapOf(
                     "key" to key,
                     "machineIdentifier" to MachineIdentifier.generateIdentifier()
