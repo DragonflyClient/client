@@ -151,16 +151,17 @@ object CapeManager {
 
         return when(fillMode) {
             FillMode.WRAP -> wrapContent(src, fillColor)
-            FillMode.CROP -> cropContent(src, fillColor)
+            FillMode.THIN -> cropContent(src, fillColor, true)
+            FillMode.CROP -> cropContent(src, fillColor, false)
             FillMode.NONE -> src
         }
     }
 
-    private fun cropContent(src: BufferedImage, fillColor: WidgetColor): BufferedImage {
+    private fun cropContent(src: BufferedImage, fillColor: WidgetColor, thin: Boolean): BufferedImage {
         val dest = BufferedImage(352, 275, 2)
-        val destX = 16
+        val destX = if (thin) 16 else 0
         val destY = 16
-        val destWidth = 160
+        val destWidth = if (thin) 160 else 192
         val destHeight = 259
 
         val diffWidth = src.width - destWidth
@@ -178,8 +179,11 @@ object CapeManager {
         val srcY = (src.height - scaledHeight) / 2.0
 
         val graphics = dest.graphics
-        graphics.color = fillColor.base
-        graphics.fillRect(0, 0, dest.width, dest.height)
+        if (!thin) {
+            graphics.color = fillColor.base
+            graphics.fillRect(0, 0, dest.width, dest.height)
+        }
+
         graphics.color = Color(255, 255, 255, 255)
         graphics.drawImage(
             src, destX, destY, destX + destWidth, destY + destHeight,
