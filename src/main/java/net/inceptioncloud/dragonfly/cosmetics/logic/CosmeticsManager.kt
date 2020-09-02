@@ -5,9 +5,11 @@ import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWings
 import net.inceptioncloud.dragonfly.cosmetics.Cosmetic
+import net.inceptioncloud.dragonfly.mc
 import net.minecraft.entity.player.EntityPlayer
 import okhttp3.Request
 import org.apache.logging.log4j.LogManager
+import java.util.*
 import java.util.function.Consumer
 
 /**
@@ -28,6 +30,12 @@ object CosmeticsManager {
      * the Dragonfly client starts.
      */
     var databaseModels = loadDatabaseModels()
+
+    /**
+     * A cache for already fetched cosmetic items saved per user. This cache can be cleared using
+     * [clearCache].
+     */
+    private val cache = mutableMapOf<UUID, CosmeticDataList?>()
 
     init {
         LogManager.getLogger().info("Loading database models for cosmetics...")
@@ -73,7 +81,7 @@ object CosmeticsManager {
     /**
      * Returns a database model in the form of a [JsonObject] for the given [cosmeticId].
      */
-    fun getDatabaseModelById(cosmeticId: Int) = databaseModels?.firstOrNull { model -> model.get("cosmeticId").asInt == cosmeticId }
+    fun getDatabaseModelById(cosmeticId: Int) = databaseModels?.firstOrNull { it.get("cosmeticId").asInt == cosmeticId }
 
     /**
      * Asynchronously loads the cosmetics by calling [fetchCosmetics] using the given [player].
@@ -81,12 +89,38 @@ object CosmeticsManager {
      */
     @JvmStatic
     fun loadCosmetics(player: EntityPlayer, callback: Consumer<CosmeticDataList?>) {
-        if (player.gameProfile.id == null) return
+        val uuid = player.gameProfile.id ?: return
+        if (cache.containsKey(uuid)) return callback.accept(cache[uuid])
 
         GlobalScope.launch(Dispatchers.IO) {
             val cosmetics = fetchCosmetics(player)
+            cache[uuid] = cosmetics
             callback.accept(cosmetics)
         }
+    }
+
+    /**
+     * Clears the [cache] for the already fetched cosmetic items. If a [uuid] is specified,
+     * only the cached cosmetics for this [uuid] are removed. Otherwise, the whole cache is cleared.
+     */
+    fun clearCache(uuid: UUID? = null) {
+        if (uuid != null) cache.remove(uuid) else cache.clear()
+    }
+
+    /**
+     * Refreshes the cosmetics for the targets. If a [uuid] is specified, the target is only
+     * the entity with this UUID. Otherwise, the whole [cache] will be cleared and the cosmetics
+     * for all entities in the cache are [reloaded][EntityPlayer.loadCosmetics].
+     */
+    @JvmStatic
+    fun refreshCosmetics(uuid: UUID? = null) {
+        val targetEntities = if (uuid != null) {
+            mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id == uuid }
+        } else {
+            mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id in cache.keys }
+        }
+        clearCache(uuid)
+        targetEntities?.forEach { it.loadCosmetics() } // reload cosmetics for targets
     }
 
     /**

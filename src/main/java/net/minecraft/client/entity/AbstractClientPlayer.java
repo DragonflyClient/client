@@ -20,7 +20,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
-import optifine.Config;
 import optifine.PlayerConfigurations;
 import optifine.Reflector;
 
@@ -42,11 +41,6 @@ public abstract class AbstractClientPlayer extends EntityPlayer
         }
 
         PlayerConfigurations.getPlayerConfiguration(this);
-
-        CosmeticsManager.loadCosmetics(this, (cosmeticData) -> {
-            this.cosmetics = cosmeticData;
-            onCosmeticsLoaded();
-        });
     }
 
     @Override
