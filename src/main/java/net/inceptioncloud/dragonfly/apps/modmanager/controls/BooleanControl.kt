@@ -3,15 +3,18 @@ package net.inceptioncloud.dragonfly.apps.modmanager.controls
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.contains
-import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.sequence.easing.*
+import net.inceptioncloud.dragonfly.engine.internal.MouseData
+import net.inceptioncloud.dragonfly.engine.internal.Widget
+import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuint
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import kotlin.reflect.KMutableProperty0
 
 class BooleanControl(
     property: KMutableProperty0<Boolean>,
     name: String,
-    description: String? = null
+    description: String? = null,
+    var changeValue: (() -> Boolean)? = { true }
 ) : OptionControlElement<Boolean>(property, name, description) {
 
     val switchWidth = 50.0
@@ -50,12 +53,15 @@ class BooleanControl(
         val foreground = getWidget<RoundedRectangle>("switch-foreground")!!
 
         background.morph(40, EaseQuint.IN_OUT, RoundedRectangle::color to computeColor())?.start()
-        foreground.morph(40, EaseQuint.IN_OUT, RoundedRectangle::x to computeInnerX(background.x, background.width))?.start()
+        foreground.morph(40, EaseQuint.IN_OUT, RoundedRectangle::x to computeInnerX(background.x, background.width))
+            ?.start()
     }
 
     override fun handleMousePress(data: MouseData) {
         if (data in getWidget<RoundedRectangle>("switch-background")) {
-            optionKey.set(!optionKey.get())
+            if (changeValue != null && changeValue!!.invoke()) {
+                optionKey.set(!optionKey.get())
+            }
         }
     }
 
