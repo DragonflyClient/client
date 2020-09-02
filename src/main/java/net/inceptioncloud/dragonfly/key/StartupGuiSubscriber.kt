@@ -15,7 +15,7 @@ object StartupGuiSubscriber {
 
     @Subscribe
     fun onStartupGui(event: StartupGuiEvent) {
-        if (KeyStorage.isKeySaved()) {
+        /*if (KeyStorage.isKeySaved()) {
             LogManager.getLogger().info("Validating stored key '${KeyStorage.getStoredKey()}'...")
             val result = KeyController.validateStoredKey()
             if (result.success) {
@@ -27,9 +27,6 @@ object StartupGuiSubscriber {
         } else {
             LogManager.getLogger().info("Asking for Dragonfly key...")
             event.target = EnterKeyUI()
-        }
-
-        Dragonfly.geforceHelper = MCGeForceHelper()
-
+        }*/
     }
 }

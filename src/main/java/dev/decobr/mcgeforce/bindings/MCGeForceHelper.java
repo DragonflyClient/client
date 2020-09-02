@@ -36,13 +36,14 @@ public class MCGeForceHelper {
 
     public static final MCGeForceHelper instance = new MCGeForceHelper();
     private static final String prefix = "[GeForce Helper] ";
-    public static boolean isSystemValid;
+    public boolean isSystemValid = isSystemValidStatic;
+    public static boolean isSystemValidStatic;
     private static long handlePtr;
 
     static {
-        isSystemValid = validateSystem();
+        isSystemValidStatic = validateSystem();
 
-        if (isSystemValid) {
+        if (isSystemValidStatic) {
             System.loadLibrary("GfeSDK");
             System.loadLibrary("MCGeForce");
 
@@ -95,7 +96,7 @@ public class MCGeForceHelper {
     }
 
     private static void callback(int code) {
-        if (isSystemValid) {
+        if (isSystemValidStatic) {
             if (!NVGSDK.succeeded(code)) {
                 LogManager.getLogger().info(prefix + "Received return code: " + NVGSDK.retCodeToString(code));
                 LogManager.getLogger().info(prefix + "Received error from NVIDIA: " + NVGSDK.retCodeToString(code));
@@ -104,7 +105,7 @@ public class MCGeForceHelper {
     }
 
     private static void createCallback(int code, String version) {
-        if (isSystemValid) {
+        if (isSystemValidStatic) {
             instance.createCallbackRetCode = code;
 
             if (NVGSDK.succeeded(code)) {
@@ -116,13 +117,13 @@ public class MCGeForceHelper {
     }
 
     private static void numberOfHighlightsCallback(int amount) {
-        if (isSystemValid) {
+        if (isSystemValidStatic) {
             instance.highlights = amount;
         }
     }
 
     private static void initialise() {
-        if (isSystemValid) {
+        if (isSystemValidStatic) {
             handlePtr = instance.init();
 
             if (handlePtr > 0) {
@@ -132,7 +133,7 @@ public class MCGeForceHelper {
     }
 
     private static void queryAmountOfHighlights() {
-        if (isSystemValid) {
+        if (isSystemValidStatic) {
             getNumOfHighlights(handlePtr, "mcdragonfly");
         }
     }
@@ -157,6 +158,17 @@ public class MCGeForceHelper {
 
     public void saveHighlight(EnumHighlightType highlightType) {
         if (isSystemValid) {
+
+            if(!NvidiaHighlightsMod.INSTANCE.getEnabled()) {
+                return;
+            }else if(highlightType == EnumHighlightType.KILL && !NvidiaHighlightsMod.INSTANCE.getSaveKills()) {
+                return;
+            }else if(highlightType == EnumHighlightType.DEATH && !NvidiaHighlightsMod.INSTANCE.getSaveDeaths()) {
+                return;
+            }else if(highlightType == EnumHighlightType.WIN && !NvidiaHighlightsMod.INSTANCE.getSaveWins()) {
+                return;
+            }
+
             LogManager.getLogger().info("Saving Highlight...");
             instance.setVideoHighlight(handlePtr, highlightType.getId(), "mcdragonfly", -(NvidiaHighlightsMod.INSTANCE.getLength() * 1000), 1000);
             queryAmountOfHighlights();

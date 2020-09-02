@@ -11,9 +11,14 @@ import java.util.*
 object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
 
     val gommehd = HashMap<String, String>()
+    var isSystemValid = Dragonfly.geforceHelper.isSystemValid
 
-    var enabled by option(true)
+    var enabled by option(false)
+
     var length by option(30)
+    var saveKills by option(true)
+    var saveDeaths by option(true)
+    var saveWins by option(true)
 
     init {
         registerMap()
@@ -21,8 +26,14 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
-        BooleanControl(NvidiaHighlightsMod::enabled, "Enable mod"),
-        NumberControl(::length, "Length", "The length of a Highlight in seconds.", min = 5.0, max = 60.0),
+        BooleanControl(::enabled, "Enable mod") {
+            if (isSystemValid) {
+                true
+            } else {
+                Toast.queue("§c You can't use this feature, take a look at the notes!", 400)
+                false
+            }
+        },
         ButtonControl("Show Highlights", "Open the GeForce Editor.", "Open Editor") {
             Dragonfly.geforceHelper.showHighlights()
             Timer().schedule(object : TimerTask() {
@@ -38,7 +49,20 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
                     Toast.queue("§cSeems like you don't have any saved Highlight!", 400)
                 }
             }, 1000)
-        }
+        },
+        TitleControl("Options"),
+        NumberControl(::length, "Length", "The length of a Highlight in seconds.", min = 5.0, max = 60.0),
+        BooleanControl(::saveKills, "Save Kills", ""),
+        BooleanControl(::saveDeaths, "Save Deaths", ""),
+        BooleanControl(::saveWins, "Save Wins", ""),
+        TitleControl("Supported Server, Languages, Modes"),
+        TextControl("GommeHD.net: German, English"),
+        TextControl("  - BedWars: Kills, Deaths, Wins"),
+        TextControl("  - SkyWars: Kills, Deaths, Wins"),
+        TextControl("  - Cores: Kills, Deaths"),
+        TitleControl("Note"),
+        TextControl("- To use this feature you need to have Windows and an Nvidia GPU"),
+        TextControl("- Please make sure you have allowed Highlight for Minecraft in your GeForce Experience Settings")
     )
 
     private fun registerMap() {
@@ -48,6 +72,21 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
         gommehd["highlights.bedwars.kill.de"] = "[BedWars] Du hast"
         gommehd["highlights.bedwars.death.de"] = "[BedWars] Du wurdest von"
         gommehd["highlights.bedwars.win.de"] = "[BedWars] Du hast die Runde gewonnen"
+
+        gommehd["highlights.skywars.kill.en"] = "was killed by %playername%"
+        gommehd["highlights.skywars.death.en"] = "[SkyWars] %playername% was killed by"
+        gommehd["highlights.skywars.win.en"] = "[SkyWars] %playername% won SkyWars"
+        gommehd["highlights.skywars.kill.de"] = "wurde von %playername% getötet"
+        gommehd["highlights.skywars.death.de"] = "[SkyWars] %playername% wurde "
+        gommehd["highlights.skywars.win.de"] = "[SkyWars] %playername% hat SkyWars gewonnen"
+
+        gommehd["highlights.cores.kill.en"] = "was killed by %playername%"
+        gommehd["highlights.cores.death.en"] = "[Cores] %playername% was killed by"
+        gommehd["highlights.cores.kill.de"] = "wurde von %playername% getötet"
+        gommehd["highlights.cores.death.de"] = "[Cores] %playername% wurde "
+
+        // FunSkyWars
+
     }
 
     fun checkMessage(message: String): Boolean {
@@ -55,10 +94,10 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
             val serverIp = Minecraft.getMinecraft().currentServerData.serverIP
             val playerName = Minecraft.getMinecraft().session.username
 
-            if(serverIp.toLowerCase().endsWith("gommehd.net")) {
-                for(entry in gommehd.keys) {
-                    if(message.startsWith(gommehd[entry]!!)) {
+            if (serverIp.toLowerCase().endsWith("gommehd.net")) {
+                for (entry in gommehd.keys) {
 
+                    if (message.startsWith("[BedWars]") && message.startsWith(gommehd[entry]!!)) {
                         when {
                             entry.startsWith("highlights.bedwars.kill") -> {
                                 Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.KILL)
@@ -70,6 +109,47 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
                             }
                             entry.startsWith("highlights.bedwars.win") -> {
                                 Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.WIN)
+                                return true
+                            }
+                        }
+                    } else if (message.startsWith("[SkyWars]") && message.contains(
+                            gommehd[entry]!!.replace(
+                                "%playername%",
+                                playerName
+                            )
+                        )
+                    ) {
+
+                        when {
+                            entry.startsWith("highlights.skywars.kill") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.KILL)
+                                return true
+                            }
+                            entry.startsWith("highlights.skywars.death") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.DEATH)
+                                return true
+                            }
+                            entry.startsWith("highlights.skywars.win") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.WIN)
+                                return true
+                            }
+                        }
+
+                    } else if (message.startsWith("[Cores]") && message.contains(
+                            gommehd[entry]!!.replace(
+                                "%playername%",
+                                playerName
+                            )
+                        )
+                    ) {
+
+                        when {
+                            entry.startsWith("highlights.cores.kill") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.KILL)
+                                return true
+                            }
+                            entry.startsWith("highlights.cores.death") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.DEATH)
                                 return true
                             }
                         }
