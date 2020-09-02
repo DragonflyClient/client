@@ -41,6 +41,14 @@ public abstract class AbstractClientPlayer extends EntityPlayer
         }
 
         PlayerConfigurations.getPlayerConfiguration(this);
+        loadCosmetics();
+    }
+
+    public void loadCosmetics() {
+        CosmeticsManager.loadCosmetics(this, (cosmeticData) -> {
+            this.cosmetics = cosmeticData;
+            onCosmeticsLoaded();
+        });
     }
 
     @Override

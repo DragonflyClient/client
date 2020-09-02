@@ -189,15 +189,6 @@ public abstract class EntityPlayer extends EntityLivingBase
         this.setLocationAndAngles((double)blockpos.getX() + 0.5D, (double)(blockpos.getY() + 1), (double)blockpos.getZ() + 0.5D, 0.0F, 0.0F);
         this.field_70741_aB = 180.0F;
         this.fireResistance = 20;
-
-        loadCosmetics();
-    }
-
-    public void loadCosmetics() {
-        CosmeticsManager.loadCosmetics(this, (cosmeticData) -> {
-            this.cosmetics = cosmeticData;
-            onCosmeticsLoaded();
-        });
     }
 
     protected void applyEntityAttributes()

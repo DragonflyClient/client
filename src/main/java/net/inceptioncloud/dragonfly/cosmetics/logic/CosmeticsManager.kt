@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWings
 import net.inceptioncloud.dragonfly.cosmetics.Cosmetic
 import net.inceptioncloud.dragonfly.mc
+import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.entity.player.EntityPlayer
 import okhttp3.Request
 import org.apache.logging.log4j.LogManager
@@ -120,7 +121,9 @@ object CosmeticsManager {
             mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id in cache.keys }
         }
         clearCache(uuid)
-        targetEntities?.forEach { it.loadCosmetics() } // reload cosmetics for targets
+        targetEntities
+            ?.mapNotNull { it as? AbstractClientPlayer }
+            ?.forEach { it.loadCosmetics() } // reload cosmetics for targets
     }
 
     /**
