@@ -5,7 +5,8 @@ public enum EnumHighlightType {
     KILL("mcdrgn_kill",10),
     KILLSTREAK("mcdrgn_killstreak",10),
     WIN("mcdrgn_win",10),
-    DEATH("mcdrgn_death",10);
+    DEATH("mcdrgn_death",10),
+    LOSE("mcdrgn_lose",10);
 
     private final String id;
     private final int time;
