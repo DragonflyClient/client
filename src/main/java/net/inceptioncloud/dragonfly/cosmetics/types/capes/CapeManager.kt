@@ -39,6 +39,7 @@ object CapeManager {
 
     private fun downloadStaticCape(player: AbstractClientPlayer, url: String, cosmeticId: Int) {
         val username = player.nameClear
+        val capeInfo = JsonParser().parse(URL(url.replace(".png", ".json")).readText()).asJsonObject
 
         if (username != null && username.isNotEmpty()) {
             LogManager.getLogger().debug("Downloading cape for $username...")
@@ -59,7 +60,7 @@ object CapeManager {
 
             val imageBuffer: IImageBuffer = object : IImageBuffer {
                 override fun parseUserSkin(image: BufferedImage): BufferedImage {
-                    return parseCape(image)
+                    return parseCape(applyFillMode(image, capeInfo))
                 }
 
                 override fun skinAvailable() {
