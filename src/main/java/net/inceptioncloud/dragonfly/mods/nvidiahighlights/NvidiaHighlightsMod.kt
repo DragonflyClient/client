@@ -65,8 +65,8 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
         TextControl("RoyalPixels: German"),
         TextControl("  - SkyWars: Kills, Deaths, Wins"),
         TitleControl("Note"),
-        TextControl("- To use this feature you need to have Windows and an Nvidia GPU"),
-        TextControl("- Please make sure you have allowed Highlight for Minecraft in your GeForce Experience Settings")
+        TextControl("- To use this feature you need to have an Nvidia Graphics Card, Nvidia GeForce Experience installed and an Windows System"),
+        TextControl("- Please make sure you have allowed Highlighting for Minecraft in your Nvidia GeForce Experience Settings")
     )
 
     private fun registerMap() {

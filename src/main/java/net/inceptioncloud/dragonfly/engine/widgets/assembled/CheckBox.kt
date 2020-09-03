@@ -24,7 +24,7 @@ class CheckBox(
     override var width: Double by property(200.0)
     override var height: Double by property(20.0)
     override var color: WidgetColor by property(DragonflyPalette.foreground)
-    var checkColor: WidgetColor by property(DragonflyPalette.background)
+    var check: Image? = null
 
     val resourceLocation = ResourceLocation("dragonflyres/icons/check.png")
 
@@ -49,13 +49,13 @@ class CheckBox(
             arc = this@CheckBox.arc
         }
 
-        "check"<Image> {
-            x = this@CheckBox.x + 2.5
-            y = this@CheckBox.y + 2.5
-            width = this@CheckBox.width - 5.0
-            height = this@CheckBox.height - 5.0
+        check = "check"<Image> {
+            x = this@CheckBox.x + 3.0
+            y = this@CheckBox.y + 3.0
+            width = this@CheckBox.width - 6.0
+            height = this@CheckBox.height - 6.0
             resourceLocation = this@CheckBox.resourceLocation
-            color = checkColor.altered {
+            color = color.altered {
                 alphaDouble = if (isChecked) {
                     1.0
                 } else {
@@ -90,7 +90,7 @@ class CheckBox(
 
         getWidget<Image>("check")?.morph(
             30, EaseQuad.IN_OUT,
-            Image::color to checkColor.altered {
+            Image::color to check?.color?.altered {
                 alphaDouble = if (isChecked) {
                     1.0
                 } else {

@@ -23,7 +23,7 @@ import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 
-class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 578.0, 548.0) {
+class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 430.0, 440.0) {
 
     lateinit var keySelector: KeySelector
     lateinit var shiftCheckBox: CheckBox
@@ -32,7 +32,6 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
     lateinit var messageTextField: InputTextField
     lateinit var timeTextField: InputTextField
     lateinit var delayTextField: InputTextField
-    lateinit var fadeOutCheckBox: CheckBox
     var colorPickerValue = WidgetColor(1.0, 1.0, 1.0, 1.0)
 
     var updateValuesBool = true
@@ -40,26 +39,18 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
         "title" to TextField(),
-        "key-text" to TextField(),
         "key-selector" to KeySelector(),
-        "shift-text" to TextField(),
         "shift-checkbox" to CheckBox(),
-        "ctrl-text" to TextField(),
+        "shift-text" to TextField(),
         "ctrl-checkbox" to CheckBox(),
-        "alt-text" to TextField(),
+        "ctrl-text" to TextField(),
         "alt-checkbox" to CheckBox(),
-        "type-text" to TextField(),
-        "type-dropdown" to TextField(),
-        "message-text" to TextField(),
+        "alt-text" to TextField(),
         "message-textfield" to InputTextField(),
-        "time-text" to TextField(),
         "time-textfield" to InputTextField(),
-        "delay-text" to TextField(),
         "delay-textfield" to InputTextField(),
-        "fadeOut-text" to TextField(),
-        "fadeOut-checkbox" to CheckBox(),
-        "color-text" to TextField(),
         "color-picker" to ColorPreview(),
+        "color-text" to TextField(),
         "save-button" to RoundButton(),
         "cancel-button" to RoundButton(),
         "delete-button" to RoundButton()
@@ -67,7 +58,8 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
 
     override fun updateStructure() {
         val paddingTop = 30.0
-        val padding = 50.0
+        val paddingLeft = 45.0
+        val padding = 20.0
 
         "container"<RoundedRectangle> {
             x = this@EditHotkeyModal.x
@@ -75,7 +67,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             width = this@EditHotkeyModal.width
             height = this@EditHotkeyModal.height
             color = DragonflyPalette.background
-            arc = 10.0
+            arc = 8.0
         }!!
 
         "title"<TextField> {
@@ -83,174 +75,104 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             y = this@EditHotkeyModal.y + height
             width = this@EditHotkeyModal.width
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 64, useScale = false)
             staticText = this@EditHotkeyModal.name
             textAlignHorizontal = Alignment.CENTER
             color = DragonflyPalette.foreground
         }!!.also { it.adaptHeight() }
 
-        "key-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding
-            y = this@EditHotkeyModal.y + (3 * paddingTop)
-            staticText = "Key"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
         keySelector = "key-selector"<KeySelector> {
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 60.0 - padding
-            y = this@EditHotkeyModal.y + (3 * paddingTop) - 10
+            x = this@EditHotkeyModal.x + paddingLeft
+            y = this@EditHotkeyModal.y + (4 * paddingTop) - 15.0
             width = 60.0
             height = 40.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
             blockKeys = listOf(42, 29, 56)
             clearKeys = listOf(14, 1)
+            textAlignment = Alignment.START
         }!!
-
-        "shift-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding + 10.0
-            y = this@EditHotkeyModal.y + (4.5 * paddingTop)
-            width = 60.0
-            staticText = "Shift"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
 
         shiftCheckBox = "shift-checkbox"<CheckBox> {
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 50.0 - padding
-            y = this@EditHotkeyModal.y + (4.5 * paddingTop)
+            x = keySelector.x + keySelector.width + (padding * 1.5)
+            y = this@EditHotkeyModal.y + (4 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
-        "ctrl-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding + 10.0
-            y = this@EditHotkeyModal.y + (5.5 * paddingTop)
-            width = 60.0
-            staticText = "Ctrl"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
+        val shiftText = "shift-text"<TextField> {
+            x = shiftCheckBox.x + shiftCheckBox.width + 10.0
+            y = shiftCheckBox.y + 2.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
+            staticText = "Shift"
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+        }!!
 
         ctrlCheckBox = "ctrl-checkbox"<CheckBox> {
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 50.0 - padding
-            y = this@EditHotkeyModal.y + (5.5 * paddingTop)
+            x = shiftText.x + shiftText.width + (padding / 2)
+            y = this@EditHotkeyModal.y + (4 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
-        "alt-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding + 10.0
-            y = this@EditHotkeyModal.y + (6.5 * paddingTop)
-            width = 60.0
-            staticText = "Alt"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
+        val ctrlText = "ctrl-text"<TextField> {
+            x = ctrlCheckBox.x + ctrlCheckBox.width + 10.0
+            y = ctrlCheckBox.y + 2.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
+            staticText = "Ctrl"
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+        }!!
 
         altCheckBox = "alt-checkbox"<CheckBox> {
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 50.0 - padding
-            y = this@EditHotkeyModal.y + (6.5 * paddingTop)
+            x = ctrlText.x + ctrlText.width + (padding / 2)
+            y = this@EditHotkeyModal.y + (4 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
-        "type-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding
-            y = this@EditHotkeyModal.y + (9 * paddingTop)
-            width = 60.0
-            staticText = "Type"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
-        "type-dropdown"<TextField> {
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 60.0 - padding
-            y = this@EditHotkeyModal.y + (9 * paddingTop)
-            width = 120.0
-            height = 40.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 42, useScale = false)
-            staticText = "Chat"
-        }
-
-        "message-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding
-            y = this@EditHotkeyModal.y + (10 * paddingTop)
-            width = 120.0
-            staticText = "Message"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+        val altText = "alt-text"<TextField> {
+            x = altCheckBox.x + altCheckBox.width + 10.0
+            y = altCheckBox.y + 2.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
+            staticText = "Alt"
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
         }!!
 
         messageTextField = "message-textfield"<InputTextField> {
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 260.0 - padding
-            y = this@EditHotkeyModal.y + (10 * paddingTop) - 10
-            width = 250.0
+            x = this@EditHotkeyModal.x + paddingLeft
+            y = this@EditHotkeyModal.y + (7 * paddingTop) - 15.0
+            width = 330.0
             height = 30.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
             label = "Message"
         }!!
 
-        "time-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding
-            y = this@EditHotkeyModal.y + (11 * paddingTop)
-            width = 120.0
-            staticText = "Time"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
         timeTextField = "time-textfield"<InputTextField> {
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 110.0 - padding
-            y = this@EditHotkeyModal.y + (11 * paddingTop)
-            width = 100.0
+            x = this@EditHotkeyModal.x + paddingLeft
+            y = this@EditHotkeyModal.y + (9 * paddingTop)
+            width = 60.0
             height = 30.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
-            label = "Duration"
-            allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14)
-            maxStringLength = 2
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
+            label = "Time"
+            allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14, 52)
+            maxStringLength = 3
         }!!
-
-        "delay-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding
-            y = this@EditHotkeyModal.y + (12 * paddingTop)
-            width = 120.0
-            staticText = "Delay"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
 
         delayTextField = "delay-textfield"<InputTextField> {
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 110.0 - padding
-            y = this@EditHotkeyModal.y + (12 * paddingTop)
-            width = 100.0
+            x = timeTextField.x + timeTextField.width + padding
+            y = this@EditHotkeyModal.y + (9 * paddingTop)
+            width = 60.0
             height = 30.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
-            label = "Duration"
-            allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14)
-            maxStringLength = 2
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
+            label = "Delay"
+            allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14, 52)
+            maxStringLength = 3
         }!!
 
-        "fadeOut-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding
-            y = this@EditHotkeyModal.y + (13 * paddingTop)
-            width = 300.0
-            staticText = "FadeOut Animation"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
-        fadeOutCheckBox = "fadeOut-checkbox"<CheckBox> {
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 38.0 - padding
-            y = this@EditHotkeyModal.y + (13.2 * paddingTop)
+        var colorPicker = "color-picker"<ColorPreview> {
+            x = delayTextField.x + delayTextField.width + padding
+            y = this@EditHotkeyModal.y + (9 * paddingTop)
             width = 25.0
             height = 25.0
-        }!!
-
-        "color-text"<TextField> {
-            x = this@EditHotkeyModal.x + padding
-            y = this@EditHotkeyModal.y + (14 * paddingTop)
-            width = 120.0
-            staticText = "Color"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
-        "color-picker"<ColorPreview> {
-            width = 25.0
-            height = 25.0
-            x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - 38.0 - padding
-            y = this@EditHotkeyModal.y + (14.2 * paddingTop)
             color = colorPickerValue
             clickAction = {
                 Modal.showModal(ColorPickerModal(colorPickerValue) {
@@ -259,17 +181,25 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
                 })
                 Modal.hideModal()
             }
-        }
+        }!!
+
+        "color-text"<TextField> {
+            x = colorPicker.x + colorPicker.width + 10.0
+            y = colorPicker.y + 2.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
+            staticText = "Color"
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+        }!!
 
         val saveButton = "save-button"<RoundButton> {
             width = 110.0
             height = 37.0
             x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - width - padding
-            y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding + 25.0
+            y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding
             text = "Save"
             textSize = 50
             color = DragonflyPalette.accentNormal
-            arc = 10.0
+            arc = 2.0
             onClick { performSave() }
         }!!
 
@@ -277,11 +207,11 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             width = 85.0
             height = 37.0
             x = saveButton.x - width - 10.0
-            y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding + 25.0
+            y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding
             text = "Cancel"
             textSize = 50
             color = DragonflyPalette.background.brighter(0.8)
-            arc = 10.0
+            arc = 2.0
             onClick { Modal.hideModal() }
         }
 
@@ -289,17 +219,17 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             width = 85.0
             height = 37.0
             x = this@EditHotkeyModal.x + padding
-            y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding + 25.0
+            y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding
             text = "Delete"
             textSize = 50
             color = DragonflyPalette.accentDark
-            arc = 10.0
+            arc = 2.0
             onClick { performDelete() }
         }
 
         if (updateValuesBool) {
-            readValuesFromParameter()
-            updateValuesBool = false
+            //readValuesFromParameter()
+            //updateValuesBool = false
         }
 
     }

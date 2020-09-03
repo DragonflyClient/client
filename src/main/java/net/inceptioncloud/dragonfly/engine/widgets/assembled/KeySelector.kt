@@ -21,6 +21,7 @@ class KeySelector(
     override var height: Double by property(20.0)
     override var horizontalAlignment: Alignment by property(Alignment.START)
     override var verticalAlignment: Alignment by property(Alignment.START)
+    var textAlignment: Alignment by property(Alignment.CENTER)
 
     override var color: WidgetColor by property(DragonflyPalette.accentNormal)
     var backgroundColor: WidgetColor by property(DragonflyPalette.background)
@@ -76,7 +77,7 @@ class KeySelector(
             it.y = y + height / 5.0
             it.padding = padding
             it.textAlignVertical = Alignment.CENTER
-            it.textAlignHorizontal = Alignment.CENTER
+            it.textAlignHorizontal = textAlignment
         }
 
         val bottomLine = (structure["bottom-line"] as Rectangle).also {
