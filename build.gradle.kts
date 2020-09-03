@@ -109,14 +109,14 @@ tasks {
         from("build/libs/")
         include(outputName)
 
-        destinationDir = file("C:\\Users\\Admin\\AppData\\Roaming\\.minecraft\\versions\\Dragonfly-1.8.8")
+        destinationDir = file("${System.getenv("APPDATA")}\\.minecraft\\versions\\Dragonfly-1.8.8")
         rename(outputName, "Dragonfly-1.8.8.jar")
     }
 
     register<Copy>("copyJson") {
         from("resources/")
         include("Dragonfly-1.8.8.json")
-        into("C:\\Users\\Admin\\AppData\\Roaming\\.minecraft\\versions\\Dragonfly-1.8.8\\")
+        into("${System.getenv("APPDATA")}\\.minecraft\\versions\\Dragonfly-1.8.8\\")
     }
 }
 
