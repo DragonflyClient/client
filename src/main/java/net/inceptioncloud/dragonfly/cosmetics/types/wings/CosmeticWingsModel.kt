@@ -62,6 +62,7 @@ class CosmeticWingsModel : CosmeticModel() {
         val rotationZ = config.rotationZ
         val wingTipRotation = config.wingTipRotation
         val speed = config.speed
+        val folding = config.folding
 
         val rotate = player.cameraYaw.toDouble()
 
@@ -101,10 +102,10 @@ class CosmeticWingsModel : CosmeticModel() {
             val modifier = 2000f - (speed * 1600f)
             val progress = System.currentTimeMillis() % modifier / modifier
             val f11 = progress * Math.PI.toFloat() * 2.0f
-            wing!!.rotateAngleX = Math.toRadians(-80.0).toFloat() - cos(f11.toDouble()).toFloat() * rotationX.toFloat()
-            wing!!.rotateAngleY = Math.toRadians(20.0).toFloat() + sin(f11.toDouble()).toFloat() * rotationY.toFloat()
+            wing!!.rotateAngleX = Math.toRadians(-80.0).toFloat() - cos(f11).toFloat() * rotationX.toFloat()
+            wing!!.rotateAngleY = Math.toRadians(folding).toFloat() + sin(f11).toFloat() * rotationY.toFloat()
             wing!!.rotateAngleZ = Math.toRadians(20.0).toFloat() * rotationZ.toFloat()
-            wingTip!!.rotateAngleZ = -(sin((f11 + 2.0f).toDouble()) + 0.5).toFloat() * wingTipRotation.toFloat()
+            wingTip!!.rotateAngleZ = -(sin((f11 + 2.0f)) + 0.5).toFloat() * wingTipRotation.toFloat()
             wing!!.render(0.0625f)
             GL11.glScalef(-1.0f, 1.0f, 1.0f)
             if (j == 0) {
