@@ -41,3 +41,4 @@ gradle.properties
 /runtime/assets/objects/
 /runtime/dragonfly/mods/keystrokes/keystrokes.json
 /runtime/dragonfly/mods/hotkeys/hotkeys.json
+/runtime/dragonfly/mods/
