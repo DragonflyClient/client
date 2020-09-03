@@ -1,5 +1,8 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPickerModal
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPreview
@@ -20,6 +23,7 @@ import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiScreen
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 
@@ -192,44 +196,44 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
         }!!
 
         val saveButton = "save-button"<RoundButton> {
-            width = 110.0
-            height = 37.0
+            width = 95.0
+            height = 31.0
             x = this@EditHotkeyModal.x + this@EditHotkeyModal.width - width - padding
             y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding
             text = "Save"
-            textSize = 50
+            textSize = 40
             color = DragonflyPalette.accentNormal
             arc = 2.0
             onClick { performSave() }
         }!!
 
         "cancel-button"<RoundButton> {
-            width = 85.0
-            height = 37.0
+            width = 95.0
+            height = 31.0
             x = saveButton.x - width - 10.0
             y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding
             text = "Cancel"
-            textSize = 50
+            textSize = 40
             color = DragonflyPalette.background.brighter(0.8)
             arc = 2.0
             onClick { Modal.hideModal() }
         }
 
         "delete-button"<RoundButton> {
-            width = 85.0
-            height = 37.0
-            x = this@EditHotkeyModal.x + padding
+            width = 95.0
+            height = 31.0
+            x = this@EditHotkeyModal.x + (padding * 2)
             y = this@EditHotkeyModal.y + this@EditHotkeyModal.height - height - padding
             text = "Delete"
-            textSize = 50
+            textSize = 40
             color = DragonflyPalette.accentDark
             arc = 2.0
             onClick { performDelete() }
         }
 
         if (updateValuesBool) {
-            //readValuesFromParameter()
-            //updateValuesBool = false
+            readValuesFromParameter()
+            updateValuesBool = false
         }
 
     }
@@ -296,16 +300,34 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
         if (originalHotkey.data.requireAlt) {
             altCheckBox.toggle()
         }
-        messageTextField.writeText((originalHotkey as ChatHotkey).config.message)
-        messageTextField.isFocused = true
-        messageTextField.isFocused = false
-        timeTextField.writeText(originalHotkey.data.time.toInt().toString())
-        timeTextField.isFocused = true
-        timeTextField.isFocused = false
-        delayTextField.writeText(originalHotkey.data.delay.toInt().toString())
-        delayTextField.isFocused = true
-        delayTextField.isFocused = false
+
+        writeTextInInputTextField("message-textfield", (originalHotkey as ChatHotkey).config.message)
+        writeTextInInputTextField("time-textfield", originalHotkey.data.time.toString())
+        writeTextInInputTextField("delay-textfield", originalHotkey.data.delay.toString())
+
         colorPickerValue = originalHotkey.data.color
+    }
+
+    private fun writeTextInInputTextField(id: String, text: String) {
+        getWidget<InputTextField>(id)?.run {
+            GlobalScope.launch {
+                delay(10)
+                isFocused = true
+                delay(30)
+
+                repeat(inputText.length) {
+                    deleteFromCursor(-1, true)
+                    delay(3)
+                }
+
+                text.chars()?.let {
+                    for (char in it) {
+                        writeText(char.toChar().toString(), true)
+                        delay(5)
+                    }
+                }
+            }
+        }
     }
 
     private fun validateForms(): Boolean {
