@@ -11,6 +11,8 @@ import java.util.*
 object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
 
     val gommehd = HashMap<String, String>()
+    val royalpixels = HashMap<String, String>()
+
     var isSystemValid = Dragonfly.geforceHelper.isSystemValid
 
     var enabled by option(false)
@@ -60,6 +62,8 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
         TextControl("  - BedWars: Kills, Deaths, Wins"),
         TextControl("  - SkyWars: Kills, Deaths, Wins"),
         TextControl("  - Cores: Kills, Deaths"),
+        TextControl("RoyalPixels: German"),
+        TextControl("  - SkyWars: Kills, Deaths, Wins"),
         TitleControl("Note"),
         TextControl("- To use this feature you need to have Windows and an Nvidia GPU"),
         TextControl("- Please make sure you have allowed Highlight for Minecraft in your GeForce Experience Settings")
@@ -85,7 +89,10 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
         gommehd["highlights.cores.kill.de"] = "wurde von %playername% getötet"
         gommehd["highlights.cores.death.de"] = "[Cores] %playername% wurde "
 
-        // FunSkyWars
+        royalpixels["highlights.skywars.kill.de"] = "Du hast"
+        royalpixels["highlights.skywars.kill2.de"] = "getötet"
+        royalpixels["highlights.skywars.death.de"] = "Du wurdest"
+        royalpixels["highlights.skywars.win.de"] = "%playername% hat das Spiel gewonnen"
 
     }
 
@@ -155,6 +162,35 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
                         }
 
                     }
+                }
+            } else if (serverIp.toLowerCase().endsWith("royalpixels.de")) {
+                for (entry in royalpixels.keys) {
+
+                    if (message.startsWith("SkyWars") && message.contains(
+                            royalpixels[entry]!!.replace(
+                                "%playername%",
+                                playerName
+                            )
+                        )
+                    ) {
+
+                        if (message.contains(royalpixels["highlights.skywars.kill.de"]!!) && message.contains(royalpixels["highlights.skywars.kill2.de"]!!)) {
+                            Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.KILL)
+                            return true
+                        }
+
+                        when {
+                            entry.startsWith("highlights.skywars.death") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.DEATH)
+                                return true
+                            }
+                            entry.startsWith("highlights.skywars.win") -> {
+                                Dragonfly.geforceHelper.saveHighlight(EnumHighlightType.WIN)
+                                return true
+                            }
+                        }
+                    }
+
                 }
             }
         }
