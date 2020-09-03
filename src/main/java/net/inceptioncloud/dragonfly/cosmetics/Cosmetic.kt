@@ -45,7 +45,7 @@ open class Cosmetic(
         if (cosmeticData.minecraft != player.gameProfile.id.toString()) return
 
         GlStateManager.pushMatrix()
-        GlStateManager.color(1.0F, 1.0F, 1.0F)
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F)
 
         models.forEach { it.render(player, properties, cosmeticData) }
 
