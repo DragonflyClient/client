@@ -114,7 +114,7 @@ data class Account(
                 return@withContext skull!!
 
             val downloaded = kotlin.runCatching {
-                ImageIO.read(URL("https://crafatar.com/avatars/$uuid?size=100&default=MHF_Steve"))
+                ImageIO.read(URL("https://crafatar.com/avatars/$uuid?size=100&default=MHF_Steve&overlay=true"))
             }.getOrNull()
 
             skull = downloaded
