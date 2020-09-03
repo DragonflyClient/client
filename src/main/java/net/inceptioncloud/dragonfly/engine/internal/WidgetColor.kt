@@ -17,35 +17,43 @@ class WidgetColor {
         val DEFAULT = WidgetColor(1F, 1F, 1F, 1F)
 
         val serializer = JsonSerializer<WidgetColor> { color, _, _ ->
-            JsonObject().apply {
-                addProperty("red", color.red)
-                addProperty("green", color.green)
-                addProperty("blue", color.blue)
-                addProperty("alpha", color.actualAlpha)
-                addProperty("hue", color.hue)
-                addProperty("saturation", color.saturation)
-                addProperty("brightness", color.brightness)
-                addProperty("rainbow", color.rainbow)
+            if (color == null) {
+                null
+            } else {
+                JsonObject().apply {
+                    addProperty("red", color.red)
+                    addProperty("green", color.green)
+                    addProperty("blue", color.blue)
+                    addProperty("alpha", color.actualAlpha)
+                    addProperty("hue", color.hue)
+                    addProperty("saturation", color.saturation)
+                    addProperty("brightness", color.brightness)
+                    addProperty("rainbow", color.rainbow)
+                }
             }
         }
 
         val deserializer = JsonDeserializer<WidgetColor> { jsonElement, _, _ ->
-            with(jsonElement.asJsonObject) {
-                val red = get("red").asInt
-                val green = get("green").asInt
-                val blue = get("blue").asInt
-                val actualAlpha = get("alpha").asInt
-                val hue = getOrNull("hue")?.asFloat
-                val saturation = getOrNull("saturation")?.asFloat
-                val brightness = getOrNull("brightness")?.asFloat
-                val rainbow = get("rainbow").asBoolean
-                WidgetColor(red, green, blue).also {
-                    it.hue = hue
-                    it.saturation = saturation
-                    it.brightness = brightness
-                    it.rainbow = rainbow
-                    it.alpha = actualAlpha
-                    it.actualAlpha = actualAlpha
+            if (jsonElement == null) {
+                null
+            } else {
+                with(jsonElement.asJsonObject) {
+                    val red = get("red").asInt
+                    val green = get("green").asInt
+                    val blue = get("blue").asInt
+                    val actualAlpha = get("alpha").asInt
+                    val hue = getOrNull("hue")?.asFloat
+                    val saturation = getOrNull("saturation")?.asFloat
+                    val brightness = getOrNull("brightness")?.asFloat
+                    val rainbow = get("rainbow").asBoolean
+                    WidgetColor(red, green, blue).also {
+                        it.hue = hue
+                        it.saturation = saturation
+                        it.brightness = brightness
+                        it.rainbow = rainbow
+                        it.alpha = actualAlpha
+                        it.actualAlpha = actualAlpha
+                    }
                 }
             }
         }

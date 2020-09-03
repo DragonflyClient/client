@@ -95,14 +95,7 @@ open class OptionsBase(val optionsFile: File) {
                 val value = gson.fromJson(jsonElement, optionKey.typeClass)
                 if (optionKey.validator(value))
                     return value.also { valueCache[optionKey] = it as Any }
-            } catch (exception: JsonSyntaxException) {
-                if (exception.cause is IllegalStateException || exception.cause is NumberFormatException) {
-                    logger.info("Noticed migrated value type for ${optionKey.key}. " +
-                            "Default Value of ${optionKey.defaultValue()} restored!")
-                } else {
-                    exception.printStackTrace()
-                }
-            } catch (exception: TypeCastException) {
+            } catch (exception: Throwable) {
                 logger.info("Illegal value for key ${optionKey.key}! Default value restored.")
             }
         }
