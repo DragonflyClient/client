@@ -1,6 +1,8 @@
 package net.inceptioncloud.dragonfly.key
 
 import com.google.common.eventbus.Subscribe
+import dev.decobr.mcgeforce.bindings.MCGeForceHelper
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent
 import net.inceptioncloud.dragonfly.key.ui.AttachingKeyUI
 import net.inceptioncloud.dragonfly.key.ui.EnterKeyUI
@@ -10,6 +12,7 @@ import org.apache.logging.log4j.LogManager
  * Listens to the [StartupGuiEvent] and changes the target gui to the [AttachingKeyUI].
  */
 object StartupGuiSubscriber {
+
     @Subscribe
     fun onStartupGui(event: StartupGuiEvent) {
         if (KeyStorage.isKeySaved()) {

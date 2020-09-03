@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly
 
+import dev.decobr.mcgeforce.bindings.MCGeForceHelper
 import net.inceptioncloud.dragonfly.account.*
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
@@ -83,6 +84,9 @@ object Dragonfly {
      */
     var account: DragonflyAccount? = null
 
+    @JvmStatic
+    lateinit var geforceHelper: MCGeForceHelper
+
     /**
      * Dragonfly Initializer Block
      *
@@ -91,6 +95,8 @@ object Dragonfly {
     @JvmStatic
     fun init() {
         Display.setTitle("Dragonfly ${DragonflyVersion.string} for Minecraft 1.8.8")
+
+        geforceHelper = MCGeForceHelper()
 
         Taskbar
         DefaultSubscribers.register(eventBus)
@@ -135,6 +141,7 @@ object Dragonfly {
             val event = ClientShutdownEvent()
             eventBus.post(event)
         })
+
     }
 
     /**
