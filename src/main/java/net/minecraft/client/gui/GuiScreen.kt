@@ -10,6 +10,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
@@ -772,6 +773,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         val that = stage[thatId] ?: return
         if (that !is IPosition) return
         if (that !is IDimension) return
+        if (that is TextField && that.adaptHeight) that.adaptHeight()
 
         this.x = that.x
         this.y = that.y + that.height + margin
