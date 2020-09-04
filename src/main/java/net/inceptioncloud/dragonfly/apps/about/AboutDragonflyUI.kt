@@ -5,7 +5,7 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.minecraft.client.gui.GuiScreen
@@ -41,7 +41,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         } id "logo-about-dragonfly"
 
         +TextField {
-            positionBelow("logo-about-dragonfly", 40.0)
+            positionBelow("logo-about-dragonfly", 60.0)
             width = (this@AboutDragonflyUI.width * (3 / 4.0)).coerceAtMost(1280.0)
             x = this@AboutDragonflyUI.width / 2 - width / 2
             adaptHeight = true
@@ -59,8 +59,35 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
                     "Find out more at [${accentNormal.chatCode}https://inceptioncloud.net§r][https://inceptioncloud.net]."
         } id "inception-cloud-text"
 
+        +SocialMediaPreview(Network.TWITTER, "§7@§rInceptionCloud", "https://twitter.com/InceptionCloud") {
+            positionBelow("inception-cloud-text", 20.0)
+            height = 56.0
+            width = 300.0
+        } id "twitter-preview"
+
+        +SocialMediaPreview(Network.INSTAGRAM, "§7@§rInceptionCloud", "https://instagram.com/InceptionCloud") {
+            positionBelow("inception-cloud-text", 20.0)
+            height = 56.0
+            width = 300.0
+            x += 320.0
+        } id "instagram-preview"
+
+        +SocialMediaPreview(Network.GITHUB, "§7@§rInceptionCloud", "https://github.com/InceptionCloud") {
+            positionBelow("inception-cloud-text", 20.0)
+            height = 56.0
+            width = 300.0
+            x += 320.0 * 2
+        } id "github-preview"
+
+        +SocialMediaPreview(Network.DISCORD, "§7icnet.dev/§rdiscord", "https://icnet.dev/discord") {
+            positionBelow("inception-cloud-text", 20.0)
+            height = 56.0
+            width = 300.0
+            x += 320.0 * 3
+        } id "discord-preview"
+
         +TextField {
-            positionBelow("inception-cloud-text", 40.0)
+            positionBelow("inception-cloud-text", 140.0)
             adaptHeight = true
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 72, useScale = false, fontWeight = FontWeight.MEDIUM)
             color = DragonflyPalette.background
