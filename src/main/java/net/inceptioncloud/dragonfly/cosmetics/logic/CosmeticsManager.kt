@@ -105,7 +105,7 @@ object CosmeticsManager {
      * only the cached cosmetics for this [uuid] are removed. Otherwise, the whole cache is cleared.
      */
     fun clearCache(uuid: UUID? = null) {
-        LogManager.getLogger().info("Clearing cache for ${uuid ?: "all players"}")
+        LogManager.getLogger().info("Clearing cosmetics cache for ${uuid ?: "all players"}")
         if (uuid != null) cache.remove(uuid) else cache.clear()
     }
 

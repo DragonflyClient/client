@@ -34,6 +34,9 @@ object CapeManager {
             downloadAnimatedCape(player, "https://cdn.icnet.dev/cosmetics/capes/$cosmeticId", cosmeticId!!)
         } else if (cape != null) {
             downloadStaticCape(player, "https://cdn.icnet.dev/cosmetics/capes/$cosmeticId.png", cosmeticId!!)
+        } else {
+            player.locationOfCape = null
+            player.animatedCape = null
         }
     }
 

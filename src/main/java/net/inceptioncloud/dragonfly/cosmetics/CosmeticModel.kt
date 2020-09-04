@@ -14,11 +14,6 @@ import net.minecraft.entity.player.EntityPlayer
 abstract class CosmeticModel : ModelBase() {
 
     /**
-     * The Minecraft partial ticks variable set by [setLivingAnimations].
-     */
-    protected var partialTicks: Float = 0F
-
-    /**
      * Lazily-initialized [RenderPlayer] object that renders players.
      */
     protected val playerRenderer: RenderPlayer by lazy { mc.renderManager.playerRenderer }
@@ -29,16 +24,8 @@ abstract class CosmeticModel : ModelBase() {
      */
     abstract fun render(player: EntityPlayer, properties: CosmeticRenderProperties, cosmeticData: CosmeticData)
 
-    /**
-     * Overridable implementation for [setLivingAnimations] with a [player] as the first parameter.
-     */
-    open fun setLivingAnimations(player: EntityPlayer, a: Float, b: Float, partialTicks: Float) {}
+    override fun setLivingAnimations(entity: EntityLivingBase?, a: Float, b: Float, partialTicks: Float) {}
 
-    final override fun setLivingAnimations(entity: EntityLivingBase?, a: Float, b: Float, partialTickTime: Float) {
-        partialTicks = partialTickTime
-        setLivingAnimations(entity as? EntityPlayer ?: return, a, b, partialTickTime)
-    }
-
-    final override fun render(entity: Entity?, limbSwing: Float, limbSwingAmount: Float, ageInTicks: Float, headYaw: Float, headPitch: Float,
+    override fun render(entity: Entity?, limbSwing: Float, limbSwingAmount: Float, ageInTicks: Float, headYaw: Float, headPitch: Float,
                               scale: Float) {}
 }

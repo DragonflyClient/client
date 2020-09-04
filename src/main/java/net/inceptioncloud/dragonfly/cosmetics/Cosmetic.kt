@@ -39,7 +39,7 @@ open class Cosmetic(
      * a new matrix and resets the color before rendering all [models]. This function can be
      * overwritten to change this behavior.
      */
-    open fun render(player: AbstractClientPlayer, partialTicks: Float, properties: CosmeticRenderProperties) {
+    open fun render(player: AbstractClientPlayer, properties: CosmeticRenderProperties) {
         val cosmeticData = player.cosmetics?.find { it.cosmeticId == cosmeticId }
         if (cosmeticData?.enabled != true) return
         if (cosmeticData.minecraft != player.gameProfile.id.toString()) return
@@ -64,9 +64,7 @@ open class Cosmetic(
     ) {
         if (player != null && player.hasPlayerInfo() && !player.isInvisible) {
             render(
-                player,
-                partialTicks,
-                CosmeticRenderProperties(limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch, scale)
+                player, CosmeticRenderProperties(limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch, scale, partialTicks)
             )
         }
     }

@@ -10,5 +10,6 @@ data class CosmeticRenderProperties(
     val ageInTicks: Float,
     val headYaw: Float,
     val headPitch: Float,
-    val scale: Float
+    val scale: Float,
+    val partialTicks: Float
 )
