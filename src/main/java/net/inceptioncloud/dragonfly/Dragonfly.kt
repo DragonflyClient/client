@@ -115,18 +115,6 @@ object Dragonfly {
         splashScreen = DragonflySplashScreen()
         richPresenceManager = RichPresenceManager()
         gameStateManager = GameStateManager()
-        tickTimer = Timer("Dragonfly Tick Timer")
-        tickTimer.scheduleAtFixedRate(object : TimerTask() {
-            override fun run() {
-                try {
-                    tick()
-                    recordTick()
-                } catch (exception: Exception) {
-                    LogManager.getLogger().error("Dragonfly tick failed!")
-                    exception.printStackTrace()
-                }
-            }
-        }, 0, 5)
         httpClient = OkHttpClient.Builder().build()
 
         Taskbar
@@ -149,6 +137,18 @@ object Dragonfly {
                 AuthenticationBridge.showLoginModal()
             }
         }
+        tickTimer = Timer("Dragonfly Tick Timer")
+        tickTimer.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                try {
+                    tick()
+                    recordTick()
+                } catch (exception: Exception) {
+                    LogManager.getLogger().error("Dragonfly tick failed!")
+                    exception.printStackTrace()
+                }
+            }
+        }, 0, 5)
 
         Runtime.getRuntime().addShutdownHook(Thread {
             // EVENTBUS - ClientShutdownEvent when the game is being closed
