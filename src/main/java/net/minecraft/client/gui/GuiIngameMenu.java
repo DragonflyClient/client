@@ -3,6 +3,7 @@ package net.minecraft.client.gui;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.apps.about.AboutDragonflyUI;
 import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI;
+import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager;
 import net.inceptioncloud.dragonfly.design.color.*;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
@@ -13,6 +14,7 @@ import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
 import net.minecraft.client.gui.achievement.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.realms.RealmsBridge;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -106,6 +108,8 @@ public class GuiIngameMenu extends GuiScreen
         this.buttonList.add(new SimpleButton(7, this.width / 2 - 100, this.height / 4 + 108, "Dragonfly Settings"));
         /* Quit World */
         this.buttonList.add(new ConfirmationButton(this, 1, this.width / 2 - 100, this.height / 4 + 132, this.mc.isIntegratedServerRunning() ? "Save and Quit to Title" : "Disconnect"));
+
+        this.buttonList.add(new ImageButton(99, 5, this.height - 15 - 5, 15, 15, new ResourceLocation("dragonflyres/icons/sync.png")));
     }
 
     /**
@@ -157,6 +161,10 @@ public class GuiIngameMenu extends GuiScreen
 
             case 9:
                 mc.displayGuiScreen(new GuiShareToLan(this));
+                break;
+
+            case 99:
+                CosmeticsManager.refreshCosmetics();
                 break;
         }
     }

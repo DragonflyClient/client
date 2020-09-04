@@ -105,15 +105,17 @@ object CosmeticsManager {
      * only the cached cosmetics for this [uuid] are removed. Otherwise, the whole cache is cleared.
      */
     fun clearCache(uuid: UUID? = null) {
+        LogManager.getLogger().info("Clearing cache for ${uuid ?: "all players"}")
         if (uuid != null) cache.remove(uuid) else cache.clear()
     }
 
     /**
      * Refreshes the cosmetics for the targets. If a [uuid] is specified, the target is only
      * the entity with this UUID. Otherwise, the whole [cache] will be cleared and the cosmetics
-     * for all entities in the cache are [reloaded][EntityPlayer.loadCosmetics].
+     * for all entities in the cache are [reloaded][AbstractClientPlayer.loadCosmetics].
      */
     @JvmStatic
+    @JvmOverloads
     fun refreshCosmetics(uuid: UUID? = null) {
         val targetEntities = if (uuid != null) {
             mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id == uuid }
