@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
@@ -125,5 +126,13 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
                     "${accentNormal.chatCode}· §rNvidia Highlights for Minecraft by [${accentNormal.chatCode}MCGeForce§r]" +
                     "[https://github.com/MCGeForce/MCGeForce]. MCGeForce Copyright (c) 2012 Adam Heinrich <adam@adamh.cz> "
         } id "credits-text"
+    }
+
+    override fun keyTyped(typedChar: Char, keyCode: Int) {
+        if (keyCode == 1 && canManuallyClose) {
+            parentScreen.switch()
+            return
+        }
+        super.keyTyped(typedChar, keyCode)
     }
 }
