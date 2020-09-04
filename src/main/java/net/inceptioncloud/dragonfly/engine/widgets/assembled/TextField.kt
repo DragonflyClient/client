@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
@@ -9,7 +10,11 @@ import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
+import net.inceptioncloud.dragonfly.utils.Link
+import net.minecraft.client.gui.GuiScreen
 import org.apache.logging.log4j.LogManager
+import java.net.URI
+import java.text.DecimalFormat
 import kotlin.math.floor
 
 /**
@@ -75,28 +80,47 @@ class TextField(
         if (fontRenderer == null)
             return
 
+        val extractedLinks = mutableMapOf<String, String>()
+        val currentText = currentText().extractLinks(extractedLinks)
+
         val maxAmount = floor((height - padding * 2) / fontRenderer!!.height).toInt()
-        val lines = fontRenderer!!.listFormattedStringToWidth(currentText(), (width - padding * 2).toInt())
+        val lines = fontRenderer!!.listFormattedStringToWidth(currentText, (width - padding * 2).toInt())
             .let { if (adaptHeight) it else it.take(maxAmount) }
         val size = lines.size * fontRenderer!!.height
 
         adaptHeight()
+        val links = mutableListOf<Link>()
 
         for ((index, line) in lines.withIndex()) {
             val widget = structure["line-$index"] ?: TextRenderer().also { structure["line-$index"] = it }
             widget.parentAssembled = this
+
             (widget as TextRenderer).also {
                 it.fontRenderer = fontRenderer
-                it.text = line
                 it.color = color
                 it.dropShadow = dropShadow
                 it.shadowDistance = shadowDistance
                 it.shadowColor = shadowColor
-                it.x = alignText(textAlignHorizontal, x, width, fontRenderer!!.getStringWidth(it.text).toDouble())
                 it.y = when (textAlignVertical) {
                     START -> y + index * fontRenderer!!.height + padding
                     CENTER -> y + (height - size) / 2 + index * fontRenderer!!.height
                     END -> y + height - size + index * fontRenderer!!.height - padding
+                }
+                it.text = line.insertLinks(it, extractedLinks, links)
+                it.x = alignText(textAlignHorizontal, x, width, fontRenderer!!.getStringWidth(it.text).toDouble())
+            }
+        }
+
+        clickAction = { // set the click action for the text field to react to link clicks
+            val mouseX = GraphicsEngine.getMouseX()
+            val mouseY = GraphicsEngine.getMouseY()
+
+            links.forEach { link ->
+                val linkX = x + link.x
+                if (mouseY in link.y..link.y + link.height &&
+                    mouseX in linkX..linkX + fontRenderer!!.getStringWidth(link.text)
+                ) {
+                    GuiScreen.openWebLink(URI(link.url))
                 }
             }
         }
@@ -114,6 +138,43 @@ class TextField(
             it.color = backgroundColor
             it.outlineColor = outlineColor
             it.outlineStroke = outlineStroke
+        }
+    }
+
+    /**
+     * Inserts the [extractedLinks] to the receiver string. The color code identifiers are removed and
+     * the full link information is inserted to the [links] list as a [Link] object. The [textRenderer]
+     * parameter is required to locate the text line.
+     */
+    private fun String.insertLinks(
+        textRenderer: TextRenderer,
+        extractedLinks: MutableMap<String, String>,
+        links: MutableList<Link>
+    ): String {
+        val insertRegex = Regex("§#(___\\d{3})(.*?)§r")
+        return insertRegex.replace(this) { match ->
+            val before = substring(0, match.range.first)
+            links.add(Link(
+                fontRenderer!!.getStringWidth(before).toDouble(), textRenderer.y, textRenderer.height,
+                match.groupValues[2], extractedLinks[match.groupValues[1]]!!
+            ))
+            match.groupValues[2]
+        }
+    }
+
+    /**
+     * Extracts the links from the receiver string to prevent miscalculations when trying to get
+     * the width of the string. The extracted links are added to the [extractedLinks] map.
+     */
+    private fun String.extractLinks(extractedLinks: MutableMap<String, String>): String {
+        var linkIndex = 0
+        val extractRegex = Regex("""\[(.*?)]\[(.*?)]""")
+
+        return extractRegex.replace(this) {
+            val linkId = DecimalFormat("___000").format(linkIndex)
+            extractedLinks[linkId] = it.groupValues[2]
+
+            "§#$linkId${it.groupValues[1]}§r".also { linkIndex++ }
         }
     }
 
