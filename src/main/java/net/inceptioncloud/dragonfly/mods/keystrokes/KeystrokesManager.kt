@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.mods.keystrokes
 object KeystrokesManager {
 
     var keystrokes = mutableListOf<Keystroke>()
+    var savedKeybindings = HashMap<Int, String>()
 
     lateinit var forward: Keystroke
     lateinit var backward: Keystroke
@@ -13,25 +14,27 @@ object KeystrokesManager {
     lateinit var attack: Keystroke
     lateinit var use: Keystroke
 
-    /**
-     * Function which is used to register a new Keystroke
-     */
-    @JvmStatic
-    fun registerKeystrokes(keyDesc: String, keyCode: Int) {
-        val keyStroke = Keystroke(keyCode, keyDesc)
-        when (keyDesc) {
-            "key.forward" -> forward = keyStroke
-            "key.back" -> backward = keyStroke
-            "key.left" -> left = keyStroke
-            "key.right" -> right = keyStroke
-            "key.jump" -> jump = keyStroke
-            "key.sprint" -> sprint = keyStroke
-            "key.attack" -> attack = keyStroke
-            "key.use" -> use = keyStroke
-            else -> return
+    fun registerKeystrokes() {
+        println("Registering Keystrokes")
+        println(savedKeybindings.size)
+        for(keyCode in savedKeybindings.keys) {
+            val keyStroke = Keystroke(keyCode, savedKeybindings[keyCode]!!)
+            when (savedKeybindings[keyCode]!!) {
+                "key.forward" -> forward = keyStroke
+                "key.back" -> backward = keyStroke
+                "key.left" -> left = keyStroke
+                "key.right" -> right = keyStroke
+                "key.jump" -> jump = keyStroke
+                "key.sprint" -> sprint = keyStroke
+                "key.attack" -> attack = keyStroke
+                "key.use" -> use = keyStroke
+                else -> return
+            }
+            keystrokes.add(keyStroke)
         }
-        keystrokes.add(keyStroke)
-
     }
+
+    @JvmStatic
+    fun saveKeybindings(keyDesc: String, keyCode: Int) = savedKeybindings.put(keyCode, keyDesc)
 
 }

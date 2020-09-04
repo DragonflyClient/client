@@ -1,7 +1,15 @@
 package net.inceptioncloud.dragonfly.mods.keystrokes
 
+import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.internal.Alignment
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.ScaledResolution
+import org.lwjgl.input.Keyboard
+import org.lwjgl.input.Mouse
 
 class Keystroke(val keyCode: Int, val keyDesc: String) {
 
@@ -9,19 +17,157 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
         set(value) {
             field = value
 
-            val ingameGUI = Minecraft.getMinecraft().ingameGUI
+            /*val ingameGUI = Minecraft.getMinecraft().ingameGUI
             ingameGUI.stage["keystrokes-$keyDesc"].apply {
                 if(this is TextField) {
                     if(value) {
-                        ingameGUI.keystrokesTextColor["keystrokes-$keyDesc"] = KeystrokesMod.textActiveColor
-                        ingameGUI.keystrokesBackgroundColor["keystrokes-$keyDesc"] = KeystrokesMod.bgActiveColor
+                        morph(100, EaseQuad.IN_OUT, Keystroke::backgroundColor to KeystrokesMod.bgActiveColor)
+                        morph(100, EaseQuad.IN_OUT, Keystroke::textColor to KeystrokesMod.textActiveColor)
                     } else {
-                        ingameGUI.keystrokesTextColor["keystrokes-$keyDesc"] = KeystrokesMod.textInactiveColor
-                        ingameGUI.keystrokesBackgroundColor["keystrokes-$keyDesc"] = KeystrokesMod.bgInactiveColor
+                        morph(100, EaseQuad.IN_OUT, Keystroke::backgroundColor to KeystrokesMod.bgInactiveColor)
+                        morph(100, EaseQuad.IN_OUT, Keystroke::textColor to KeystrokesMod.textInactiveColor)
                     }
-                    ingameGUI.initKeystrokes(false)
+                    ingameGUI.initKeystrokes()
                 }
+            }*/
+        }
+
+    var backgroundColor = KeystrokesMod.bgInactiveColor
+    var textColor = KeystrokesMod.textInactiveColor
+    var fontSize = KeystrokesMod.fontSize
+    var scale = KeystrokesMod.scale
+    var space = KeystrokesMod.space
+    var name = ""
+    var posX = 0.0
+    var posY = 0.0
+    var width = 0.0
+    var height = 0.0
+    var keystrokesStartX = 0.0
+    var keystrokesStartY = 0.0
+
+    var textField: TextField
+
+    init {
+        when (KeystrokesMod.position) {
+            EnumKeystrokesPosition.TOP_LEFT -> {
+                keystrokesStartX = 10.0
+                keystrokesStartY = 10.0
+            }
+            EnumKeystrokesPosition.TOP_RIGHT -> {
+                val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
+
+                keystrokesStartX = width - ((scale * 3) + (space * 2)) - 10
+                keystrokesStartY = 10.0
+            }
+            EnumKeystrokesPosition.BOTTOM_LEFT -> {
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
+
+                keystrokesStartX = 10.0
+                keystrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+            }
+            EnumKeystrokesPosition.BOTTOM_RIGHT -> {
+                val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
+
+                keystrokesStartX = width - ((scale * 3) + (space * 2)) - 10
+                keystrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+            }
+            EnumKeystrokesPosition.HOTBAR_LEFT -> {
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
+
+                keystrokesStartX = Minecraft.getMinecraft().ingameGUI.hotbarX - ((scale * 3) + (space * 2)) - 10
+                keystrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+            }
+            EnumKeystrokesPosition.HOTBAR_RIGHT -> {
+                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+                val scale = KeystrokesMod.scale
+                val space = KeystrokesMod.space
+
+                keystrokesStartX = (Minecraft.getMinecraft().ingameGUI.hotbarX + Minecraft.getMinecraft().ingameGUI.hotbarW + 10).toDouble()
+                keystrokesStartY = height - ((scale * 4) + (space * 3)) - 10
             }
         }
+
+        when (keyDesc) {
+            "key.forward" -> {
+                posX = keystrokesStartX + width + KeystrokesMod.space
+                posY = keystrokesStartY
+                width = KeystrokesMod.scale
+                height = KeystrokesMod.scale
+                name = Keyboard.getKeyName(keyCode)
+            }
+            "key.left" -> {
+                posX = keystrokesStartX
+                posY = keystrokesStartY + width + KeystrokesMod.space
+                width = KeystrokesMod.scale
+                height = KeystrokesMod.scale
+            }
+            "key.back" -> {
+                posX = keystrokesStartX + width + KeystrokesMod.space
+                posY = keystrokesStartY + width + KeystrokesMod.space
+                width = KeystrokesMod.scale
+                height = KeystrokesMod.scale
+            }
+            "key.right" -> {
+                posX = keystrokesStartX + (2 * width) + (2 * KeystrokesMod.space)
+                posY = keystrokesStartY + width + KeystrokesMod.space
+                width = KeystrokesMod.scale
+                height = KeystrokesMod.scale
+                name = Keyboard.getKeyName(keyCode)
+            }
+            "key.jump" -> {
+                posX = keystrokesStartX
+                posY = keystrokesStartY + (2 * width) + (2 * KeystrokesMod.space)
+                width = (3 * KeystrokesMod.scale) + (2 * KeystrokesMod.space)
+                height = KeystrokesMod.scale
+                name = Keyboard.getKeyName(keyCode)
+            }
+            "key.attack" -> {
+                posX = keystrokesStartX
+                posY = keystrokesStartY + (3 * width) + (3 * KeystrokesMod.space)
+                width = (1.5 * KeystrokesMod.scale) + (KeystrokesMod.space / 2)
+                height = KeystrokesMod.scale
+                name = Mouse.getButtonName(keyCode + 100)
+                    .replace("BUTTON0", "LMB")
+                    .replace("BUTTON1", "RMB")
+                    .replace("BUTTON2", "MMB")
+            }
+            "key.use" -> {
+                posX = keystrokesStartX + 1.5 * KeystrokesMod.scale + (1.5 * KeystrokesMod.space)
+                posY = keystrokesStartY + (3 * width) + (3 * KeystrokesMod.space)
+                width = (1.5 * KeystrokesMod.scale) + (KeystrokesMod.space / 2)
+                height = KeystrokesMod.scale
+                name = Mouse.getButtonName(keyCode + 100)
+                    .replace("BUTTON0", "LMB")
+                    .replace("BUTTON1", "RMB")
+                    .replace("BUTTON2", "MMB")
+            }
+            else -> {
+                posX = -1000.0
+                posY = -1000.0
+            }
+        }
+
+        textField = TextField().apply {
+            x = posX
+            y = posY
+            this.width = this@Keystroke.width
+            this.height = this@Keystroke.height
+            backgroundColor = this@Keystroke.backgroundColor
+            color = textColor
+            textAlignHorizontal = Alignment.CENTER
+            textAlignVertical = Alignment.CENTER
+            staticText = name
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = KeystrokesMod.fontSize.toInt())
+        }
+    }
 
 }

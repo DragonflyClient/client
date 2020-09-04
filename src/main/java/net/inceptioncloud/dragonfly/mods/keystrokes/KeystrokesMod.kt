@@ -26,7 +26,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
     val listener: ChangeListener<Any?> = ChangeListener { _, oldValue, newValue ->
         if (oldValue is WidgetColor && newValue is WidgetColor) {
             if (oldValue != newValue) {
-                Minecraft.getMinecraft().ingameGUI.initKeystrokes(true)
+                Minecraft.getMinecraft().ingameGUI.initKeystrokes()
             }
         }
     }

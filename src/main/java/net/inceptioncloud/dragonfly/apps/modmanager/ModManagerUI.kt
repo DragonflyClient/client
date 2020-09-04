@@ -178,11 +178,11 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     private fun reloadKeystrokesOverlay() {
         for (keystroke in KeystrokesManager.keystrokes) {
-            Minecraft.getMinecraft().ingameGUI.keystrokesScale["keystrokes-${keystroke.keyDesc}"] = KeystrokesMod.scale
-            Minecraft.getMinecraft().ingameGUI.keystrokesSpace["keystrokes-${keystroke.keyDesc}"] = KeystrokesMod.space
-            Minecraft.getMinecraft().ingameGUI.keystrokesFontSize["keystrokes-${keystroke.keyDesc}"] = KeystrokesMod.fontSize
+            keystroke.scale = KeystrokesMod.scale
+            keystroke.space = KeystrokesMod.space
+            keystroke.fontSize = KeystrokesMod.fontSize
 
-            Minecraft.getMinecraft().ingameGUI.initKeystrokes(true)
+            Minecraft.getMinecraft().ingameGUI.initKeystrokes()
         }
     }
 }

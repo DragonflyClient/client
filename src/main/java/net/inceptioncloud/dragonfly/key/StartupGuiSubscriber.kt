@@ -6,6 +6,8 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent
 import net.inceptioncloud.dragonfly.key.ui.AttachingKeyUI
 import net.inceptioncloud.dragonfly.key.ui.EnterKeyUI
+import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesManager
+import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -28,5 +30,9 @@ object StartupGuiSubscriber {
             LogManager.getLogger().info("Asking for Dragonfly key...")
             event.target = EnterKeyUI()
         }
+
+        KeystrokesManager.registerKeystrokes()
+        Minecraft.getMinecraft().ingameGUI.initKeystrokes()
+
     }
 }
