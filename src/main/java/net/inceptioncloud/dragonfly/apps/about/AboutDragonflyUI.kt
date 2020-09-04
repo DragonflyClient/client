@@ -2,13 +2,13 @@ package net.inceptioncloud.dragonfly.apps.about
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
-import net.inceptioncloud.dragonfly.ui.components.button.ImageButton
-import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
-import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
-import net.minecraft.client.gui.GuiButton
+import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.minecraft.client.gui.GuiScreen
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
 
 /**
@@ -20,162 +20,83 @@ import net.minecraft.util.ResourceLocation
  * @property parentScreen the screen from which the UI was opened
  */
 class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
-    /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
-     */
+
+    override var customScaleFactor: () -> Double? = { java.lang.Double.min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
+
     override fun initGui() {
-        val iconSize = width.coerceAtMost(height) / 15
-        buttonList.add(
-            ImageButton(
-                1,
-                5,
-                height - 5 - iconSize,
-                iconSize,
-                iconSize,
-                ResourceLocation("dragonflyres/icons/about/back.png")
-            )
-        )
-    }
+        +Rectangle {
+            x = 0.0
+            y = 0.0
+            width = this@AboutDragonflyUI.width.toDouble()
+            height = this@AboutDragonflyUI.height.toDouble()
+            color = DragonflyPalette.foreground.brighter(0.7)
+        } id "background"
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        if (mc.displayWidth >= 400 && mc.displayHeight >= 400) {
-            drawRect(0, 0, width, height, DragonflyPalette.background.rgb)
+        +Image {
+            resourceLocation = ResourceLocation("dragonflyres/logos/about-dragonfly.png")
+            height = 90.0
+            width = 468.0
+            x = this@AboutDragonflyUI.width / 2.0 - width / 2.0
+            y = 60.0
+        } id "logo-about-dragonfly"
 
-            val wHeight = (height / 1.3).toInt()
-            val wWidth = (wHeight / 1.2).toInt()
-            val wX = width / 2 - wWidth / 2
-            val wY = height / 2 - wHeight / 2
+        +TextField {
+            positionBelow("logo-about-dragonfly", 40.0)
+            width = (this@AboutDragonflyUI.width * (3 / 4.0)).coerceAtMost(1280.0)
+            x = this@AboutDragonflyUI.width / 2 - width / 2
+            adaptHeight = true
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 72, useScale = false, fontWeight = FontWeight.MEDIUM)
+            color = DragonflyPalette.background
+            staticText = "Inception Cloud"
+        } id "inception-cloud-header"
 
-            val header = wHeight / 11
-            val body = wHeight - header
-            val fontRenderer = Dragonfly.fontManager.defaultFont.fontRendererAsync(
-                fontWeight = FontWeight.MEDIUM,
-                size = (header * 1.1).toInt()
-            )
+        +TextField {
+            positionBelow("inception-cloud-header", 5.0)
+            adaptHeight = true
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 56, useScale = false)
+            color = DragonflyPalette.background
+            staticText = "Dragonfly is a product by Inception Cloud that is maintained by the Dragonfly team. " +
+                    "Find out more at [${accentNormal.chatCode}https://inceptioncloud.net§r][https://inceptioncloud.net]."
+        } id "inception-cloud-text"
 
-            // Header
-            RenderUtils.drawRoundRect(wX, wY, wWidth, header, 100, DragonflyPalette.accentNormal.base)
-            drawRect(wX, wY + header / 2, wX + wWidth, wY + header, DragonflyPalette.accentNormal.rgb)
+        +TextField {
+            positionBelow("inception-cloud-text", 40.0)
+            adaptHeight = true
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 72, useScale = false, fontWeight = FontWeight.MEDIUM)
+            color = DragonflyPalette.background
+            staticText = "Dragonfly Products"
+        } id "dragonfly-products-header"
 
-            fontRenderer?.drawCenteredString(
-                "About Dragonfly", wX + wWidth / 2, wY + header / 2 - fontRenderer.height / 4,
-                DragonflyPalette.foreground.rgb, false
-            )
+        +TextField {
+            positionBelow("dragonfly-products-header", 5.0)
+            adaptHeight = true
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 56, useScale = false)
+            color = DragonflyPalette.background
+            staticText = "Dragonfly comes along with other related products. All these products can be found " +
+                    "on our Dragonfly website at [${accentNormal.chatCode}https://playdragonfly.net§r][https://playdragonfly.net]."
+        } id "dragonfly-products-text"
 
-            // Body
-            RenderUtils.drawRoundRect(wX, wY + body, wWidth, header, 100, DragonflyPalette.foreground.base)
-            drawRect(wX, wY + header, wX + wWidth, wY + wHeight - header / 2, DragonflyPalette.foreground.rgb)
+        +TextField {
+            positionBelow("dragonfly-products-text", 40.0)
+            adaptHeight = true
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 72, useScale = false, fontWeight = FontWeight.MEDIUM)
+            color = DragonflyPalette.background
+            staticText = "Credits (Third Parties)"
+        } id "credits-header"
 
-            //region Content
-            val titleFont = Dragonfly.fontManager.defaultFont.fontRendererAsync(size = (header * 1.15).toInt())
-            val largeFont = Dragonfly.fontManager.defaultFont.fontRendererAsync(size = (header / 1))
-            val smallFont = Dragonfly.fontManager.defaultFont.fontRendererAsync(size = (header / 1.5).toInt())
-
-            if (titleFont == null || largeFont == null || smallFont == null)
-                return
-
-            val largeColor = 0x545454
-            val smallColor = 0x6D6D6D
-            val imageSize = (smallFont.height * 1.2).toInt()
-            var textY = wY + header + 10
-
-            //region Title
-            titleFont.drawCenteredString("Inception Cloud Dragonfly", wX + wWidth / 2, textY, largeColor, false)
-            textY += titleFont.height + 2
-            smallFont.drawCenteredString(DragonflyVersion.string, wX + wWidth / 2, textY, smallColor, false)
-            textY += smallFont.height + 12
-            //endregion
-
-            //region Network
-            largeFont.drawString("part of the Inception Cloud Network", wX + 10F, textY.toFloat(), largeColor, false)
-            textY += largeFont.height + 2
-
-            smallFont.drawString(
-                "visit https://inceptioncloud.net for more information",
-                wX + 10F,
-                textY.toFloat(),
-                smallColor,
-                false
-            )
-            textY += smallFont.height + 1
-
-            drawIcon("twitter", wX + 20, textY, imageSize)
-            smallFont.drawString("@inceptioncloud", wX + 22F + imageSize, textY + 3F, smallColor, false)
-            textY += imageSize + 2
-
-            drawIcon("instagram", wX + 20, textY, imageSize)
-            smallFont.drawString("@inceptioncloud", wX + 22F + imageSize, textY + 3F, smallColor, false)
-            textY += imageSize + 2
-
-            drawIcon("discord", wX + 20, textY, imageSize)
-            smallFont.drawString("https://discord.gg/DJRb4fF", wX + 22F + imageSize, textY + 3F, smallColor, false)
-            textY += 20
-            //endregion
-
-            //region Developer
-            drawIcon(
-                "heart",
-                wX + 10 + largeFont.getStringWidth("developed with"),
-                textY - (imageSize / 4),
-                (imageSize * 1.5).toInt()
-            )
-            largeFont.drawString("developed with", wX + 10F, textY.toFloat(), largeColor, false)
-            largeFont.drawString(
-                "by inception", (wX + 11F + (imageSize * 1.5) + largeFont.getStringWidth("developed with"))
-                    .toFloat(), textY.toFloat(), largeColor, false
-            )
-            textY += largeFont.height + 2
-
-            drawIcon("twitter", wX + 20, textY, imageSize)
-            smallFont.drawString("@theincxption", wX + 22F + imageSize, textY + 3F, smallColor, false)
-            textY += imageSize + 2
-
-            drawIcon("instagram", wX + 20, textY, imageSize)
-            smallFont.drawString("@theincxption", wX + 22F + imageSize, textY + 3F, smallColor, false)
-            textY += imageSize + 2
-
-            drawIcon("github", wX + 20, textY, imageSize)
-            smallFont.drawString("@incxption", wX + 22F + imageSize, textY + 3F, smallColor, false)
-            textY += 20
-            //endregion
-
-            //region Credits
-            largeFont.drawString("credits", wX + 10F, textY.toFloat(), largeColor, false)
-            textY += largeFont.height + 2
-
-            smallFont.drawString("icons by https://icons8.com", wX + 20F, textY + 3F, smallColor, false)
-            textY += smallFont.height + 2
-
-            smallFont.drawString("fonts by https://fonts.google.com", wX + 20F, textY + 3F, smallColor, false)
-            //endregion
-
-            //endregion
-
-            super.drawScreen(mouseX, mouseY, partialTicks)
-        } else {
-            drawSizeNotSupported()
-        }
-    }
-
-    /**
-     * A quick method that draws a icon from the "dragonfly/assets/icon/about/" folder into the gui.
-     */
-    private fun drawIcon(name: String, x: Int, y: Int, size: Int) {
-        mc.textureManager.bindTexture(ResourceLocation("dragonflyres/icons/about/$name.png"))
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F)
-        drawModalRectWithCustomSizedTexture(x, y, 0F, 0F, size, size, size.toFloat(), size.toFloat())
-    }
-
-    /**
-     * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
-     */
-    override fun actionPerformed(button: GuiButton?) {
-        if (button?.id == 1) {
-            mc.displayGuiScreen(parentScreen)
-        }
+        +TextField {
+            positionBelow("credits-header", 5.0)
+            adaptHeight = true
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 56, useScale = false)
+            color = DragonflyPalette.background
+            staticText = "${accentNormal.chatCode}· §rDragonfly uses several open source libraries whose licences can be " +
+                    "found ${accentNormal.chatCode}here§r.\n" +
+                    "${accentNormal.chatCode}· §rThe fonts used by Dragonfly are provided by [${accentNormal.chatCode}Google Fonts§r]" +
+                    "[https://fonts.google.com]. The main font is called \"Rubik\".\n" +
+                    "${accentNormal.chatCode}· §rAll icons that can be seen in Dragonfly are provided by [${accentNormal.chatCode}Icons8§r]" +
+                    "[https://icons8.com]. We mainly use the “Fluent” icon set.\n" +
+                    "${accentNormal.chatCode}· §rNvidia Highlights for Minecraft by [${accentNormal.chatCode}MCGeForce§r]" +
+                    "[https://github.com/MCGeForce/MCGeForce]. MCGeForce Copyright (c) 2012 Adam Heinrich <adam@adamh.cz> "
+        } id "credits-text"
     }
 }

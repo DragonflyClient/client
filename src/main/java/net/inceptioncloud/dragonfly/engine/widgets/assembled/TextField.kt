@@ -154,11 +154,12 @@ class TextField(
         val insertRegex = Regex("§#(___\\d{3})(.*?)§r")
         return insertRegex.replace(this) { match ->
             val before = substring(0, match.range.first)
+            val text = match.groupValues[2].replace("_", " ")
             links.add(Link(
                 fontRenderer!!.getStringWidth(before).toDouble(), textRenderer.y, textRenderer.height,
-                match.groupValues[2], extractedLinks[match.groupValues[1]]!!
+                text, extractedLinks[match.groupValues[1]]!!
             ))
-            match.groupValues[2]
+            text
         }
     }
 
@@ -172,9 +173,10 @@ class TextField(
 
         return extractRegex.replace(this) {
             val linkId = DecimalFormat("___000").format(linkIndex)
+            val text = it.groupValues[1].replace(" ", "_")
             extractedLinks[linkId] = it.groupValues[2]
 
-            "§#$linkId${it.groupValues[1]}§r".also { linkIndex++ }
+            "§#$linkId${text}§r".also { linkIndex++ }
         }
     }
 
