@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.mods.keystrokes
 
 import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorControl
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
@@ -8,7 +9,6 @@ import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
 import net.minecraft.client.Minecraft
 import kotlin.reflect.jvm.isAccessible
-
 
 object KeystrokesMod : DragonflyMod("Keystrokes") {
 
@@ -23,13 +23,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
     var bgActiveColor by option(WidgetColor(0.9, 0.5, 0.1, 0.7))
     var bgInactiveColor by option(WidgetColor(0.9, 0.9, 0.9, 0.2))
 
-    val listener: ChangeListener<Any?> = ChangeListener { _, oldValue, newValue ->
-        if (oldValue is WidgetColor && newValue is WidgetColor) {
-            if (oldValue != newValue) {
-                Minecraft.getMinecraft().ingameGUI.initKeystrokes(true)
-            }
-        }
-    }
+    private val listener = KeystrokesModListener()
 
     init {
 
@@ -91,4 +85,14 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
         ColorControl(KeystrokesMod::bgInactiveColor, "Background")
     )
 
+}
+
+private class KeystrokesModListener : ChangeListener<Any?> {
+    override fun changed(observable: ObservableValue<out Any?>?, oldValue: Any?, newValue: Any?) {
+        if (oldValue is WidgetColor && newValue is WidgetColor) {
+            if (oldValue != newValue) {
+                Minecraft.getMinecraft().ingameGUI.initKeystrokes(true)
+            }
+        }
+    }
 }

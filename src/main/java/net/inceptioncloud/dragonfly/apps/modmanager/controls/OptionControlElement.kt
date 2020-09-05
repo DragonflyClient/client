@@ -1,11 +1,13 @@
 package net.inceptioncloud.dragonfly.apps.modmanager.controls
 
 import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
+import net.inceptioncloud.dragonfly.utils.Keep
 import kotlin.properties.Delegates
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.jvm.isAccessible
@@ -30,11 +32,7 @@ abstract class OptionControlElement<T>(
         (property.getDelegate() as OptionDelegate<T>).optionKey
     }
 
-    val listener: ChangeListener<T> = ChangeListener { _, oldValue, newValue ->
-        if (oldValue != newValue) {
-            react(newValue)
-        }
-    }
+    private val listener = OptionControlElementListener(this)
 
     init {
         optionKey.objectProperty.addListener(listener)
@@ -93,4 +91,13 @@ abstract class OptionControlElement<T>(
     abstract fun controlUpdateStructure()
 
     abstract fun react(newValue: T)
+}
+
+@Keep
+private class OptionControlElementListener<T>(val elem: OptionControlElement<T>) : ChangeListener<T> {
+    override fun changed(observable: ObservableValue<out T>?, oldValue: T, newValue: T) {
+        if (oldValue != newValue) {
+            elem.react(newValue)
+        }
+    }
 }
