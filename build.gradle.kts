@@ -31,7 +31,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
-    implementation("org.reflections:reflections:0.9.12")
 
     // only required for inspector extension
     implementation("no.tornado:tornadofx:1.7.20")
@@ -102,10 +101,10 @@ tasks {
         verbose()
         dontwarn()
         dontoptimize()
-        dontobfuscate()
+        dontshrink()
 
         injars("build/libs/$outputName")
-        outjars("Dragonfly-1.8.8.jar")
+        outjars("C:/Users/user/AppData/Roaming/.minecraft/versions/Dragonfly-1.8.8/Dragonfly-1.8.8.jar")
 
         libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
 
@@ -129,20 +128,29 @@ tasks {
         renamesourcefileattribute("SourceFile")
         keepattributes("SourceFile,LineNumberTable")
 
+        keep("class com.** { *; }")
+        keep("class darwin.** { *; }")
+        keep("class io.** { *; }")
+        keep("class javax.** { *; }")
+        keep("class khttp.** { *; }")
         keep("class kotlin.** { *; }")
         keep("class kotlinx.** { *; }")
-        keep("class net.minecraft.block.** { *; }")
-        keep("class com.sun.jna.** { *; }")
+        keep("class linux.** { *; }")
         keep("class net.arikia.** { *; }")
+        keep("class net.minecraftforge.** { *; }")
+        keep("class optifine.** { *; }")
+        keep("class org.** { *; }")
+        keep("class oshi.** { *; }")
+
+        keep("@net.inceptioncloud.dragonfly.utils.Keep public class * { *; }")
+        keep("class net.inceptioncloud.dragonfly.utils.Keep")
         keep("class net.inceptioncloud.dragonfly.engine.internal.** { *; }")
+        keep("class net.inceptioncloud.dragonfly.engine.structure.** { *; }")
+        keep("class net.inceptioncloud.dragonfly.ui.taskbar.** { *; }")
+
         keep("class net.minecraft.entity.** { *; }")
         keep("class net.minecraft.village.** { *; }")
-        keep("public class kotlin.reflect.jvm.internal.impl.** { public *; }")
-        keep("public class org.jetbrains.annotations.NotNull")
-        keep("public class org.jetbrains.annotations.Nullable")
-
-        keep("class net.inceptioncloud.dragonfly.utils.Keep")
-        keep("@net.inceptioncloud.dragonfly.utils.Keep public class * { *; }")
+        keep("class net.minecraft.block.** { *; }")
 
         // Preserve all annotations.
 

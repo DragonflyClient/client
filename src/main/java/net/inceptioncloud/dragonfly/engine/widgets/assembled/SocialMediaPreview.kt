@@ -8,6 +8,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.inceptioncloud.dragonfly.utils.Keep
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 import java.net.URI
@@ -68,6 +69,7 @@ class SocialMediaPreview(
     }
 }
 
+@Keep
 enum class Network {
     TWITTER,
     DISCORD,
