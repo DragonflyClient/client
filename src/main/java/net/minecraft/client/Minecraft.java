@@ -1458,70 +1458,48 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     public void toggleFullscreen ()
     {
         try {
-            LogManager.getLogger().info("A");
             this.fullscreen = !this.fullscreen;
             this.gameSettings.fullScreen = this.fullscreen;
 
             final Boolean windowedFullscreen = OptionsSectionClient.getWindowedFullscreen().getKey().get();
 
             if (this.fullscreen) {
-                LogManager.getLogger().info("B");
                 if (windowedFullscreen) {
-                    LogManager.getLogger().info("C");
                     System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
                     Display.setResizable(false);
-                    LogManager.getLogger().info("D");
                 }
 
-                LogManager.getLogger().info("E");
                 this.updateDisplayMode();
-                LogManager.getLogger().info("F");
                 this.displayWidth = Display.getDisplayMode().getWidth();
                 this.displayHeight = Display.getDisplayMode().getHeight();
-                LogManager.getLogger().info("G");
 
             } else {
-                LogManager.getLogger().info("H");
                 System.setProperty("org.lwjgl.opengl.Window.undecorated", "false");
-                LogManager.getLogger().info("I");
                 Display.setResizable(true);
-                LogManager.getLogger().info("J");
                 Display.setDisplayMode(new DisplayMode(this.tempDisplayWidth, this.tempDisplayHeight));
-                LogManager.getLogger().info("K");
 
                 this.displayWidth = this.tempDisplayWidth;
                 this.displayHeight = this.tempDisplayHeight;
-                LogManager.getLogger().info("L");
             }
 
             if (this.displayWidth <= 0) {
-                LogManager.getLogger().info("M");
                 this.displayWidth = 1;
             }
 
             if (this.displayHeight <= 0) {
-                LogManager.getLogger().info("N");
                 this.displayHeight = 1;
             }
 
             if (this.currentScreen != null) {
-                LogManager.getLogger().info("O");
                 this.resize(this.displayWidth, this.displayHeight);
             } else {
-                LogManager.getLogger().info("P");
                 this.updateFramebufferSize();
             }
 
-            LogManager.getLogger().info("Q");
-
             Display.setFullscreen(!windowedFullscreen && this.fullscreen);
-            LogManager.getLogger().info("R");
             Display.setVSyncEnabled(this.gameSettings.enableVsync);
-            LogManager.getLogger().info("S");
             this.updateDisplay();
-            LogManager.getLogger().info("U");
         } catch (Exception exception) {
-            LogManager.getLogger().info("V");
             logger.error("Couldn't toggle fullscreen", exception);
         }
     }

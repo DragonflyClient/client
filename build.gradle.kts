@@ -106,9 +106,9 @@ tasks {
 
         libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
 
-//        obfuscationdictionary("dictionary.txt")
-//        classobfuscationdictionary("dictionary.txt")
-//        packageobfuscationdictionary("dictionary.txt")
+        obfuscationdictionary("dictionary.txt")
+        classobfuscationdictionary("dictionary.txt")
+        packageobfuscationdictionary("dictionary.txt")
 
         overloadaggressively()
         flattenpackagehierarchy()
