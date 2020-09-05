@@ -96,8 +96,6 @@ tasks {
     }
 
     register<proguard.gradle.ProGuardTask>("proguard") {
-        val outputName = "${project.name}-fat-${project.version}.jar"
-
         verbose()
         dontwarn()
         dontoptimize()
@@ -108,21 +106,16 @@ tasks {
 
         libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
 
-        obfuscationdictionary("dictionary.txt")
-        classobfuscationdictionary("dictionary.txt")
-        packageobfuscationdictionary("dictionary.txt")
+//        obfuscationdictionary("dictionary.txt")
+//        classobfuscationdictionary("dictionary.txt")
+//        packageobfuscationdictionary("dictionary.txt")
+
         overloadaggressively()
         flattenpackagehierarchy()
         repackageclasses()
 
-        // add libraries from '/libraries' and '/libraries-minecraft'
         File("libraries-minecraft").listFiles()!!.forEach { libraryjars(it.absolutePath) }
         File("libraries").listFiles()!!.forEach { libraryjars(it.absolutePath) }
-
-        // Save the obfuscation mapping to a file, so you can de-obfuscate any stack
-        // traces later on. Keep a fixed source file attribute and all line number
-        // tables to get line numbers in the stack traces.
-        // You can comment this out if you")re not interested in stack traces.
 
         printmapping("out.map")
         renamesourcefileattribute("SourceFile")
@@ -142,38 +135,36 @@ tasks {
         keep("class org.** { *; }")
         keep("class oshi.** { *; }")
 
+        dontnote("kotlin.internal.PlatformImplementationsKt")
+        dontnote("kotlin.reflect.jvm.internal.**")
+
         keep("@net.inceptioncloud.dragonfly.utils.Keep public class * { *; }")
         keep("class net.inceptioncloud.dragonfly.utils.Keep")
+        keep("class net.inceptioncloud.dragonfly.ui.taskbar.** { *; }")
         keep("class net.inceptioncloud.dragonfly.engine.internal.** { *; }")
         keep("class net.inceptioncloud.dragonfly.engine.structure.** { *; }")
-        keep("class net.inceptioncloud.dragonfly.ui.taskbar.** { *; }")
+        keep("class * extends net.inceptioncloud.dragonfly.engine.internal.Widget { *; }")
+        keep("class * extends net.inceptioncloud.dragonfly.engine.internal.AssembledWidget { *; }")
 
         keep("class net.minecraft.entity.** { *; }")
         keep("class net.minecraft.village.** { *; }")
         keep("class net.minecraft.block.** { *; }")
-
-        // Preserve all annotations.
+        keep("class net.minecraft.realms.** { *; }")
+        keep("class net.minecraft.client.ClientBrandRetriever { *; }")
+        keep("class net.minecraft.client.gui.Gui { *; }")
+        keep("class net.minecraft.client.gui.GuiScreen { *; }")
+        keep("class net.minecraft.client.gui.GuiYesNoCallback { *; }")
+        keep("class net.minecraft.server.MinecraftServer { *; }")
 
         keepattributes("*Annotation*")
-
-        // You can print out the seeds that are matching the keep options below.
-
-        //printseeds("out.seeds")
-
-        // Preserve all public applications.
 
         keepclasseswithmembers("""public class * {
         public static void main(java.lang.String[]);
         }""")
 
-        // Preserve all native method names and the names of their classes.
-
         keepclasseswithmembernames("""class * {
             native <methods>;
         }""")
-
-        // Preserve the special static methods that are required in all enumeration
-        // classes.
 
         keepclassmembers(mapOf(
             "allowoptimization" to true
@@ -181,12 +172,6 @@ tasks {
         public static **[] values();
         public static ** valueOf(java.lang.String);
         }""")
-
-        // Explicitly preserve all serialization members. The Serializable interface
-        // is only a marker interface, so it wouldn")t save them.
-        // You can comment this out if your application doesn")t use serialization.
-        // If your code contains serializable classes that have to be backward
-        // compatible, please refer to the manual.
 
         keepclassmembers("""class * implements java.io.Serializable {
         static final long serialVersionUID;
@@ -196,13 +181,6 @@ tasks {
         java.lang.Object writeReplace();
         java.lang.Object readResolve();
         }""")
-
-        // Your application may contain more items that need to be preserved;
-        // typically classes that are dynamically created using Class.forName:
-
-        // keep("public class com.example.MyClass")
-        // keep("public interface com.example.MyInterface")
-        // keep("public class * implements com.example.MyInterface")
     }
 
     register<Jar>("fatJar") {

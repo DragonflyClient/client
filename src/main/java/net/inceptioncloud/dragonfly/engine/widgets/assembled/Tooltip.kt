@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Polygon
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
+import net.inceptioncloud.dragonfly.utils.Keep
 
 /**
  * ## Tooltip Assembled Widget

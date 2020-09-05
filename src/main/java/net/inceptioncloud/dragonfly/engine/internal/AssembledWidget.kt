@@ -6,14 +6,6 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 /**
- * The colors that are used to separate the individual structure widgets when
- * the developer mode is enabled.
- */
-private val structureColors = arrayOf(
-    0x1abc9c, 0x2ecc71, 0x3498db, 0x9b59b6, 0xf1c40f, 0xe67e22, 0xe74c3c
-)
-
-/**
  * ## Assembled Widget
  *
  * An assembled widget is a widget that is based on the base of multiple other primitive or assembled

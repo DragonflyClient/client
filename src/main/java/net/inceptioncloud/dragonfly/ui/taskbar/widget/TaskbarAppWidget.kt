@@ -164,8 +164,8 @@ class TaskbarAppWidget(
         tooltip.detachAnimation<MorphAnimation>()
         tooltip.morph(
             40, EaseQuad.IN_OUT,
-            tooltip::opacity to if (show) 1.0 else 0.0,
-            tooltip::verticalOffset to if (show) -offset else 0.0
+            Tooltip::opacity to if (show) 1.0 else 0.0,
+            Tooltip::verticalOffset to if (show) -offset else 0.0
         )?.start()
     }
 }

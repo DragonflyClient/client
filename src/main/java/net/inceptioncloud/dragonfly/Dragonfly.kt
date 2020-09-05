@@ -23,10 +23,6 @@ import java.io.File
 import java.nio.file.*
 import java.util.*
 
-/*
- *   🎇   🔥300🔥   🎆
- */
-
 /**
  * The main class of the Inception Cloud Dragonfly Modification.
  */
@@ -108,8 +104,8 @@ object Dragonfly {
                     tick()
                     recordTick()
                 } catch (exception: Exception) {
-                    LogManager.getLogger().error("Dragonfly tick failed!")
                     exception.printStackTrace()
+                    LogManager.getLogger().error("Dragonfly tick failed: ${exception.message}")
                 }
             }
         }, 0, 5)
