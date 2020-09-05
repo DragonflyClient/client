@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly.apps.accountmanager
 
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.link.LinkBridge
@@ -16,6 +18,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
+import net.inceptioncloud.dragonfly.utils.Keep
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
@@ -36,14 +39,7 @@ class AccountCard(
 
     init {
         this::isSelected.getTypedWidgetDelegate<Boolean>()!!.objectProperty
-            .addListener { _, oldValue, newValue ->
-                if (oldValue == newValue) return@addListener
-
-                morph(
-                    30, EaseQuad.IN_OUT,
-                    this::accentColor to if (newValue) accentNormal else foreground
-                )?.start()
-            }
+            .addListener(AccountCardChangeListener(this))
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -233,5 +229,17 @@ class AccountCard(
 
             return "$firstThree****@$provider".toLowerCase()
         }
+    }
+}
+
+@Keep
+private class AccountCardChangeListener(val accountCard: AccountCard) : ChangeListener<Boolean> {
+    override fun changed(observable: ObservableValue<out Boolean>?, oldValue: Boolean, newValue: Boolean) {
+        if (oldValue == newValue) return
+
+        accountCard.morph(
+            30, EaseQuad.IN_OUT,
+            AccountCard::accentColor to if (newValue) accentNormal else foreground
+        )?.start()
     }
 }

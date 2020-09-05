@@ -138,7 +138,7 @@ tasks {
         dontnote("kotlin.internal.PlatformImplementationsKt")
         dontnote("kotlin.reflect.jvm.internal.**")
 
-        keep("@net.inceptioncloud.dragonfly.utils.Keep public class * { *; }")
+        keep("@net.inceptioncloud.dragonfly.utils.Keep class * { *; }")
         keep("class net.inceptioncloud.dragonfly.utils.Keep")
         keep("class net.inceptioncloud.dragonfly.ui.taskbar.** { *; }")
         keep("class net.inceptioncloud.dragonfly.engine.internal.** { *; }")
