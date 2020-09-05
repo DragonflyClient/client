@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.mods.hotkeys.types.data
 import com.google.gson.JsonObject
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.mods.hotkeys.Hotkey
+import net.inceptioncloud.dragonfly.utils.Keep
 
 /**
  * This class holds the data about a hotkey and is used as an interface between the hotkey code
@@ -16,6 +17,7 @@ import net.inceptioncloud.dragonfly.mods.hotkeys.Hotkey
  * @param color Color for the animation, ui or something else
  * @param fadeOut Whether the progress bar should fade out
  */
+@Keep
 data class HotkeyData (
     val type: EnumHotkeyType,
     val key: Int,

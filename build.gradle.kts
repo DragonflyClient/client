@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "net.inceptioncloud"
-version = "1.1.3.0"
+version = "1.1.4.0"
 
 val outputName = "${project.name}-${project.version}-full.jar"
 
@@ -94,7 +94,7 @@ sourceSets {
 tasks {
     register<net.inceptioncloud.build.update.VersionTask>("version")
     register<net.inceptioncloud.build.update.PublishTask>("publish") {
-        dependsOn("fullJar", "obfuscatedJar")
+        dependsOn("fullJar", "obfuscateJar")
     }
 
     register<proguard.gradle.ProGuardTask>("obfuscateJar") {

@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.mods.hotkeys
 
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyData
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyRepository
+import net.inceptioncloud.dragonfly.utils.ListParameterizedType
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 import java.io.File
@@ -94,7 +95,8 @@ class HotkeysController {
         val content = repositoryFile.takeIf { it.exists() }?.readText()
 
         if (content != null) {
-            repository = gson.fromJson(content, HotkeyRepository::class.java)
+            val typeToken = ListParameterizedType(HotkeyData::class.java)
+            repository = HotkeyRepository(gson.fromJson(content, typeToken))
             hotkeys = repository.map {
                 val hotkeyClass = it.type.hotkeyClass
                 val configClass = it.type.configClass
@@ -102,7 +104,7 @@ class HotkeysController {
                 hotkeyClass.primaryConstructor!!.call(it, config) as Hotkey
             }.toMutableList()
         } else {
-            repository = HotkeyRepository()
+            repository = HotkeyRepository(listOf())
             hotkeys = mutableListOf()
         }
     }
