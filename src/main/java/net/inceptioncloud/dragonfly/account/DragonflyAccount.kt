@@ -1,5 +1,8 @@
 package net.inceptioncloud.dragonfly.account
 
+import net.inceptioncloud.dragonfly.utils.Keep
+
+@Keep
 data class DragonflyAccount(
     var token: String? = null,
     val identifier: String,

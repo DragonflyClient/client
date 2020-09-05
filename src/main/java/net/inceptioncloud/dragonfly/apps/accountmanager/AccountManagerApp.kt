@@ -8,7 +8,6 @@ import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import java.io.File
-import java.nio.file.*
 import java.util.*
 
 /**
@@ -96,8 +95,9 @@ object AccountManagerApp : TaskbarApp("Account Manager") {
     private fun readFromAccountsFile(): List<Account>? {
         return try {
             val file = accountsFile.takeIf { it.exists() } ?: return null
+            val typeToken = ListParameterizedType(Account::class.java)
 
-            Gson().fromJson(file.reader(), AccountList::class.java)
+            Gson().fromJson(file.reader(), typeToken)
         } catch (e: Exception) {
             LogManager.getLogger().error("Could not read accounts from accounts.json!")
             e.printStackTrace()

@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.engine.widgets.primitive
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.cos
@@ -35,14 +34,14 @@ class Arc(
     initializerBlock: (Arc.() -> Unit)? = null
 ) : Widget<Arc>(initializerBlock), IPosition, IDimension, IColor {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double by property(50.0)
-    @Interpolate override var height: Double by property(50.0)
-    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var width: Double by property(50.0)
+    override var height: Double by property(50.0)
+    override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
-    @Interpolate var start: Int by property(0)
-    @Interpolate var end: Int by property(90)
+    var start: Int by property(0)
+    var end: Int by property(90)
 
     override fun render() {
         val factor = 5.0

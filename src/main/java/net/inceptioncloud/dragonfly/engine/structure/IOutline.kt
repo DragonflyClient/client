@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.structure
 
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.utils.Keep
 
 /**
  * ## Outline Interface
@@ -8,6 +9,7 @@ import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
  * Determines that the parent widget can have an outline and allows specifying its
  * color and width.
  */
+@Keep
 interface IOutline {
     /**
      * The color that the outline is rendered in.

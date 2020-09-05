@@ -4,7 +4,6 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
@@ -35,10 +34,10 @@ class HotActionWidget(
     initializerBlock: (HotActionWidget.() -> Unit)? = null
 ) : AssembledWidget<HotActionWidget>(initializerBlock), IPosition, IDimension {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(30.0)
-    @Interpolate override var width: Double by property(-1.0)
-    @Interpolate override var height: Double by property(-1.0)
+    override var x: Double by property(0.0)
+    override var y: Double by property(30.0)
+    override var width: Double by property(-1.0)
+    override var height: Double by property(-1.0)
 
     /**
      * The function that is used to convert an [Action] to a representing string

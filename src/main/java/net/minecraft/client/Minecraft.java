@@ -1464,7 +1464,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             final Boolean windowedFullscreen = OptionsSectionClient.getWindowedFullscreen().getKey().get();
 
             if (this.fullscreen) {
-
                 if (windowedFullscreen) {
                     System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
                     Display.setResizable(false);

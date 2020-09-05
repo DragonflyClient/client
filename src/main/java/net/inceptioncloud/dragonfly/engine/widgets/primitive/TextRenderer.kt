@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.minecraft.client.gui.Gui
 import java.awt.Color
@@ -33,11 +32,11 @@ class TextRenderer(
 
     var fontRenderer: IFontRenderer? by property(null)
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double = 0.0
-    @Interpolate override var height: Double = 0.0
-    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var width: Double = 0.0
+    override var height: Double = 0.0
+    override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
     override fun preRender() {
         /* kept empty since the render preparations would break the font-rendering */

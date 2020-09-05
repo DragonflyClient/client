@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.engine.internal
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
@@ -102,7 +101,6 @@ abstract class Widget<W : Widget<W>>(
     /**
      * The factor with which the widget is scaled when drawing.
      */
-    @Interpolate
     var scaleFactor: Double = 1.0
 
     /**

@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.widgets.primitive
 
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.*
@@ -24,13 +23,13 @@ class Circle(
     initializerBlock: (Circle.() -> Unit)? = null
 ) : Widget<Circle>(initializerBlock), IPosition, ISize, IColor, IAlign {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var size: Double by property(50.0)
-    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var size: Double by property(50.0)
+    override var color: WidgetColor by property(WidgetColor.DEFAULT)
     override var horizontalAlignment: Alignment by property(Alignment.START)
     override var verticalAlignment: Alignment by property(Alignment.START)
-    @Interpolate var lineWidth: Float by property(2F)
+    var lineWidth: Float by property(2F)
 
     init {
         val (alignedX, alignedY) = align(x, y, size, size)

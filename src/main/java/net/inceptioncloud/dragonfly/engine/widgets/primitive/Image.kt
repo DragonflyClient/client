@@ -4,7 +4,6 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine.popScale
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine.pushScale
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morphBetween
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
@@ -33,13 +32,13 @@ class Image(
     initializerBlock: (Image.() -> Unit)? = null
 ) : AssembledWidget<Image>(initializerBlock), IPosition, IDimension, IColor {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double by property(50.0)
-    @Interpolate override var height: Double by property(50.0)
-    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var width: Double by property(50.0)
+    override var height: Double by property(50.0)
+    override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
-    @Interpolate var scale: Double by property(1.0)
+    var scale: Double by property(1.0)
     var dynamicTexture: DynamicTexture? by property(null)
     var resourceLocation: ResourceLocation? by property(null)
 

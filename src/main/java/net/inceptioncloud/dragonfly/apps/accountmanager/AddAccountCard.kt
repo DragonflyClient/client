@@ -5,7 +5,6 @@ import net.inceptioncloud.dragonfly.engine.*
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
@@ -26,7 +25,7 @@ class AddAccountCard(
 
     val accentColor: WidgetColor = DragonflyPalette.foreground
 
-    @Interpolate var opacity: Double by property(0.2)
+    var opacity: Double by property(0.2)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to Rectangle(),

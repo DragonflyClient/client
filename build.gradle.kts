@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath("com.guardsquare:proguard-gradle:7.0.0")
+    }
+}
+
 plugins {
     application
     java
@@ -8,7 +19,7 @@ plugins {
 group = "net.inceptioncloud"
 version = "1.1.3.0"
 
-val outputName = "${project.name}-fat-${project.version}.jar"
+val outputName = "${project.name}-${project.version}-full.jar"
 
 repositories {
     mavenCentral()
@@ -20,7 +31,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
-    implementation("org.reflections:reflections:0.9.12")
     implementation("com.squareup.okhttp3:okhttp:4.3.1")
 
     // only required for inspector extension
@@ -75,6 +85,7 @@ sourceSets {
         }
         resources {
             srcDirs("resources/")
+            exclude("resources/Dragonfly-1.8.8.json")
         }
     }
 }
@@ -83,19 +94,115 @@ sourceSets {
 tasks {
     register<net.inceptioncloud.build.update.VersionTask>("version")
     register<net.inceptioncloud.build.update.PublishTask>("publish") {
-        dependsOn("fatJar")
+        dependsOn("obfuscatedJar")
     }
 
-    register<Jar>("fatJar") {
-        baseName = "${project.name}-fat"
+    register<proguard.gradle.ProGuardTask>("obfuscatedJar") {
+        dependsOn("fullJar")
+
+        verbose()
+        dontwarn()
+        dontoptimize()
+        dontshrink()
+
+        injars("build/libs/$outputName")
+        outjars("build/libs/${project.name}-${project.version}-obfuscated.jar")
+
+        libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
+
+        obfuscationdictionary("obfuscation/dictionary.txt")
+        classobfuscationdictionary("obfuscation/dictionary.txt")
+        packageobfuscationdictionary("obfuscation/dictionary.txt")
+
+        overloadaggressively()
+        flattenpackagehierarchy()
+        repackageclasses()
+
+        File("libraries-minecraft").listFiles()!!.forEach { libraryjars(it.absolutePath) }
+        File("libraries").listFiles()!!.forEach { libraryjars(it.absolutePath) }
+
+        printmapping("obfuscation/${project.name}-${project.version}.map")
+        renamesourcefileattribute("SourceFile")
+        keepattributes("SourceFile,LineNumberTable")
+
+        dontnote("kotlin.internal.PlatformImplementationsKt")
+        dontnote("kotlin.reflect.jvm.internal.**")
+
+        keep("class com.** { *; }")
+        keep("class darwin.** { *; }")
+        keep("class io.** { *; }")
+        keep("class javax.** { *; }")
+        keep("class khttp.** { *; }")
+        keep("class kotlin.** { *; }")
+        keep("class kotlinx.** { *; }")
+        keep("class linux.** { *; }")
+        keep("class net.arikia.** { *; }")
+        keep("class net.minecraftforge.** { *; }")
+        keep("class optifine.** { *; }")
+        keep("class org.** { *; }")
+        keep("class oshi.** { *; }")
+
+        keep("@net.inceptioncloud.dragonfly.utils.Keep class * { *; }")
+        keep("class net.inceptioncloud.dragonfly.utils.Keep")
+        keep("class net.inceptioncloud.dragonfly.ui.taskbar.** { *; }")
+        keep("class net.inceptioncloud.dragonfly.engine.internal.** { *; }")
+        keep("class net.inceptioncloud.dragonfly.engine.structure.** { *; }")
+        keep("class * extends net.inceptioncloud.dragonfly.engine.internal.Widget { *; }")
+        keep("class * extends net.inceptioncloud.dragonfly.engine.internal.AssembledWidget { *; }")
+
+        keep("class net.minecraft.entity.** { *; }")
+        keep("class net.minecraft.village.** { *; }")
+        keep("class net.minecraft.block.** { *; }")
+        keep("class net.minecraft.realms.** { *; }")
+        keep("class net.minecraft.client.ClientBrandRetriever { *; }")
+        keep("class net.minecraft.client.gui.Gui { *; }")
+        keep("class net.minecraft.client.gui.GuiScreen { *; }")
+        keep("class net.minecraft.client.gui.GuiYesNoCallback { *; }")
+        keep("class net.minecraft.server.MinecraftServer { *; }")
+
+        keepattributes("*Annotation*")
+
+        keepclasseswithmembers("""public class * {
+        public static void main(java.lang.String[]);
+        }""")
+
+        keepclasseswithmembernames("""class * {
+            native <methods>;
+        }""")
+
+        keepclassmembers(mapOf(
+            "allowoptimization" to true
+        ), """enum * {
+        public static **[] values();
+        public static ** valueOf(java.lang.String);
+        }""")
+
+        keepclassmembers("""class * implements java.io.Serializable {
+        static final long serialVersionUID;
+        static final java.io.ObjectStreamField[] serialPersistentFields;
+        private void writeObject(java.io.ObjectOutputStream);
+        private void readObject(java.io.ObjectInputStream);
+        java.lang.Object writeReplace();
+        java.lang.Object readResolve();
+        }""")
+    }
+
+    register<Jar>("fullJar") {
+        archiveClassifier.set("full")
+
         manifest {
             attributes["Main-Class"] = "net.minecraft.client.main.Main"
         }
+
         from(configurations.runtimeClasspath.get()
             .filter { !it.absolutePath.contains("libraries-minecraft") || it.absolutePath.contains("netty-all") }
-            .filter { "tornadofx" !in it.absolutePath }
+            .filter { "tornadofx" !in it.absolutePath } // exclude tornadofx
+            .filter { "reflections" !in it.absolutePath } // exclude org.reflections but not kotlin-reflect
             .map { if (it.isDirectory) it else zipTree(it) }
-        )
+        ) {
+            exclude { it.name == "module-info.class" || it.name == "icon_inspector.png" }
+        }
+
         with(jar.get() as CopySpec)
     }
 
@@ -104,7 +211,7 @@ tasks {
     }
 
     register<Copy>("copyJar") {
-        dependsOn("fatJar")
+        dependsOn("fullJar")
 
         from("build/libs/")
         include(outputName)
@@ -123,7 +230,7 @@ tasks {
 // tasks configurations
 tasks {
     build.configure {
-        dependsOn("fatJar")
+        dependsOn("fullJar")
     }
 
     run.configure {

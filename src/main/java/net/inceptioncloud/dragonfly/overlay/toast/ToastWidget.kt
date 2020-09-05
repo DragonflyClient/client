@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.overlay.toast
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
@@ -26,12 +25,12 @@ class ToastWidget(
 
     var text: String by property("This is a toast message")
     var duration: Int by property(200)
-    @Interpolate var opacity: Double by property(0.0)
+    var opacity: Double by property(0.0)
 
-    @Interpolate override var x: Double by property(-1.0)
-    @Interpolate override var y: Double by property(-1.0)
-    @Interpolate override var width: Double by property(-1.0)
-    @Interpolate override var height: Double by property(-1.0)
+    override var x: Double by property(-1.0)
+    override var y: Double by property(-1.0)
+    override var width: Double by property(-1.0)
+    override var height: Double by property(-1.0)
 
     /**
      * The time of initialization that is used for the timer (set when invoking [updateStructure])

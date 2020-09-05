@@ -3,10 +3,10 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Polygon
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
+import net.inceptioncloud.dragonfly.utils.Keep
 
 /**
  * ## Tooltip Assembled Widget
@@ -29,15 +29,15 @@ class Tooltip(
     initializerBlock: (Tooltip.() -> Unit)? = null
 ) : AssembledWidget<Tooltip>(initializerBlock), IPosition {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
 
-    @Interpolate var opacity: Double by property(0.0)
-    @Interpolate var arrowSize: Double by property(6.0)
+    var opacity: Double by property(0.0)
+    var arrowSize: Double by property(6.0)
 
-    @Interpolate var verticalOffset: Double by property(0.0)
-    @Interpolate var padding: Double by property(4.0)
-    @Interpolate var arc: Double by property(10.0)
+    var verticalOffset: Double by property(0.0)
+    var padding: Double by property(4.0)
+    var arc: Double by property(10.0)
 
     var text: String by property("Tooltip")
     var fontRenderer: IFontRenderer? = null

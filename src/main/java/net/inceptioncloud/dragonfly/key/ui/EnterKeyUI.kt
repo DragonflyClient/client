@@ -75,7 +75,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             x = description.x
             y = description.y + description.height + 10
             width = description.width
-            height = 18.0
+            height = 30.0
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.END
             staticText = message ?: ""
@@ -86,7 +86,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
 
         val keyInput = +InputTextField().apply {
             x = this@EnterKeyUI.width / 2.0 - 110.0
-            y = description.y + description.height + 35.0
+            y = description.y + description.height + 50.0
             color = DragonflyPalette.accentNormal
             width = 200.0
             height = 20.0

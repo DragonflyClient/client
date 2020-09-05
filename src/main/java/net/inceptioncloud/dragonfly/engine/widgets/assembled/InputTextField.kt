@@ -9,7 +9,6 @@ import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -40,19 +39,19 @@ class InputTextField(
     initializerBlock: (InputTextField.() -> Unit)? = null
 ) : AssembledWidget<InputTextField>(initializerBlock), IPosition, IDimension, IAlign, IColor {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double by property(100.0)
-    @Interpolate override var height: Double by property(20.0)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var width: Double by property(100.0)
+    override var height: Double by property(20.0)
     override var horizontalAlignment: Alignment by property(Alignment.START)
     override var verticalAlignment: Alignment by property(Alignment.START)
 
-    @Interpolate override var color: WidgetColor by property(DragonflyPalette.accentNormal)
-    @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
-    @Interpolate var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
+    override var color: WidgetColor by property(DragonflyPalette.accentNormal)
+    var backgroundColor: WidgetColor by property(DragonflyPalette.background)
+    var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
 
     var fontRenderer: IFontRenderer? by property(null)
-    @Interpolate var padding: Double by property(2.0)
+    var padding: Double by property(2.0)
 
     var allowList = listOf<Int>()
 

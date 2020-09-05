@@ -286,6 +286,13 @@ class WidgetColor {
     var brightness: Float? = null
 
     /**
+     * Returns the Minecraft chat color code that can be used to display this color in
+     * rendered strings.
+     */
+    val chatCode: String
+        get() = "§${String.format("#%06X", Integer.valueOf(rgb and 0x00FFFFFF))}"
+
+    /**
      * The base color stored in a [java.awt.Color] object.
      *
      * Whenever values of the [WidgetColor] object are accessed, the values of the base color will be used.

@@ -2,7 +2,6 @@ package net.inceptioncloud.dragonfly.engine.animation.alter
 
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.internal.Widget
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.Sequence
 import org.apache.logging.log4j.LogManager
 import kotlin.reflect.KMutableProperty
@@ -118,7 +117,6 @@ class MorphAnimation(
         private fun Widget<*>.doesModifyState(updates: List<PropertyUpdate>) =
             updates.any { (prop, value) ->
                 this::class.memberProperties.any { it.name == prop.name }
-                        && prop.hasAnnotation<Interpolate>()
                         && getPropertyIn(prop, this).getter.call(this) != value
             }
 
@@ -129,7 +127,6 @@ class MorphAnimation(
             val suitable = updates
                 .map { it.first }
                 .filter { this::class.memberProperties.any { that -> it.name == that.name } }
-                .filter { it.hasAnnotation<Interpolate>() }
                 .filterIsInstance<KMutableProperty<*>>()
 
             if (suitable.size != updates.size) {

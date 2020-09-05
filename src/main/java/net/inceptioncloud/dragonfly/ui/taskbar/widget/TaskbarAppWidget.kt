@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
@@ -34,12 +33,12 @@ class TaskbarAppWidget(
     initializerBlock: (TaskbarAppWidget.() -> Unit)? = null
 ) : AssembledWidget<TaskbarAppWidget>(initializerBlock), IPosition, IDimension {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double by property(200.0)
-    @Interpolate override var height: Double by property(20.0)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var width: Double by property(200.0)
+    override var height: Double by property(20.0)
 
-    @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
+    var backgroundColor: WidgetColor by property(DragonflyPalette.background)
 
     var originX by Delegates.notNull<Double>()
     var originY by Delegates.notNull<Double>()
@@ -165,8 +164,8 @@ class TaskbarAppWidget(
         tooltip.detachAnimation<MorphAnimation>()
         tooltip.morph(
             40, EaseQuad.IN_OUT,
-            tooltip::opacity to if (show) 1.0 else 0.0,
-            tooltip::verticalOffset to if (show) -offset else 0.0
+            Tooltip::opacity to if (show) 1.0 else 0.0,
+            Tooltip::verticalOffset to if (show) -offset else 0.0
         )?.start()
     }
 }

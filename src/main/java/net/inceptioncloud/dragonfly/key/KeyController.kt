@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly.key
 
 import com.google.gson.Gson
 import khttp.responses.Response
+import net.inceptioncloud.dragonfly.utils.Keep
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -71,5 +72,6 @@ object KeyController {
     /**
      * A simple class holding information about the response-
      */
+    @Keep
     data class Result(val success: Boolean, val message: String)
 }
