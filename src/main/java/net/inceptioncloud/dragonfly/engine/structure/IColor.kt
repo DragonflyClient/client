@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.structure
 
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 
 /**
  * ## Colorable Interface
@@ -13,5 +12,5 @@ interface IColor {
     /**
      * The color of the object represented by a [WidgetColor] wrapper.
      */
-    @Interpolate var color: WidgetColor
+    var color: WidgetColor
 }

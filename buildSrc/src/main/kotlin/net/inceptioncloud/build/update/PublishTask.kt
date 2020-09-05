@@ -74,7 +74,6 @@ open class PublishTask : DefaultTask() {
      */
     @TaskAction
     fun execute() {
-        val outputName = "${project.name}-${project.version}-full.jar"
         val host = readSecret("sftp_host")
         val username = readSecret("sftp_user")
         val password = readSecret("sftp_password")

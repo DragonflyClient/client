@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.IAlign
 import net.inceptioncloud.dragonfly.engine.structure.IColor
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
@@ -15,7 +14,7 @@ class KeySelector(
     initializerBlock: (KeySelector.() -> Unit)? = null
 ) : AssembledWidget<KeySelector>(initializerBlock), IPosition, IDimension, IAlign, IColor {
 
-    @Interpolate override var x: Double by property(0.0)
+    override var x: Double by property(0.0)
     override var y: Double by property(0.0)
     override var width: Double by property(100.0)
     override var height: Double by property(20.0)
@@ -25,11 +24,10 @@ class KeySelector(
     override var color: WidgetColor by property(DragonflyPalette.accentNormal)
     var backgroundColor: WidgetColor by property(DragonflyPalette.background)
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
-    @Interpolate var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
+    var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
 
     var fontRenderer: IFontRenderer? by property(null)
 
-    @Interpolate
     var padding: Double by property(2.0)
 
     var inputText: TextField? = null

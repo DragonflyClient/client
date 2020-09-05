@@ -1,18 +1,14 @@
 package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
-import net.inceptioncloud.dragonfly.engine.font.FontWeight
-import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
-import net.inceptioncloud.dragonfly.engine.toWidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiScreen.Companion.isCtrlKeyDown
@@ -20,7 +16,6 @@ import net.minecraft.client.gui.GuiScreen.Companion.isShiftKeyDown
 import net.minecraft.util.ChatAllowedCharacters
 import org.apache.commons.lang3.StringUtils
 import org.lwjgl.input.Keyboard.*
-import java.awt.Color
 import kotlin.math.abs
 
 val DEFAULT_TEXT_COLOR
@@ -59,7 +54,7 @@ class InputTextField(
     var isEnabled: Boolean by property(true)
     var maxStringLength: Int by property(200)
 
-    @Interpolate var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
+    var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
 
     /**
      * Whether the text field is currently focused. If it is, typed keys will be passed on to the input field
