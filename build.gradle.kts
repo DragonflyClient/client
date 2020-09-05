@@ -19,7 +19,7 @@ plugins {
 group = "net.inceptioncloud"
 version = "1.1.3.0"
 
-val outputName = "${project.name}-fat-${project.version}.jar"
+val outputName = "${project.name}-${project.version}-full.jar"
 
 repositories {
     mavenCentral()
@@ -84,6 +84,7 @@ sourceSets {
         }
         resources {
             srcDirs("resources/")
+            exclude("resources/Dragonfly-1.8.8.json")
         }
     }
 }
@@ -92,17 +93,19 @@ sourceSets {
 tasks {
     register<net.inceptioncloud.build.update.VersionTask>("version")
     register<net.inceptioncloud.build.update.PublishTask>("publish") {
-        dependsOn("fatJar")
+        dependsOn("obfuscatedJar")
     }
 
-    register<proguard.gradle.ProGuardTask>("proguard") {
+    register<proguard.gradle.ProGuardTask>("obfuscatedJar") {
+        dependsOn("fullJar")
+
         verbose()
         dontwarn()
         dontoptimize()
         dontshrink()
 
         injars("build/libs/$outputName")
-        outjars("C:/Users/user/AppData/Roaming/.minecraft/versions/Dragonfly-1.8.8/Dragonfly-1.8.8.jar")
+        outjars("build/libs/${project.name}-${project.version}-obfuscated.jar")
 
         libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
 
@@ -121,6 +124,9 @@ tasks {
         renamesourcefileattribute("SourceFile")
         keepattributes("SourceFile,LineNumberTable")
 
+        dontnote("kotlin.internal.PlatformImplementationsKt")
+        dontnote("kotlin.reflect.jvm.internal.**")
+
         keep("class com.** { *; }")
         keep("class darwin.** { *; }")
         keep("class io.** { *; }")
@@ -134,9 +140,6 @@ tasks {
         keep("class optifine.** { *; }")
         keep("class org.** { *; }")
         keep("class oshi.** { *; }")
-
-        dontnote("kotlin.internal.PlatformImplementationsKt")
-        dontnote("kotlin.reflect.jvm.internal.**")
 
         keep("@net.inceptioncloud.dragonfly.utils.Keep class * { *; }")
         keep("class net.inceptioncloud.dragonfly.utils.Keep")
@@ -183,16 +186,22 @@ tasks {
         }""")
     }
 
-    register<Jar>("fatJar") {
-        baseName = "${project.name}-fat"
+    register<Jar>("fullJar") {
+        archiveClassifier.set("full")
+
         manifest {
             attributes["Main-Class"] = "net.minecraft.client.main.Main"
         }
+
         from(configurations.runtimeClasspath.get()
             .filter { !it.absolutePath.contains("libraries-minecraft") || it.absolutePath.contains("netty-all") }
-            .filter { "tornadofx" !in it.absolutePath }
+            .filter { "tornadofx" !in it.absolutePath } // exclude tornadofx
+            .filter { "reflections" !in it.absolutePath } // exclude org.reflections but not kotlin-reflect
             .map { if (it.isDirectory) it else zipTree(it) }
-        )
+        ) {
+            exclude { it.name == "module-info.class" || it.name == "icon_inspector.png" }
+        }
+
         with(jar.get() as CopySpec)
     }
 
@@ -201,7 +210,7 @@ tasks {
     }
 
     register<Copy>("copyJar") {
-        dependsOn("fatJar")
+        dependsOn("fullJar")
 
         from("build/libs/")
         include(outputName)
@@ -220,7 +229,7 @@ tasks {
 // tasks configurations
 tasks {
     build.configure {
-        dependsOn("fatJar")
+        dependsOn("fullJar")
     }
 
     run.configure {

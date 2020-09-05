@@ -74,7 +74,7 @@ open class PublishTask : DefaultTask() {
      */
     @TaskAction
     fun execute() {
-        val outputName = "${project.name}-fat-${project.version}.jar"
+        val outputName = "${project.name}-${project.version}-full.jar"
         val host = readSecret("sftp_host")
         val username = readSecret("sftp_user")
         val password = readSecret("sftp_password")
@@ -101,7 +101,7 @@ open class PublishTask : DefaultTask() {
             channel.mkdir(cdn)
         }
 
-        channel.put("/build/libs/$outputName", "$cdn/Dragonfly-1.8.8.jar")
+        channel.put("/build/libs/${project.name}-${project.version}-obfuscated.jar", "$cdn/Dragonfly-1.8.8.jar")
         channel.put("/resources/Dragonfly-1.8.8.json", "$cdn/Dragonfly-1.8.8.json")
         channel.exit()
         logger.info("Upload succeeded!")
