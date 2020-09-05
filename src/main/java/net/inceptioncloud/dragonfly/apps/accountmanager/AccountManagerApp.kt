@@ -5,6 +5,7 @@ import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly.secretsDirectory
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
+import net.inceptioncloud.dragonfly.utils.ListParameterizedType
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import java.io.File

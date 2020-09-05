@@ -3,10 +3,12 @@ package net.inceptioncloud.dragonfly.cosmetics.types.wings
 import com.google.gson.JsonObject
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticConfig
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.utils.Keep
 
 /**
  * The configuration for the [wings][CosmeticWings] cosmetic
  */
+@Keep
 class CosmeticWingsConfig(jsonObject: JsonObject) : CosmeticConfig(jsonObject) {
     var enableBlending by boolean(false)
     var enableShadows by boolean(true)

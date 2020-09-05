@@ -3,9 +3,11 @@ package net.inceptioncloud.dragonfly.cosmetics.logic
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.apps.accountmanager.Account
 import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWings
 import net.inceptioncloud.dragonfly.cosmetics.Cosmetic
 import net.inceptioncloud.dragonfly.mc
+import net.inceptioncloud.dragonfly.utils.ListParameterizedType
 import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.entity.player.EntityPlayer
 import okhttp3.Request
@@ -70,7 +72,8 @@ object CosmeticsManager {
 
             if (response.get("success").asBoolean) {
                 val availableCosmetics = response.getAsJsonArray("availableCosmetics")
-                return Dragonfly.gson.fromJson(availableCosmetics, DatabaseModelList::class.java)
+                val typeToken = ListParameterizedType(JsonObject::class.java)
+                return DatabaseModelList(Dragonfly.gson.fromJson(availableCosmetics, typeToken))
             }
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -152,7 +155,8 @@ object CosmeticsManager {
 
             if (response.get("success").asBoolean) {
                 val cosmetics = response.getAsJsonArray("cosmetics")
-                return Dragonfly.gson.fromJson(cosmetics, CosmeticDataList::class.java)
+                val typeToken = ListParameterizedType(CosmeticData::class.java)
+                return CosmeticDataList(Dragonfly.gson.fromJson(cosmetics, typeToken))
             }
         } catch (e: Throwable) {
             e.printStackTrace()

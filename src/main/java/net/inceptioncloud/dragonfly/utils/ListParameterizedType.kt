@@ -1,13 +1,14 @@
-package net.inceptioncloud.dragonfly.apps.accountmanager
+package net.inceptioncloud.dragonfly.utils
 
-import net.inceptioncloud.dragonfly.utils.Keep
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-@Keep
-class AccountList : ArrayList<Account>()
-
+/**
+ * Represents a type token for a List with a parameterized type that isn't
+ * erased at runtime and thus eliminates issues when parsing lists via Gson.
+ */
 class ListParameterizedType (private val type: Type) : ParameterizedType {
+
     override fun getActualTypeArguments(): Array<Type> {
         return arrayOf(type)
     }

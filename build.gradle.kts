@@ -94,12 +94,10 @@ sourceSets {
 tasks {
     register<net.inceptioncloud.build.update.VersionTask>("version")
     register<net.inceptioncloud.build.update.PublishTask>("publish") {
-        dependsOn("obfuscatedJar")
+        dependsOn("fullJar", "obfuscatedJar")
     }
 
-    register<proguard.gradle.ProGuardTask>("obfuscatedJar") {
-        dependsOn("fullJar")
-
+    register<proguard.gradle.ProGuardTask>("obfuscateJar") {
         verbose()
         dontwarn()
         dontoptimize()
@@ -122,7 +120,7 @@ tasks {
         File("libraries").listFiles()!!.forEach { libraryjars(it.absolutePath) }
 
         printmapping("obfuscation/${project.name}-${project.version}.map")
-        renamesourcefileattribute("SourceFile")
+        renamesourcefileattribute("~")
         keepattributes("SourceFile,LineNumberTable")
 
         dontnote("kotlin.internal.PlatformImplementationsKt")
@@ -149,6 +147,8 @@ tasks {
         keep("class net.inceptioncloud.dragonfly.engine.structure.** { *; }")
         keep("class * extends net.inceptioncloud.dragonfly.engine.internal.Widget { *; }")
         keep("class * extends net.inceptioncloud.dragonfly.engine.internal.AssembledWidget { *; }")
+        keep("class * extends net.inceptioncloud.dragonfly.mods.core.DragonflyMod { *; }")
+        keep("class net.inceptioncloud.dragonfly.mods.core.DragonflyMod { *; }")
 
         keep("class net.minecraft.entity.** { *; }")
         keep("class net.minecraft.village.** { *; }")

@@ -1,18 +1,19 @@
 package net.inceptioncloud.dragonfly.cosmetics.logic
 
 import com.google.gson.JsonObject
+import net.inceptioncloud.dragonfly.utils.Keep
 import kotlin.reflect.KClass
 
 /**
  * Represents a list of [CosmeticData] obtained by fetching the cosmetics of a Minecraft user
  */
-class CosmeticDataList : ArrayList<CosmeticData>()
+class CosmeticDataList(list: ArrayList<CosmeticData>) : ArrayList<CosmeticData>(list)
 
 /**
  * Represents a list of [JsonObject]s obtained by fetching the database models for the
  * available cosmetics
  */
-class DatabaseModelList : ArrayList<JsonObject>()
+class DatabaseModelList(list: ArrayList<JsonObject>) : ArrayList<JsonObject>(list)
 
 /**
  * Represents data of a cosmetic item that is hold by a player
@@ -26,6 +27,7 @@ class DatabaseModelList : ArrayList<JsonObject>()
  * @param enabled Whether the cosmetic item is enabled for the player.
  * @param minecraft The UUID of the Minecraft account to which the cosmetic item is bound
  */
+@Keep
 data class CosmeticData(
     val config: JsonObject,
     val cosmeticId: Int,

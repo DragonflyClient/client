@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.utils.Keep
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -11,6 +12,7 @@ import kotlin.reflect.KProperty
  * Superclass for all cosmetic configurations. Provides delegates for easily
  * reading properties from the [jsonObject].
  */
+@Keep
 open class CosmeticConfig(val jsonObject: JsonObject) {
 
     /**
