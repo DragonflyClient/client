@@ -109,9 +109,9 @@ tasks {
 
         libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
 
-        obfuscationdictionary("dictionary.txt")
-        classobfuscationdictionary("dictionary.txt")
-        packageobfuscationdictionary("dictionary.txt")
+        obfuscationdictionary("obfuscation/dictionary.txt")
+        classobfuscationdictionary("obfuscation/dictionary.txt")
+        packageobfuscationdictionary("obfuscation/dictionary.txt")
 
         overloadaggressively()
         flattenpackagehierarchy()
@@ -120,7 +120,7 @@ tasks {
         File("libraries-minecraft").listFiles()!!.forEach { libraryjars(it.absolutePath) }
         File("libraries").listFiles()!!.forEach { libraryjars(it.absolutePath) }
 
-        printmapping("out.map")
+        printmapping("obfuscation/${project.name}-${project.version}.map")
         renamesourcefileattribute("SourceFile")
         keepattributes("SourceFile,LineNumberTable")
 

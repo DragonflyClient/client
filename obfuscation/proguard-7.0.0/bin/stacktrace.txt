@@ -1,0 +1,12 @@
+Exception in thread "Client thread" java.lang.ExceptionInInitializerError
+	at net.minecraft.a.a.R(SourceFile:1244)
+	at net.minecraft.i.b.b(SourceFile:517)
+	at net.minecraft.client.c.<init>(SourceFile:342)
+	at net.minecraft.client.main.Main.main(SourceFile:132)
+Caused by: java.lang.NullPointerException
+	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:213)
+	at com.google.common.collect.Lists.newArrayList(Lists.java:100)
+	at net.minecraft.a.b.d.a(SourceFile:56)
+	at net.minecraft.a.b.d.a(SourceFile:51)
+	at net.minecraft.a.dj.<clinit>(SourceFile:20)
+	... 4 more
