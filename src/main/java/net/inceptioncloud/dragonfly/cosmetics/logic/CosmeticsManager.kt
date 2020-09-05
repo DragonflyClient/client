@@ -117,15 +117,20 @@ object CosmeticsManager {
     @JvmStatic
     @JvmOverloads
     fun refreshCosmetics(uuid: UUID? = null) {
-        val targetEntities = if (uuid != null) {
-            mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id == uuid }
-        } else {
-            mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id in cache.keys }
+        GlobalScope.launch {
+            databaseModels = loadDatabaseModels()
+            mc.addScheduledTask {
+                val targetEntities = if (uuid != null) {
+                    mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id == uuid }
+                } else {
+                    mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id in cache.keys }
+                }
+                clearCache(uuid)
+                targetEntities
+                    ?.mapNotNull { it as? AbstractClientPlayer }
+                    ?.forEach { it.loadCosmetics() } // reload cosmetics for targets
+            }
         }
-        clearCache(uuid)
-        targetEntities
-            ?.mapNotNull { it as? AbstractClientPlayer }
-            ?.forEach { it.loadCosmetics() } // reload cosmetics for targets
     }
 
     /**
