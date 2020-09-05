@@ -7,6 +7,7 @@ import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorControl
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
+import net.inceptioncloud.dragonfly.utils.Keep
 import net.minecraft.client.Minecraft
 import kotlin.reflect.jvm.isAccessible
 
@@ -87,6 +88,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
 
 }
 
+@Keep
 private class KeystrokesModListener : ChangeListener<Any?> {
     override fun changed(observable: ObservableValue<out Any?>?, oldValue: Any?, newValue: Any?) {
         if (oldValue is WidgetColor && newValue is WidgetColor) {

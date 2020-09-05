@@ -1,11 +1,14 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
+import net.inceptioncloud.dragonfly.utils.Keep
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
 import java.util.*
@@ -292,13 +295,7 @@ abstract class Widget<W : Widget<W>>(
      */
     protected fun <T> property(initialValue: T): WidgetPropertyDelegate<T> {
         val delegate = WidgetPropertyDelegate(initialValue)
-        delegate.objectProperty.addListener { _, oldValue, newValue ->
-            if (oldValue != newValue) {
-                if (!isInStateUpdate) {
-                    notifyStateChanged()
-                }
-            }
-        }
+        delegate.objectProperty.addListener(WidgetListener(this))
         return delegate
     }
 
@@ -385,5 +382,16 @@ abstract class Widget<W : Widget<W>>(
     )
     override fun drawNative() {
         super.drawNative()
+    }
+}
+
+@Keep
+private class WidgetListener<T>(val widget: Widget<*>) : ChangeListener<T> {
+    override fun changed(observable: ObservableValue<out T>?, oldValue: T, newValue: T) {
+        if (oldValue != newValue) {
+            if (!widget.isInStateUpdate) {
+                widget.notifyStateChanged()
+            }
+        }
     }
 }
