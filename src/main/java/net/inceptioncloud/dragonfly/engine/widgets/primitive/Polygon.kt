@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.widgets.primitive
 
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.IColor
 import org.lwjgl.opengl.GL11.*
 
@@ -19,7 +18,7 @@ open class Polygon(
     initializerBlock: (Polygon.() -> Unit)? = null
 ) : Widget<Polygon>(initializerBlock), IColor {
 
-    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
     var smooth: Boolean by property(false)
     val points = mutableListOf<Point>()

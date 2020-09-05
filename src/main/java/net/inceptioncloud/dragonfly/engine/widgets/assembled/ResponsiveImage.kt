@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.minecraft.client.renderer.GlStateManager
@@ -27,14 +26,14 @@ class ResponsiveImage(
     initializerBlock: (ResponsiveImage.() -> Unit)
 ) : AssembledWidget<ResponsiveImage>(initializerBlock), IPosition, IDimension, IColor {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double by property(50.0)
-    @Interpolate override var height: Double by property(50.0)
-    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var width: Double by property(50.0)
+    override var height: Double by property(50.0)
+    override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
-    @Interpolate var originalWidth: Double by property(width)
-    @Interpolate var originalHeight: Double by property(width)
+    var originalWidth: Double by property(width)
+    var originalHeight: Double by property(width)
     var resourceLocation: ResourceLocation? by property(null)
     var dynamicTexture: DynamicTexture? by property(null)
 

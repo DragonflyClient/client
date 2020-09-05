@@ -8,7 +8,6 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.foreground
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
@@ -33,7 +32,7 @@ class AccountCard(
 
     var isSelected: Boolean by property(false)
     var isExpired: Boolean by property(false)
-    @Interpolate var accentColor: WidgetColor by property(foreground)
+    var accentColor: WidgetColor by property(foreground)
 
     init {
         this::isSelected.getTypedWidgetDelegate<Boolean>()!!.objectProperty

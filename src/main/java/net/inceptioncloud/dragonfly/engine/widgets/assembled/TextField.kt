@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.internal.Alignment.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
@@ -37,11 +36,11 @@ class TextField(
     initializerBlock: (TextField.() -> Unit)? = null
 ) : AssembledWidget<TextField>(initializerBlock), IPosition, IDimension, IColor, IAlign, IOutline {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double by property(50.0)
-    @Interpolate override var height: Double by property(50.0)
-    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var width: Double by property(50.0)
+    override var height: Double by property(50.0)
+    override var color: WidgetColor by property(WidgetColor.DEFAULT)
     override var horizontalAlignment: Alignment by property(START)
     override var verticalAlignment: Alignment by property(START)
     var adaptHeight: Boolean by property(false)
@@ -54,14 +53,14 @@ class TextField(
 
     var fontRenderer: IFontRenderer? by property(null)
 
-    @Interpolate var backgroundColor: WidgetColor by property(WidgetColor(0, 0, 0, 0))
-    @Interpolate var padding: Double by property(0.0)
+    var backgroundColor: WidgetColor by property(WidgetColor(0, 0, 0, 0))
+    var padding: Double by property(0.0)
     var dropShadow: Boolean by property(false)
-    @Interpolate var shadowDistance: Double by property(2.0)
-    @Interpolate var shadowColor: WidgetColor? by property(null)
+    var shadowDistance: Double by property(2.0)
+    var shadowColor: WidgetColor? by property(null)
 
-    @Interpolate override var outlineStroke: Double by property(0.0)
-    @Interpolate override var outlineColor: WidgetColor by property(WidgetColor.DEFAULT)
+    override var outlineStroke: Double by property(0.0)
+    override var outlineColor: WidgetColor by property(WidgetColor.DEFAULT)
 
     init {
         val (alignedX, alignedY) = align(x, y, width, height)

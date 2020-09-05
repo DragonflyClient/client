@@ -1,8 +1,11 @@
 package net.inceptioncloud.dragonfly.versioning
 
+import net.inceptioncloud.dragonfly.utils.Keep
+
 /**
  * Represents a version of the Dragonfly client using the default versioning scheme.
  */
+@Keep
 data class Version(
     val major: Int,
     val minor: Int,

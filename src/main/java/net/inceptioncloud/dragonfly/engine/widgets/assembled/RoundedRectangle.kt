@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Arc
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
@@ -17,15 +16,15 @@ class RoundedRectangle(
     initializerBlock: (RoundedRectangle.() -> Unit)? = null
 ) : AssembledWidget<RoundedRectangle>(initializerBlock), IPosition, IDimension, IColor, IAlign {
 
-    @Interpolate override var x: Double by property(0.0)
-    @Interpolate override var y: Double by property(0.0)
-    @Interpolate override var width: Double by property(50.0)
-    @Interpolate override var height: Double by property(50.0)
-    @Interpolate override var color: WidgetColor by property(WidgetColor.DEFAULT)
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var width: Double by property(50.0)
+    override var height: Double by property(50.0)
+    override var color: WidgetColor by property(WidgetColor.DEFAULT)
     override var horizontalAlignment: Alignment by property(Alignment.START)
     override var verticalAlignment: Alignment by property(Alignment.START)
 
-    @Interpolate var arc: Double by property(0.0)
+    var arc: Double by property(0.0)
 
     init {
         val (alignedX, alignedY) = align(x, y, width, height)

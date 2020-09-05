@@ -5,7 +5,6 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
@@ -24,7 +23,7 @@ class SocialMediaPreview(
     override var y: Double by property(0.0)
     override var width: Double by property(0.0)
     override var height: Double by property(0.0)
-    @Interpolate override var color: WidgetColor by property(DragonflyPalette.background)
+    override var color: WidgetColor by property(DragonflyPalette.background)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "text" to TextField(),

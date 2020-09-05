@@ -1,8 +1,11 @@
 package net.inceptioncloud.dragonfly.versioning
 
+import net.inceptioncloud.dragonfly.utils.Keep
+
 /**
  * Represents an update of the Dragonfly client published to the backend.
  */
+@Keep
 data class Update(
     /**
      * The version in string-format
