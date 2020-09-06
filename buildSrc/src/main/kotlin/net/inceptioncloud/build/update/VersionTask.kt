@@ -26,6 +26,7 @@ open class VersionTask : DefaultTask() {
     fun execute() {
         requireNotNull(newVersion) { "A version for the update must be specified" }
         globalVersion = newVersion
+        project.version = newVersion!!
         writeVersionToBuildScript()
         writeVersionToClientSource()
     }
