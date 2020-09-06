@@ -32,7 +32,7 @@ object CrashDiagnostics {
             val body = json.toString()
                 .toRequestBody("application/json".toMediaType())
             val request = Request.Builder()
-                .url("http://localhost:1414/v1/diagnostics/submit_crash_report")
+                .url("https://api.playdragonfly.net/v1/diagnostics/submit_crash_report")
                 .post(body)
                 .build()
             val response = Dragonfly.httpClient.newCall(request).execute()
