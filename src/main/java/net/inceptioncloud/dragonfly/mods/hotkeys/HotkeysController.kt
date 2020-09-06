@@ -69,7 +69,6 @@ class HotkeysController {
                 }
             }
         }
-
     }
 
     fun updateKeyState(key: Int) {
@@ -95,18 +94,27 @@ class HotkeysController {
         val content = repositoryFile.takeIf { it.exists() }?.readText()
 
         if (content != null) {
-            val typeToken = ListParameterizedType(HotkeyData::class.java)
-            repository = HotkeyRepository(gson.fromJson(content, typeToken))
-            hotkeys = repository.map {
-                val hotkeyClass = it.type.hotkeyClass
-                val configClass = it.type.configClass
-                val config = gson.fromJson(it.config, configClass.java)
-                hotkeyClass.primaryConstructor!!.call(it, config) as Hotkey
-            }.toMutableList()
-        } else {
-            repository = HotkeyRepository(listOf())
-            hotkeys = mutableListOf()
+            try {
+                val typeToken = ListParameterizedType(HotkeyData::class.java)
+                repository = HotkeyRepository(gson.fromJson(content, typeToken))
+                hotkeys = repository.mapNotNull {
+                    try {
+                        val hotkeyClass = it.type.hotkeyClass
+                        val configClass = it.type.configClass
+                        val config = gson.fromJson(it.config, configClass.java)
+                        hotkeyClass.primaryConstructor!!.call(it, config) as Hotkey
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                        null
+                    }
+                }.toMutableList()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
         }
+
+        repository = HotkeyRepository(listOf())
+        hotkeys = mutableListOf()
     }
 }
 

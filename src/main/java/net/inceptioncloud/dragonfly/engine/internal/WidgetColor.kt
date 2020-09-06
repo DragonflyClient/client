@@ -34,27 +34,23 @@ class WidgetColor {
         }
 
         val deserializer = JsonDeserializer<WidgetColor> { jsonElement, _, _ ->
-            if (jsonElement == null) {
-                null
-            } else {
-                jsonElement.asJsonObject.runCatching {
-                    val red = get("red").asInt
-                    val green = get("green").asInt
-                    val blue = get("blue").asInt
-                    val actualAlpha = get("alpha").asInt
-                    val hue = getOrNull("hue")?.asFloat
-                    val saturation = getOrNull("saturation")?.asFloat
-                    val brightness = getOrNull("brightness")?.asFloat
-                    val rainbow = get("rainbow").asBoolean
-                    WidgetColor(red, green, blue).also {
-                        it.hue = hue
-                        it.saturation = saturation
-                        it.brightness = brightness
-                        it.rainbow = rainbow
-                        it.alpha = actualAlpha
-                        it.actualAlpha = actualAlpha
-                    }
-                }.getOrNull()
+            jsonElement?.asJsonObject?.run {
+                val red = get("red").asInt
+                val green = get("green").asInt
+                val blue = get("blue").asInt
+                val actualAlpha = get("alpha").asInt
+                val hue = getOrNull("hue")?.asFloat
+                val saturation = getOrNull("saturation")?.asFloat
+                val brightness = getOrNull("brightness")?.asFloat
+                val rainbow = get("rainbow").asBoolean
+                WidgetColor(red, green, blue).also {
+                    it.hue = hue
+                    it.saturation = saturation
+                    it.brightness = brightness
+                    it.rainbow = rainbow
+                    it.alpha = actualAlpha
+                    it.actualAlpha = actualAlpha
+                }
             }
         }
 
