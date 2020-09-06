@@ -39,9 +39,6 @@ class DragonflySplashScreen {
 
     var additionalLoadingMillis = 0L
 
-    /** The action that is currently being performed. */
-    private var action: String? = null
-
     /** Whether the splash screen is active due to the loading of the client. */
     var isActive = true
 
@@ -51,11 +48,9 @@ class DragonflySplashScreen {
     fun update() {
         if (Minecraft.getMinecraft() == null || Minecraft.getMinecraft().languageManager == null || !isActive) return
 
-        val element = RuntimeUtils.getStackTrace(DragonflySplashScreen::class.java)
         targetPercentage = (percentage + 1.0 / 20).coerceIn(0.0..1.0)
-        action = if (element == null) "..." else element.className.split(".").last() + " - " + element.methodName
 
-        if (Dragonfly.isDeveloperMode /* improve startup performance in developer mode */) {
+        if (Dragonfly.isDeveloperMode) { // improve startup performance in developer mode
             percentage = targetPercentage
         } else {
             val start = System.currentTimeMillis()
@@ -118,12 +113,7 @@ class DragonflySplashScreen {
 
         titleFR!!.drawCenteredString("Dragonfly", resolution.width / 2, 120, DragonflyPalette.accentNormal.rgb, true)
         defaultFR!!.drawCenteredString("Initializing...", resolution.width / 2, 150, DragonflyPalette.foreground.rgb, true)
-        actionFR!!.drawCenteredString(action, resolution.width / 2, resolution.height - 50, Color(0x717577).rgb, true)
 
-//        titleFR!!.drawCenteredString("InceptionCloud", resolution.scaledWidth / 2, 100, Color.WHITE.rgb, false)
-//        defaultFR!!.drawCenteredString("Dragonfly", resolution.scaledWidth / 2, 126, Color(255, 255, 255, 170).rgb, false)
-//        actionFR!!.drawCenteredString(action, resolution.scaledWidth / 2 - 15, 210, Color(255, 255, 255, 100).rgb, false)
-//
         val rectWidth = resolution.width - 40
         val rectHeight = 15
         val rectLeft = resolution.width / 2 - rectWidth / 2
