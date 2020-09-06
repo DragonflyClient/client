@@ -10,9 +10,11 @@ import net.inceptioncloud.dragonfly.event.*
 import net.inceptioncloud.dragonfly.event.client.*
 import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
+import net.inceptioncloud.dragonfly.diagnostic.ui.DiagnosticsPermissionsModal
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.state.GameStateManager
 import net.inceptioncloud.dragonfly.subscriber.DefaultSubscribers
 import net.inceptioncloud.dragonfly.transition.Transition
@@ -131,6 +133,10 @@ object Dragonfly {
         } finally {
             if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
                 AuthenticationBridge.showLoginModal()
+            }
+
+            if (StorageOptions.SEND_DIAGNOSTICS.get() == 0) {
+                Modal.showModal(DiagnosticsPermissionsModal())
             }
         }
         tickTimer = Timer("Dragonfly Tick Timer")

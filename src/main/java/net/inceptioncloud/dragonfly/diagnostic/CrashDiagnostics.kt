@@ -17,7 +17,7 @@ object CrashDiagnostics {
      */
     @JvmStatic
     fun submit(report: CrashReport) {
-        if (!StorageOptions.SEND_DIAGNOSTICS.get()) return
+        if (StorageOptions.SEND_DIAGNOSTICS.get() != 1) return
 
         try {
             LogManager.getLogger().info("Submitting crash report...")
@@ -40,7 +40,6 @@ object CrashDiagnostics {
                 .let { Dragonfly.gson.fromJson(it, JsonObject::class.java).asJsonObject }
 
             // validate response
-            println(response)
             if (!response.get("success").asBoolean) throw IllegalStateException(response.get("error").asString)
 
             LogManager.getLogger().info("Crash report submitted to Dragonfly")

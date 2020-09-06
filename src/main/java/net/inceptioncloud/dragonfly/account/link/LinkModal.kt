@@ -35,10 +35,6 @@ class LinkModal(
      */
     var isLinking = false
 
-    override fun onShow() {
-        Keyboard.enableRepeatEvents(true)
-    }
-
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
         "image" to Image(),
