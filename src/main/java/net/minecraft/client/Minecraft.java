@@ -9,6 +9,7 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.diagnostic.CrashDiagnostics;
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService;
 import net.inceptioncloud.dragonfly.event.client.*;
 import net.inceptioncloud.dragonfly.event.control.KeyDispatchEvent;
@@ -730,6 +731,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         File file1 = new File(getMinecraft().mcDataDir, "crash-reports");
         File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
         Bootstrap.printToSYSOUT(crashReportIn.getCompleteReport());
+
+        CrashDiagnostics.submit(crashReportIn);
 
         if (crashReportIn.getFile() != null) {
             Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + crashReportIn.getFile());

@@ -19,4 +19,13 @@ public class StorageOptions {
             .defaultValue(false)
             .validator(bool -> true)
             .build();
+
+    // 0: not selected
+    // 1: allowed
+    // -1: denied
+    public static final OptionKey<Integer> SEND_DIAGNOSTICS = OptionKey.newInstance(Integer.class)
+            .key("sendDiagnostics")
+            .defaultValue(0)
+            .validator(val -> true)
+            .build();
 }
