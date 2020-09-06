@@ -37,7 +37,7 @@ class WidgetColor {
             if (jsonElement == null) {
                 null
             } else {
-                with(jsonElement.asJsonObject) {
+                jsonElement.asJsonObject.runCatching {
                     val red = get("red").asInt
                     val green = get("green").asInt
                     val blue = get("blue").asInt
@@ -54,7 +54,7 @@ class WidgetColor {
                         it.alpha = actualAlpha
                         it.actualAlpha = actualAlpha
                     }
-                }
+                }.getOrNull()
             }
         }
 
