@@ -9,6 +9,8 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
 import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.MouseData
+import net.inceptioncloud.dragonfly.engine.scrollbar.Scrollbar
+import net.inceptioncloud.dragonfly.engine.scrollbar.attachTo
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
@@ -25,6 +27,8 @@ import net.minecraft.util.ResourceLocation
 class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     companion object : OneTimeUILoader(500)
+
+    private var scrollbar: Scrollbar? = null
 
     /**
      * Returns all mod list entries in the sidebar
@@ -55,6 +59,8 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         get() = this@ModManagerUI.width - contentX
 
     override fun initGui() {
+        scrollbar = Scrollbar(this, 40.0)
+
         +Rectangle {
             x = 0.0
             y = 0.0
@@ -128,6 +134,8 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         placeholderImage?.isVisible = selectedMod == null
         placeholderText?.isVisible = selectedMod == null
 
+        scrollbar?.reset()
+        stage.remove("scrollbar")
         stage.content.filterKeys { it.startsWith("control-") }
             .forEach { (key, value) ->
                 stage.remove(key)
@@ -150,10 +158,18 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
                 control.width = controlsWidth
 
                 stage.add("control-element-$index" to control)
+                control.attachTo(scrollbar!!)
 
                 currentY += control.height + 13.0
             }
         }
+
+        +scrollbar!!.buildWidget().apply {
+            width = 10.0
+            x = this@ModManagerUI.width - width
+            y = 0.0
+            runStructureUpdate()
+        } id "scrollbar"
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
@@ -164,6 +180,11 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         ) {
             selectedMod = entries.firstOrNull { data in it }?.mod
         }
+    }
+
+    override fun handleMouseInput() {
+        scrollbar?.handleMouseInput()
+        super.handleMouseInput()
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
