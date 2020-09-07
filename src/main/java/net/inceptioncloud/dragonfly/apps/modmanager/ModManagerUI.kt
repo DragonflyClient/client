@@ -164,11 +164,10 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             }
         }
 
-        +scrollbar!!.buildWidget().apply {
+        +scrollbar!!.prepareWidget().apply {
             width = 10.0
             x = this@ModManagerUI.width - width
             y = 0.0
-            runStructureUpdate()
         } id "scrollbar"
     }
 
