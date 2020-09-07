@@ -36,7 +36,8 @@ class DropdownElement(
     }
     private val containerHeight = 40.0
     private val containerX by lazy { x + width - containerWidth }
-    private val containerY by lazy { y + (height - containerHeight) / 2.0 }
+    private val containerY: Double
+        get() = y + (height - containerHeight) / 2.0
 
     private var isExpanded = false
     private var isInProgress = false
@@ -60,6 +61,9 @@ class DropdownElement(
     override fun controlUpdateStructure() {
         val iconSize = 20.0
         height = height.coerceAtLeast(containerHeight)
+        isExpanded = false
+        isInProgress = false
+        mc.currentScreen.focusHandler = null
 
         "container"<RoundedRectangle> {
             x = containerX
