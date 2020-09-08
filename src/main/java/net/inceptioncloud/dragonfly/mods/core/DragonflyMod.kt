@@ -1,6 +1,6 @@
 package net.inceptioncloud.dragonfly.mods.core
 
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.ControlElement
+import net.inceptioncloud.dragonfly.controls.ControlElement
 import net.inceptioncloud.dragonfly.options.OptionsBase
 import net.minecraft.util.ResourceLocation
 import java.io.File

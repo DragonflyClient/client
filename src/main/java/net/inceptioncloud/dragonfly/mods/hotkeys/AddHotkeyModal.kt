@@ -1,8 +1,8 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPickerModal
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorPreview
+import net.inceptioncloud.dragonfly.controls.color.ColorPickerModal
+import net.inceptioncloud.dragonfly.controls.color.ColorPreview
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph

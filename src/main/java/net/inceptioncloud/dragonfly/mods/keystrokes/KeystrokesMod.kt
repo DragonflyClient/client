@@ -1,8 +1,8 @@
 package net.inceptioncloud.dragonfly.mods.keystrokes
 
 import javafx.beans.value.ChangeListener
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorControl
+import net.inceptioncloud.dragonfly.controls.*
+import net.inceptioncloud.dragonfly.controls.color.ColorControl
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate

@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.apps.modmanager.controls
+package net.inceptioncloud.dragonfly.controls
 
 import javafx.beans.value.ChangeListener
 import net.inceptioncloud.dragonfly.Dragonfly

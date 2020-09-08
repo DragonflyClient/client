@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.mods.nvidiahighlights
 
 import dev.decobr.mcgeforce.utils.EnumHighlightType
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
+import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.Minecraft

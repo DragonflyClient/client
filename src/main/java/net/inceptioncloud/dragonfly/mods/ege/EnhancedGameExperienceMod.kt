@@ -1,6 +1,6 @@
 package net.inceptioncloud.dragonfly.mods.ege
 
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
+import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import org.apache.logging.log4j.LogManager
 import java.awt.image.BufferedImage

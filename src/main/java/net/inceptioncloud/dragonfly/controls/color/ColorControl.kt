@@ -1,7 +1,7 @@
-package net.inceptioncloud.dragonfly.apps.modmanager.controls.color
+package net.inceptioncloud.dragonfly.controls.color
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.OptionControlElement
+import net.inceptioncloud.dragonfly.controls.OptionControlElement
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField

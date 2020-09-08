@@ -1,12 +1,9 @@
-package net.inceptioncloud.dragonfly.apps.modmanager.controls
+package net.inceptioncloud.dragonfly.controls
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.internal.Widget
-import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import kotlin.properties.Delegates
 
 class TextControl(

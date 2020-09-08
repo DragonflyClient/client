@@ -1,4 +1,4 @@
-package net.inceptioncloud.dragonfly.apps.modmanager.controls.color
+package net.inceptioncloud.dragonfly.controls.color
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette

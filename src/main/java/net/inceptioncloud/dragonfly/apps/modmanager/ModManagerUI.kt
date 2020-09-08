@@ -1,8 +1,8 @@
 package net.inceptioncloud.dragonfly.apps.modmanager
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.OptionControlElement
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.TitleControl
+import net.inceptioncloud.dragonfly.controls.OptionControlElement
+import net.inceptioncloud.dragonfly.controls.TitleControl
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
