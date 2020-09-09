@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.apps.modmanager
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.OptionControlElement
 import net.inceptioncloud.dragonfly.controls.TitleControl
+import net.inceptioncloud.dragonfly.controls.manager.ControlsManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
@@ -28,7 +29,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     companion object : OneTimeUILoader(500)
 
-    private var scrollbar: Scrollbar? = null
+    private val controlsManager = ControlsManager(this, originY = 40.0, originX = 40.0, margin = 15.0)
 
     /**
      * Returns all mod list entries in the sidebar
@@ -59,8 +60,6 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         get() = this@ModManagerUI.width - contentX
 
     override fun initGui() {
-        scrollbar = Scrollbar(this, 40.0)
-
         +Rectangle {
             x = 0.0
             y = 0.0
@@ -134,41 +133,20 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         placeholderImage?.isVisible = selectedMod == null
         placeholderText?.isVisible = selectedMod == null
 
-        scrollbar?.reset()
-        stage.remove("scrollbar")
-        stage.content.filterKeys { it.startsWith("control-") }
-            .forEach { (key, value) ->
-                stage.remove(key)
-                (value as? OptionControlElement<*>)?.removeListener()
-            }
+        controlsManager.reset()
 
         if (selectedMod != null) {
             val mod = selectedMod!!
-            val controls = mod.publishControls()
 
             val controlsWidth = (contentWidth - 600.0).coerceIn(1000.0..1500.0)
             val controlsX = contentX + (contentWidth - controlsWidth) / 2.0
-            var currentY = 40.0
 
-            for ((index, control) in controls.withIndex()) {
-                if (control is TitleControl && index != 0) currentY += 15.0
-
-                control.x = controlsX
-                control.y = currentY
-                control.width = controlsWidth
-
-                stage.add("control-element-$index" to control)
-                control.attachTo(scrollbar!!)
-
-                currentY += control.height + 13.0
-            }
+            controlsManager.originX = controlsX
+            controlsManager.width = controlsWidth
+            controlsManager.show(mod.publishControls())
         }
 
-        +scrollbar!!.prepareWidget().apply {
-            width = 10.0
-            x = this@ModManagerUI.width - width
-            y = 0.0
-        } id "scrollbar"
+
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {

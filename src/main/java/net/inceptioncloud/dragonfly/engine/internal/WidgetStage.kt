@@ -103,6 +103,14 @@ class WidgetStage(val name: String) {
     }
 
     /**
+     * Removes the given [widget] from the stage.
+     */
+    fun remove(widget: Widget<*>) = synchronized(this) {
+        contentPrivate.entries.filter { it.value == widget }
+            .forEach { remove(it.key) }
+    }
+
+    /**
      * Finds a widget in the stage by searching for its id. Since every id is unique, there
      * will never be more than one result. If no widget was found, this function returns null.
      */
