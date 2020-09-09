@@ -1,9 +1,9 @@
 package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.structure.IDimension
-import net.inceptioncloud.dragonfly.engine.structure.IPosition
+import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.minecraft.client.Minecraft
@@ -12,12 +12,13 @@ import net.minecraft.util.ResourceLocation
 
 class BackNavigation(
     initializerBlock: (BackNavigation.() -> Unit)? = null
-) : AssembledWidget<BackNavigation>(initializerBlock), IPosition, IDimension {
+) : AssembledWidget<BackNavigation>(initializerBlock), IPosition, IDimension, IColor {
 
     override var x: Double by property(0.0)
     override var y: Double by property(0.0)
     override var width: Double = -1.0
     override var height: Double = 40.0
+    override var color: WidgetColor by property(DragonflyPalette.foreground)
 
     private var action: () -> Unit = {}
 
@@ -44,6 +45,7 @@ class BackNavigation(
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = (height * 1.2).toInt(), useScale = false)
+            color = this@BackNavigation.color
         }!!
 
         this.width = text.x + text.width - icon.x

@@ -43,9 +43,8 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         entryGap = 5.0
     ).apply {
         produceEntries {
-            ModManagerApp.availableMods.map {
-                SidebarEntry(it.name, it.iconResource, it)
-            }
+            ModManagerApp.availableMods
+                .map { SidebarEntry(it.name, it.iconResource, it) }
         }
         consumeEntry { _, _ -> updateContent() }
     }
@@ -57,9 +56,9 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         )
     }
 
-    val contentX = 500.0
+    val sidebarWidth = 500.0
     val contentWidth: Double
-        get() = this@ModManagerUI.width - contentX
+        get() = this@ModManagerUI.width - sidebarWidth
 
     override fun initGui() {
         +Rectangle {
@@ -88,7 +87,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         +Image {
             height = this@ModManagerUI.height / 2.0
             width = height
-            x = contentX + (contentWidth / 2.0 - width / 2.0)
+            x = sidebarWidth + (contentWidth / 2.0 - width / 2.0)
             y = this@ModManagerUI.height / 2.5 - height / 2.0
             resourceLocation = ResourceLocation("dragonflyres/vectors/rocket.png")
         } id "placeholder-image"
@@ -97,7 +96,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             positionBelow("placeholder-image", 10.0)
             width = contentWidth / 3.0
             adaptHeight = true
-            x = contentX + contentWidth / 2.0 - width / 2.0
+            x = sidebarWidth + contentWidth / 2.0 - width / 2.0
             staticText = "Choose a mod in the sidebar to (de-)activate it and customize it's appearance, behavior and much more."
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
             color = background
@@ -120,7 +119,7 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
         if (selectedMod != null) {
             val controlsWidth = (contentWidth - 600.0).coerceIn(1000.0..1500.0)
-            val controlsX = contentX + (contentWidth - controlsWidth) / 2.0
+            val controlsX = sidebarWidth + (contentWidth - controlsWidth) / 2.0
 
             controlsManager.originX = controlsX
             controlsManager.width = controlsWidth
