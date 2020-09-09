@@ -1,17 +1,13 @@
 package net.inceptioncloud.dragonfly.apps.modmanager
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.controls.OptionControlElement
-import net.inceptioncloud.dragonfly.controls.TitleControl
-import net.inceptioncloud.dragonfly.controls.manager.ControlsManager
+import net.inceptioncloud.dragonfly.controls.sidebar.SidebarEntry
+import net.inceptioncloud.dragonfly.controls.ControlsManager
+import net.inceptioncloud.dragonfly.controls.sidebar.SidebarManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.background
-import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.MouseData
-import net.inceptioncloud.dragonfly.engine.scrollbar.Scrollbar
-import net.inceptioncloud.dragonfly.engine.scrollbar.attachTo
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
@@ -29,24 +25,30 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     companion object : OneTimeUILoader(500)
 
-    private val controlsManager = ControlsManager(this, originY = 40.0, originX = 40.0, margin = 15.0)
+    private val controlsManager = ControlsManager(
+        guiScreen = this,
+        originY = 40.0,
+        originX = 40.0,
+        margin = 15.0
+    )
 
-    /**
-     * Returns all mod list entries in the sidebar
-     */
-    val entries: List<ModListEntry>
-        get() = stage.content
-            .filterKeys { it.startsWith("sidebar-entry") }
-            .mapNotNull { it.value as? ModListEntry }
-
-    var selectedMod: DragonflyMod? = null
-        set(value) {
-            if (field == value) return
-            field = value
-
-            updateSidebar()
-            updateContent()
+    private val sidebarManager = SidebarManager(
+        guiScreen = this,
+        x = 0.0,
+        y = 0.0,
+        width = 500.0,
+        entryHeight = 55.0,
+        entryWidth = 470.0,
+        entryPadding = 15.0,
+        entryGap = 5.0
+    ).apply {
+        produceEntries {
+            ModManagerApp.availableMods.map {
+                SidebarEntry(it.name, it.iconResource, it)
+            }
         }
+        consumeEntry { _, _ -> updateContent() }
+    }
 
     override var customScaleFactor: () -> Double? = {
         java.lang.Double.min(
@@ -68,13 +70,11 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             color = DragonflyPalette.foreground.brighter(0.7)
         } id "background-color"
 
-        +Rectangle {
-            x = 0.0
-            y = 0.0
-            width = contentX
+        sidebarManager.apply {
             height = this@ModManagerUI.height.toDouble()
-            color = background
-        } id "sidebar-background"
+            reset()
+            show()
+        }
 
         +BackNavigation {
             x = 30.0
@@ -84,18 +84,6 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
                 previousScreen.switch()
             }
         } id "back-navigation"
-
-        var currentY = 17.0
-
-        for (mod in ModManagerApp.availableMods) {
-            +ModListEntry(mod) {
-                x = 15.0
-                y = currentY
-                width = contentX - (2 * x)
-            } id "sidebar-entry-${mod.cleanName}"
-
-            currentY += 61.0
-        }
 
         +Image {
             height = this@ModManagerUI.height / 2.0
@@ -116,19 +104,14 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
             textAlignHorizontal = Alignment.CENTER
         } id "placeholder-text"
 
-        updateSidebar()
         updateContent()
-    }
-
-    private fun updateSidebar() {
-        entries.forEach {
-            it.color = if (it.mod == selectedMod) accentNormal else background
-        }
     }
 
     private fun updateContent() {
         val placeholderImage = getWidget<Image>("placeholder-image")
         val placeholderText = getWidget<TextField>("placeholder-text")
+
+        val selectedMod = sidebarManager.selectedEntry?.metadata as? DragonflyMod
 
         placeholderImage?.isVisible = selectedMod == null
         placeholderText?.isVisible = selectedMod == null
@@ -136,31 +119,23 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
         controlsManager.reset()
 
         if (selectedMod != null) {
-            val mod = selectedMod!!
-
             val controlsWidth = (contentWidth - 600.0).coerceIn(1000.0..1500.0)
             val controlsX = contentX + (contentWidth - controlsWidth) / 2.0
 
             controlsManager.originX = controlsX
             controlsManager.width = controlsWidth
-            controlsManager.show(mod.publishControls())
+            controlsManager.show(selectedMod.publishControls())
         }
-
-
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         val data = MouseData(mouseX, mouseY, mouseButton)
-
-        if (data in getWidget<Rectangle>("sidebar-background") &&
-            data !in getWidget<BackNavigation>("back-navigation")
-        ) {
-            selectedMod = entries.firstOrNull { data in it }?.mod
-        }
+        sidebarManager.mouseClicked(data)
     }
 
     override fun handleMouseInput() {
-        scrollbar?.handleMouseInput()
+        controlsManager.scrollbar.handleMouseInput()
+        sidebarManager.scrollbar.handleMouseInput()
         super.handleMouseInput()
     }
 

@@ -1,6 +1,5 @@
-package net.inceptioncloud.dragonfly.controls.manager
+package net.inceptioncloud.dragonfly.controls
 
-import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.engine.scrollbar.Scrollbar
 import net.inceptioncloud.dragonfly.engine.scrollbar.attachTo
 import net.minecraft.client.gui.GuiScreen
@@ -25,7 +24,7 @@ class ControlsManager(
     /**
      * Scrollbar to which the controls are attached.
      */
-    private var scrollbar = Scrollbar(guiScreen, overflowY)
+    var scrollbar = Scrollbar(guiScreen, overflowY)
 
     /**
      * List of control elements that have been shown via the [show] function.

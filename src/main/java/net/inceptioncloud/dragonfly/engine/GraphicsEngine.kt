@@ -84,6 +84,16 @@ object GraphicsEngine {
     }
 
     /**
+     * Constructs a [MouseData] object based on the mouse coordinates.
+     */
+    @JvmStatic
+    fun getMouseData(): MouseData {
+        val mouseX = getMouseX()
+        val mouseY = getMouseY()
+        return MouseData(mouseX.toInt(), mouseY.toInt())
+    }
+
+    /**
      * Reads the color of a specific pixel from the current frame stage at the [xIn],[yIn] position and
      * returns it as a [WidgetColor].
      */

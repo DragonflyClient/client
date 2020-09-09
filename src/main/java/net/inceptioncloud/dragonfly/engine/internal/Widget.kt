@@ -77,6 +77,12 @@ abstract class Widget<W : Widget<W>>(
         }
 
     /**
+     * The id that has been assigned to this widget when it was added to the [parentStage] or to its
+     * [parentAssembled] widget.
+     */
+    var widgetId: String? = null
+
+    /**
      * Whether the widget is currently visible. If this flag is set to false, the [drawNative] method
      * won't be called by the parent [WidgetStage] that contains the widget.
      */
