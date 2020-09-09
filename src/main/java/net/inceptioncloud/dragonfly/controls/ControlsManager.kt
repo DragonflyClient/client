@@ -15,8 +15,8 @@ import net.minecraft.client.gui.GuiScreen
  */
 class ControlsManager(
     val guiScreen: GuiScreen,
-    var originY: Double = 0.0,
     var originX: Double = 0.0,
+    var originY: Double = 0.0,
     var overflowY: Double = 0.0,
     var width: Double = 0.0,
     var margin: Double = 0.0

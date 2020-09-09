@@ -28,7 +28,6 @@ class ModManagerUI(val previousScreen: GuiScreen) : GuiScreen() {
     private val controlsManager = ControlsManager(
         guiScreen = this,
         originY = 40.0,
-        originX = 40.0,
         margin = 15.0
     )
 

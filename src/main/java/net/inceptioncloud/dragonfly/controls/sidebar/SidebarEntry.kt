@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation
 
 class SidebarEntry(
     text: String,
-    icon: ResourceLocation?,
+    icon: ResourceLocation? = null,
     val metadata: Any? = null
 ) : AssembledWidget<SidebarEntry>(), IPosition, IDimension, IColor {
 
