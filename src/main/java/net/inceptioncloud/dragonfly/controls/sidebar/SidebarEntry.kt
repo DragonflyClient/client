@@ -54,12 +54,18 @@ class SidebarEntry(
         }
 
         val iconWidget = "icon"<Image> {
-            x = this@SidebarEntry.x + iconMargin
-            y = this@SidebarEntry.y + iconMargin
-            width = this@SidebarEntry.height - (iconMargin * 2)
-            height = width
-            resourceLocation = icon
-            isVisible = icon != null
+            if (icon == null) {
+                x = this@SidebarEntry.x + 4.0
+                width = 0.0
+                isVisible = false
+            } else {
+                x = this@SidebarEntry.x + iconMargin
+                y = this@SidebarEntry.y + iconMargin
+                width = this@SidebarEntry.height - (iconMargin * 2)
+                height = width
+                resourceLocation = icon
+                isVisible = true
+            }
         }!!
 
         "text"<TextField> {
