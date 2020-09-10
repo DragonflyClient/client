@@ -4,8 +4,6 @@ import javafx.beans.value.ChangeListener
 import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.color.ColorControl
 import javafx.beans.value.ObservableValue
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorControl
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
@@ -95,7 +93,7 @@ private class KeystrokesModListener : ChangeListener<Any?> {
     override fun changed(observable: ObservableValue<out Any?>?, oldValue: Any?, newValue: Any?) {
         if (oldValue is WidgetColor && newValue is WidgetColor) {
             if (oldValue != newValue) {
-                Minecraft.getMinecraft().ingameGUI.initKeystrokes(true)
+                Minecraft.getMinecraft().ingameGUI.initKeystrokes()
             }
         }
     }
