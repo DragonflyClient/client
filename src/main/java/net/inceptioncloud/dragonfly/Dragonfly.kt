@@ -2,6 +2,7 @@ package net.inceptioncloud.dragonfly
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import dev.decobr.mcgeforce.bindings.MCGeForceHelper
 import net.inceptioncloud.dragonfly.account.*
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
@@ -98,6 +99,9 @@ object Dragonfly {
      */
     var account: DragonflyAccount? = null
 
+    @JvmStatic
+    lateinit var geforceHelper: MCGeForceHelper
+
     /**
      * Dragonfly Initializer Block
      *
@@ -114,6 +118,7 @@ object Dragonfly {
         richPresenceManager = RichPresenceManager()
         gameStateManager = GameStateManager()
         httpClient = OkHttpClient.Builder().build()
+        geforceHelper = MCGeForceHelper()
 
         Taskbar
         CosmeticsManager

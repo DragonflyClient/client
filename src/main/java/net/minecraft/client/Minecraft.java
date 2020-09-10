@@ -1924,10 +1924,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
         this.mcProfiler.endSection();
         this.systemTime = getSystemTime();
-
-        // ICMM - Hotkeys type
-        HotkeysMod.getController().updateKeys();
-
     }
 
     /**

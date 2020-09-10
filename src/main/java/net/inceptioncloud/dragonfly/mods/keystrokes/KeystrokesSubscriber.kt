@@ -30,12 +30,12 @@ object KeystrokesSubscriber {
 
     @Subscribe
     fun toggleFullscreenWindow(event: ToggleFullscreenEvent) {
-        Minecraft.getMinecraft().ingameGUI.initKeystrokes(true)
+        Minecraft.getMinecraft().ingameGUI.initKeystrokes()
     }
 
     @Subscribe
     fun resizeWindow(event: ResizeEvent) {
-        Minecraft.getMinecraft().ingameGUI.initKeystrokes(true)
+        Minecraft.getMinecraft().ingameGUI.initKeystrokes()
     }
 
 }

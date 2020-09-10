@@ -291,6 +291,12 @@ class InputTextField(
         if (!isFocused || (allowList.isNotEmpty() && !allowList.contains(keyCode)))
             return
 
+        if(allowList.isNotEmpty() && allowList.contains(52)) {
+            if(realText.length == (maxStringLength - 1) && keyCode == 52) {
+                return
+            }
+        }
+
         when {
             GuiScreen.isKeyComboCtrlA(keyCode) -> {
                 setCursorPositionEnd()

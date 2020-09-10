@@ -1,9 +1,9 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.BooleanControl
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.ButtonControl
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.ControlElement
-import net.inceptioncloud.dragonfly.apps.modmanager.controls.TitleControl
+import net.inceptioncloud.dragonfly.controls.BooleanControl
+import net.inceptioncloud.dragonfly.controls.ButtonControl
+import net.inceptioncloud.dragonfly.controls.ControlElement
+import net.inceptioncloud.dragonfly.controls.TitleControl
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.ChatHotkey
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.EnumHotkeyType
@@ -13,7 +13,7 @@ import org.lwjgl.input.Keyboard
 object HotkeysMod : DragonflyMod("Hotkeys") {
 
     @JvmStatic
-    val controller = HotkeysController()
+    val controller = HotkeysController
 
     var enabled by option(true)
 

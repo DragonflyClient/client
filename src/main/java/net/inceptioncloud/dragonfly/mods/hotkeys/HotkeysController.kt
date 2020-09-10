@@ -1,5 +1,8 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
+import com.google.common.eventbus.Subscribe
+import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
+import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyData
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyRepository
 import net.inceptioncloud.dragonfly.utils.ListParameterizedType
@@ -8,7 +11,7 @@ import org.lwjgl.input.Keyboard
 import java.io.File
 import kotlin.reflect.full.primaryConstructor
 
-class HotkeysController {
+object HotkeysController {
 
     /**
      * Contains all registered hotkeys
@@ -56,26 +59,25 @@ class HotkeysController {
         repository.remove(hotkey.data)
     }
 
-    fun updateKeys() {
-        if (HotkeysMod.enabled) {
-            val modifierKeys = listOf(Keyboard.KEY_LCONTROL, Keyboard.KEY_LSHIFT, Keyboard.KEY_LMENU)
+    /**
+     * Handles the key input by subscribing to the [KeyInputEvent].
+     */
+    @Subscribe
+    fun onKeyInput(event: KeyInputEvent) {
+        if (!HotkeysMod.enabled) return
 
-            modifierKeys.forEach { updateKeyState(it) }
-            hotkeys.forEach {
-                if (it.isSatisfied()) {
-                    it.progressForward()
-                } else {
-                    it.progressBackward()
+        for (hotkey in hotkeys) {
+            if (event.press) {
+                if (event.key != hotkey.data.key) continue // activate if primary key is pressed
+
+                if (hotkey.areModifiersSatisfied()) {
+                    hotkey.progressForward() // start if modifiers are also satisfied
+                }
+            } else {
+                if (event.key == hotkey.data.key || !hotkey.areModifiersSatisfied()) {
+                    hotkey.progressBackward() // cancel if modifier key is primary key is released
                 }
             }
-        }
-    }
-
-    fun updateKeyState(key: Int) {
-        if (key.isKeyPressed() && !pressedKeys.containsKey(key)) {
-            pressedKeys[key] = System.currentTimeMillis()
-        } else if (!key.isKeyPressed() && pressedKeys.containsKey(key)) {
-            pressedKeys.remove(key)
         }
     }
 

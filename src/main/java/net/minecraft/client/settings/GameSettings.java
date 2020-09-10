@@ -1,6 +1,9 @@
 package net.minecraft.client.settings;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesManager;
 import net.minecraft.client.Minecraft;
@@ -26,7 +29,10 @@ import shadersmod.client.Shaders;
 import java.io.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class GameSettings {
     public static final int DEFAULT = 0;
@@ -979,12 +985,14 @@ public class GameSettings {
                         this.field_181151_V = astring[1].equals("true");
                     }
 
+                    int test = 0;
+
                     for (KeyBinding keybinding : this.keyBindings) {
                         if (astring[0].equals("key_" + keybinding.getKeyDescription())) {
                             keybinding.setKeyCode(Integer.parseInt(astring[1]));
 
-                            // ICMM - Keystrokes Register
-                            KeystrokesManager.registerKeystrokes(keybinding.getKeyDescription(), keybinding.getKeyCode());
+                            // ICMM - Keystrokes Save
+                            KeystrokesManager.saveKeybindings(keybinding.getKeyDescription(), keybinding.getKeyCode());
 
                         }
                     }

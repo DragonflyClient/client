@@ -678,6 +678,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     @Override
     public String wrapFormattedStringToWidth(final String text, final int width) {
+        if (width <= 0) return "";
         int i = this.sizeStringToWidth(text, width);
 
         if (text.length() <= i) {

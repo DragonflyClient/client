@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.design.zoom.ZoomSubscriber
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorSubscriber
 import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.key.StartupGuiSubscriber
+import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysController
 import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesSubscriber
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction
@@ -38,6 +39,7 @@ object DefaultSubscribers {
             register(KeystrokesSubscriber)
             register(LoginSubscriber)
             register(OptionSaveSubscriber)
+            register(HotkeysController)
         }
     }
 }

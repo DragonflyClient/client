@@ -1,6 +1,8 @@
 package net.inceptioncloud.dragonfly.mods.keystrokes
 
 import javafx.beans.value.ChangeListener
+import net.inceptioncloud.dragonfly.controls.*
+import net.inceptioncloud.dragonfly.controls.color.ColorControl
 import javafx.beans.value.ObservableValue
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.*
 import net.inceptioncloud.dragonfly.apps.modmanager.controls.color.ColorControl
@@ -21,7 +23,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
 
     var textActiveColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
     var textInactiveColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
-    var bgActiveColor by option(WidgetColor(0.9, 0.5, 0.1, 0.7))
+    var bgActiveColor by option(WidgetColor(0.9, 0.5, 0.1, 1.0))
     var bgInactiveColor by option(WidgetColor(0.9, 0.9, 0.9, 0.2))
 
     private val listener = KeystrokesModListener()
