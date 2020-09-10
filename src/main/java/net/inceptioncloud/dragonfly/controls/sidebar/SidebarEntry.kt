@@ -9,13 +9,11 @@ import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
-import net.minecraft.util.ResourceLocation
 
 class SidebarEntry(
     text: String,
-    icon: ResourceLocation? = null,
-    val metadata: Any? = null,
-    var isSelectable: Boolean = true
+    icon: ImageResource? = null,
+    val metadata: Any? = null
 ) : AssembledWidget<SidebarEntry>(), IPosition, IDimension, IColor {
 
     override var x: Double by property(0.0)
@@ -25,9 +23,12 @@ class SidebarEntry(
 
     override var color: WidgetColor by property(DragonflyPalette.background)
 
-    var icon: ResourceLocation? by property(icon)
+    var icon: ImageResource? by property(icon)
     var text: String by property(text)
     var isSelected = false
+
+    var isSelectable: Boolean = true
+    var iconMargin = 7.0
 
     /**
      * The sidebar manager that controls this entry.
@@ -41,8 +42,6 @@ class SidebarEntry(
     )
 
     override fun updateStructure() {
-        val iconMargin = 7.0
-
         "background"<RoundedRectangle> {
             x = this@SidebarEntry.x
             y = this@SidebarEntry.y
@@ -62,7 +61,8 @@ class SidebarEntry(
                 y = this@SidebarEntry.y + iconMargin
                 width = this@SidebarEntry.height - (iconMargin * 2)
                 height = width
-                resourceLocation = icon
+                resourceLocation = icon?.resourceLocation
+                dynamicTexture = icon?.dynamicTexture
                 isVisible = true
             }
         }!!

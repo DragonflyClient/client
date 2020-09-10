@@ -97,7 +97,7 @@ object CosmeticsManager {
         if (cache.containsKey(uuid)) return callback.accept(cache[uuid])
 
         GlobalScope.launch(Dispatchers.IO) {
-            val cosmetics = fetchCosmetics(player)
+            val cosmetics = fetchCosmetics(uuid)
             cache[uuid] = cosmetics
             callback.accept(cosmetics)
         }
@@ -137,17 +137,39 @@ object CosmeticsManager {
     }
 
     /**
-     * Fetches the cosmetics of the given [player] from the Dragonfly servers. This function
+     * Fetches the cosmetics of the given [uuid] from the Dragonfly servers. This function
      * will return a list of all [cosmetics][CosmeticData]. If an error occurred during the
      * request (missing internet connection, account not linked) this function will return
      * null.
      */
-    private fun fetchCosmetics(player: EntityPlayer): CosmeticDataList? {
-        val id = player.gameProfile.id
-
+    fun fetchCosmetics(uuid: UUID): CosmeticDataList? {
         try {
             val request = Request.Builder()
-                .url("https://api.playdragonfly.net/v1/cosmetics/find?uuid=$id")
+                .url("https://api.playdragonfly.net/v1/cosmetics/find?minecraft=$uuid")
+                .build()
+            val response = Dragonfly.httpClient.newCall(request).execute()
+                .use { response -> response.body!!.string() }
+                .let { Dragonfly.gson.fromJson(it, JsonObject::class.java).asJsonObject }
+
+            if (response.get("success").asBoolean) {
+                val cosmetics = response.getAsJsonArray("cosmetics")
+                val typeToken = ListParameterizedType(CosmeticData::class.java)
+                return CosmeticDataList(Dragonfly.gson.fromJson(cosmetics, typeToken))
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
+    /**
+     * Fetches the cosmetics associated with the currently logged in Dragonfly account.
+     */
+    fun fetchDragonflyCosmetics(dragonflyUUID: String? = Dragonfly.account?.uuid): CosmeticDataList? {
+        try {
+            val request = Request.Builder()
+                .url("https://api.playdragonfly.net/v1/cosmetics/find?dragonfly=${dragonflyUUID ?: return null}")
                 .build()
             val response = Dragonfly.httpClient.newCall(request).execute()
                 .use { response -> response.body!!.string() }
