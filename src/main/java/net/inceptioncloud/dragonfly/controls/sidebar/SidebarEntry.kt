@@ -14,7 +14,8 @@ import net.minecraft.util.ResourceLocation
 class SidebarEntry(
     text: String,
     icon: ResourceLocation? = null,
-    val metadata: Any? = null
+    val metadata: Any? = null,
+    var isSelectable: Boolean = true
 ) : AssembledWidget<SidebarEntry>(), IPosition, IDimension, IColor {
 
     override var x: Double by property(0.0)
@@ -26,7 +27,7 @@ class SidebarEntry(
 
     var icon: ResourceLocation? by property(icon)
     var text: String by property(text)
-    var selected = false
+    var isSelected = false
 
     /**
      * The sidebar manager that controls this entry.

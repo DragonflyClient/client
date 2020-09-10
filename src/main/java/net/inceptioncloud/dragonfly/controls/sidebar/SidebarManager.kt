@@ -154,7 +154,7 @@ class SidebarManager(
      */
     fun mouseClicked(data: MouseData) {
         if (data in stage["sidebar-background"] as? Rectangle && data !in stage["back-navigation"] as? BackNavigation) {
-            selected = entries.firstOrNull { data in it }?.widgetId
+            entries.filter { it.isSelectable }.firstOrNull { data in it }?.widgetId?.let { selected = it }
         }
     }
 
