@@ -15,6 +15,7 @@ import net.inceptioncloud.dragonfly.event.client.ResizeEvent
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
 import net.inceptioncloud.dragonfly.mc
+import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.inceptioncloud.dragonfly.ui.loader.UILoader
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
@@ -62,6 +63,7 @@ object ScreenOverlay {
      */
     @JvmStatic
     fun displayGui(gui: GuiScreen) {
+        val prev = mc.currentScreen
         val companionObject = gui::class.companionObjectInstance
 
         val preload = (companionObject as? UILoader)?.shouldPreload() ?: false
@@ -71,10 +73,16 @@ object ScreenOverlay {
         overlayAction = {
             GraphicsEngine.runAfter(firstDelay) {
                 mc.addScheduledTask {
-                    mc.displayGuiScreen(gui)
-
-                    GraphicsEngine.runAfter(secondDelay) {
-                        finishSwitchOverlay()
+                    try {
+                        mc.displayGuiScreen(gui)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.queue("§cError switching gui! Please try again later.", 600)
+                        mc.displayGuiScreen(prev)
+                    } finally {
+                        GraphicsEngine.runAfter(secondDelay) {
+                            finishSwitchOverlay()
+                        }
                     }
                 }
             }
