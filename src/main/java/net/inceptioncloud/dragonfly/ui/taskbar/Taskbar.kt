@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.apps.*
 import net.inceptioncloud.dragonfly.apps.about.AboutDragonflyApp
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
+import net.inceptioncloud.dragonfly.apps.cosmetics.CosmeticsApp
 import net.inceptioncloud.dragonfly.apps.modmanager.ModManagerApp
 import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsApp
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
@@ -21,10 +22,11 @@ object Taskbar {
 
     private val taskbarApps = listOf(
         DragonflySettingsApp,
+        ModManagerApp,
+        CosmeticsApp,
         AccountManagerApp,
         IdeasPlatformApp,
-        AboutDragonflyApp,
-        ModManagerApp
+        AboutDragonflyApp
     )
 
     fun initializeTaskbar(gui: GuiScreen): Unit = with(gui) {

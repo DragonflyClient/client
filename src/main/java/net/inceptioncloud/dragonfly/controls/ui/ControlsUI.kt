@@ -88,6 +88,7 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
     }
 
     protected fun showSidebar() {
+        sidebarManager.reset()
         sidebarManager.apply {
             width = sidebarWidth
             height = this@ControlsUI.height.toDouble()
