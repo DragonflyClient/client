@@ -12,6 +12,8 @@ import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
+import net.inceptioncloud.dragonfly.options.OptionKey
+import net.inceptioncloud.dragonfly.utils.Either
 import org.apache.commons.lang3.StringUtils
 import org.lwjgl.input.Mouse
 import java.text.DecimalFormat
@@ -22,7 +24,7 @@ import kotlin.math.roundToInt
 import kotlin.reflect.KMutableProperty0
 
 class NumberControl(
-    property: KMutableProperty0<out Number>,
+    either: Either<KMutableProperty0<out Number>, OptionKey<Number>>,
     name: String,
     description: String? = null,
     val min: Double,
@@ -31,7 +33,19 @@ class NumberControl(
     val transformer: (Number) -> Number = { it.keepDecimals(decimalPlaces) },
     val formatter: ((String) -> String)? = null,
     val liveUpdate: Boolean = false
-) : OptionControlElement<Number>(property, name, description) {
+) : OptionControlElement<Number>(either, name, description) {
+
+    constructor(
+        property: KMutableProperty0<out Number>,
+        name: String,
+        description: String? = null,
+        min: Double,
+        max: Double,
+        decimalPlaces: Int = 0,
+        transformer: (Number) -> Number = { it.keepDecimals(decimalPlaces) },
+        formatter: ((String) -> String)? = null,
+        liveUpdate: Boolean = false
+    ) : this(Either(a = property), name, description, min, max, decimalPlaces, transformer, formatter, liveUpdate)
 
     private val sliderWidth by lazy { controlWidth / 1.5 }
     private val sliderX by lazy { x + width - sliderWidth }

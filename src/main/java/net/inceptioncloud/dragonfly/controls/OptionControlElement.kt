@@ -7,13 +7,14 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
-import net.inceptioncloud.dragonfly.utils.Keep
+import net.inceptioncloud.dragonfly.options.OptionKey
+import net.inceptioncloud.dragonfly.utils.*
 import kotlin.properties.Delegates
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.jvm.isAccessible
 
 abstract class OptionControlElement<T>(
-    val property: KMutableProperty0<out T>,
+    val either: Either<KMutableProperty0<out T>, OptionKey<T>>,
     val name: String,
     val description: String? = null
 ) : ControlElement<OptionControlElement<T>>() {
@@ -27,9 +28,9 @@ abstract class OptionControlElement<T>(
     val controlWidth by lazy { width / 3.0 }
 
     @Suppress("UNCHECKED_CAST")
-    val optionKey = kotlin.run {
-        property.isAccessible = true
-        (property.getDelegate() as OptionDelegate<T>).optionKey
+    val optionKey = either.b ?: either.a!!.run {
+        isAccessible = true
+        (getDelegate() as OptionDelegate<T>).optionKey
     }
 
     private val listener = OptionControlElementListener(this)

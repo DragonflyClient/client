@@ -1,22 +1,19 @@
 package net.inceptioncloud.dragonfly.apps.cosmetics
 
-import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.controls.ControlElement
+import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
+import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.sidebar.SidebarEntry
 import net.inceptioncloud.dragonfly.controls.ui.ControlsUI
+import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
-import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesMod
+import net.inceptioncloud.dragonfly.options.OptionKey
+import net.inceptioncloud.dragonfly.options.OptionKeyBuilder
+import net.inceptioncloud.dragonfly.utils.Either
 import net.inceptioncloud.dragonfly.utils.MojangRequest
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
-import net.minecraft.client.gui.inventory.GuiInventory
-import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.texture.DynamicTexture
-import net.minecraft.entity.EntityLivingBase
 import net.minecraft.util.ResourceLocation
 import java.awt.image.BufferedImage
 
@@ -79,12 +76,26 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                 val cosmeticName = CosmeticsManager.getDatabaseModelById(it.cosmeticId)?.get("name")?.asString
                 val prefix = if (!isAccountLoggedIn) DragonflyPalette.foreground.darker(0.8).chatCode else ""
                 cosmeticName?.let { text ->
-                    SidebarEntry(prefix + text).apply { isSelectable = isAccountLoggedIn }
+                    SidebarEntry(prefix + text, null, it).apply { isSelectable = isAccountLoggedIn }
                 }
             }
         }
     }
 
-    override fun produceControls(entry: SidebarEntry): Collection<ControlElement<*>>? =
-        KeystrokesMod.publishControls()
+    override fun produceControls(entry: SidebarEntry): Collection<ControlElement<*>>? {
+        val data = entry.metadata as? CosmeticData ?: return null
+
+        return listOf(
+            TitleControl("General"),
+            BooleanControl(
+                Either(b = OptionKey.newInstance(Boolean::class.java)
+                    .defaultValue { true }
+                    .key("hahaabab4g643")
+                    .optionsBase(DragonflyOptions)
+                    .validator { true }
+                    .build()),
+                "Enable cosmetic"
+            )
+        )
+    }
 }

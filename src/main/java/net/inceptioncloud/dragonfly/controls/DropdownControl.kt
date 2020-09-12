@@ -15,16 +15,24 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.mc
+import net.inceptioncloud.dragonfly.options.OptionKey
+import net.inceptioncloud.dragonfly.utils.Either
 import net.minecraft.util.ResourceLocation
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
 class DropdownElement(
-    property: KMutableProperty0<out Enum<*>>,
+    either: Either<KMutableProperty0<out Enum<*>>, OptionKey<Enum<*>>>,
     name: String,
     description: String? = null
-) : OptionControlElement<Enum<*>>(property, name, description) {
+) : OptionControlElement<Enum<*>>(either, name, description) {
+
+    constructor(
+        property: KMutableProperty0<out Enum<*>>,
+        name: String,
+        description: String? = null
+    ) : this(Either(a = property), name, description)
 
     val allValues: List<Enum<*>> = optionKey.typeClass.enumConstants.toList()
 

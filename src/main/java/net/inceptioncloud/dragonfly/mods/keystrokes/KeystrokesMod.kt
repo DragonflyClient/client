@@ -48,7 +48,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
-        BooleanControl(KeystrokesMod::enabled, "Enable mod"),
+        BooleanControl(!KeystrokesMod::enabled, "Enable mod"),
         TitleControl("Appearance", "Customize the appearance of the keystrokes mod on your screen"),
         NumberControl(
             KeystrokesMod::scale,
@@ -79,11 +79,11 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
         ),
         DropdownElement(KeystrokesMod::position, "Position", "Position of the keystroke boxes"),
         TitleControl("Colors (pressed)", "Set the colors of the keystroke box if the corresponding key/button is pressed"),
-        ColorControl(KeystrokesMod::textActiveColor, "Text"),
-        ColorControl(KeystrokesMod::bgActiveColor, "Background"),
+        ColorControl(!KeystrokesMod::textActiveColor, "Text"),
+        ColorControl(!KeystrokesMod::bgActiveColor, "Background"),
         TitleControl("Colors (released)", "Set the colors of the keystroke box if the corresponding key/button is not pressed"),
-        ColorControl(KeystrokesMod::textInactiveColor, "Text"),
-        ColorControl(KeystrokesMod::bgInactiveColor, "Background")
+        ColorControl(!KeystrokesMod::textInactiveColor, "Text"),
+        ColorControl(!KeystrokesMod::bgInactiveColor, "Background")
     )
 
 }

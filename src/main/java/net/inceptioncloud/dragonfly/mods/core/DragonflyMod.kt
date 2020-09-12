@@ -1,9 +1,13 @@
 package net.inceptioncloud.dragonfly.mods.core
 
 import net.inceptioncloud.dragonfly.controls.ControlElement
+import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.OptionsBase
+import net.inceptioncloud.dragonfly.utils.Either
 import net.minecraft.util.ResourceLocation
 import java.io.File
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KProperty0
 
 /**
  * The directory in which all mod-specific files are stored.
@@ -63,5 +67,9 @@ open class DragonflyMod(
      */
     protected fun <T> option(defaultValue: () -> T, validator: (T) -> Boolean = { true }): OptionDelegate<T> {
         return OptionDelegate(validator, defaultValue, optionsBase)
+    }
+
+    protected operator fun <T> KMutableProperty0<T>.not(): Either<KMutableProperty0<out T>, OptionKey<T>> {
+        return Either(a = this)
     }
 }
