@@ -11,8 +11,12 @@ import net.inceptioncloud.dragonfly.engine.internal.ImageResource
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesMod
 import net.inceptioncloud.dragonfly.utils.MojangRequest
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.inventory.GuiInventory
+import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.texture.DynamicTexture
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.util.ResourceLocation
 import java.awt.image.BufferedImage
 
@@ -38,20 +42,12 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
     override fun initGui() {
         super.initGui()
 
-        +TextField {
-            staticText = "Cosmetics preview is unavailable while not ingame!\n\n" +
-                    "§7Enter a world or join a server to enable the cosmetics preview for your current account."
+        +PlayerPreview {
             x = previewX
             y = 0.0
             width = 500.0
             height = this@CosmeticsUI.height.toDouble()
-            textAlignVertical = Alignment.CENTER
-            textAlignHorizontal = Alignment.CENTER
-            padding = width / 8.0
-            backgroundColor = DragonflyPalette.background
-            color = DragonflyPalette.foreground
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 56, useScale = false)
-        } id "missing-preview"
+        } id "preview"
     }
 
     override fun produceSidebar(): Collection<SidebarEntry> {
