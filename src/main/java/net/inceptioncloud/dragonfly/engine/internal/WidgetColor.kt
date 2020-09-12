@@ -260,6 +260,16 @@ class WidgetColor {
     }
 
     /**
+     * Clone of the [Color.darker] function with a custom [factor].
+     */
+    fun darker(factor: Double) = WidgetColor(
+        (red * factor).toInt().coerceAtLeast(0),
+        (red * factor).toInt().coerceAtLeast(0),
+        (red * factor).toInt().coerceAtLeast(0),
+        alpha
+    )
+
+    /**
      * Calculates the contrast value between this and the [other] color.
      */
     fun getContrastValue(other: WidgetColor): Int = (red - other.red).absoluteValue +

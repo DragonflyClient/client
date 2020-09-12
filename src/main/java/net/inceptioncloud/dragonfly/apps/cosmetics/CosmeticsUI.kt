@@ -31,10 +31,14 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
     override fun produceSidebar(): Collection<SidebarEntry> {
         val cosmetics = cosmetics ?: return listOf()
         val accounts = cosmetics.groupBy { it.minecraft }
+            .toSortedMap(
+                Comparator { o1, _ -> if (mc.session?.profile?.id.toString() == o1) -1 else 1 }
+            )
 
         return accounts.flatMap { entry ->
             var playerName: String? = null
             var playerSkull: BufferedImage? = null
+            val isAccountLoggedIn = entry.key == mc.session?.profile?.id.toString()
 
             MojangRequest()
                 .withUUID(entry.key)
@@ -51,7 +55,10 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                 }
             ) + entry.value.mapNotNull {
                 val cosmeticName = CosmeticsManager.getDatabaseModelById(it.cosmeticId)?.get("name")?.asString
-                cosmeticName?.let { text -> SidebarEntry(text) }
+                val prefix = if (!isAccountLoggedIn) DragonflyPalette.foreground.darker(0.8).chatCode else ""
+                cosmeticName?.let { text ->
+                    SidebarEntry(prefix + text).apply { isSelectable = isAccountLoggedIn }
+                }
             }
         }
     }
