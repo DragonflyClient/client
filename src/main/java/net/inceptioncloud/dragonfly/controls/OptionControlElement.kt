@@ -1,12 +1,11 @@
 package net.inceptioncloud.dragonfly.controls
 
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
+import net.inceptioncloud.dragonfly.options.ChangeListener
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.utils.*
 import kotlin.properties.Delegates
@@ -36,7 +35,7 @@ abstract class OptionControlElement<T>(
     private val listener = OptionControlElementListener(this)
 
     init {
-        optionKey.objectProperty.addListener(listener)
+        optionKey.addListener(listener)
     }
 
     override fun assemble(): Map<String, Widget<*>> = buildMap {
@@ -84,7 +83,7 @@ abstract class OptionControlElement<T>(
     }
 
     fun removeListener() {
-        optionKey.objectProperty.removeListener(listener)
+        optionKey.removeListener(listener)
     }
 
     abstract fun controlAssemble(): Map<String, Widget<*>>
@@ -96,9 +95,7 @@ abstract class OptionControlElement<T>(
 
 @Keep
 private class OptionControlElementListener<T>(val elem: OptionControlElement<T>) : ChangeListener<T> {
-    override fun changed(observable: ObservableValue<out T>?, oldValue: T, newValue: T) {
-        if (oldValue != newValue) {
-            elem.react(newValue)
-        }
+    override fun invoke(oldValue: T, newValue: T) {
+        elem.react(newValue)
     }
 }
