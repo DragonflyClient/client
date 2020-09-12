@@ -24,19 +24,19 @@ open class OptionKey<T>(
      * Contains all listeners that have been added to this option key that are notified
      * when its value changes.
      */
-    private val listeners = mutableListOf<ChangeListener<T>>()
+    protected val listeners = mutableListOf<ChangeListener<T>>()
 
     /**
      * @see OptionsBase.getValue
      */
-    fun get(): T {
+    open fun get(): T {
         return optionsBase.getValue(this)
     }
 
     /**
      * @see OptionsBase.setValue
      */
-    fun set(value: T): Boolean {
+    open fun set(value: T): Boolean {
         val success = optionsBase.setValue(this, value)
         listeners.forEach { it(value, value) }
         return success

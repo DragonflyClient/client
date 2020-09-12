@@ -8,8 +8,7 @@ import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
-import net.inceptioncloud.dragonfly.options.OptionKey
-import net.inceptioncloud.dragonfly.options.OptionKeyBuilder
+import net.inceptioncloud.dragonfly.options.*
 import net.inceptioncloud.dragonfly.utils.Either
 import net.inceptioncloud.dragonfly.utils.MojangRequest
 import net.minecraft.client.gui.GuiScreen
@@ -58,6 +57,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
             var playerName: String? = null
             var playerSkull: BufferedImage? = null
             val isAccountLoggedIn = entry.key == mc.session?.profile?.id.toString()
+            val value = if (isAccountLoggedIn) mc.thePlayer?.cosmetics ?: entry.value else entry.value
 
             MojangRequest()
                 .withUUID(entry.key)
@@ -72,7 +72,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                     iconMargin = 10.0
                     isSelectable = false
                 }
-            ) + entry.value.mapNotNull {
+            ) + value.mapNotNull {
                 val cosmeticName = CosmeticsManager.getDatabaseModelById(it.cosmeticId)?.get("name")?.asString
                 val prefix = if (!isAccountLoggedIn) DragonflyPalette.foreground.darker(0.8).chatCode else ""
                 cosmeticName?.let { text ->
@@ -88,12 +88,18 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
         return listOf(
             TitleControl("General"),
             BooleanControl(
-                Either(b = OptionKey.newInstance(Boolean::class.java)
-                    .defaultValue { true }
-                    .key("hahaabab4g643")
-                    .optionsBase(DragonflyOptions)
-                    .validator { true }
-                    .build()),
+                Either(
+                    b = PseudoOptionKey.new<Boolean>()
+                        .set {
+                            println("set $it")
+                            data.enabled = it
+                        }
+                        .get {
+                            println("get ${data.enabled}")
+                            data.enabled
+                        }
+                        .build()
+                ),
                 "Enable cosmetic"
             )
         )

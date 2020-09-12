@@ -32,7 +32,7 @@ data class CosmeticData(
     val config: JsonObject,
     val cosmeticId: Int,
     val cosmeticQualifier: String,
-    val enabled: Boolean,
+    var enabled: Boolean,
     val minecraft: String
 ) {
     /**
