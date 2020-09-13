@@ -127,6 +127,7 @@ class PlayerPreview(
 
         val renderManager = Minecraft.getMinecraft().renderManager
         renderManager.setPlayerViewY(180.0f)
+        renderManager.isRenderShadow = false
         renderManager.renderEntityWithPosYaw(ent, 0.0, 0.0, 0.0, 0.0f, 1.0f)
         renderManager.isRenderShadow = true
 
