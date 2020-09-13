@@ -132,6 +132,9 @@ object Dragonfly {
 
             if (stored == null) LogManager.getLogger().info("No Dragonfly account token stored!")
             else LogManager.getLogger().info("Successfully authenticated with Dragonfly")
+
+            val fetched = CosmeticsManager.fetchDragonflyCosmetics(account?.uuid)
+            CosmeticsManager.dragonflyAccountCosmetics = fetched
         } catch (e: Exception) {
             LogManager.getLogger().warn("Failed to authenticate with Dragonfly:")
             e.printStackTrace()

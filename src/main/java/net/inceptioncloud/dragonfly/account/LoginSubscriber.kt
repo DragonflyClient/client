@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.account.link.LinkBridge
 import net.inceptioncloud.dragonfly.apps.accountmanager.Account
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.parseWithoutDashes
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp.selectedAccount
+import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.event.client.ClientStartupEvent
 import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyLoginEvent
@@ -28,6 +29,8 @@ object LoginSubscriber {
         GraphicsEngine.runAfter(200) {
             ((mc.currentScreen as? MainMenuUI)?.stage?.get("login-status") as? LoginStatusWidget)?.runStructureUpdate()
         }
+
+        CosmeticsManager.dragonflyAccountCosmetics = CosmeticsManager.fetchDragonflyCosmetics(event.account.uuid)
 
         val session = Minecraft.getMinecraft().session
         if (session.token == null) return

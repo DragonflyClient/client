@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.apps.cosmetics
 
-import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
 import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.sidebar.SidebarEntry
 import net.inceptioncloud.dragonfly.controls.ui.ControlsUI
@@ -33,7 +32,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
     override val placeholderImage: ResourceLocation? = ResourceLocation("dragonflyres/vectors/equipment.png")
     override val placeholderText: String? = "Select a cosmetic item from the left to customize it."
 
-    private val cosmetics by lazy { CosmeticsManager.fetchDragonflyCosmetics() }
+    private val cosmetics by lazy { CosmeticsManager.dragonflyAccountCosmetics }
 
     override fun initGui() {
         super.initGui()
@@ -57,7 +56,6 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
             var playerName: String? = null
             var playerSkull: BufferedImage? = null
             val isAccountLoggedIn = entry.key == mc.session?.profile?.id.toString()
-            val value = if (isAccountLoggedIn) mc.thePlayer?.cosmetics ?: entry.value else entry.value
 
             MojangRequest()
                 .withUUID(entry.key)
@@ -72,11 +70,13 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                     iconMargin = 10.0
                     isSelectable = false
                 }
-            ) + value.mapNotNull {
-                val cosmeticName = CosmeticsManager.getDatabaseModelById(it.cosmeticId)?.get("name")?.asString
+            ) + entry.value.mapNotNull { data ->
+                val cosmeticName = CosmeticsManager.getDatabaseModelById(data.cosmeticId)?.get("name")?.asString
                 val prefix = if (!isAccountLoggedIn) DragonflyPalette.foreground.darker(0.8).chatCode else ""
+                val playerData = mc.thePlayer?.cosmetics?.firstOrNull { it == data }
+
                 cosmeticName?.let { text ->
-                    SidebarEntry(prefix + text, null, it).apply { isSelectable = isAccountLoggedIn }
+                    SidebarEntry(prefix + text, null, playerData).apply { isSelectable = isAccountLoggedIn }
                 }
             }
         }
@@ -91,11 +91,9 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                 Either(
                     b = PseudoOptionKey.new<Boolean>()
                         .set {
-                            println("set $it")
                             data.enabled = it
                         }
                         .get {
-                            println("get ${data.enabled}")
                             data.enabled
                         }
                         .build()

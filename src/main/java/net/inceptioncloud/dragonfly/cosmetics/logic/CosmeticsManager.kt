@@ -14,6 +14,7 @@ import okhttp3.Request
 import org.apache.logging.log4j.LogManager
 import java.util.*
 import java.util.function.Consumer
+import kotlin.collections.ArrayList
 
 /**
  * Handles the communication between the client and the server for loading
@@ -33,6 +34,11 @@ object CosmeticsManager {
      * the Dragonfly client starts.
      */
     var databaseModels = loadDatabaseModels()
+
+    /**
+     * Stores the cosmetics for the currently authenticated Dragonfly account.
+     */
+    var dragonflyAccountCosmetics: CosmeticDataList? = null
 
     /**
      * A cache for already fetched cosmetic items saved per user. This cache can be cleared using
@@ -96,6 +102,15 @@ object CosmeticsManager {
         val uuid = player.gameProfile.id ?: return
         if (cache.containsKey(uuid)) return callback.accept(cache[uuid])
 
+        if (Dragonfly.account?.linkedMinecraftAccounts?.contains(uuid.toString()) == true) {
+            val cosmetics = dragonflyAccountCosmetics
+                ?.filter { it.minecraft == uuid.toString() }
+                ?.toCollection(ArrayList())
+                ?.let { CosmeticDataList(it) }
+            cache[uuid] = cosmetics
+            callback.accept(cosmetics)
+        }
+
         GlobalScope.launch(Dispatchers.IO) {
             val cosmetics = fetchCosmetics(uuid)
             cache[uuid] = cosmetics
@@ -122,6 +137,7 @@ object CosmeticsManager {
     fun refreshCosmetics(uuid: UUID? = null) {
         GlobalScope.launch {
             databaseModels = loadDatabaseModels()
+            dragonflyAccountCosmetics = fetchDragonflyCosmetics()
             mc.addScheduledTask {
                 val targetEntities = if (uuid != null) {
                     mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id == uuid }
