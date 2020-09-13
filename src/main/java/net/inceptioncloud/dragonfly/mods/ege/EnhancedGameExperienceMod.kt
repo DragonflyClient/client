@@ -10,7 +10,7 @@ object EnhancedGameExperienceMod : DragonflyMod("Enhanced Game Experience") {
     // enhancements
     @JvmStatic var tcpNoDelay by option(true)
     @JvmStatic var scaleResourcePackIcons by option(true)
-    var maximumPackIconSize by option(64) { it in 1..128 }
+    var maximumPackIconSize by option(64.0) { it in 1.0..128.0 }
     var disableExplicitGC by option(false)
 
     // bug fixes
@@ -35,6 +35,7 @@ object EnhancedGameExperienceMod : DragonflyMod("Enhanced Game Experience") {
 
         LogManager.getLogger().info("Scaling resource pack icon from ${icon.width}x to ${maximumPackIconSize}x")
 
+        val maximumPackIconSize = maximumPackIconSize.toInt()
         val smallImage = BufferedImage(maximumPackIconSize, maximumPackIconSize, BufferedImage.TYPE_INT_ARGB)
         val graphics = smallImage.graphics
 

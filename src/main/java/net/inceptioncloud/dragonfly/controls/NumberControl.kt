@@ -24,25 +24,25 @@ import kotlin.math.roundToInt
 import kotlin.reflect.KMutableProperty0
 
 class NumberControl(
-    either: Either<KMutableProperty0<out Number>, OptionKey<Number>>,
+    either: Either<KMutableProperty0<out Double>, OptionKey<Double>>,
     name: String,
     description: String? = null,
     val min: Double,
     val max: Double,
     val decimalPlaces: Int = 0,
-    val transformer: (Number) -> Number = { it.keepDecimals(decimalPlaces) },
+    val transformer: (Double) -> Double = { it.keepDecimals(decimalPlaces) },
     val formatter: ((String) -> String)? = null,
     val liveUpdate: Boolean = false
-) : OptionControlElement<Number>(either, name, description) {
+) : OptionControlElement<Double>(either, name, description) {
 
     constructor(
-        property: KMutableProperty0<out Number>,
+        property: KMutableProperty0<out Double>,
         name: String,
         description: String? = null,
         min: Double,
         max: Double,
         decimalPlaces: Int = 0,
-        transformer: (Number) -> Number = { it.keepDecimals(decimalPlaces) },
+        transformer: (Double) -> Double = { it.keepDecimals(decimalPlaces) },
         formatter: ((String) -> String)? = null,
         liveUpdate: Boolean = false
     ) : this(Either(a = property), name, description, min, max, decimalPlaces, transformer, formatter, liveUpdate)
@@ -95,11 +95,11 @@ class NumberControl(
 
     private fun computeCircleX(): Double {
         val room = (max - min)
-        val progress = (optionKey.get().toDouble().coerceIn(min..max) - min) / room
+        val progress = (optionKey.get().coerceIn(min..max) - min) / room
         return sliderX + (progress * sliderWidth) - (circleSize / 2)
     }
 
-    override fun react(newValue: Number) {
+    override fun react(newValue: Double) {
         if (isDragging && liveUpdate) return
 
         "slider-foreground"<FilledCircle> {
@@ -153,28 +153,28 @@ class NumberControl(
         super.handleMouseRelease(data)
     }
 
-    private fun updateOptionKeyValue(): Number {
+    private fun updateOptionKeyValue(): Double {
         val new = calculateMouseValue()
         if (new != optionKey.get())
             optionKey.set(new)
         return new
     }
 
-    private fun calculateMouseValue(): Number {
+    private fun calculateMouseValue(): Double {
         val progress = (GraphicsEngine.getMouseX() - sliderX) / sliderWidth
         val value = (min + (progress * (max - min))).coerceIn(min..max)
         return transformer(value)
     }
 
-    private fun formatString(value: Number): String {
+    private fun formatString(value: Double): String {
         val decimalFormatted = if (decimalPlaces == 0) value.toInt().toString()
         else format.format(value)
         return formatter?.invoke(decimalFormatted) ?: decimalFormatted
     }
 }
 
-fun Number.keepDecimals(decimalPlaces: Int): Number {
-    if (decimalPlaces == 0) return toDouble().roundToInt()
+fun Double.keepDecimals(decimalPlaces: Int): Double {
+    if (decimalPlaces == 0) return roundToInt().toDouble()
     val factor = 10.0.pow(decimalPlaces)
     return (toDouble() * factor).roundToInt() / factor
 }

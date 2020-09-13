@@ -17,7 +17,7 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
 
     var enabled by option(false)
 
-    var length by option(30)
+    var length by option(30.0)
     var saveKills by option(true)
     var saveDeaths by option(true)
     var saveWins by option(true)

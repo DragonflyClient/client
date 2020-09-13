@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.controls.sidebar.SidebarEntry
 import net.inceptioncloud.dragonfly.controls.ui.ControlsUI
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
+import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWingsConfig
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
 import net.inceptioncloud.dragonfly.options.*
@@ -73,7 +74,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
             ) + entry.value.mapNotNull { data ->
                 val cosmeticName = CosmeticsManager.getDatabaseModelById(data.cosmeticId)?.get("name")?.asString
                 val prefix = if (!isAccountLoggedIn) DragonflyPalette.foreground.darker(0.8).chatCode else ""
-                val playerData = mc.thePlayer?.cosmetics?.firstOrNull { it == data }
+                val playerData = mc.thePlayer?.cosmetics?.firstOrNull { it.cosmeticQualifier == data.cosmeticQualifier }
 
                 cosmeticName?.let { text ->
                     SidebarEntry(prefix + text, null, playerData).apply { isSelectable = isAccountLoggedIn }
@@ -84,22 +85,23 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
 
     override fun produceControls(entry: SidebarEntry): Collection<ControlElement<*>>? {
         val data = entry.metadata as? CosmeticData ?: return null
+        val cosmetic = CosmeticsManager.cosmetics.firstOrNull { it.cosmeticId == data.cosmeticId }
+        val controls = cosmetic?.generateControls(cosmetic.parseConfig(data))
 
-        return listOf(
+        val preset = mutableListOf(
             TitleControl("General"),
             BooleanControl(
-                Either(
-                    b = PseudoOptionKey.new<Boolean>()
-                        .set {
-                            data.enabled = it
-                        }
-                        .get {
-                            data.enabled
-                        }
-                        .build()
-                ),
-                "Enable cosmetic"
+                Either(b = PseudoOptionKey.new<Boolean>()
+                    .set { data.enabled = it }
+                    .get { data.enabled }
+                    .build()
+                ), "Enable cosmetic"
             )
         )
+
+        if (controls != null)
+            preset.add(TitleControl("Configuration", "Configure the appearance of your cosmetic item"))
+
+        return if (controls == null) preset else preset + controls
     }
 }

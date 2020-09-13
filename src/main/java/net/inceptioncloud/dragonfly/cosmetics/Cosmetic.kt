@@ -1,10 +1,16 @@
 package net.inceptioncloud.dragonfly.cosmetics
 
 import com.google.gson.JsonObject
+import net.inceptioncloud.dragonfly.controls.ControlElement
+import net.inceptioncloud.dragonfly.cosmetics.logic.*
+import net.inceptioncloud.dragonfly.options.OptionKey
+import net.inceptioncloud.dragonfly.options.PseudoOptionKey
+import net.inceptioncloud.dragonfly.utils.Either
 import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.entity.layers.LayerRenderer
 import net.minecraft.entity.player.EntityPlayer
+import kotlin.reflect.*
 
 /**
  * Represents a cosmetic item.
@@ -15,7 +21,7 @@ import net.minecraft.entity.player.EntityPlayer
  *
  * @param cosmeticId The unique id to identify the cosmetic item.
  */
-open class Cosmetic(
+abstract class Cosmetic<ConfigType : CosmeticConfig>(
     val cosmeticId: Int
 ) : LayerRenderer<AbstractClientPlayer> {
 
@@ -30,6 +36,14 @@ open class Cosmetic(
      * and may be null shortly after the client launch.
      */
     var databaseModel: JsonObject? = null
+
+    abstract val configClass: KClass<ConfigType>
+
+    abstract fun generateControls(config: ConfigType): Collection<ControlElement<*>>
+
+    fun parseConfig(data: CosmeticData): ConfigType {
+        return data.parseConfigClass(configClass)
+    }
 
     /**
      * Renders the cosmetic for the given [player].
@@ -70,4 +84,13 @@ open class Cosmetic(
     }
 
     override fun shouldCombineTextures(): Boolean = false
+
+    inline fun <reified T> KMutableProperty0<T>.pseudo(): Either<KMutableProperty0<out T>, OptionKey<T>> {
+        return Either(
+            b = PseudoOptionKey.new<T>()
+                .set(setter)
+                .get(getter)
+                .build()
+        )
+    }
 }

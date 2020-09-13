@@ -54,4 +54,19 @@ data class CosmeticData(
 
         return c.constructors.first().call(config)
     }
+
+    @Deprecated(
+        "Performs an unchecked cast to T. Use the parseConfig function with a reified type parameter where possible!",
+        ReplaceWith("data.parseConfig<T>()", "net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData"),
+        DeprecationLevel.WARNING
+    )
+    fun <T : CosmeticConfig> parseConfigClass(c: KClass<T>): T {
+        if (cache == null) {
+            cache = mutableMapOf()
+        } else if (cache!!.containsKey(c)) {
+            return cache!![c] as T
+        }
+
+        return c.constructors.first().call(config)
+    }
 }
