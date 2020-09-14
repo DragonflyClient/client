@@ -32,7 +32,6 @@ object StartupGuiSubscriber {
         }
 
         KeystrokesManager.registerKeystrokes()
-        Minecraft.getMinecraft().ingameGUI.initKeystrokes()
 
     }
 }

@@ -98,53 +98,55 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
 
         when (keyDesc) {
             "key.forward" -> {
-                posX = keystrokesStartX + width + KeystrokesMod.space
-                posY = keystrokesStartY
                 width = KeystrokesMod.scale
                 height = KeystrokesMod.scale
+                posX = keystrokesStartX + width + KeystrokesMod.space
+                posY = keystrokesStartY
                 name = Keyboard.getKeyName(keyCode)
             }
             "key.left" -> {
+                width = KeystrokesMod.scale
+                height = KeystrokesMod.scale
                 posX = keystrokesStartX
                 posY = keystrokesStartY + width + KeystrokesMod.space
-                width = KeystrokesMod.scale
-                height = KeystrokesMod.scale
+                name = Keyboard.getKeyName(keyCode)
             }
             "key.back" -> {
+                width = KeystrokesMod.scale
+                height = KeystrokesMod.scale
                 posX = keystrokesStartX + width + KeystrokesMod.space
                 posY = keystrokesStartY + width + KeystrokesMod.space
-                width = KeystrokesMod.scale
-                height = KeystrokesMod.scale
+                name = Keyboard.getKeyName(keyCode)
             }
             "key.right" -> {
-                posX = keystrokesStartX + (2 * width) + (2 * KeystrokesMod.space)
-                posY = keystrokesStartY + width + KeystrokesMod.space
                 width = KeystrokesMod.scale
                 height = KeystrokesMod.scale
+                posX = keystrokesStartX + (2 * width) + (2 * KeystrokesMod.space)
+                posY = keystrokesStartY + width + KeystrokesMod.space
                 name = Keyboard.getKeyName(keyCode)
             }
             "key.jump" -> {
-                posX = keystrokesStartX
-                posY = keystrokesStartY + (2 * width) + (2 * KeystrokesMod.space)
                 width = (3 * KeystrokesMod.scale) + (2 * KeystrokesMod.space)
                 height = KeystrokesMod.scale
+                posX = keystrokesStartX
+                posY = keystrokesStartY + (2 * height) + (2 * KeystrokesMod.space)
                 name = Keyboard.getKeyName(keyCode)
             }
             "key.attack" -> {
-                posX = keystrokesStartX
-                posY = keystrokesStartY + (3 * width) + (3 * KeystrokesMod.space)
                 width = (1.5 * KeystrokesMod.scale) + (KeystrokesMod.space / 2)
                 height = KeystrokesMod.scale
+                posX = keystrokesStartX
+                posY = keystrokesStartY + (3 * height) + (3 * KeystrokesMod.space)
                 name = Mouse.getButtonName(keyCode + 100)
                     .replace("BUTTON0", "LMB")
                     .replace("BUTTON1", "RMB")
                     .replace("BUTTON2", "MMB")
             }
             "key.use" -> {
-                posX = keystrokesStartX + 1.5 * KeystrokesMod.scale + (1.5 * KeystrokesMod.space)
-                posY = keystrokesStartY + (3 * width) + (3 * KeystrokesMod.space)
                 width = (1.5 * KeystrokesMod.scale) + (KeystrokesMod.space / 2)
                 height = KeystrokesMod.scale
+                posX = keystrokesStartX + 1.5 * KeystrokesMod.scale + (1.5 * KeystrokesMod.space)
+                posY = keystrokesStartY + (3 * height) + (3 * KeystrokesMod.space)
                 name = Mouse.getButtonName(keyCode + 100)
                     .replace("BUTTON0", "LMB")
                     .replace("BUTTON1", "RMB")
