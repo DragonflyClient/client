@@ -30,8 +30,8 @@ abstract class OptionControlElement<T>(
     final override var width by Delegates.notNull<Double>()
     override var height: Double = -1.0
 
-    val controlX by lazy { x + width * (2 / 3.0) - (resetIconSize / 2.0) }
-    val controlWidth by lazy { width / 3.0 - resetIconSize }
+    val controlX by lazy { x + width * (2 / 3.0) }
+    val controlWidth by lazy { width / 3.0 }
 
     @Suppress("UNCHECKED_CAST")
     val optionKey = either.b ?: either.a!!.run {
@@ -40,7 +40,6 @@ abstract class OptionControlElement<T>(
     }
 
     var isResettable = false
-    val resetIconSize = 28.0
     private var dirtyState = isDirty()
 
     private val listener = OptionControlElementListener(this)
@@ -60,7 +59,7 @@ abstract class OptionControlElement<T>(
         val nameWidget = "name"<TextField> {
             x = this@OptionControlElement.x
             y = this@OptionControlElement.y
-            width = this@OptionControlElement.width * (2 / 3.0) - resetIconSize
+            width = this@OptionControlElement.width * (2 / 3.0)
             adaptHeight = true
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
             color = DragonflyPalette.background
@@ -81,7 +80,7 @@ abstract class OptionControlElement<T>(
             val descriptionWidget = "description"<TextField> {
                 x = this@OptionControlElement.x
                 y = nameWidget.y + nameWidget.height + 2.0
-                width = this@OptionControlElement.width * (2 / 3.0) - resetIconSize
+                width = this@OptionControlElement.width * (2 / 3.0)
                 adaptHeight = true
                 fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
                 color = DragonflyPalette.background.altered { alphaDouble = 0.4 }
@@ -94,9 +93,9 @@ abstract class OptionControlElement<T>(
         controlUpdateStructure()
 
         "reset"<Image> {
-            width = resetIconSize
+            width = 28.0
             height = width
-            x = this@OptionControlElement.x + this@OptionControlElement.width - width
+            x = this@OptionControlElement.x + this@OptionControlElement.width + 15.0
             y = this@OptionControlElement.y + this@OptionControlElement.height / 2 - height / 2
             color = accentNormal.altered { alphaDouble = if (isDirty()) 1.0 else 0.0 }
             isVisible = isResettable
@@ -120,7 +119,7 @@ abstract class OptionControlElement<T>(
             if (dirtyState != dirty) {
                 dirtyState = dirty
                 detachAnimation<MorphAnimation>()
-                morph(50, EaseQuad.IN_OUT, Image::color to accentNormal.altered { alphaDouble = if (dirty) 1.0 else 0.0 })?.start()
+                morph(30, EaseQuad.IN_OUT, Image::color to accentNormal.altered { alphaDouble = if (dirty) 1.0 else 0.0 })?.start()
             }
         }
     }

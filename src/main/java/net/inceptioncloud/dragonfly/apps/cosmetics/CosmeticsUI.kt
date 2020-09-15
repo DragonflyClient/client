@@ -21,14 +21,14 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
     override val sidebarWidth: Double = 400.0
 
     override val controlsWidth: Double
-        get() = width - 400.0 - 120.0 - previewWidth
+        get() = width - 400.0 - 120.0 - 43.0 - previewWidth
 
     override val controlsX: Double
         get() = sidebarWidth + 60.0
 
     val previewWidth = 500.0
     val previewX: Double
-            get() = controlsX + controlsWidth + 60.0
+            get() = controlsX + controlsWidth + 60.0 + 43.0
 
     override val placeholderImage: ResourceLocation? = ResourceLocation("dragonflyres/vectors/equipment.png")
     override val placeholderText: String? = "Select a cosmetic item from the left to customize it."
