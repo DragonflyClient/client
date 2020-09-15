@@ -126,10 +126,19 @@ abstract class OptionControlElement<T>(
 
     private fun isDirty() = optionKey.get() != optionKey.getDefaultValue()
 
+    /**
+     * Assembling function for the control element that inherits from this class.
+     */
     abstract fun controlAssemble(): Map<String, Widget<*>>
 
+    /**
+     * Structure updating function for the control element that inherits from this class.
+     */
     abstract fun controlUpdateStructure()
 
+    /**
+     * React to changes to the option key.
+     */
     abstract fun react(newValue: T)
 }
 
