@@ -43,6 +43,11 @@ open class OptionKey<T>(
     }
 
     /**
+     * Returns the default value of the option key.
+     */
+    open fun getDefaultValue() = defaultValue()
+
+    /**
      * Adds a new [listener] to the option key.
      */
     fun addListener(listener: ChangeListener<T>) {

@@ -48,7 +48,7 @@ class NumberControl(
     ) : this(Either(a = property), name, description, min, max, decimalPlaces, transformer, formatter, liveUpdate)
 
     private val sliderWidth by lazy { controlWidth / 1.5 }
-    private val sliderX by lazy { x + width - sliderWidth }
+    private val sliderX by lazy { controlX + controlWidth - sliderWidth }
     private val sliderHeight = 6.0
     private val circleSize = 16.0
 
@@ -101,11 +101,12 @@ class NumberControl(
 
     override fun react(newValue: Double) {
         if (isDragging && liveUpdate) return
+        val allowDragging = isTargeted()
 
         "slider-foreground"<FilledCircle> {
             detachAnimation<MorphAnimation>()
             morph(20, EaseQuad.IN_OUT, FilledCircle::x to computeCircleX())
-                ?.post { _, _ -> if (Mouse.isButtonDown(0)) isDragging = true }
+                ?.post { _, _ -> if (allowDragging && Mouse.isButtonDown(0)) isDragging = true }
                 ?.start()
         }
 
@@ -130,27 +131,30 @@ class NumberControl(
     }
 
     override fun handleMousePress(data: MouseData) {
-        val c = getWidget<FilledCircle>("slider-foreground")!!
-        val b = getWidget<RoundedRectangle>("slider-background")!!
+        super.handleMousePress(data)
 
-        val mouseX = data.mouseX.toDouble()
-        val mouseY = data.mouseY.toDouble()
+        val c = getWidget<FilledCircle>("slider-foreground")!!
 
         when {
             data in c -> isDragging = true
-            mouseX in b.x..b.x + b.width && mouseY in b.y - 20.0..b.y + b.height + 20.0 -> updateOptionKeyValue()
+            isTargeted() -> updateOptionKeyValue()
         }
-
-        super.handleMousePress(data)
     }
 
     override fun handleMouseRelease(data: MouseData) {
         if (isDragging) {
             isDragging = false
-            react(updateOptionKeyValue())
+            handleNewValue(updateOptionKeyValue())
         }
 
         super.handleMouseRelease(data)
+    }
+
+    private fun isTargeted(): Boolean {
+        val b = getWidget<RoundedRectangle>("slider-background")!!
+        val mouseX = GraphicsEngine.getMouseX()
+        val mouseY = GraphicsEngine.getMouseY()
+        return mouseX in b.x..b.x + b.width && mouseY in b.y - 20.0..b.y + b.height + 20.0
     }
 
     private fun updateOptionKeyValue(): Double {

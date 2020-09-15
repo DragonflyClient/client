@@ -2,12 +2,19 @@ package net.inceptioncloud.dragonfly.controls
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.internal.Widget
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
 import net.inceptioncloud.dragonfly.options.ChangeListener
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.utils.*
+import net.minecraft.util.ResourceLocation
 import kotlin.properties.Delegates
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.jvm.isAccessible
@@ -23,14 +30,18 @@ abstract class OptionControlElement<T>(
     final override var width by Delegates.notNull<Double>()
     override var height: Double = -1.0
 
-    val controlX by lazy { x + width * (2 / 3.0) }
-    val controlWidth by lazy { width / 3.0 }
+    val controlX by lazy { x + width * (2 / 3.0) - (resetIconSize / 2.0) }
+    val controlWidth by lazy { width / 3.0 - resetIconSize }
 
     @Suppress("UNCHECKED_CAST")
     val optionKey = either.b ?: either.a!!.run {
         isAccessible = true
         (getDelegate() as OptionDelegate<T>).optionKey
     }
+
+    var isResettable = false
+    val resetIconSize = 28.0
+    private var dirtyState = isDirty()
 
     private val listener = OptionControlElementListener(this)
 
@@ -41,6 +52,7 @@ abstract class OptionControlElement<T>(
     override fun assemble(): Map<String, Widget<*>> = buildMap {
         put("name", TextField())
         put("description", TextField())
+        put("reset", Image())
         putAll(controlAssemble())
     }
 
@@ -48,7 +60,7 @@ abstract class OptionControlElement<T>(
         val nameWidget = "name"<TextField> {
             x = this@OptionControlElement.x
             y = this@OptionControlElement.y
-            width = this@OptionControlElement.width * (2 / 3.0)
+            width = this@OptionControlElement.width * (2 / 3.0) - resetIconSize
             adaptHeight = true
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
             color = DragonflyPalette.background
@@ -69,7 +81,7 @@ abstract class OptionControlElement<T>(
             val descriptionWidget = "description"<TextField> {
                 x = this@OptionControlElement.x
                 y = nameWidget.y + nameWidget.height + 2.0
-                width = this@OptionControlElement.width * (2 / 3.0)
+                width = this@OptionControlElement.width * (2 / 3.0) - resetIconSize
                 adaptHeight = true
                 fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
                 color = DragonflyPalette.background.altered { alphaDouble = 0.4 }
@@ -80,11 +92,40 @@ abstract class OptionControlElement<T>(
         }
 
         controlUpdateStructure()
+
+        "reset"<Image> {
+            width = resetIconSize
+            height = width
+            x = this@OptionControlElement.x + this@OptionControlElement.width - width
+            y = this@OptionControlElement.y + this@OptionControlElement.height / 2 - height / 2
+            color = accentNormal.altered { alphaDouble = if (isDirty()) 1.0 else 0.0 }
+            isVisible = isResettable
+            resourceLocation = ResourceLocation("dragonflyres/icons/reset.png")
+            clickAction = {
+                optionKey.set(optionKey.getDefaultValue())
+            }
+        }
     }
 
     fun removeListener() {
         optionKey.removeListener(listener)
     }
+
+    fun handleNewValue(newValue: T) {
+        react(newValue)
+
+        if (!isResettable) return
+        "reset"<Image> {
+            val dirty = isDirty()
+            if (dirtyState != dirty) {
+                dirtyState = dirty
+                detachAnimation<MorphAnimation>()
+                morph(50, EaseQuad.IN_OUT, Image::color to accentNormal.altered { alphaDouble = if (dirty) 1.0 else 0.0 })?.start()
+            }
+        }
+    }
+
+    private fun isDirty() = optionKey.get() != optionKey.getDefaultValue()
 
     abstract fun controlAssemble(): Map<String, Widget<*>>
 
@@ -96,6 +137,6 @@ abstract class OptionControlElement<T>(
 @Keep
 private class OptionControlElementListener<T>(val elem: OptionControlElement<T>) : ChangeListener<T> {
     override fun invoke(oldValue: T, newValue: T) {
-        elem.react(newValue)
+        elem.handleNewValue(newValue)
     }
 }

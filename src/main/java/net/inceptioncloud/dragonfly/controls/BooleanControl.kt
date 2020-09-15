@@ -34,7 +34,7 @@ class BooleanControl(
         val background = "switch-background"<RoundedRectangle> {
             width = switchWidth
             height = switchHeight
-            x = this@BooleanControl.x + this@BooleanControl.width - width
+            x = controlX + controlWidth - width
             y = this@BooleanControl.y + (this@BooleanControl.height - height) / 2.0
             arc = height / 2.0
             color = computeColor()
@@ -65,6 +65,7 @@ class BooleanControl(
                 optionKey.set(!optionKey.get())
             }
         }
+        super.handleMousePress(data)
     }
 
     private fun computeColor() =

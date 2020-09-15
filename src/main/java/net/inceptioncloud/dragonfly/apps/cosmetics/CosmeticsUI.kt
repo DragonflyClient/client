@@ -94,6 +94,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                 Either(b = PseudoOptionKey.new<Boolean>()
                     .set { data.enabled = it }
                     .get { data.enabled }
+                    .defaultValue { true }
                     .build()
                 ), "Enable cosmetic"
             )
@@ -101,6 +102,8 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
 
         if (controls != null)
             preset.add(TitleControl("Configuration", "Configure the appearance of your cosmetic item"))
+
+        controls?.mapNotNull { it as? OptionControlElement<*> }?.forEach { it.isResettable = true }
 
         return if (controls == null) preset else preset + controls
     }

@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.entity.layers.LayerRenderer
 import net.minecraft.entity.player.EntityPlayer
 import kotlin.reflect.*
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * Represents a cosmetic item.
@@ -37,10 +38,19 @@ abstract class Cosmetic<ConfigType : CosmeticConfig>(
      */
     var databaseModel: JsonObject? = null
 
+    /**
+     * The class reference to the [ConfigType].
+     */
     abstract val configClass: KClass<ConfigType>
 
+    /**
+     * Function to be implemented for generating controls to customize the cosmetic item.
+     */
     abstract fun generateControls(config: ConfigType): Collection<ControlElement<*>>
 
+    /**
+     * Parses the given [data] as the [ConfigType].
+     */
     fun parseConfig(data: CosmeticData): ConfigType {
         return data.parseConfigClass(configClass)
     }
@@ -86,10 +96,15 @@ abstract class Cosmetic<ConfigType : CosmeticConfig>(
     override fun shouldCombineTextures(): Boolean = false
 
     inline fun <reified T> KMutableProperty0<T>.pseudo(): Either<KMutableProperty0<out T>, OptionKey<T>> {
+        isAccessible = true
+        val delegate = getDelegate() as ConfigProperty<*>
+        val default = delegate.defaultValue as T
+
         return Either(
             b = PseudoOptionKey.new<T>()
                 .set(setter)
                 .get(getter)
+                .defaultValue { default }
                 .build()
         )
     }
