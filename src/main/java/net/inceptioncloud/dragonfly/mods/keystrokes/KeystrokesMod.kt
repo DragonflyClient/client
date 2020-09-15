@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener
 import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.color.ColorControl
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
 import net.minecraft.client.Minecraft

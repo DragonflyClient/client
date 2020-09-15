@@ -4,6 +4,7 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
+import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.minecraft.client.Minecraft
@@ -17,23 +18,25 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
         set(value) {
             field = value
 
-            /*val ingameGUI = Minecraft.getMinecraft().ingameGUI
-            ingameGUI.stage["keystrokes-$keyDesc"].apply {
+            val ingameGUI = Minecraft.getMinecraft().ingameGUI
+
+            ingameGUI.stage["keystroke-$keyDesc"].apply {
                 if(this is TextField) {
+                    println("Pressed")
+
                     if(value) {
-                        morph(100, EaseQuad.IN_OUT, Keystroke::backgroundColor to KeystrokesMod.bgActiveColor)
-                        morph(100, EaseQuad.IN_OUT, Keystroke::textColor to KeystrokesMod.textActiveColor)
+                        morph(20, EaseQuad.IN_OUT, this@Keystroke::backgroundColor to KeystrokesMod.bgActiveColor)?.start()
+                        morph(20, EaseQuad.IN_OUT, this@Keystroke::textColor to KeystrokesMod.textActiveColor)?.start()
                     } else {
-                        morph(100, EaseQuad.IN_OUT, Keystroke::backgroundColor to KeystrokesMod.bgInactiveColor)
-                        morph(100, EaseQuad.IN_OUT, Keystroke::textColor to KeystrokesMod.textInactiveColor)
+                        morph(20, EaseQuad.IN_OUT, this@Keystroke::backgroundColor to KeystrokesMod.bgInactiveColor)?.start()
+                        morph(20, EaseQuad.IN_OUT, this@Keystroke::textColor to KeystrokesMod.textInactiveColor)?.start()
                     }
-                    ingameGUI.initKeystrokes()
                 }
-            }*/
+            }
         }
 
-    var backgroundColor = KeystrokesMod.bgInactiveColor
-    var textColor = KeystrokesMod.textInactiveColor
+    @Interpolate var backgroundColor = KeystrokesMod.bgInactiveColor
+    @Interpolate var textColor = KeystrokesMod.textInactiveColor
     var fontSize = KeystrokesMod.fontSize
     var scale = KeystrokesMod.scale
     var space = KeystrokesMod.space

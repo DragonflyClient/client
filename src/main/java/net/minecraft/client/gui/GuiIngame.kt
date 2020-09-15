@@ -1040,8 +1040,6 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     fun initKeystrokes() {
         stage.clear()
 
-        println(KeystrokesManager.keystrokes.size)
-
         for(keyStroke in KeystrokesManager.keystrokes) {
             stage.add(Pair("keystroke-${keyStroke.keyDesc}", keyStroke.textField))
         }
