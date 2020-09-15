@@ -19,7 +19,8 @@ class ControlsManager(
     var originY: Double = 0.0,
     var overflowY: Double = 0.0,
     var width: Double = 0.0,
-    var margin: Double = 0.0
+    var margin: Double = 0.0,
+    var scrollbarX: Double? = null
 ) {
     /**
      * Scrollbar to which the controls are attached.
@@ -60,8 +61,8 @@ class ControlsManager(
         }
 
         stage.add("scrollbar" to scrollbar.prepareWidget().apply {
-            width = 10.0
-            x = guiScreen.width - width
+            width = 7.0
+            x = (scrollbarX ?: guiScreen.width.toDouble()) - width
             y = 0.0
         })
     }

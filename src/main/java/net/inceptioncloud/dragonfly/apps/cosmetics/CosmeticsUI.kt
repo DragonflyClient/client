@@ -22,13 +22,15 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
 
     override val controlsWidth: Double
         get() = width - 400.0 - 120.0 - 43.0 - previewWidth
-
     override val controlsX: Double
         get() = sidebarWidth + 60.0
 
     val previewWidth = 500.0
     val previewX: Double
             get() = controlsX + controlsWidth + 60.0 + 43.0
+
+    override val scrollbarX: Double?
+        get() = width - previewWidth
 
     override val placeholderImage: ResourceLocation? = ResourceLocation("dragonflyres/vectors/equipment.png")
     override val placeholderText: String? = "Select a cosmetic item from the left to customize it."
@@ -106,5 +108,9 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
         controls?.mapNotNull { it as? OptionControlElement<*> }?.forEach { it.isResettable = true }
 
         return if (controls == null) preset else preset + controls
+    }
+
+    operator fun <T> Collection<T>.times(amount: Int): Collection<T> {
+        return this.flatMap { item -> (0..amount).map { item } }
     }
 }
