@@ -59,7 +59,7 @@ class WidgetColor {
             return cycle / 200.0f
         }
 
-        private fun JsonObject.getOrNull(key: String) = if (has(key)) get(key) else null
+        private fun JsonObject.getOrNull(key: String) = if (has(key)) get(key)?.takeIf { !it.isJsonNull } else null
     }
 
     /**
