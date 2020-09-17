@@ -49,6 +49,12 @@ abstract class Cosmetic<ConfigType : CosmeticConfig>(
     abstract fun generateControls(config: ConfigType): Collection<ControlElement<*>>
 
     /**
+     * Convenience function for generating controls with the given [cosmeticData].
+     */
+    fun generateControls(cosmeticData: CosmeticData): Collection<ControlElement<*>>
+            = generateControls(parseConfig(cosmeticData))
+
+    /**
      * Parses the given [data] as the [ConfigType].
      */
     fun parseConfig(data: CosmeticData): ConfigType {

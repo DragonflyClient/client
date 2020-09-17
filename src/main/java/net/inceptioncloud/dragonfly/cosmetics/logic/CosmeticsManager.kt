@@ -27,7 +27,7 @@ object CosmeticsManager {
      * to add it to this list in order to make it available.
      */
     @JvmStatic
-    var cosmetics = listOf(CosmeticWings)
+    var cosmetics = listOf<Cosmetic<out CosmeticConfig>>(CosmeticWings)
 
     /**
      * Contains the database models provided by [loadDatabaseModels]. This variable is computed when

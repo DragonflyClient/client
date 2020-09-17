@@ -5,7 +5,7 @@ import net.inceptioncloud.dragonfly.controls.sidebar.SidebarEntry
 import net.inceptioncloud.dragonfly.controls.ui.ControlsUI
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
-import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWingsConfig
+import net.inceptioncloud.dragonfly.cosmetics.types.capes.CapeManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
 import net.inceptioncloud.dragonfly.options.*
@@ -88,13 +88,18 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
     override fun produceControls(entry: SidebarEntry): Collection<ControlElement<*>>? {
         val data = entry.metadata as? CosmeticData ?: return null
         val cosmetic = CosmeticsManager.cosmetics.firstOrNull { it.cosmeticId == data.cosmeticId }
-        val controls = cosmetic?.generateControls(cosmetic.parseConfig(data))
+        val controls = cosmetic?.generateControls(data)
+        val model = CosmeticsManager.getDatabaseModelById(data.cosmeticId)
+        val isCape = model != null && model.has("type") && model.get("type").asString == "CAPE"
 
         val preset = mutableListOf(
             TitleControl("General"),
             BooleanControl(
                 Either(b = PseudoOptionKey.new<Boolean>()
-                    .set { data.enabled = it }
+                    .set { value ->
+                        data.enabled = value
+                        if (isCape) mc.thePlayer?.let { CapeManager.downloadCape(it) }
+                    }
                     .get { data.enabled }
                     .defaultValue { true }
                     .build()
