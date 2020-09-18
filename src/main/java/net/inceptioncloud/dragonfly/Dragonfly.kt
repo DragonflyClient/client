@@ -96,8 +96,6 @@ object Dragonfly {
     fun init() {
         Display.setTitle("Dragonfly ${DragonflyVersion.string} for Minecraft 1.8.8")
 
-        geforceHelper = MCGeForceHelper()
-
         Taskbar
         DefaultSubscribers.register(eventBus)
 
@@ -141,7 +139,6 @@ object Dragonfly {
             val event = ClientShutdownEvent()
             eventBus.post(event)
         })
-
     }
 
     /**

@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
 import com.google.gson.JsonParser
+import dev.decobr.mcgeforce.bindings.MCGeForceHelper
 import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
@@ -27,6 +28,7 @@ class MainMenuUI : GuiScreen() {
     override var customScaleFactor: () -> Double? = { min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
 
     override fun initGui() {
+
         val playerSkullTexture = runBlocking {
             AccountManagerApp.selectedAccount?.retrieveSkull()?.let {
                 DynamicTexture(it)

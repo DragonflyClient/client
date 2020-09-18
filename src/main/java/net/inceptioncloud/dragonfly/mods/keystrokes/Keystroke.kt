@@ -22,8 +22,6 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
 
             ingameGUI.stage["keystroke-$keyDesc"].apply {
                 if(this is TextField) {
-                    println("Pressed")
-
                     if(value) {
                         morph(20, EaseQuad.IN_OUT, this@Keystroke::backgroundColor to KeystrokesMod.bgActiveColor)?.start()
                         morph(20, EaseQuad.IN_OUT, this@Keystroke::textColor to KeystrokesMod.textActiveColor)?.start()

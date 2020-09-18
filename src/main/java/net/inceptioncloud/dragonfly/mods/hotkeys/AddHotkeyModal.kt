@@ -23,7 +23,7 @@ import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 
-class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
+class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
 
     lateinit var keySelector: KeySelector
     lateinit var shiftCheckBox: CheckBox
@@ -32,39 +32,33 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
     lateinit var messageTextField: InputTextField
     lateinit var timeTextField: InputTextField
     lateinit var delayTextField: InputTextField
-    lateinit var fadeOutCheckBox: CheckBox
     var colorPickerValue = WidgetColor(1.0, 1.0, 1.0, 1.0)
+
+    var updateValuesBool = true
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
         "title" to TextField(),
-        "key-text" to TextField(),
         "key-selector" to KeySelector(),
-        "shift-text" to TextField(),
         "shift-checkbox" to CheckBox(),
-        "ctrl-text" to TextField(),
+        "shift-text" to TextField(),
         "ctrl-checkbox" to CheckBox(),
-        "alt-text" to TextField(),
+        "ctrl-text" to TextField(),
         "alt-checkbox" to CheckBox(),
-        "type-text" to TextField(),
-        "type-dropdown" to TextField(),
-        "message-text" to TextField(),
+        "alt-text" to TextField(),
         "message-textfield" to InputTextField(),
-        "time-text" to TextField(),
         "time-textfield" to InputTextField(),
-        "delay-text" to TextField(),
         "delay-textfield" to InputTextField(),
-        "fadeOut-text" to TextField(),
-        "fadeOut-checkbox" to CheckBox(),
-        "color-text" to TextField(),
         "color-picker" to ColorPreview(),
-        "save-button" to RoundButton(),
+        "color-text" to TextField(),
+        "add-button" to RoundButton(),
         "cancel-button" to RoundButton()
     )
 
     override fun updateStructure() {
         val paddingTop = 30.0
-        val padding = 50.0
+        val paddingLeft = 45.0
+        val padding = 20.0
 
         "container"<RoundedRectangle> {
             x = this@AddHotkeyModal.x
@@ -72,7 +66,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
             width = this@AddHotkeyModal.width
             height = this@AddHotkeyModal.height
             color = DragonflyPalette.background
-            arc = 10.0
+            arc = 8.0
         }!!
 
         "title"<TextField> {
@@ -80,174 +74,104 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
             y = this@AddHotkeyModal.y + height
             width = this@AddHotkeyModal.width
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 64, useScale = false)
             staticText = this@AddHotkeyModal.name
             textAlignHorizontal = Alignment.CENTER
             color = DragonflyPalette.foreground
         }!!.also { it.adaptHeight() }
 
-        "key-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (3 * paddingTop)
-            staticText = "Key"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
         keySelector = "key-selector"<KeySelector> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 60.0 - padding
-            y = this@AddHotkeyModal.y + (3 * paddingTop) - 10
+            x = this@AddHotkeyModal.x + paddingLeft
+            y = this@AddHotkeyModal.y + (4 * paddingTop) - 15.0
             width = 60.0
             height = 40.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
             blockKeys = listOf(42, 29, 56)
             clearKeys = listOf(14, 1)
+            textAlignment = Alignment.START
         }!!
-
-        "shift-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding + 10.0
-            y = this@AddHotkeyModal.y + (4.5 * paddingTop)
-            width = 60.0
-            staticText = "Shift"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
 
         shiftCheckBox = "shift-checkbox"<CheckBox> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 50.0 - padding
-            y = this@AddHotkeyModal.y + (4.5 * paddingTop)
+            x = keySelector.x + keySelector.width + (padding * 1.5)
+            y = this@AddHotkeyModal.y + (4 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
-        "ctrl-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding + 10.0
-            y = this@AddHotkeyModal.y + (5.5 * paddingTop)
-            width = 60.0
-            staticText = "Ctrl"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
+        val shiftText = "shift-text"<TextField> {
+            x = shiftCheckBox.x + shiftCheckBox.width + 10.0
+            y = shiftCheckBox.y + 2.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
+            staticText = "Shift"
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+        }!!
 
         ctrlCheckBox = "ctrl-checkbox"<CheckBox> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 50.0 - padding
-            y = this@AddHotkeyModal.y + (5.5 * paddingTop)
+            x = shiftText.x + shiftText.width + (padding / 2)
+            y = this@AddHotkeyModal.y + (4 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
-        "alt-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding + 10.0
-            y = this@AddHotkeyModal.y + (6.5 * paddingTop)
-            width = 60.0
-            staticText = "Alt"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
+        val ctrlText = "ctrl-text"<TextField> {
+            x = ctrlCheckBox.x + ctrlCheckBox.width + 10.0
+            y = ctrlCheckBox.y + 2.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
+            staticText = "Ctrl"
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+        }!!
 
         altCheckBox = "alt-checkbox"<CheckBox> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 50.0 - padding
-            y = this@AddHotkeyModal.y + (6.5 * paddingTop)
+            x = ctrlText.x + ctrlText.width + (padding / 2)
+            y = this@AddHotkeyModal.y + (4 * paddingTop)
             width = 25.0
             height = 25.0
         }!!
 
-        "type-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (9 * paddingTop)
-            width = 60.0
-            staticText = "Type"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
-        "type-dropdown"<TextField> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 60.0 - padding
-            y = this@AddHotkeyModal.y + (9 * paddingTop)
-            width = 120.0
-            height = 40.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 42, useScale = false)
-            staticText = "Chat"
-        }
-
-        "message-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (10 * paddingTop)
-            width = 120.0
-            staticText = "Message"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+        val altText = "alt-text"<TextField> {
+            x = altCheckBox.x + altCheckBox.width + 10.0
+            y = altCheckBox.y + 2.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
+            staticText = "Alt"
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
         }!!
 
         messageTextField = "message-textfield"<InputTextField> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 260.0 - padding
-            y = this@AddHotkeyModal.y + (10 * paddingTop) - 10
-            width = 250.0
+            x = this@AddHotkeyModal.x + paddingLeft
+            y = this@AddHotkeyModal.y + (7 * paddingTop) - 15.0
+            width = 330.0
             height = 30.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
             label = "Message"
         }!!
 
-        "time-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (11 * paddingTop)
-            width = 120.0
-            staticText = "Time"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
         timeTextField = "time-textfield"<InputTextField> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 110.0 - padding
-            y = this@AddHotkeyModal.y + (11 * paddingTop)
-            width = 100.0
+            x = this@AddHotkeyModal.x + paddingLeft
+            y = this@AddHotkeyModal.y + (9 * paddingTop)
+            width = 60.0
             height = 30.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
-            label = "Duration"
-            allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14)
-            maxStringLength = 2
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
+            label = "Time"
+            allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14, 52)
+            maxStringLength = 3
         }!!
-
-        "delay-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (12 * paddingTop)
-            width = 120.0
-            staticText = "Delay"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
 
         delayTextField = "delay-textfield"<InputTextField> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 110.0 - padding
-            y = this@AddHotkeyModal.y + (12 * paddingTop)
-            width = 100.0
+            x = timeTextField.x + timeTextField.width + padding
+            y = this@AddHotkeyModal.y + (9 * paddingTop)
+            width = 60.0
             height = 30.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
-            label = "Duration"
-            allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14)
-            maxStringLength = 2
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
+            label = "Delay"
+            allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14, 52)
+            maxStringLength = 3
         }!!
 
-        "fadeOut-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (13 * paddingTop)
-            width = 300.0
-            staticText = "FadeOut Animation"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
-        fadeOutCheckBox = "fadeOut-checkbox"<CheckBox> {
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 38.0 - padding
-            y = this@AddHotkeyModal.y + (13.2 * paddingTop)
+        var colorPicker = "color-picker"<ColorPreview> {
+            x = delayTextField.x + delayTextField.width + padding
+            y = this@AddHotkeyModal.y + (9 * paddingTop)
             width = 25.0
             height = 25.0
-        }!!
-
-        "color-text"<TextField> {
-            x = this@AddHotkeyModal.x + padding
-            y = this@AddHotkeyModal.y + (14 * paddingTop)
-            width = 120.0
-            staticText = "Color"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-        }
-
-        "color-picker"<ColorPreview> {
-            width = 25.0
-            height = 25.0
-            x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - 38.0 - padding
-            y = this@AddHotkeyModal.y + (14.2 * paddingTop)
             color = colorPickerValue
             clickAction = {
                 Modal.showModal(ColorPickerModal(colorPickerValue) {
@@ -256,44 +180,53 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
                 })
                 Modal.hideModal()
             }
-        }
+        }!!
 
-        val saveButton = "save-button"<RoundButton> {
-            width = 110.0
-            height = 37.0
+        "color-text"<TextField> {
+            x = colorPicker.x + colorPicker.width + 10.0
+            y = colorPicker.y + 2.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
+            staticText = "Color"
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+        }!!
+
+        val addButton = "add-button"<RoundButton> {
+            width = 95.0
+            height = 31.0
             x = this@AddHotkeyModal.x + this@AddHotkeyModal.width - width - padding
-            y = this@AddHotkeyModal.y + this@AddHotkeyModal.height - height - padding + 25.0
-            text = "Save"
-            textSize = 50
+            y = this@AddHotkeyModal.y + this@AddHotkeyModal.height - height - padding
+            text = "Add"
+            textSize = 40
             color = DragonflyPalette.accentNormal
-            arc = 10.0
-            onClick { performSave() }
+            arc = 2.0
+            onClick { performAdd() }
         }!!
 
         "cancel-button"<RoundButton> {
-            width = 85.0
-            height = 37.0
-            x = saveButton.x - width - 10.0
-            y = this@AddHotkeyModal.y + this@AddHotkeyModal.height - height - padding + 25.0
+            width = 95.0
+            height = 31.0
+            x = addButton.x - width - 10.0
+            y = this@AddHotkeyModal.y + this@AddHotkeyModal.height - height - padding
             text = "Cancel"
-            textSize = 50
+            textSize = 40
             color = DragonflyPalette.background.brighter(0.8)
-            arc = 10.0
+            arc = 2.0
             onClick { Modal.hideModal() }
+        }
+
+        if (updateValuesBool) {
+            updateValuesBool = false
         }
 
     }
 
-    private fun performSave() {
-        Toast.queue("Saving hotkey...", 100)
-
-        if(validateForms()) {
+    private fun performAdd() {
+        if (validateForms()) {
             Modal.hideModal()
 
             HotkeysMod.controller.addHotkey(convertThisToHotkey())
             Minecraft.getMinecraft().currentScreen.refresh()
-
-            Toast.queue("§aSaved hotkey!", 400)
+            Toast.queue("§aChanges saved!", 400)
         } else {
             Toast.queue("§cPlease check your settings!", 300)
         }
@@ -326,110 +259,85 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 578.0, 548.0) {
         return ChatHotkey(data, config)
     }
 
+    private fun writeTextInInputTextField(id: String, text: String) {
+        getWidget<InputTextField>(id)?.run {
+            writeText(text, true)
+            focusedStateChanged(false)
+        }
+    }
+
     private fun validateForms(): Boolean {
         var error = false
 
         if (keySelector.currentText == "") {
             LogManager.getLogger().info("Error property 'Key' was not set by the user!")
-
-            keySelector.apply {
-                keySelector.morph(25, EaseQuad.IN, KeySelector::lineColor to DragonflyPalette.accentDark)?.post { animation, widget ->
-                    keySelector.detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.post { animation, widget ->
-                        keySelector.detachAnimation<MorphAnimation>()
-                        keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { animation, widget ->
-                            keySelector.detachAnimation<MorphAnimation>()
-                            keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 20.0))?.post { animation, widget ->
-                                keySelector.detachAnimation<MorphAnimation>()
-                                keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { animation, widget ->
-                                    keySelector.detachAnimation<MorphAnimation>()
-                                    keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.start()
-                                    keySelector.lineColor = DragonflyPalette.background.brighter(0.4)
-                                }?.start()
-                            }?.start()
-                        }?.start()
-                    }?.start()
-                }?.start()
-            }
+            keySelector.shake()
             error = true
         }
 
         if (messageTextField.realText == "") {
             LogManager.getLogger().info("Error property 'Message' was not set by the user!")
-
-            messageTextField.apply {
-                messageTextField.morph(25, EaseQuad.IN, InputTextField::lineColor to DragonflyPalette.accentDark)?.post { animation, widget ->
-                    messageTextField.detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x - 10.0))?.post { animation, widget ->
-                        messageTextField.detachAnimation<MorphAnimation>()
-                        messageTextField.morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x + 20.0))?.post { animation, widget ->
-                            messageTextField.detachAnimation<MorphAnimation>()
-                            messageTextField.morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x - 20.0))?.post { animation, widget ->
-                                messageTextField.detachAnimation<MorphAnimation>()
-                                messageTextField.morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x + 20.0))?.post { animation, widget ->
-                                    messageTextField.detachAnimation<MorphAnimation>()
-                                    messageTextField.morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x - 10.0))?.start()
-                                    messageTextField.lineColor = DragonflyPalette.background.brighter(0.4)
-                                }?.start()
-                            }?.start()
-                        }?.start()
-                    }?.start()
-                }?.start()
-            }
+            messageTextField.shake()
             error = true
         }
 
         if (timeTextField.realText == "") {
             LogManager.getLogger().info("Error property 'Time' was not set by the user!")
-
-            timeTextField.apply {
-                timeTextField.morph(25, EaseQuad.IN, InputTextField::lineColor to DragonflyPalette.accentDark)?.post { animation, widget ->
-                    timeTextField.detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x - 10.0))?.post { animation, widget ->
-                        timeTextField.detachAnimation<MorphAnimation>()
-                        timeTextField.morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x + 20.0))?.post { animation, widget ->
-                            timeTextField.detachAnimation<MorphAnimation>()
-                            timeTextField.morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x - 20.0))?.post { animation, widget ->
-                                timeTextField.detachAnimation<MorphAnimation>()
-                                timeTextField.morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x + 20.0))?.post { animation, widget ->
-                                    timeTextField.detachAnimation<MorphAnimation>()
-                                    timeTextField.morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x - 10.0))?.start()
-                                    timeTextField.lineColor = DragonflyPalette.background.brighter(0.4)
-                                }?.start()
-                            }?.start()
-                        }?.start()
-                    }?.start()
-                }?.start()
-            }
+            timeTextField.shake()
             error = true
         }
 
         if (delayTextField.realText == "") {
             LogManager.getLogger().info("Error property 'Delay' was not set by the user!")
-
-            delayTextField.apply {
-                delayTextField.morph(25, EaseQuad.IN, InputTextField::lineColor to DragonflyPalette.accentDark)?.post { animation, widget ->
-                    delayTextField.detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x - 10.0))?.post { animation, widget ->
-                        delayTextField.detachAnimation<MorphAnimation>()
-                        delayTextField.morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x + 20.0))?.post { animation, widget ->
-                            delayTextField.detachAnimation<MorphAnimation>()
-                            delayTextField.morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x - 20.0))?.post { animation, widget ->
-                                delayTextField.detachAnimation<MorphAnimation>()
-                                delayTextField.morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x + 20.0))?.post { animation, widget ->
-                                    delayTextField.detachAnimation<MorphAnimation>()
-                                    delayTextField.morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x - 10.0))?.start()
-                                    delayTextField.lineColor = DragonflyPalette.background.brighter(0.4)
-                                }?.start()
-                            }?.start()
-                        }?.start()
-                    }?.start()
-                }?.start()
-            }
+            delayTextField.shake()
             error = true
         }
 
         return !error
+    }
+
+    private fun InputTextField.shake() {
+        this.apply {
+            morph(25, EaseQuad.IN, InputTextField::lineColor to DragonflyPalette.accentDark)?.post { _, _ ->
+                detachAnimation<MorphAnimation>()
+                morph(5, EaseQuad.IN, InputTextField::x to (keySelector.x - 10.0))?.post { _, _ ->
+                    detachAnimation<MorphAnimation>()
+                    morph(5, EaseQuad.IN, InputTextField::x to (keySelector.x + 20.0))?.post { _, _ ->
+                        detachAnimation<MorphAnimation>()
+                        morph(5, EaseQuad.IN, InputTextField::x to (keySelector.x - 20.0))?.post { _, _ ->
+                            detachAnimation<MorphAnimation>()
+                            morph(5, EaseQuad.IN, InputTextField::x to (keySelector.x + 20.0))?.post { _, _ ->
+                                detachAnimation<MorphAnimation>()
+                                morph(5, EaseQuad.IN, InputTextField::x to (keySelector.x - 10.0))?.start()
+                                lineColor = DragonflyPalette.background.brighter(0.4)
+                            }?.start()
+                        }?.start()
+                    }?.start()
+                }?.start()
+            }?.start()
+        }
+    }
+
+    private fun KeySelector.shake() {
+        this.apply {
+            morph(25, EaseQuad.IN, KeySelector::lineColor to DragonflyPalette.accentDark)?.post { _, _ ->
+                detachAnimation<MorphAnimation>()
+                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.post { _, _ ->
+                    detachAnimation<MorphAnimation>()
+                    morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                        detachAnimation<MorphAnimation>()
+                        morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 20.0))?.post { _, _ ->
+                            detachAnimation<MorphAnimation>()
+                            morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                                detachAnimation<MorphAnimation>()
+                                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.start()
+                                lineColor = DragonflyPalette.background.brighter(0.4)
+                            }?.start()
+                        }?.start()
+                    }?.start()
+                }?.start()
+            }?.start()
+        }
     }
 
 }

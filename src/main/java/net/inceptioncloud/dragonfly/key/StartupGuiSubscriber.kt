@@ -17,8 +17,7 @@ object StartupGuiSubscriber {
 
     @Subscribe
     fun onStartupGui(event: StartupGuiEvent) {
-        if (KeyStorage.isKeySaved()) {
-            LogManager.getLogger().info("Validating stored key '${KeyStorage.getStoredKey()}'...")
+        if (KeyStorage.isKeySaved()) { LogManager.getLogger().info("Validating stored key '${KeyStorage.getStoredKey()}'...")
             val result = KeyController.validateStoredKey()
             if (result.success) {
                 LogManager.getLogger().info("Validation successful!")

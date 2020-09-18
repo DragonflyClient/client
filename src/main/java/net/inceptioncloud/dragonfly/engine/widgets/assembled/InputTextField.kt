@@ -125,7 +125,7 @@ class InputTextField(
     /**
      * Called whenever the [isFocused] property changes.
      */
-    private fun focusedStateChanged(focused: Boolean) {
+    fun focusedStateChanged(focused: Boolean) {
         val label = structure["label"] as? TextField ?: error("Structure should contain label!")
         val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
             ?: error("Structure should contain bottom line overlay!")

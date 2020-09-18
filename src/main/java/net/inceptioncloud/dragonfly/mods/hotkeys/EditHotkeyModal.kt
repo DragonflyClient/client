@@ -1,8 +1,5 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.color.ColorPickerModal
 import net.inceptioncloud.dragonfly.controls.color.ColorPreview
@@ -238,7 +235,6 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
     }
 
     private fun performSave() {
-        Toast.queue("Saving changes...", 100)
         if (validateForms()) {
             Modal.hideModal()
 
@@ -252,7 +248,6 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
     }
 
     private fun performDelete() {
-        Toast.queue("Deleting hotkey...", 100)
         Modal.hideModal()
 
         HotkeysMod.controller.removeHotkey(originalHotkey)
@@ -309,23 +304,8 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
 
     private fun writeTextInInputTextField(id: String, text: String) {
         getWidget<InputTextField>(id)?.run {
-            GlobalScope.launch {
-                delay(10)
-                isFocused = true
-                delay(30)
-
-                repeat(inputText.length) {
-                    deleteFromCursor(-1, true)
-                    delay(3)
-                }
-
-                text.chars()?.let {
-                    for (char in it) {
-                        writeText(char.toChar().toString(), true)
-                        delay(5)
-                    }
-                }
-            }
+            writeText(text, true)
+            focusedStateChanged(false)
         }
     }
 
@@ -334,105 +314,73 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
 
         if (keySelector.currentText == "") {
             LogManager.getLogger().info("Error property 'Key' was not set by the user!")
-
-            keySelector.apply {
-                keySelector.morph(25, EaseQuad.IN, KeySelector::lineColor to DragonflyPalette.accentDark)?.post { animation, widget ->
-                    keySelector.detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.post { animation, widget ->
-                        keySelector.detachAnimation<MorphAnimation>()
-                        keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { animation, widget ->
-                            keySelector.detachAnimation<MorphAnimation>()
-                            keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 20.0))?.post { animation, widget ->
-                                keySelector.detachAnimation<MorphAnimation>()
-                                keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { animation, widget ->
-                                    keySelector.detachAnimation<MorphAnimation>()
-                                    keySelector.morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.start()
-                                    keySelector.lineColor = DragonflyPalette.background.brighter(0.4)
-                                }?.start()
-                            }?.start()
-                        }?.start()
-                    }?.start()
-                }?.start()
-            }
+            keySelector.shake()
             error = true
         }
 
         if (messageTextField.realText == "") {
             LogManager.getLogger().info("Error property 'Message' was not set by the user!")
-
-            messageTextField.apply {
-                messageTextField.morph(25, EaseQuad.IN, InputTextField::lineColor to DragonflyPalette.accentDark)?.post { animation, widget ->
-                    messageTextField.detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x - 10.0))?.post { animation, widget ->
-                        messageTextField.detachAnimation<MorphAnimation>()
-                        messageTextField.morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x + 20.0))?.post { animation, widget ->
-                            messageTextField.detachAnimation<MorphAnimation>()
-                            messageTextField.morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x - 20.0))?.post { animation, widget ->
-                                messageTextField.detachAnimation<MorphAnimation>()
-                                messageTextField.morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x + 20.0))?.post { animation, widget ->
-                                    messageTextField.detachAnimation<MorphAnimation>()
-                                    messageTextField.morph(5, EaseQuad.IN, InputTextField::x to (messageTextField.x - 10.0))?.start()
-                                    messageTextField.lineColor = DragonflyPalette.background.brighter(0.4)
-                                }?.start()
-                            }?.start()
-                        }?.start()
-                    }?.start()
-                }?.start()
-            }
+            messageTextField.shake()
             error = true
         }
 
         if (timeTextField.realText == "") {
             LogManager.getLogger().info("Error property 'Time' was not set by the user!")
-
-            timeTextField.apply {
-                timeTextField.morph(25, EaseQuad.IN, InputTextField::lineColor to DragonflyPalette.accentDark)?.post { animation, widget ->
-                    timeTextField.detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x - 10.0))?.post { animation, widget ->
-                        timeTextField.detachAnimation<MorphAnimation>()
-                        timeTextField.morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x + 20.0))?.post { animation, widget ->
-                            timeTextField.detachAnimation<MorphAnimation>()
-                            timeTextField.morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x - 20.0))?.post { animation, widget ->
-                                timeTextField.detachAnimation<MorphAnimation>()
-                                timeTextField.morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x + 20.0))?.post { animation, widget ->
-                                    timeTextField.detachAnimation<MorphAnimation>()
-                                    timeTextField.morph(5, EaseQuad.IN, InputTextField::x to (timeTextField.x - 10.0))?.start()
-                                    timeTextField.lineColor = DragonflyPalette.background.brighter(0.4)
-                                }?.start()
-                            }?.start()
-                        }?.start()
-                    }?.start()
-                }?.start()
-            }
+            timeTextField.shake()
             error = true
         }
 
         if (delayTextField.realText == "") {
             LogManager.getLogger().info("Error property 'Delay' was not set by the user!")
-
-            delayTextField.apply {
-                delayTextField.morph(25, EaseQuad.IN, InputTextField::lineColor to DragonflyPalette.accentDark)?.post { animation, widget ->
-                    delayTextField.detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x - 10.0))?.post { animation, widget ->
-                        delayTextField.detachAnimation<MorphAnimation>()
-                        delayTextField.morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x + 20.0))?.post { animation, widget ->
-                            delayTextField.detachAnimation<MorphAnimation>()
-                            delayTextField.morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x - 20.0))?.post { animation, widget ->
-                                delayTextField.detachAnimation<MorphAnimation>()
-                                delayTextField.morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x + 20.0))?.post { animation, widget ->
-                                    delayTextField.detachAnimation<MorphAnimation>()
-                                    delayTextField.morph(5, EaseQuad.IN, InputTextField::x to (delayTextField.x - 10.0))?.start()
-                                    delayTextField.lineColor = DragonflyPalette.background.brighter(0.4)
-                                }?.start()
-                            }?.start()
-                        }?.start()
-                    }?.start()
-                }?.start()
-            }
+            delayTextField.shake()
             error = true
         }
 
         return !error
+    }
+
+    private fun InputTextField.shake() {
+        this.apply {
+            morph(25, EaseQuad.IN, KeySelector::lineColor to DragonflyPalette.accentDark)?.post { _, _ ->
+                detachAnimation<MorphAnimation>()
+                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.post { _, _ ->
+                    detachAnimation<MorphAnimation>()
+                    morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                        detachAnimation<MorphAnimation>()
+                        morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 20.0))?.post { _, _ ->
+                            detachAnimation<MorphAnimation>()
+                            morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                                detachAnimation<MorphAnimation>()
+                                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.start()
+                                lineColor = DragonflyPalette.background.brighter(0.4)
+                            }?.start()
+                        }?.start()
+                    }?.start()
+                }?.start()
+            }?.start()
+        }
+    }
+
+    private fun KeySelector.shake() {
+        this.apply {
+            morph(25, EaseQuad.IN, KeySelector::lineColor to DragonflyPalette.accentDark)?.post { _, _ ->
+                detachAnimation<MorphAnimation>()
+                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.post { _, _ ->
+                    detachAnimation<MorphAnimation>()
+                    morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                        detachAnimation<MorphAnimation>()
+                        morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 20.0))?.post { _, _ ->
+                            detachAnimation<MorphAnimation>()
+                            morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                                detachAnimation<MorphAnimation>()
+                                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.start()
+                                lineColor = DragonflyPalette.background.brighter(0.4)
+                            }?.start()
+                        }?.start()
+                    }?.start()
+                }?.start()
+            }?.start()
+        }
     }
 
 }
