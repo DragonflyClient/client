@@ -98,7 +98,7 @@ class InputTextField(
     var realText: String = ""
 
     /** Whether the text label is raised due to present input text or focus state. */
-    var isLabelRaised: Boolean = false
+    val isLabelRaised: Boolean
         get() = isFocused || inputText.isNotEmpty()
 
     /** The position of the cursor as well as the start of the text selection*/
@@ -113,8 +113,10 @@ class InputTextField(
     /** The time in milliseconds the cursor has moved lately */
     private var timeCursorMoved = 0L
 
-    private var labelHeight: Double? = null
-    private var labelY: Double? = null
+    private val labelHeight: Double
+        get() = (fontRenderer?.height ?: 0) + padding * 2
+    private val labelY: Double
+        get() = y + (height - labelHeight) / 2.0
 
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
@@ -198,10 +200,12 @@ class InputTextField(
             it.y = y + (height - it.height) / 2.0
             it.padding = padding
 
-            if (!isLabelRaised) {
-                labelHeight = it.height
-                labelY = it.y
-            }
+            // apply label preferences
+            it.scaleFactor = if (isLabelRaised) 0.5 else 1.0
+            it.x = if (isLabelRaised) x + padding * 0.5 else x
+            it.y = if (isLabelRaised) y + padding * 0.5 else labelY
+            it.height = if (isLabelRaised) height / 2.5 else labelHeight
+            it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
         }
 
         val bottomLine = (structure["bottom-line"] as Rectangle).also {
