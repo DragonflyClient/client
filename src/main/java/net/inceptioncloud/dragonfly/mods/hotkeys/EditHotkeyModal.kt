@@ -1,9 +1,12 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.color.ColorPickerModal
 import net.inceptioncloud.dragonfly.controls.color.ColorPreview
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
@@ -168,7 +171,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
             maxStringLength = 3
         }!!
 
-        var colorPicker = "color-picker"<ColorPreview> {
+        val colorPicker = "color-picker"<ColorPreview> {
             x = delayTextField.x + delayTextField.width + padding
             y = this@EditHotkeyModal.y + (9 * paddingTop)
             width = 25.0
@@ -305,7 +308,6 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
     private fun writeTextInInputTextField(id: String, text: String) {
         getWidget<InputTextField>(id)?.run {
             writeText(text, true)
-            focusedStateChanged(false)
         }
     }
 
