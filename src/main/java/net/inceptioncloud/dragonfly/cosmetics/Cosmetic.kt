@@ -84,19 +84,11 @@ abstract class Cosmetic<ConfigType : CosmeticConfig>(
     }
 
     override fun doRenderLayer(
-        player: AbstractClientPlayer?,
-        limbSwing: Float,
-        limbSwingAmount: Float,
-        partialTicks: Float,
-        ageInTicks: Float,
-        headYaw: Float,
-        headPitch: Float,
-        scale: Float
+        player: AbstractClientPlayer?, limbSwing: Float, limbSwingAmount: Float, partialTicks: Float, ageInTicks: Float,
+        headYaw: Float, headPitch: Float, scale: Float
     ) {
         if (player != null && player.hasPlayerInfo() && !player.isInvisible) {
-            render(
-                player, CosmeticRenderProperties(limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch, scale, partialTicks)
-            )
+            render(player, CosmeticRenderProperties(limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch, scale, partialTicks))
         }
     }
 
@@ -109,13 +101,7 @@ abstract class Cosmetic<ConfigType : CosmeticConfig>(
 
         return Either(
             b = PseudoOptionKey.new<T>()
-                .set {
-                    if (getter() != it) {
-                        delegate.configReference?.isDirty = true
-                        LogManager.getLogger().info("$name has made ${delegate.configReference} dirty")
-                    }
-                    setter(it)
-                }
+                .set(setter)
                 .get(getter)
                 .defaultValue { default }
                 .build()

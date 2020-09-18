@@ -121,30 +121,24 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
     override fun onClose() {
         GlobalScope.launch {
             var success = true
-            val dirtyEntries = sidebarManager.entries
+
+            CosmeticsManager.clearCache(mc.session?.profile?.id)
+            sidebarManager.entries
                 .mapNotNull { it.metadata as? CosmeticData }
-                .filter { it.cache?.entries?.firstOrNull()?.value?.isDirty == true }
+                .forEach {
+                    val a = CosmeticsManager.toggleCosmetic(it.cosmeticQualifier, it.enabled)
+                    val b = CosmeticsManager.configureCosmetic(it.cosmeticQualifier, it.config)
 
-            dirtyEntries.forEach {
-                val a = CosmeticsManager.toggleCosmetic(it.cosmeticQualifier, it.enabled)
-                val b = CosmeticsManager.configureCosmetic(it.cosmeticQualifier, it.config)
-
-                if (!a || !b) success = false
-                it.cache?.entries?.firstOrNull()?.value?.isDirty = false
-            }
-
-            if (dirtyEntries.isNotEmpty()) {
-                if (success) {
-                    CosmeticsManager.clearCache(mc.session?.profile?.id)
-                    Toast.queue("§aSuccessfully uploaded cosmetic configurations!", 500)
-                } else {
-                    Toast.queue("§cCould not upload all cosmetic configurations! Please try again later.", 500)
+                    if (!a || !b) success = false
                 }
+
+            if (success) {
+                Toast.queue("§aSuccessfully uploaded cosmetic configurations!", 500)
+            } else {
+                Toast.queue("§cCould not upload all cosmetic configurations! Please try again later.", 500)
             }
         }
     }
 
-    operator fun <T> Collection<T>.times(amount: Int): Collection<T> {
-        return this.flatMap { item -> (0..amount).map { item } }
-    }
+    operator fun <T> Collection<T>.times(amount: Int) = this.flatMap { item -> (0..amount).map { item } }
 }

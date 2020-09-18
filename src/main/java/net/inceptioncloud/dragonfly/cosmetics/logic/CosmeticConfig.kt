@@ -17,11 +17,6 @@ import kotlin.reflect.KProperty
 open class CosmeticConfig(val jsonObject: JsonObject) {
 
     /**
-     * Whether the config has been modified (is dirty).
-     */
-    var isDirty = false
-
-    /**
      * Use a [BooleanConfigProperty] to parse the property from the [jsonObject].
      */
     protected fun boolean(defaultValue: Boolean, validator: (Boolean) -> Boolean = { true })
