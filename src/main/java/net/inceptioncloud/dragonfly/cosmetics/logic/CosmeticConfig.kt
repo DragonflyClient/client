@@ -17,6 +17,11 @@ import kotlin.reflect.KProperty
 open class CosmeticConfig(val jsonObject: JsonObject) {
 
     /**
+     * Whether the config has been modified (is dirty).
+     */
+    var isDirty = false
+
+    /**
      * Use a [BooleanConfigProperty] to parse the property from the [jsonObject].
      */
     protected fun boolean(defaultValue: Boolean, validator: (Boolean) -> Boolean = { true })
@@ -58,7 +63,14 @@ abstract class ConfigProperty<T>(
      */
     private var value: T? = null
 
+    /**
+     * The cosmetic configuration that this property is part of.
+     */
+    var configReference: CosmeticConfig? = null
+
     override fun setValue(thisRef: CosmeticConfig, property: KProperty<*>, value: T) {
+        if (configReference == null) configReference = thisRef
+
         if (validator(value)) {
             this.value = value
             jsonObject.add(property.name, Dragonfly.gson.toJsonTree(value))
@@ -66,10 +78,12 @@ abstract class ConfigProperty<T>(
     }
 
     override fun getValue(thisRef: CosmeticConfig, property: KProperty<*>): T {
+        if (configReference == null) configReference = thisRef
         return value!!
     }
 
     operator fun provideDelegate(thisRef: CosmeticConfig, property: KProperty<*>): ConfigProperty<T> {
+        if (configReference == null) configReference = thisRef
         value = defaultValue
 
         try {

@@ -65,7 +65,7 @@ class SidebarManager(
     /**
      * All entries that are shown by this sidebar by the [show] function
      */
-    private var entries = mutableListOf<SidebarEntry>()
+    var entries = mutableListOf<SidebarEntry>()
 
     /**
      * The scrollbar for this sidebar that is activated if it contains too much entries

@@ -10,6 +10,7 @@ import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.entity.layers.LayerRenderer
 import net.minecraft.entity.player.EntityPlayer
+import org.apache.logging.log4j.LogManager
 import kotlin.reflect.*
 import kotlin.reflect.jvm.isAccessible
 
@@ -108,7 +109,13 @@ abstract class Cosmetic<ConfigType : CosmeticConfig>(
 
         return Either(
             b = PseudoOptionKey.new<T>()
-                .set(setter)
+                .set {
+                    if (getter() != it) {
+                        delegate.configReference?.isDirty = true
+                        LogManager.getLogger().info("$name has made ${delegate.configReference} dirty")
+                    }
+                    setter(it)
+                }
                 .get(getter)
                 .defaultValue { default }
                 .build()

@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly.apps.cosmetics
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.sidebar.SidebarEntry
 import net.inceptioncloud.dragonfly.controls.ui.ControlsUI
@@ -9,6 +11,7 @@ import net.inceptioncloud.dragonfly.cosmetics.types.capes.CapeManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
 import net.inceptioncloud.dragonfly.options.*
+import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.inceptioncloud.dragonfly.utils.Either
 import net.inceptioncloud.dragonfly.utils.MojangRequest
 import net.minecraft.client.gui.GuiScreen
@@ -79,7 +82,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                 val playerData = mc.thePlayer?.cosmetics?.firstOrNull { it.cosmeticQualifier == data.cosmeticQualifier }
 
                 cosmeticName?.let { text ->
-                    SidebarEntry(prefix + text, null, playerData).apply { isSelectable = isAccountLoggedIn }
+                    SidebarEntry(prefix + text, null, playerData ?: data).apply { isSelectable = isAccountLoggedIn }
                 }
             }
         }
@@ -113,6 +116,32 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
         controls?.mapNotNull { it as? OptionControlElement<*> }?.forEach { it.isResettable = true }
 
         return if (controls == null) preset else preset + controls
+    }
+
+    override fun onClose() {
+        GlobalScope.launch {
+            var success = true
+            val dirtyEntries = sidebarManager.entries
+                .mapNotNull { it.metadata as? CosmeticData }
+                .filter { it.cache?.entries?.firstOrNull()?.value?.isDirty == true }
+
+            dirtyEntries.forEach {
+                val a = CosmeticsManager.toggleCosmetic(it.cosmeticQualifier, it.enabled)
+                val b = CosmeticsManager.configureCosmetic(it.cosmeticQualifier, it.config)
+
+                if (!a || !b) success = false
+                it.cache?.entries?.firstOrNull()?.value?.isDirty = false
+            }
+
+            if (dirtyEntries.isNotEmpty()) {
+                if (success) {
+                    CosmeticsManager.clearCache(mc.session?.profile?.id)
+                    Toast.queue("§aSuccessfully uploaded cosmetic configurations!", 500)
+                } else {
+                    Toast.queue("§cCould not upload all cosmetic configurations! Please try again later.", 500)
+                }
+            }
+        }
     }
 
     operator fun <T> Collection<T>.times(amount: Int): Collection<T> {

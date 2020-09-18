@@ -3,14 +3,15 @@ package net.inceptioncloud.dragonfly.cosmetics.logic
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.accountmanager.Account
 import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWings
 import net.inceptioncloud.dragonfly.cosmetics.Cosmetic
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.utils.ListParameterizedType
 import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.entity.player.EntityPlayer
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.apache.logging.log4j.LogManager
 import java.util.*
 import java.util.function.Consumer
@@ -201,5 +202,57 @@ object CosmeticsManager {
         }
 
         return null
+    }
+
+    fun configureCosmetic(cosmeticQualifier: String, config: JsonObject): Boolean {
+        try {
+            val token = Dragonfly.account?.token ?: return false
+            val request = Request.Builder()
+                .header("Authorization", "Bearer $token")
+                .url("https://api.playdragonfly.net/v1/cosmetics/configure")
+                .post(JsonObject().apply {
+                    addProperty("cosmeticQualifier", cosmeticQualifier)
+                    add("config", config)
+                }.toString().toRequestBody("application/json".toMediaType()))
+                .build()
+            val response = Dragonfly.httpClient.newCall(request).execute()
+                .takeIf { it.code == 200 }
+                ?.use { response -> response.body!!.string() }
+                ?.let { Dragonfly.gson.fromJson(it, JsonObject::class.java).asJsonObject }
+
+            if (response?.get("success")?.asBoolean == true) {
+                return true
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+
+        return false
+    }
+
+    fun toggleCosmetic(cosmeticQualifier: String, enable: Boolean): Boolean {
+        try {
+            val token = Dragonfly.account?.token ?: return false
+            val request = Request.Builder()
+                .header("Authorization", "Bearer $token")
+                .url("https://api.playdragonfly.net/v1/cosmetics/toggle")
+                .post(JsonObject().apply {
+                    addProperty("cosmeticQualifier", cosmeticQualifier)
+                    addProperty("enable", enable)
+                }.toString().toRequestBody("application/json".toMediaType()))
+                .build()
+            val response = Dragonfly.httpClient.newCall(request).execute()
+                .takeIf { it.code == 200 }
+                ?.use { response -> response.body!!.string() }
+                ?.let { Dragonfly.gson.fromJson(it, JsonObject::class.java).asJsonObject }
+
+            if (response?.get("success")?.asBoolean == true) {
+                return true
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+
+        return false
     }
 }

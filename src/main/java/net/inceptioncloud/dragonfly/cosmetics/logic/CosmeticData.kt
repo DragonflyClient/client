@@ -38,7 +38,7 @@ data class CosmeticData(
     /**
      * Cache for already converted [config]s.
      */
-    var cache: MutableMap<KClass<*>, Any>? = null
+    var cache: MutableMap<KClass<*>, CosmeticConfig>? = null
 
     /**
      * Parses the [config] as a subtype of [CosmeticConfig] by passing the [config]
