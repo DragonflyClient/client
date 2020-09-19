@@ -325,6 +325,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
         // ICMM Render Stage
         stage.render()
+        mc.entityRenderer.setupOverlayRendering(true)
     }
 
     protected fun renderTooltip(sr: ScaledResolution, partialTicks: Float) {

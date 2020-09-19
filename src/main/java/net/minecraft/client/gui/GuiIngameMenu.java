@@ -48,6 +48,11 @@ public class GuiIngameMenu extends GuiScreen
 
     private final String aboutString = "About Dragonfly";
 
+    @Override
+    public boolean isNativeResolution() {
+        return true;
+    }
+
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
      */
