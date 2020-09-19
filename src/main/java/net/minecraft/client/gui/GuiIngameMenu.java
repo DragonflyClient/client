@@ -248,7 +248,7 @@ public class GuiIngameMenu extends GuiScreen
         fontRenderer = Dragonfly.getFontManager().getRegular();
         fontRenderer.drawString(aboutString, 5, 5, Color.WHITE.getRGB(), true);
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        stage.render();
     }
 
     @Override
