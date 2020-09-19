@@ -66,6 +66,7 @@ class TaskbarAppWidget(
             size = this@TaskbarAppWidget.width + shadowOffset * 2
             color = backgroundColor.altered { alphaDouble = 0.9 }
             smooth = true
+            isVisible = width > 0.0
         }
 
         "background"<FilledCircle> {
@@ -79,8 +80,8 @@ class TaskbarAppWidget(
         "icon"<Image> {
             x = this@TaskbarAppWidget.x + iconMargin
             y = this@TaskbarAppWidget.y + iconMargin
-            width = this@TaskbarAppWidget.width - iconMargin * 2
-            height = this@TaskbarAppWidget.height - iconMargin * 2
+            width = (this@TaskbarAppWidget.width - iconMargin * 2).coerceAtLeast(0.0)
+            height = (this@TaskbarAppWidget.height - iconMargin * 2).coerceAtLeast(0.0)
             resourceLocation = app.resourceLocation
         }
 

@@ -7,7 +7,15 @@ import kotlin.math.pow
  *
  * Provides easing functions that go back before starting to increase their value.
  */
-object EaseBack {
+object EaseBack : BackEasing(1.70158) {
+
+    /**
+     * Generates a new [BackEasing] instance with the given [factor].
+     */
+    fun withFactor(factor: Double) = BackEasing(factor)
+}
+
+open class BackEasing(val factor: Double) {
     /**
      * ## Ease In Back
      * Calculates the easing the following way:
@@ -19,9 +27,8 @@ object EaseBack {
      *
      * [Visit on easings.net](https://easings.net/#easeInBack)
      */
-    @JvmStatic
-    val IN: (Double) -> Double = {
-        val c1 = 1.70158
+    open val IN: (Double) -> Double = {
+        val c1 = factor
         val c3 = c1 + 1
 
         c3 * it * it * it - c1 * it * it
@@ -38,9 +45,8 @@ object EaseBack {
      *
      * [Visit on easings.net](https://easings.net/#easeOutBack)
      */
-    @JvmStatic
-    val OUT: (Double) -> Double = {
-        val c1 = 1.70158
+    open val OUT: (Double) -> Double = {
+        val c1 = factor
         val c3 = c1 + 1
 
         1 + c3 * (it - 1).pow(3) + c1 * (it - 1).pow(2)
@@ -59,9 +65,8 @@ object EaseBack {
      *
      * [Visit on easings.net](https://easings.net/#easeInOutBack)
      */
-    @JvmStatic
-    val IN_OUT: (Double) -> Double = {
-        val c1 = 1.70158
+    open val IN_OUT: (Double) -> Double = {
+        val c1 = factor
         val c2 = c1 * 1.525
 
         if (it < 0.5) ((2 * it).pow(2) * ((c2 + 1) * 2 * it - c2)) / 2
