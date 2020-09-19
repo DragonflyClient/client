@@ -21,6 +21,9 @@ import net.minecraft.util.ResourceLocation
 
 object Taskbar {
 
+    /**
+     * All available taskbar applications.
+     */
     private val taskbarApps = listOf(
         DragonflySettingsApp,
         ModManagerApp,
@@ -30,6 +33,9 @@ object Taskbar {
         AboutDragonflyApp
     )
 
+    /**
+     * Adds the taskbar to the stage of the given [gui] screen using its default fade in animation.
+     */
     fun initializeTaskbar(gui: GuiScreen): Unit = with(gui) {
         val easing = EaseBack.IN_OUT
         val duration = 110
