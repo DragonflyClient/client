@@ -65,7 +65,7 @@ class SidebarManager(
     /**
      * All entries that are shown by this sidebar by the [show] function
      */
-    private var entries = mutableListOf<SidebarEntry>()
+    var entries = mutableListOf<SidebarEntry>()
 
     /**
      * The scrollbar for this sidebar that is activated if it contains too much entries
@@ -154,7 +154,7 @@ class SidebarManager(
      */
     fun mouseClicked(data: MouseData) {
         if (data in stage["sidebar-background"] as? Rectangle && data !in stage["back-navigation"] as? BackNavigation) {
-            selected = entries.firstOrNull { data in it }?.widgetId
+            entries.filter { it.isSelectable }.firstOrNull { data in it }?.widgetId?.let { selected = it }
         }
     }
 

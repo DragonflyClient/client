@@ -175,7 +175,8 @@ public class MCGeForceHelper {
                 @Override
                 public void run() {
                     LogManager.getLogger().info("Saving Highlight...");
-                    instance.setVideoHighlight(handlePtr, highlightType.getId(), "mcdragonfly", -(NvidiaHighlightsMod.INSTANCE.getLength() * 1000), 1000);
+                    instance.setVideoHighlight(handlePtr, highlightType.getId(), "mcdragonfly",
+                            (int) -(NvidiaHighlightsMod.INSTANCE.getLength() * 1000), 1000);
                     queryAmountOfHighlights();
                 }
             }, 3 * 1000);

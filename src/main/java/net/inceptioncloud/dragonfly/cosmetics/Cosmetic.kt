@@ -1,10 +1,18 @@
 package net.inceptioncloud.dragonfly.cosmetics
 
 import com.google.gson.JsonObject
+import net.inceptioncloud.dragonfly.controls.ControlElement
+import net.inceptioncloud.dragonfly.cosmetics.logic.*
+import net.inceptioncloud.dragonfly.options.OptionKey
+import net.inceptioncloud.dragonfly.options.PseudoOptionKey
+import net.inceptioncloud.dragonfly.utils.Either
 import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.entity.layers.LayerRenderer
 import net.minecraft.entity.player.EntityPlayer
+import org.apache.logging.log4j.LogManager
+import kotlin.reflect.*
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * Represents a cosmetic item.
@@ -15,7 +23,7 @@ import net.minecraft.entity.player.EntityPlayer
  *
  * @param cosmeticId The unique id to identify the cosmetic item.
  */
-open class Cosmetic(
+abstract class Cosmetic<ConfigType : CosmeticConfig>(
     val cosmeticId: Int
 ) : LayerRenderer<AbstractClientPlayer> {
 
@@ -30,6 +38,29 @@ open class Cosmetic(
      * and may be null shortly after the client launch.
      */
     var databaseModel: JsonObject? = null
+
+    /**
+     * The class reference to the [ConfigType].
+     */
+    abstract val configClass: KClass<ConfigType>
+
+    /**
+     * Function to be implemented for generating controls to customize the cosmetic item.
+     */
+    abstract fun generateControls(config: ConfigType): Collection<ControlElement<*>>
+
+    /**
+     * Convenience function for generating controls with the given [cosmeticData].
+     */
+    fun generateControls(cosmeticData: CosmeticData): Collection<ControlElement<*>>
+            = generateControls(parseConfig(cosmeticData))
+
+    /**
+     * Parses the given [data] as the [ConfigType].
+     */
+    fun parseConfig(data: CosmeticData): ConfigType {
+        return data.parseConfigClass(configClass)
+    }
 
     /**
      * Renders the cosmetic for the given [player].
@@ -53,21 +84,27 @@ open class Cosmetic(
     }
 
     override fun doRenderLayer(
-        player: AbstractClientPlayer?,
-        limbSwing: Float,
-        limbSwingAmount: Float,
-        partialTicks: Float,
-        ageInTicks: Float,
-        headYaw: Float,
-        headPitch: Float,
-        scale: Float
+        player: AbstractClientPlayer?, limbSwing: Float, limbSwingAmount: Float, partialTicks: Float, ageInTicks: Float,
+        headYaw: Float, headPitch: Float, scale: Float
     ) {
         if (player != null && player.hasPlayerInfo() && !player.isInvisible) {
-            render(
-                player, CosmeticRenderProperties(limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch, scale, partialTicks)
-            )
+            render(player, CosmeticRenderProperties(limbSwing, limbSwingAmount, ageInTicks, headYaw, headPitch, scale, partialTicks))
         }
     }
 
     override fun shouldCombineTextures(): Boolean = false
+
+    inline fun <reified T> KMutableProperty0<T>.pseudo(): Either<KMutableProperty0<out T>, OptionKey<T>> {
+        isAccessible = true
+        val delegate = getDelegate() as ConfigProperty<*>
+        val default = delegate.defaultValue as T
+
+        return Either(
+            b = PseudoOptionKey.new<T>()
+                .set(setter)
+                .get(getter)
+                .defaultValue { default }
+                .build()
+        )
+    }
 }

@@ -32,13 +32,13 @@ data class CosmeticData(
     val config: JsonObject,
     val cosmeticId: Int,
     val cosmeticQualifier: String,
-    val enabled: Boolean,
+    var enabled: Boolean,
     val minecraft: String
 ) {
     /**
      * Cache for already converted [config]s.
      */
-    var cache: MutableMap<KClass<*>, Any>? = null
+    var cache: MutableMap<KClass<*>, CosmeticConfig>? = null
 
     /**
      * Parses the [config] as a subtype of [CosmeticConfig] by passing the [config]
@@ -46,6 +46,21 @@ data class CosmeticData(
      */
     inline fun <reified T : CosmeticConfig> parseConfig(): T {
         val c = T::class
+        if (cache == null) {
+            cache = mutableMapOf()
+        } else if (cache!!.containsKey(c)) {
+            return cache!![c] as T
+        }
+
+        return c.constructors.first().call(config)
+    }
+
+    @Deprecated(
+        "Performs an unchecked cast to T. Use the parseConfig function with a reified type parameter where possible!",
+        ReplaceWith("data.parseConfig<T>()", "net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData"),
+        DeprecationLevel.WARNING
+    )
+    fun <T : CosmeticConfig> parseConfigClass(c: KClass<T>): T {
         if (cache == null) {
             cache = mutableMapOf()
         } else if (cache!!.containsKey(c)) {

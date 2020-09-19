@@ -3,17 +3,19 @@ package net.inceptioncloud.dragonfly.cosmetics.logic
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.accountmanager.Account
 import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWings
 import net.inceptioncloud.dragonfly.cosmetics.Cosmetic
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.utils.ListParameterizedType
 import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.entity.player.EntityPlayer
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.apache.logging.log4j.LogManager
 import java.util.*
 import java.util.function.Consumer
+import kotlin.collections.ArrayList
 
 /**
  * Handles the communication between the client and the server for loading
@@ -26,13 +28,18 @@ object CosmeticsManager {
      * to add it to this list in order to make it available.
      */
     @JvmStatic
-    var cosmetics = listOf(CosmeticWings)
+    var cosmetics = listOf<Cosmetic<out CosmeticConfig>>(CosmeticWings)
 
     /**
      * Contains the database models provided by [loadDatabaseModels]. This variable is computed when
      * the Dragonfly client starts.
      */
     var databaseModels = loadDatabaseModels()
+
+    /**
+     * Stores the cosmetics for the currently authenticated Dragonfly account.
+     */
+    var dragonflyAccountCosmetics: CosmeticDataList? = null
 
     /**
      * A cache for already fetched cosmetic items saved per user. This cache can be cleared using
@@ -96,8 +103,17 @@ object CosmeticsManager {
         val uuid = player.gameProfile.id ?: return
         if (cache.containsKey(uuid)) return callback.accept(cache[uuid])
 
+        if (Dragonfly.account?.linkedMinecraftAccounts?.contains(uuid.toString()) == true) {
+            val cosmetics = dragonflyAccountCosmetics
+                ?.filter { it.minecraft == uuid.toString() }
+                ?.toCollection(ArrayList())
+                ?.let { CosmeticDataList(it) }
+            cache[uuid] = cosmetics
+            callback.accept(cosmetics)
+        }
+
         GlobalScope.launch(Dispatchers.IO) {
-            val cosmetics = fetchCosmetics(player)
+            val cosmetics = fetchCosmetics(uuid)
             cache[uuid] = cosmetics
             callback.accept(cosmetics)
         }
@@ -122,6 +138,7 @@ object CosmeticsManager {
     fun refreshCosmetics(uuid: UUID? = null) {
         GlobalScope.launch {
             databaseModels = loadDatabaseModels()
+            dragonflyAccountCosmetics = fetchDragonflyCosmetics()
             mc.addScheduledTask {
                 val targetEntities = if (uuid != null) {
                     mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id == uuid }
@@ -137,17 +154,15 @@ object CosmeticsManager {
     }
 
     /**
-     * Fetches the cosmetics of the given [player] from the Dragonfly servers. This function
+     * Fetches the cosmetics of the given [uuid] from the Dragonfly servers. This function
      * will return a list of all [cosmetics][CosmeticData]. If an error occurred during the
      * request (missing internet connection, account not linked) this function will return
      * null.
      */
-    private fun fetchCosmetics(player: EntityPlayer): CosmeticDataList? {
-        val id = player.gameProfile.id
-
+    fun fetchCosmetics(uuid: UUID): CosmeticDataList? {
         try {
             val request = Request.Builder()
-                .url("https://api.playdragonfly.net/v1/cosmetics/find?uuid=$id")
+                .url("https://api.playdragonfly.net/v1/cosmetics/find?minecraft=$uuid")
                 .build()
             val response = Dragonfly.httpClient.newCall(request).execute()
                 .use { response -> response.body!!.string() }
@@ -163,5 +178,81 @@ object CosmeticsManager {
         }
 
         return null
+    }
+
+    /**
+     * Fetches the cosmetics associated with the currently logged in Dragonfly account.
+     */
+    fun fetchDragonflyCosmetics(dragonflyUUID: String? = Dragonfly.account?.uuid): CosmeticDataList? {
+        try {
+            val request = Request.Builder()
+                .url("https://api.playdragonfly.net/v1/cosmetics/find?dragonfly=${dragonflyUUID ?: return null}")
+                .build()
+            val response = Dragonfly.httpClient.newCall(request).execute()
+                .use { response -> response.body!!.string() }
+                .let { Dragonfly.gson.fromJson(it, JsonObject::class.java).asJsonObject }
+
+            if (response.get("success").asBoolean) {
+                val cosmetics = response.getAsJsonArray("cosmetics")
+                val typeToken = ListParameterizedType(CosmeticData::class.java)
+                return CosmeticDataList(Dragonfly.gson.fromJson(cosmetics, typeToken))
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
+    fun configureCosmetic(cosmeticQualifier: String, config: JsonObject): Boolean {
+        try {
+            val token = Dragonfly.account?.token ?: return false
+            val request = Request.Builder()
+                .header("Authorization", "Bearer $token")
+                .url("https://api.playdragonfly.net/v1/cosmetics/configure")
+                .post(JsonObject().apply {
+                    addProperty("cosmeticQualifier", cosmeticQualifier)
+                    add("config", config)
+                }.toString().toRequestBody("application/json".toMediaType()))
+                .build()
+            val response = Dragonfly.httpClient.newCall(request).execute()
+                .takeIf { it.code == 200 }
+                ?.use { response -> response.body!!.string() }
+                ?.let { Dragonfly.gson.fromJson(it, JsonObject::class.java).asJsonObject }
+
+            if (response?.get("success")?.asBoolean == true) {
+                return true
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+
+        return false
+    }
+
+    fun toggleCosmetic(cosmeticQualifier: String, enable: Boolean): Boolean {
+        try {
+            val token = Dragonfly.account?.token ?: return false
+            val request = Request.Builder()
+                .header("Authorization", "Bearer $token")
+                .url("https://api.playdragonfly.net/v1/cosmetics/toggle")
+                .post(JsonObject().apply {
+                    addProperty("cosmeticQualifier", cosmeticQualifier)
+                    addProperty("enable", enable)
+                }.toString().toRequestBody("application/json".toMediaType()))
+                .build()
+            val response = Dragonfly.httpClient.newCall(request).execute()
+                .takeIf { it.code == 200 }
+                ?.use { response -> response.body!!.string() }
+                ?.let { Dragonfly.gson.fromJson(it, JsonObject::class.java).asJsonObject }
+
+            if (response?.get("success")?.asBoolean == true) {
+                return true
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+
+        return false
     }
 }

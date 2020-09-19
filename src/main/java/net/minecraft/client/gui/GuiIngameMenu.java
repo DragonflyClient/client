@@ -11,6 +11,7 @@ import net.inceptioncloud.dragonfly.transition.supplier.*;
 import net.inceptioncloud.dragonfly.ui.components.button.*;
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils;
 import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
+import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar;
 import net.minecraft.client.gui.achievement.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.realms.RealmsBridge;
@@ -46,6 +47,11 @@ public class GuiIngameMenu extends GuiScreen
     private SmoothDoubleTransition pushOffset;
 
     private final String aboutString = "About Dragonfly";
+
+    @Override
+    public boolean isNativeResolution() {
+        return true;
+    }
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
@@ -110,6 +116,8 @@ public class GuiIngameMenu extends GuiScreen
         this.buttonList.add(new ConfirmationButton(this, 1, this.width / 2 - 100, this.height / 4 + 132, this.mc.isIntegratedServerRunning() ? "Save and Quit to Title" : "Disconnect"));
 
         this.buttonList.add(new ImageButton(99, 5, this.height - 15 - 5, 15, 15, new ResourceLocation("dragonflyres/icons/sync.png")));
+
+        Taskbar.INSTANCE.initializeTaskbar(this);
     }
 
     /**
@@ -239,6 +247,8 @@ public class GuiIngameMenu extends GuiScreen
         // About
         fontRenderer = Dragonfly.getFontManager().getRegular();
         fontRenderer.drawString(aboutString, 5, 5, Color.WHITE.getRGB(), true);
+
+        stage.render();
     }
 
     @Override

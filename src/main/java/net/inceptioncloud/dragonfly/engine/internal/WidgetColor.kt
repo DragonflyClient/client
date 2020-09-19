@@ -59,7 +59,7 @@ class WidgetColor {
             return cycle / 200.0f
         }
 
-        private fun JsonObject.getOrNull(key: String) = if (has(key)) get(key) else null
+        private fun JsonObject.getOrNull(key: String) = if (has(key)) get(key)?.takeIf { !it.isJsonNull } else null
     }
 
     /**
@@ -258,6 +258,16 @@ class WidgetColor {
             (b / factor).toInt().coerceAtMost(255),
             alpha)
     }
+
+    /**
+     * Clone of the [Color.darker] function with a custom [factor].
+     */
+    fun darker(factor: Double) = WidgetColor(
+        (red * factor).toInt().coerceAtLeast(0),
+        (red * factor).toInt().coerceAtLeast(0),
+        (red * factor).toInt().coerceAtLeast(0),
+        alpha
+    )
 
     /**
      * Calculates the contrast value between this and the [other] color.

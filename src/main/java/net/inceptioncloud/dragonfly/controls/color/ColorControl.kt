@@ -5,14 +5,16 @@ import net.inceptioncloud.dragonfly.controls.OptionControlElement
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
+import net.inceptioncloud.dragonfly.utils.Either
 import kotlin.reflect.KMutableProperty0
 
 class ColorControl(
-    property: KMutableProperty0<out WidgetColor>,
+    either: Either<KMutableProperty0<out WidgetColor>, OptionKey<WidgetColor>>,
     name: String,
     description: String? = null
-) : OptionControlElement<WidgetColor>(property, name, description) {
+) : OptionControlElement<WidgetColor>(either, name, description) {
 
     override fun controlAssemble(): Map<String, Widget<*>> = mapOf(
         "color-preview" to ColorPreview(),

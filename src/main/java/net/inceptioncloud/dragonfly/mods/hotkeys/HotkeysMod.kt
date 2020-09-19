@@ -19,7 +19,7 @@ object HotkeysMod : DragonflyMod("Hotkeys") {
 
     override fun publishControls(): List<ControlElement<*>> = buildList {
         add(TitleControl("General"))
-        add(BooleanControl(HotkeysMod::enabled, "Enable mod"))
+        add(BooleanControl(!HotkeysMod::enabled, "Enable mod"))
         add(ButtonControl("Add Hotkey", "", "Add", ::openAddPopup))
         add(TitleControl("Hotkeys", "List of all set hotkeys."))
 

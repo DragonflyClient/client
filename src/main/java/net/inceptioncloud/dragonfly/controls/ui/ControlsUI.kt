@@ -19,13 +19,14 @@ import kotlin.math.min
 
 abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
 
-    protected val controlsManager = ControlsManager(
+    protected open val controlsManager = ControlsManager(
         guiScreen = this,
         originY = 40.0,
+        overflowY = 40.0,
         margin = 15.0
     )
 
-    protected val sidebarManager = SidebarManager(
+    protected open val sidebarManager = SidebarManager(
         guiScreen = this,
         x = 0.0,
         y = 0.0,
@@ -40,9 +41,7 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
         }
     }
 
-    override var customScaleFactor: () -> Double? = {
-        min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0)
-    }
+    override var isNativeResolution: Boolean = true
 
     override fun initGui() {
         +Rectangle {
@@ -111,6 +110,7 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
         placeholderText?.isVisible = controls == null
 
         if (!controls.isNullOrEmpty()) {
+            controlsManager.scrollbarX = scrollbarX
             controlsManager.originX = controlsX
             controlsManager.width = controlsWidth
             controlsManager.show(controls)
@@ -152,6 +152,8 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
     open val placeholderImage: ResourceLocation? = null
 
     open val placeholderText: String? = null
+
+    open val scrollbarX: Double? = null
 
     abstract fun produceSidebar(): Collection<SidebarEntry>
 

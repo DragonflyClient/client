@@ -99,17 +99,18 @@ object HotkeysController {
             try {
                 val typeToken = ListParameterizedType(HotkeyData::class.java)
                 repository = HotkeyRepository(gson.fromJson(content, typeToken))
-                hotkeys = repository.mapNotNull {
+                hotkeys = repository.mapNotNull { data ->
                     try {
-                        val hotkeyClass = it.type.hotkeyClass
-                        val configClass = it.type.configClass
-                        val config = gson.fromJson(it.config, configClass.java)
-                        hotkeyClass.primaryConstructor!!.call(it, config) as Hotkey
+                        val hotkeyClass = data.type.hotkeyClass
+                        val configClass = data.type.configClass
+                        val config = gson.fromJson(data.config, configClass.java)
+                        hotkeyClass.primaryConstructor!!.call(data, config) as Hotkey
                     } catch (e: Throwable) {
                         e.printStackTrace()
                         null
                     }
                 }.toMutableList()
+                return
             } catch (e: Throwable) {
                 e.printStackTrace()
             }

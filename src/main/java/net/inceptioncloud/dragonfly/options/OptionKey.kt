@@ -1,7 +1,8 @@
 package net.inceptioncloud.dragonfly.options
 
-import javafx.beans.property.SimpleObjectProperty
 import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
+
+typealias ChangeListener<T> = (oldValue: T, newValue: T) -> Unit
 
 /**
  * Represents a value that is set in the options file for a specific key.
@@ -12,34 +13,52 @@ import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
  * @param defaultValue Supplies the default value
  * @param optionsBase The options base instance to which the key's values are saved.
  */
-class OptionKey<T>(
+open class OptionKey<T>(
     val typeClass: Class<T>,
     val key: String,
     val validator: (T) -> Boolean,
     val defaultValue: () -> T,
     val optionsBase: OptionsBase = DragonflyOptions
 ) {
-
     /**
-     * A simple object property that can be used to observe the option key but
-     * has no influence on the value.
+     * Contains all listeners that have been added to this option key that are notified
+     * when its value changes.
      */
-    val objectProperty = SimpleObjectProperty<T>(optionsBase.getValue(this))
+    protected val listeners = mutableListOf<ChangeListener<T>>()
 
     /**
      * @see OptionsBase.getValue
      */
-    fun get(): T {
+    open fun get(): T {
         return optionsBase.getValue(this)
     }
 
     /**
      * @see OptionsBase.setValue
      */
-    fun set(value: T): Boolean {
+    open fun set(value: T): Boolean {
         val success = optionsBase.setValue(this, value)
-        objectProperty.set(value)
+        listeners.forEach { it(value, value) }
         return success
+    }
+
+    /**
+     * Returns the default value of the option key.
+     */
+    open fun getDefaultValue() = defaultValue()
+
+    /**
+     * Adds a new [listener] to the option key.
+     */
+    fun addListener(listener: ChangeListener<T>) {
+        listeners.add(listener)
+    }
+
+    /**
+     * Removes a [listener] from the option key.
+     */
+    fun removeListener(listener: ChangeListener<T>) {
+        listeners.remove(listener)
     }
 
     companion object {

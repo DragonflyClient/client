@@ -10,7 +10,7 @@ object EnhancedGameExperienceMod : DragonflyMod("Enhanced Game Experience") {
     // enhancements
     @JvmStatic var tcpNoDelay by option(true)
     @JvmStatic var scaleResourcePackIcons by option(true)
-    var maximumPackIconSize by option(64) { it in 1..128 }
+    var maximumPackIconSize by option(64.0) { it in 1.0..128.0 }
     var disableExplicitGC by option(false)
 
     // bug fixes
@@ -35,6 +35,7 @@ object EnhancedGameExperienceMod : DragonflyMod("Enhanced Game Experience") {
 
         LogManager.getLogger().info("Scaling resource pack icon from ${icon.width}x to ${maximumPackIconSize}x")
 
+        val maximumPackIconSize = maximumPackIconSize.toInt()
         val smallImage = BufferedImage(maximumPackIconSize, maximumPackIconSize, BufferedImage.TYPE_INT_ARGB)
         val graphics = smallImage.graphics
 
@@ -47,17 +48,17 @@ object EnhancedGameExperienceMod : DragonflyMod("Enhanced Game Experience") {
     override fun publishControls() = listOf(
         TitleControl("Enhancements",
             "Customize enhancements that have been made to the Minecraft game in order to improve your game experience"),
-        BooleanControl(::tcpNoDelay, "TCP no delay", "Improve your network connection speed by enabling this option"),
-        BooleanControl(::scaleResourcePackIcons, "Scale resource pack icons",
+        BooleanControl(!::tcpNoDelay, "TCP no delay", "Improve your network connection speed by enabling this option"),
+        BooleanControl(!::scaleResourcePackIcons, "Scale resource pack icons",
             "Decreases the size of resource pack icons to increase your performance and free memory"),
         NumberControl(::maximumPackIconSize, "Maximum pack icon size",
             "The maximum size that a resource pack icon is allowed to have, icons above this size are scaled down", min = 1.0, max = 128.0,
             decimalPlaces = 0, formatter = { "${it}x$it" }),
-        BooleanControl(::disableExplicitGC, "Disable explicit garbage collection",
+        BooleanControl(!::disableExplicitGC, "Disable explicit garbage collection",
             "Prevents Minecraft from explicitly calling the JVM garbage collector to decrease world load time"),
         TitleControl("Bug fixes", "Some issues that exist in Minecraft have been fixed by Dragonfly"),
-        BooleanControl(::fixPlayerRotation, "Fix player rotation (crosshair sync)",
+        BooleanControl(!::fixPlayerRotation, "Fix player rotation (crosshair sync)",
             "Synchronizes the player look direction with their actual rotation and crosshair position which enhances the pvp experience"),
-        BooleanControl(::fixRidingHand, "Fix hand while riding", "Fixes the right hand of the player which can look weird when the player is riding")
+        BooleanControl(!::fixRidingHand, "Fix hand while riding", "Fixes the right hand of the player which can look weird when the player is riding")
     )
 }

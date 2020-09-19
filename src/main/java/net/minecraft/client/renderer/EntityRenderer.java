@@ -1890,7 +1890,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
     public void setupOverlayRendering (boolean useCustomScale)
     {
         if (mc.currentScreen != null && useCustomScale) {
-            Double customScaleFactor = mc.currentScreen.getCustomScaleFactor().invoke();
+            Double customScaleFactor = mc.currentScreen.getCustomScaleFactor();
             setupOverlayRendering(customScaleFactor);
         } else {
             setupOverlayRendering(null);

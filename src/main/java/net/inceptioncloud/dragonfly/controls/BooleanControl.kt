@@ -8,14 +8,16 @@ import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuint
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.options.OptionKey
+import net.inceptioncloud.dragonfly.utils.Either
 import kotlin.reflect.KMutableProperty0
 
 class BooleanControl(
-    property: KMutableProperty0<Boolean>,
+    either: Either<KMutableProperty0<out Boolean>, OptionKey<Boolean>>,
     name: String,
     description: String? = null,
     var changeValue: (() -> Boolean)? = { true }
-) : OptionControlElement<Boolean>(property, name, description) {
+) : OptionControlElement<Boolean>(either, name, description) {
 
     val switchWidth = 50.0
     val switchHeight = 24.0
@@ -32,7 +34,7 @@ class BooleanControl(
         val background = "switch-background"<RoundedRectangle> {
             width = switchWidth
             height = switchHeight
-            x = this@BooleanControl.x + this@BooleanControl.width - width
+            x = controlX + controlWidth - width
             y = this@BooleanControl.y + (this@BooleanControl.height - height) / 2.0
             arc = height / 2.0
             color = computeColor()
@@ -63,6 +65,7 @@ class BooleanControl(
                 optionKey.set(!optionKey.get())
             }
         }
+        super.handleMousePress(data)
     }
 
     private fun computeColor() =

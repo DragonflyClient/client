@@ -19,7 +19,7 @@ class OptionDelegate<T>(
     private val validator: (T) -> Boolean,
     private val defaultValue: () -> T,
     private val optionsBase: OptionsBase
-) : ReadWriteProperty<DragonflyMod, T> {
+) : ReadWriteProperty<Any?, T> {
 
     /**
      * The option key that is created by the delegate
@@ -29,14 +29,14 @@ class OptionDelegate<T>(
     /**
      * Retrieves the value from the [optionKey] ([OptionKey.get])
      */
-    override fun getValue(thisRef: DragonflyMod, property: KProperty<*>): T {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return optionKey.get()
     }
 
     /**
      * Sets the value for the [optionKey] ([OptionKey.set])
      */
-    override fun setValue(thisRef: DragonflyMod, property: KProperty<*>, value: T) {
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         optionKey.set(value)
     }
 
@@ -44,7 +44,7 @@ class OptionDelegate<T>(
      * Called when the delegate is provided to set initialize the [optionKey].
      */
     @Suppress("UNCHECKED_CAST")
-    operator fun provideDelegate(thisRef: DragonflyMod, prop: KProperty<*>): OptionDelegate<T> {
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): OptionDelegate<T> {
         val typeClass = prop.returnType.jvmErasure.java
         optionKey = OptionKey(
             typeClass as? Class<T> ?: error("Invalid property field type!"),

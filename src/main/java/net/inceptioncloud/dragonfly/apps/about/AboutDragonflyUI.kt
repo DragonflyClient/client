@@ -22,7 +22,7 @@ import net.minecraft.util.ResourceLocation
  */
 class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
 
-    override var customScaleFactor: () -> Double? = { java.lang.Double.min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
+    override var isNativeResolution: Boolean = true
 
     override fun initGui() {
         +Rectangle {

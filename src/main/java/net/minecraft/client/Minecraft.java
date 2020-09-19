@@ -911,6 +911,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      */
     public void displayGuiScreen(GuiScreen guiScreenIn) {
         if (guiScreenIn == null && this.theWorld == null) {
+            if (currentScreen instanceof MainMenuUI) return;
             guiScreenIn = new MainMenuUI();
         } else if (guiScreenIn == null && this.thePlayer.getHealth() <= 0.0F) {
             guiScreenIn = new GuiGameOver();

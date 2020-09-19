@@ -11,6 +11,7 @@ import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsApp
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseBack
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.mc
@@ -20,6 +21,9 @@ import net.minecraft.util.ResourceLocation
 
 object Taskbar {
 
+    /**
+     * All available taskbar applications.
+     */
     private val taskbarApps = listOf(
         DragonflySettingsApp,
         ModManagerApp,
@@ -29,7 +33,13 @@ object Taskbar {
         AboutDragonflyApp
     )
 
+    /**
+     * Adds the taskbar to the stage of the given [gui] screen using its default fade in animation.
+     */
     fun initializeTaskbar(gui: GuiScreen): Unit = with(gui) {
+        val easing = EaseBack.IN_OUT
+        val duration = 110
+
         val size = 55.0
         val space = 20.0
         val taskbarHeight = 80.0
@@ -37,19 +47,30 @@ object Taskbar {
 
         +Rectangle {
             x = 0.0
-            y = this@with.height - taskbarHeight
+            y = this@with.height.toDouble()
             width = this@with.width.toDouble()
-            height = taskbarHeight
+            height = 0.0
             color = DragonflyPalette.accentNormal
+
+            morph(
+                duration, easing,
+                Rectangle::height to taskbarHeight,
+                Rectangle::y to this@with.height - taskbarHeight
+            )?.start()
         } id "taskbar-background"
 
         val shadow = +Image {
             x = exitOffset + 3.0
-            y = this@with.height - taskbarHeight + exitOffset + 3.0
+            y = this@with.height.toDouble() + 3.0
             height = taskbarHeight - exitOffset * 2
             width = height
             resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/exit.png")
             color = WidgetColor(0, 0, 0, 50)
+
+            morph(
+                duration, easing,
+                Image::y to this@with.height - taskbarHeight + exitOffset + 3.0
+            )?.start()
         } id "taskbar-exit-game-shadow"
 
         +Image {
@@ -69,17 +90,28 @@ object Taskbar {
                     morph(40, EaseQuad.IN_OUT, Image::color to WidgetColor(255, 255, 255, 200))?.start()
                 }
             }
+
+            morph(
+                duration, easing,
+                Image::y to this@with.height - taskbarHeight + exitOffset
+            )?.start()
         } id "taskbar-exit-game"
 
         var currentX = width / 2.0 - (taskbarApps.size * size + (taskbarApps.size - 1) * space) / 2.0
 
         for (app in taskbarApps) {
-            +TaskbarAppWidget(app) {
+            val appWidget = +TaskbarAppWidget(app) {
                 x = currentX
                 y = this@with.height - taskbarHeight + (taskbarHeight - size) / 2.0
                 width = size
                 height = size
             } id "app-${app.name.toLowerCase().replace(" ", "-")}"
+
+            appWidget.y = this@with.height.toDouble()
+            appWidget.morph(
+                duration, easing,
+                TaskbarAppWidget::y to this@with.height - taskbarHeight + (taskbarHeight - size) / 2.0
+            )?.start()
 
             currentX += size + space
         }

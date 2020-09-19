@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.utils.Keep
+import org.apache.logging.log4j.LogManager
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -57,16 +58,29 @@ abstract class ConfigProperty<T>(
      */
     private var value: T? = null
 
+    /**
+     * The cosmetic configuration that this property is part of.
+     */
+    var configReference: CosmeticConfig? = null
+
     override fun setValue(thisRef: CosmeticConfig, property: KProperty<*>, value: T) {
-        if (validator(value))
+        if (configReference == null) configReference = thisRef
+
+        if (validator(value)) {
             this.value = value
+            jsonObject.add(property.name, Dragonfly.gson.toJsonTree(value))
+        }
     }
 
     override fun getValue(thisRef: CosmeticConfig, property: KProperty<*>): T {
+        if (configReference == null) configReference = thisRef
         return value!!
     }
 
     operator fun provideDelegate(thisRef: CosmeticConfig, property: KProperty<*>): ConfigProperty<T> {
+        if (configReference == null) configReference = thisRef
+        value = defaultValue
+
         try {
             if (jsonObject.has(property.name)) {
                 val given = convert(jsonObject[property.name])
@@ -77,7 +91,6 @@ abstract class ConfigProperty<T>(
             }
         } catch (ignored: Throwable) {}
 
-        value = defaultValue
         return this
     }
 

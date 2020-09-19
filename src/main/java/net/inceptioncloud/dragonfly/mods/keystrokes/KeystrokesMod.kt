@@ -1,12 +1,11 @@
 package net.inceptioncloud.dragonfly.mods.keystrokes
 
-import javafx.beans.value.ChangeListener
 import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.color.ColorControl
-import javafx.beans.value.ObservableValue
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
+import net.inceptioncloud.dragonfly.options.ChangeListener
 import net.inceptioncloud.dragonfly.utils.Keep
 import net.minecraft.client.Minecraft
 import kotlin.reflect.jvm.isAccessible
@@ -30,25 +29,25 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
 
         val textColorAcProp = KeystrokesMod::textActiveColor
         textColorAcProp.isAccessible = true
-        (textColorAcProp.getDelegate() as OptionDelegate<*>).optionKey.objectProperty.addListener(listener)
+        (textColorAcProp.getDelegate() as OptionDelegate<*>).optionKey.addListener(listener)
 
         val textColorInProp = KeystrokesMod::textInactiveColor
         textColorInProp.isAccessible = true
-        (textColorInProp.getDelegate() as OptionDelegate<*>).optionKey.objectProperty.addListener(listener)
+        (textColorInProp.getDelegate() as OptionDelegate<*>).optionKey.addListener(listener)
 
         val bgColorAcProp = KeystrokesMod::bgActiveColor
         bgColorAcProp.isAccessible = true
-        (bgColorAcProp.getDelegate() as OptionDelegate<*>).optionKey.objectProperty.addListener(listener)
+        (bgColorAcProp.getDelegate() as OptionDelegate<*>).optionKey.addListener(listener)
 
         val bgColorInProp = KeystrokesMod::bgInactiveColor
         bgColorInProp.isAccessible = true
-        (bgColorInProp.getDelegate() as OptionDelegate<*>).optionKey.objectProperty.addListener(listener)
+        (bgColorInProp.getDelegate() as OptionDelegate<*>).optionKey.addListener(listener)
 
     }
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
-        BooleanControl(KeystrokesMod::enabled, "Enable mod"),
+        BooleanControl(!KeystrokesMod::enabled, "Enable mod"),
         TitleControl("Appearance", "Customize the appearance of the keystrokes mod on your screen"),
         NumberControl(
             KeystrokesMod::scale,
@@ -79,22 +78,18 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
         ),
         DropdownElement(KeystrokesMod::position, "Position", "Position of the keystroke boxes"),
         TitleControl("Colors (pressed)", "Set the colors of the keystroke box if the corresponding key/button is pressed"),
-        ColorControl(KeystrokesMod::textActiveColor, "Text"),
-        ColorControl(KeystrokesMod::bgActiveColor, "Background"),
+        ColorControl(!KeystrokesMod::textActiveColor, "Text"),
+        ColorControl(!KeystrokesMod::bgActiveColor, "Background"),
         TitleControl("Colors (released)", "Set the colors of the keystroke box if the corresponding key/button is not pressed"),
-        ColorControl(KeystrokesMod::textInactiveColor, "Text"),
-        ColorControl(KeystrokesMod::bgInactiveColor, "Background")
+        ColorControl(!KeystrokesMod::textInactiveColor, "Text"),
+        ColorControl(!KeystrokesMod::bgInactiveColor, "Background")
     )
 
 }
 
 @Keep
 private class KeystrokesModListener : ChangeListener<Any?> {
-    override fun changed(observable: ObservableValue<out Any?>?, oldValue: Any?, newValue: Any?) {
-        if (oldValue is WidgetColor && newValue is WidgetColor) {
-            if (oldValue != newValue) {
-                Minecraft.getMinecraft().ingameGUI.initKeystrokes()
-            }
-        }
+    override fun invoke(oldValue: Any?, newValue: Any?) {
+        Minecraft.getMinecraft().ingameGUI.initKeystrokes()
     }
 }

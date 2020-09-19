@@ -24,7 +24,7 @@ class MainMenuUI : GuiScreen() {
 
     override var backgroundImage: SizedImage? = splashImage
 
-    override var customScaleFactor: () -> Double? = { min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) }
+    override var isNativeResolution: Boolean = true
 
     override fun initGui() {
         val playerSkullTexture = runBlocking {
