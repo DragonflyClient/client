@@ -33,7 +33,7 @@ data class CosmeticData(
     val cosmeticId: Int,
     val cosmeticQualifier: String,
     var enabled: Boolean,
-    val minecraft: String
+    val minecraft: String?
 ) {
     /**
      * Cache for already converted [config]s.

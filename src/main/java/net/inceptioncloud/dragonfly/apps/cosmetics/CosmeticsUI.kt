@@ -53,30 +53,47 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
 
     override fun produceSidebar(): Collection<SidebarEntry> {
         val cosmetics = cosmetics ?: return listOf()
-        val accounts = cosmetics.groupBy { it.minecraft }
+        val accounts = cosmetics
+            .groupBy { it.minecraft }
             .toSortedMap(
-                Comparator { o1, _ -> if (mc.session?.profile?.id.toString() == o1) -1 else 1 }
+                Comparator { _, o2 ->
+                    when (o2) {
+                        mc.session?.profile?.id.toString() -> 1
+                        null -> -2
+                        else -> -1
+                    }
+                }
             )
 
         return accounts.flatMap { entry ->
             var playerName: String? = null
             var playerSkull: BufferedImage? = null
             val isAccountLoggedIn = entry.key == mc.session?.profile?.id.toString()
+            val uuid = entry.key
 
-            MojangRequest()
-                .withUUID(entry.key)
-                .getName { playerName = it }
-                .getSkull { playerSkull = it }
+            if (uuid != null) {
+                MojangRequest()
+                    .withUUID(uuid)
+                    .getName { playerName = it }
+                    .getSkull { playerSkull = it }
+            } else {
+                MojangRequest()
+                    .withUUID("606e2ff0-ed77-4842-9d6c-e1d3321c7838")
+                    .getSkull { playerSkull = it }
+            }
 
             val playerSkullTexture = playerSkull?.let { DynamicTexture(it) }
             val icon = playerSkullTexture?.let { ImageResource(it) }
+            val titleEntry = if (playerName != null) {
+                SidebarEntry("${DragonflyPalette.accentBright.chatCode}$playerName", icon)
+            } else {
+                SidebarEntry("${DragonflyPalette.accentDark.chatCode}Not bound", icon)
+            }.apply {
+                iconMargin = 10.0
+                isSelectable = false
+            }
 
-            listOf(
-                SidebarEntry("${DragonflyPalette.accentBright.chatCode}$playerName", icon).apply {
-                    iconMargin = 10.0
-                    isSelectable = false
-                }
-            ) + entry.value.mapNotNull { data ->
+            listOf(titleEntry) + entry.value.mapNotNull { data ->
                 val cosmeticName = CosmeticsManager.getDatabaseModelById(data.cosmeticId)?.get("name")?.asString
                 val prefix = if (!isAccountLoggedIn) DragonflyPalette.foreground.darker(0.8).chatCode else ""
                 val playerData = mc.thePlayer?.cosmetics?.firstOrNull { it.cosmeticQualifier == data.cosmeticQualifier }
