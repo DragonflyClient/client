@@ -47,6 +47,8 @@ class InputTextField(
     override var horizontalAlignment: Alignment by property(Alignment.START)
     override var verticalAlignment: Alignment by property(Alignment.START)
 
+    var labelScaleFactor: Double by property(0.5)
+
     @Interpolate override var color: WidgetColor by property(DragonflyPalette.accentNormal)
     @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
     @Interpolate var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
@@ -135,9 +137,8 @@ class InputTextField(
         label.detachAnimation<MorphAnimation>()
         label.morph(
             30, EaseQuad.IN_OUT,
-            label::scaleFactor to if (isLabelRaised) 0.5 else 1.0,
-            label::x to if (isLabelRaised) x + padding * 0.5 else x,
-            label::y to if (isLabelRaised) y + padding * 0.5 else labelY,
+            label::scaleFactor to if (isLabelRaised) labelScaleFactor else 1.0,
+            label::y to if (isLabelRaised) y + padding * (labelScaleFactor * -8) else labelY,
             label::height to if (isLabelRaised) height / 2.5 else labelHeight,
             label::color to if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
         )?.start()
@@ -201,9 +202,9 @@ class InputTextField(
             it.padding = padding
 
             // apply label preferences
-            it.scaleFactor = if (isLabelRaised) 0.5 else 1.0
-            it.x = if (isLabelRaised) x + padding * 0.5 else x
-            it.y = if (isLabelRaised) y + padding * 0.5 else labelY
+            it.scaleFactor = if (isLabelRaised) labelScaleFactor else 1.0
+            it.x = x
+            it.y = if (isLabelRaised) y + padding * (labelScaleFactor * -8) else labelY
             it.height = if (isLabelRaised) height / 2.5 else labelHeight
             it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
         }
