@@ -23,7 +23,7 @@ import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
 
-class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
+class AddHotkeyModal() : ModalWidget("Add Hotkey", 430.0, 440.0) {
 
     lateinit var keySelector: KeySelector
     lateinit var shiftCheckBox: CheckBox
@@ -89,6 +89,7 @@ class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
             blockKeys = listOf(42, 29, 56)
             clearKeys = listOf(14, 1)
             textAlignment = Alignment.START
+            lineColor = DragonflyPalette.foreground
         }!!
 
         shiftCheckBox = "shift-checkbox"<CheckBox> {
@@ -103,7 +104,7 @@ class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
             y = shiftCheckBox.y + 2.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
             staticText = "Shift"
-            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+            color = DragonflyPalette.foreground
         }!!
 
         ctrlCheckBox = "ctrl-checkbox"<CheckBox> {
@@ -118,7 +119,7 @@ class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
             y = ctrlCheckBox.y + 2.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
             staticText = "Ctrl"
-            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+            color = DragonflyPalette.foreground
         }!!
 
         altCheckBox = "alt-checkbox"<CheckBox> {
@@ -133,7 +134,7 @@ class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
             y = altCheckBox.y + 2.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
             staticText = "Alt"
-            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+            color = DragonflyPalette.foreground
         }!!
 
         messageTextField = "message-textfield"<InputTextField> {
@@ -143,6 +144,8 @@ class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
             height = 30.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
             label = "Message"
+            labelScaleFactor = 0.9
+            lineColor = DragonflyPalette.foreground
         }!!
 
         timeTextField = "time-textfield"<InputTextField> {
@@ -154,6 +157,8 @@ class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
             label = "Time"
             allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14, 52)
             maxStringLength = 3
+            labelScaleFactor = 0.9
+            lineColor = DragonflyPalette.foreground
         }!!
 
         delayTextField = "delay-textfield"<InputTextField> {
@@ -165,10 +170,12 @@ class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
             label = "Delay"
             allowList = listOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 71, 72, 73, 75, 76, 77, 79, 80, 81, 82, 14, 52)
             maxStringLength = 3
+            labelScaleFactor = 0.9
+            lineColor = DragonflyPalette.foreground
         }!!
 
-        var colorPicker = "color-picker"<ColorPreview> {
-            x = delayTextField.x + delayTextField.width + padding
+        val colorPicker = "color-picker"<ColorPreview> {
+            x = delayTextField.x + delayTextField.width + padding + 25.0
             y = this@AddHotkeyModal.y + (9 * paddingTop)
             width = 25.0
             height = 25.0
@@ -183,11 +190,11 @@ class AddHotkeyModal() : ModalWidget("Edit Hotkey", 430.0, 440.0) {
         }!!
 
         "color-text"<TextField> {
-            x = colorPicker.x + colorPicker.width + 10.0
+            x = colorPicker.x + colorPicker.width + 10.0 + 25.0
             y = colorPicker.y + 2.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
             staticText = "Color"
-            color = DragonflyPalette.foreground.altered { alphaDouble = 0.7 }
+            color = DragonflyPalette.foreground
         }!!
 
         val addButton = "add-button"<RoundButton> {
