@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
+import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
@@ -11,6 +12,8 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
+import net.inceptioncloud.dragonfly.ui.modal.ConfirmModal
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
@@ -114,24 +117,42 @@ class IngameMenuUI : GuiScreen() {
             useScale = false
 
             onClick {
-                val isIntegratedServerRunning = mc.isIntegratedServerRunning
-                val isConnectedToRealms = mc.isConnectedToRealms
-
-                mc.theWorld.sendQuittingDisconnectingPacket()
-                mc.loadWorld(null)
-
-                when {
-                    isIntegratedServerRunning -> mc.displayGuiScreen(MainMenuUI())
-                    isConnectedToRealms -> {
-                        val realmsBridge = RealmsBridge()
-                        realmsBridge.switchToRealms(MainMenuUI())
-                    }
-                    else -> mc.displayGuiScreen(GuiMultiplayer(MainMenuUI()))
+                if (mc.isIntegratedServerRunning) {
+                    disconnect()
+                } else {
+                    val modal = ConfirmModal(
+                        title = "Confirm disconnect",
+                        description = "Are you sure that you want to disconnect from this server? Depending on the server's rules, you may " +
+                                "lose your progress or get punished for leaving the game. \n\n§7You can disable this warning in the Dragonfly settings.",
+                        yesText = "Disconnect",
+                        noText = "Keep me playing"
+                    ) { if (it) disconnect() }
+                    Modal.showModal(modal)
                 }
             }
         } id "quit-button"
 
         Taskbar.initializeTaskbar(this)
+    }
+
+    /**
+     * Performs the disconnection from the server or stops the integrated server.
+     */
+    private fun disconnect(): ListenableFuture<Any> = mc.addScheduledTask {
+        val isIntegratedServerRunning = mc.isIntegratedServerRunning
+        val isConnectedToRealms = mc.isConnectedToRealms
+
+        mc.theWorld.sendQuittingDisconnectingPacket()
+        mc.loadWorld(null)
+
+        when {
+            isIntegratedServerRunning -> mc.displayGuiScreen(MainMenuUI())
+            isConnectedToRealms -> {
+                val realmsBridge = RealmsBridge()
+                realmsBridge.switchToRealms(MainMenuUI())
+            }
+            else -> mc.displayGuiScreen(GuiMultiplayer(MainMenuUI()))
+        }
     }
 }
 

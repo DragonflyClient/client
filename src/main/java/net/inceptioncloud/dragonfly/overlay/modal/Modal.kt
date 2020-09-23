@@ -89,7 +89,8 @@ object Modal {
     /**
      * Hides the [currentModal] if one is set. Returns whether a modal window was hidden.
      */
-    fun hideModal(): Boolean {
+    @JvmOverloads
+    fun hideModal(responder: () -> Unit = {}): Boolean {
         if (currentModal == null) return false
         if (inHidingAnimation) return false
 
@@ -120,6 +121,8 @@ object Modal {
             stage.remove("modal")
             currentModal = null
             inHidingAnimation = false
+
+            responder()
 
             if (queue.isNotEmpty()) {
                 showModal(queue.poll())
