@@ -8,7 +8,7 @@ object ToggleSneakSubscriber {
 
     @Subscribe
     fun keyPressed(event: KeyInputEvent) {
-        if (Minecraft.getMinecraft().thePlayer != null) {
+        if (Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().currentScreen == null) {
             if (event.key == Minecraft.getMinecraft().gameSettings.keyBindSneak.keyCode) {
                 if (event.press) {
                     ToggleSneakMod.doSneak = !ToggleSneakMod.doSneak

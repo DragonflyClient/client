@@ -639,24 +639,18 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 
         if (this.onGround && !flag1 && !flag2 && this.movementInput.moveForward >= f && !this.isSprinting() && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness)) {
             if (this.sprintToggleTimer <= 0 /*&&  !ToggleSneakMod.INSTANCE.getDoSprint() / !this.mc.gameSettings.keyBindSprint.isKeyDown()*/) {
-                if ((!ToggleSneakMod.INSTANCE.getEnabledSprint() && this.mc.gameSettings.keyBindSprint.isKeyDown()) || ToggleSneakMod.INSTANCE.getDoSprint()) {
+                if ((!ToggleSneakMod.INSTANCE.getEnabledSprint() && this.mc.gameSettings.keyBindSprint.isKeyDown()) || (ToggleSneakMod.INSTANCE.getEnabledSprint() && ToggleSneakMod.INSTANCE.getDoSprint())) {
                     this.sprintToggleTimer = 7;
                 }
             } else {
-                if (!ToggleSneakMod.INSTANCE.getEnabledSprint() && this.mc.gameSettings.keyBindSprint.isKeyDown()) {
+                if ((!ToggleSneakMod.INSTANCE.getEnabledSprint() && this.mc.gameSettings.keyBindSprint.isKeyDown()) || (ToggleSneakMod.INSTANCE.getEnabledSprint() && ToggleSneakMod.INSTANCE.getDoSprint())) {
                     this.setSprinting(true);
-                    System.out.println("Situation 1");
-                }
-
-                if (ToggleSneakMod.INSTANCE.getEnabledSprint() && ToggleSneakMod.INSTANCE.getDoSprint()) {
-                    this.setSprinting(true);
-                    System.out.println("Situation 2");
                 }
             }
         }
 
         if (!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness)/* && ToggleSneakMod.INSTANCE.getDoSprint() / this.mc.gameSettings.keyBindSprint.isKeyDown()*/) {
-            if (!ToggleSneakMod.INSTANCE.getEnabledSprint() || ToggleSneakMod.INSTANCE.getDoSprint()) {
+            if ((!ToggleSneakMod.INSTANCE.getEnabledSprint() && this.mc.gameSettings.keyBindSprint.isKeyDown()) || (ToggleSneakMod.INSTANCE.getEnabledSprint() && ToggleSneakMod.INSTANCE.getDoSprint())) {
                 this.setSprinting(true);
             }
         }
