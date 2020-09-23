@@ -4,10 +4,13 @@ import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
@@ -18,8 +21,6 @@ import java.net.URL
 import javax.imageio.ImageIO
 
 class IngameMenuUI : GuiScreen() {
-
-    override var backgroundFill: WidgetColor? = WidgetColor(0.0, 0.0, 0.0, 0.7)
 
     override var isNativeResolution: Boolean = true
 
@@ -33,6 +34,15 @@ class IngameMenuUI : GuiScreen() {
                 )))
             }.getOrNull()
         }
+
+        +Rectangle {
+            x = 0.0
+            y = 0.0
+            width = this@IngameMenuUI.width.toDouble()
+            height = this@IngameMenuUI.height.toDouble()
+            color = WidgetColor(0.0, 0.0, 0.0, 0.0)
+            morph(30, EaseQuad.IN_OUT, ::color to WidgetColor(0.0, 0.0, 0.0, 0.8))?.start()
+        } id "background-fill"
 
         +Image {
             x = 10.0

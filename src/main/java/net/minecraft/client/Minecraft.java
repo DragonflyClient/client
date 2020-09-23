@@ -200,6 +200,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      * The GuiScreen that's being displayed at the moment.
      */
     public GuiScreen currentScreen;
+    public GuiScreen previousScreen;
     public LoadingScreenRenderer loadingScreen;
     public EntityRenderer entityRenderer;
     /**
@@ -922,6 +923,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         Dragonfly.getEventBus().post(event);
         if (event.isCancelled()) return;
 
+        this.previousScreen = this.currentScreen;
         if (this.currentScreen != null) {
             this.currentScreen.onGuiClosed();
         }
