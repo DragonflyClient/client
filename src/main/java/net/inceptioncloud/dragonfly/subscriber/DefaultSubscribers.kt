@@ -8,6 +8,7 @@ import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.key.StartupGuiSubscriber
 import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysController
 import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesSubscriber
+import net.inceptioncloud.dragonfly.mods.togglesneak.ToggleSneakSubscriber
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
@@ -40,6 +41,7 @@ object DefaultSubscribers {
             register(LoginSubscriber)
             register(OptionSaveSubscriber)
             register(HotkeysController)
+            register(ToggleSneakSubscriber)
         }
     }
 }
