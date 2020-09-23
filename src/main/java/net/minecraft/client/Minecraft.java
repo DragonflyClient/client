@@ -26,7 +26,7 @@ import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
 import net.inceptioncloud.dragonfly.overlay.modal.Modal;
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget;
 import net.inceptioncloud.dragonfly.tracking.transitions.TransitionTracker;
-import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
+import net.inceptioncloud.dragonfly.ui.screens.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -1341,7 +1341,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      */
     public void displayInGameMenu() {
         if (this.currentScreen == null) {
-            this.displayGuiScreen(new GuiIngameMenu());
+            this.displayGuiScreen(new IngameMenuUI());
 
             if (this.isSingleplayer() && !this.theIntegratedServer.getPublic()) {
                 this.mcSoundHandler.pauseSounds();
