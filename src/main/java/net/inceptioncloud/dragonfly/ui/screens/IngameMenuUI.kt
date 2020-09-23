@@ -19,7 +19,7 @@ import javax.imageio.ImageIO
 
 class IngameMenuUI : GuiScreen() {
 
-    override var backgroundFill: WidgetColor? = DragonflyPalette.background.altered { alphaDouble = 0.5 }
+    override var backgroundFill: WidgetColor? = WidgetColor(0.0, 0.0, 0.0, 0.7)
 
     override var isNativeResolution: Boolean = true
 
