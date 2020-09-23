@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
-import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
@@ -13,6 +12,7 @@ import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.texture.DynamicTexture
+import net.minecraft.realms.RealmsBridge
 import net.minecraft.util.ResourceLocation
 import java.net.URL
 import javax.imageio.ImageIO
@@ -80,7 +80,7 @@ class IngameMenuUI : GuiScreen() {
             useScale = false
 
             onClick {
-                mc.displayGuiScreen(GuiSelectWorld(this@IngameMenuUI))
+                mc.displayGuiScreen(null)
             }
         } id "resume-button"
 
@@ -92,7 +92,7 @@ class IngameMenuUI : GuiScreen() {
             useScale = false
 
             onClick {
-                mc.displayGuiScreen(GuiMultiplayer(this@IngameMenuUI))
+                mc.displayGuiScreen(GuiOptions(this@IngameMenuUI, mc.gameSettings))
             }
         } id "options-button"
 
@@ -104,7 +104,20 @@ class IngameMenuUI : GuiScreen() {
             useScale = false
 
             onClick {
-                mc.displayGuiScreen(GuiOptions(this@IngameMenuUI, mc.gameSettings))
+                val isIntegratedServerRunning = mc.isIntegratedServerRunning
+                val isConnectedToRealms = mc.isConnectedToRealms
+
+                mc.theWorld.sendQuittingDisconnectingPacket()
+                mc.loadWorld(null)
+
+                when {
+                    isIntegratedServerRunning -> mc.displayGuiScreen(MainMenuUI())
+                    isConnectedToRealms -> {
+                        val realmsBridge = RealmsBridge()
+                        realmsBridge.switchToRealms(MainMenuUI())
+                    }
+                    else -> mc.displayGuiScreen(GuiMultiplayer(MainMenuUI()))
+                }
             }
         } id "quit-button"
 
