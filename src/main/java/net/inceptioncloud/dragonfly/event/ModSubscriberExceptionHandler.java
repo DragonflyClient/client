@@ -4,6 +4,7 @@ import com.google.common.eventbus.*;
 import org.apache.logging.log4j.*;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * A custom subscriber exception handler for the {@link EventBus}.
@@ -29,5 +30,6 @@ public class ModSubscriberExceptionHandler implements SubscriberExceptionHandler
         logger.error("Could not dispatch event " + event.getClass().getSimpleName()
                 + " to " + method.getDeclaringClass().getName() + "." + method.getName() + "()");
         logger.error(exception);
+        exception.printStackTrace();
     }
 }
