@@ -1,19 +1,15 @@
 package net.inceptioncloud.dragonfly.engine.tooltip
 
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
-
 enum class TooltipPosition {
     ABOVE {
-        private val RoundedRectangle.endY get() = y + height
-
-        override fun TooltipWidget.arrowPoint1() = x - arrowSize to background!!.endY
-        override fun TooltipWidget.arrowPoint2() = x + arrowSize to background!!.endY
-        override fun TooltipWidget.arrowPoint3() = x to background!!.endY + arrowSize
+        override fun TooltipWidget.arrowPoint1() = x - arrowSize to containerY + containerHeight
+        override fun TooltipWidget.arrowPoint2() = x + arrowSize to containerY + containerHeight
+        override fun TooltipWidget.arrowPoint3() = x to containerY + containerHeight + arrowSize
     },
     BELOW {
-        override fun TooltipWidget.arrowPoint1() = x - arrowSize to background!!.y
-        override fun TooltipWidget.arrowPoint2() = x + arrowSize to background!!.y
-        override fun TooltipWidget.arrowPoint3() = x to background!!.y - arrowSize
+        override fun TooltipWidget.arrowPoint1() = x - arrowSize to containerY
+        override fun TooltipWidget.arrowPoint2() = x + arrowSize to containerY
+        override fun TooltipWidget.arrowPoint3() = x to containerY - arrowSize
     };
 
     open fun TooltipWidget.arrowPoint1(): Pair<Double, Double> {

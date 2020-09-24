@@ -33,6 +33,11 @@ class TooltipWidget(
     override var x: Double by property(0.0)
     override var y: Double by property(0.0)
 
+    val containerWidth: Double get() = fontRenderer.getStringWidth(text) + 4 * padding
+    val containerHeight: Double get() = fontRenderer.height + 2 * padding
+    val containerX: Double get() = this@TooltipWidget.x - containerWidth / 2
+    val containerY: Double get() = this@TooltipWidget.y + verticalOffset
+
     var opacity: Double by property(0.0)
     var arrowSize: Double by property(6.0)
 
@@ -44,9 +49,6 @@ class TooltipWidget(
     var position: TooltipPosition by property(TooltipPosition.ABOVE)
     var fontRenderer: IFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
 
-    val background: RoundedRectangle?
-        get() = getWidget<RoundedRectangle>("background")
-
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "background" to RoundedRectangle(),
         "arrow" to Polygon(),
@@ -54,14 +56,12 @@ class TooltipWidget(
     )
 
     override fun updateStructure() {
-        val textWidth = fontRenderer.getStringWidth(text)
-
         val background = "background"<RoundedRectangle> {
             arc = this@TooltipWidget.arc
-            width = textWidth + 4 * padding
-            height = fontRenderer.height + 2 * padding
-            x = this@TooltipWidget.x - width / 2
-            y = this@TooltipWidget.y + verticalOffset
+            width = this@TooltipWidget.containerWidth
+            height = this@TooltipWidget.containerHeight
+            x = this@TooltipWidget.containerX
+            y = this@TooltipWidget.containerY
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
         } ?: return
 
