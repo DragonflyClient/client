@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.tooltip
 
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
@@ -36,12 +37,12 @@ class TooltipWidget(
     var arrowSize: Double by property(6.0)
 
     var verticalOffset: Double by property(0.0)
-    var padding: Double by property(4.0)
-    var arc: Double by property(10.0)
+    var padding: Double by property(3.0)
+    var arc: Double by property(7.0)
 
     var text: String by property("TooltipWidget")
     var position: TooltipPosition by property(TooltipPosition.ABOVE)
-    var fontRenderer: IFontRenderer? = null
+    var fontRenderer: IFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
 
     val background: RoundedRectangle?
         get() = getWidget<RoundedRectangle>("background")
@@ -53,12 +54,12 @@ class TooltipWidget(
     )
 
     override fun updateStructure() {
-        val textWidth = fontRenderer?.getStringWidth(text) ?: return
+        val textWidth = fontRenderer.getStringWidth(text)
 
         val background = "background"<RoundedRectangle> {
             arc = this@TooltipWidget.arc
             width = textWidth + 4 * padding
-            height = fontRenderer!!.height + 2 * padding
+            height = fontRenderer.height + 2 * padding
             x = this@TooltipWidget.x - width / 2
             y = this@TooltipWidget.y + verticalOffset
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
@@ -81,7 +82,7 @@ class TooltipWidget(
             x = background.x + padding * 2
             y = background.y + padding
             color = DragonflyPalette.background.altered { alphaDouble = opacity }
-            fontRenderer = this@TooltipWidget.fontRenderer!!
+            fontRenderer = this@TooltipWidget.fontRenderer
         }
     }
 }
