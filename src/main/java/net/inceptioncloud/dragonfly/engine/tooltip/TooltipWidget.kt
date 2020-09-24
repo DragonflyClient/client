@@ -2,12 +2,14 @@ package net.inceptioncloud.dragonfly.engine.tooltip
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Polygon
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
+import net.inceptioncloud.dragonfly.mc
 
 /**
  * ## TooltipWidget Assembled Widget
@@ -58,10 +60,10 @@ class TooltipWidget(
     override fun updateStructure() {
         val background = "background"<RoundedRectangle> {
             arc = this@TooltipWidget.arc
-            width = this@TooltipWidget.containerWidth
-            height = this@TooltipWidget.containerHeight
-            x = this@TooltipWidget.containerX
-            y = this@TooltipWidget.containerY
+            width = containerWidth
+            height = containerHeight
+            x = containerX.coerceIn(15.0, (mc.currentScreen?.width?.toDouble() ?: 1920.0) - 15.0)
+            y = containerY
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
         } ?: return
 
