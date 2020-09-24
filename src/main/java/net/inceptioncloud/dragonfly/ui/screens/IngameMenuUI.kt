@@ -87,7 +87,7 @@ class IngameMenuUI : GuiScreen() {
             width = 620.0
             height = 60.0
             x = this@IngameMenuUI.width / 2.0 - width / 2.0
-            y = 500.0
+            y = 450.0
             text = "Back to game"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/ingamemenu/resume.png"))
             useScale = false
@@ -146,7 +146,7 @@ class IngameMenuUI : GuiScreen() {
         mc.loadWorld(null)
 
         when {
-            isIntegratedServerRunning -> mc.displayGuiScreen(MainMenuUI())
+            isIntegratedServerRunning -> mc.displayGuiScreen(GuiSelectWorld(MainMenuUI()))
             isConnectedToRealms -> {
                 val realmsBridge = RealmsBridge()
                 realmsBridge.switchToRealms(MainMenuUI())
