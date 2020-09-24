@@ -14,6 +14,7 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseBack
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
+import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
@@ -93,6 +94,7 @@ object Taskbar {
             width = shadow.width
             resourceLocation = shadow.resourceLocation
             color = WidgetColor(255, 255, 255, 200)
+            tooltip = Tooltip("Close Dragonfly")
             clickAction = { mc.shutdown() }
             hoverAction = {
                 if (it) {
