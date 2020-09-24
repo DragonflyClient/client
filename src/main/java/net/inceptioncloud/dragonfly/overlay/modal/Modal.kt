@@ -39,6 +39,12 @@ object Modal {
     private var inHidingAnimation = false
 
     /**
+     * A modified instance of the [EaseBack] easing that is used for animating
+     * modal windows.
+     */
+    private val easing = EaseBack.withFactor(1.2)
+
+    /**
      * Shows a new [modal] window on the screen.
      *
      * This function uses a smooth popup animation and darkens the background before showing
@@ -77,7 +83,7 @@ object Modal {
         modal.onShow()
         modal.detachAnimation<MorphAnimation>()
         modal.morph(
-            100, EaseBack.OUT,
+            75, easing.OUT,
             ModalWidget::scaleFactor to 1.0,
             ModalWidget::x to screenWidth / 2.0 - modal.width / 2.0,
             ModalWidget::y to screenHeight / 2.0 - modal.height / 2.0
@@ -113,7 +119,7 @@ object Modal {
 
         modal.detachAnimation<MorphAnimation>()
         modal.morph(
-            100, EaseBack.IN,
+            75, easing.IN,
             ModalWidget::scaleFactor to 0.5,
             ModalWidget::x to screenWidth / 2.0 - modal.width / 4.0,
             ModalWidget::y to screenHeight
