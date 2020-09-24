@@ -40,7 +40,11 @@ class TooltipWidget(
     var arc: Double by property(10.0)
 
     var text: String by property("TooltipWidget")
+    var position: TooltipPosition by property(TooltipPosition.ABOVE)
     var fontRenderer: IFontRenderer? = null
+
+    val background: RoundedRectangle?
+        get() = getWidget<RoundedRectangle>("background")
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "background" to RoundedRectangle(),
@@ -64,13 +68,11 @@ class TooltipWidget(
             smooth = true
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
 
-            val endY = background.y + background.height
-
-            with(points) {
-                clear()
-                add(Point(x - arrowSize, endY))
-                add(Point(x + arrowSize, endY))
-                add(Point(x, endY + arrowSize))
+            with(position) {
+                points.clear()
+                points.add(arrowPoint1().point)
+                points.add(arrowPoint2().point)
+                points.add(arrowPoint3().point)
             }
         }
 
@@ -83,3 +85,6 @@ class TooltipWidget(
         }
     }
 }
+
+private val Pair<Double, Double>.point: Point
+    get() = Point(first, second)
