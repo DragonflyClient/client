@@ -31,7 +31,7 @@ object KeystrokesManager {
             }
             keystrokes.add(keyStroke)
         }
-        Minecraft.getMinecraft().ingameGUI.initKeystrokes()
+        Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
     }
 
     @JvmStatic

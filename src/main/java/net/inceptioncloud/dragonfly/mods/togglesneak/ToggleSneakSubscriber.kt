@@ -12,10 +12,12 @@ object ToggleSneakSubscriber {
             if (event.key == Minecraft.getMinecraft().gameSettings.keyBindSneak.keyCode) {
                 if (event.press) {
                     ToggleSneakMod.doSneak = !ToggleSneakMod.doSneak
+                    Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
                 }
             }else if (event.key == Minecraft.getMinecraft().gameSettings.keyBindSprint.keyCode) {
                 if (event.press) {
                     ToggleSneakMod.doSprint = !ToggleSneakMod.doSprint
+                    Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
                 }
             }
         }

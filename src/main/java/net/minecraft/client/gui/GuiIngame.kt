@@ -2,14 +2,17 @@ package net.minecraft.client.gui
 
 import com.google.common.collect.Iterables
 import com.google.common.collect.Lists
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysMod
 import net.inceptioncloud.dragonfly.mods.keystrokes.*
+import net.inceptioncloud.dragonfly.mods.togglesneak.ToggleSneakMod
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardTitle
@@ -39,11 +42,8 @@ import net.minecraft.scoreboard.ScorePlayerTeam
 import net.minecraft.util.*
 import optifine.Config
 import optifine.CustomColors
-import org.lwjgl.input.Keyboard
-import org.lwjgl.input.Mouse
 import java.util.*
 import java.util.stream.Collectors
-import kotlin.collections.HashMap
 
 class GuiIngame(private val mc: Minecraft) : Gui() {
     private val rand = Random()
@@ -368,7 +368,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             GlStateManager.disableBlend()
 
             if (reInitKeystrokesOverlay) {
-                initKeystrokes()
+                initInGameOverlay()
             }
 
         }
@@ -1037,12 +1037,22 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
     @Suppress("UNCHECKED_CAST")
     fun <W : Widget<W>> getWidget(identifier: String): W? = stage[identifier] as? W
 
-    fun initKeystrokes() {
+    fun initInGameOverlay() {
         stage.clear()
-
+        
         for(keyStroke in KeystrokesManager.keystrokes) {
             stage.add(Pair("keystroke-${keyStroke.keyDesc}", keyStroke.textField))
         }
+
+        stage.add(Pair("togglesneak-text", TextField().apply {
+            x = 10.0
+            y = 10.0
+            width = 100.0
+            staticText = ToggleSneakMod.overlayText
+            color = ToggleSneakMod.overlayColor
+            fontRenderer = fontManager.defaultFont.fontRenderer(size = ToggleSneakMod.overlaySize, useScale = false)
+        }))
+
     }
 
     companion object {
