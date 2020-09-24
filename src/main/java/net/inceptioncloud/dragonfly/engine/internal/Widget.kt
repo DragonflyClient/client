@@ -396,7 +396,7 @@ abstract class Widget<W : Widget<W>>(
      */
     open fun handleHoverStateUpdate() {
         hoverAction(isHovered)
-        tooltip?.morphTooltip(isHovered)
+        tooltip?.animateTooltip(isHovered)
     }
 
     /**

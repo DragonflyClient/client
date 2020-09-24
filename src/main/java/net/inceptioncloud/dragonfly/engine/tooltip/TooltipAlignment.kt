@@ -1,6 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.tooltip
 
-enum class TooltipPosition {
+enum class TooltipAlignment {
     ABOVE {
         override fun TooltipWidget.arrowPoint1() = x - arrowSize to containerY + containerHeight
         override fun TooltipWidget.arrowPoint2() = x + arrowSize to containerY + containerHeight

@@ -2,7 +2,6 @@ package net.inceptioncloud.dragonfly.engine.tooltip
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
@@ -48,7 +47,7 @@ class TooltipWidget(
     var arc: Double by property(7.0)
 
     var text: String by property("TooltipWidget")
-    var position: TooltipPosition by property(TooltipPosition.ABOVE)
+    var alignment: TooltipAlignment by property(TooltipAlignment.ABOVE)
     var fontRenderer: IFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -71,7 +70,7 @@ class TooltipWidget(
             smooth = true
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
 
-            with(position) {
+            with(alignment) {
                 points.clear()
                 points.add(arrowPoint1().point)
                 points.add(arrowPoint2().point)
