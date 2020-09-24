@@ -65,8 +65,8 @@ class WidgetStage(val name: String) {
      */
     fun add(widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
         contentPrivate += widgetWithId
-        widgetWithId.second.parentStage = this
         widgetWithId.second.widgetId = widgetWithId.first
+        widgetWithId.second.parentStage = this
         (widgetWithId.second as? AssembledWidget<*>)?.runStructureUpdate()
         inspector { observableContent += widgetWithId }
     }
@@ -79,8 +79,8 @@ class WidgetStage(val name: String) {
     fun add(vararg widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
         contentPrivate += widgetWithId
         widgetWithId.forEach {
-            it.second.parentStage = this
             it.second.widgetId = it.first
+            it.second.parentStage = this
             (it.second as? AssembledWidget<*>)?.runStructureUpdate()
         }
         inspector { observableContent += widgetWithId }
@@ -92,8 +92,8 @@ class WidgetStage(val name: String) {
     fun clear() = synchronized(this) {
         contentPrivate.clear()
         contentPrivate.forEach {
-            it.value.parentStage = null
             it.value.widgetId = null
+            it.value.parentStage = null
         }
         inspector { observableContent.clear() }
     }
@@ -103,8 +103,8 @@ class WidgetStage(val name: String) {
      */
     fun remove(id: String) = synchronized(this) {
         val widget = contentPrivate.remove(id)
-        widget?.parentStage = null
         widget?.widgetId = null
+        widget?.parentStage = null
         inspector { observableContent.remove(id to widget) }
     }
 
