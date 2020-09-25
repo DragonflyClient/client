@@ -60,6 +60,14 @@ class Tooltip(
     }
 
     /**
+     * Updates the text of the tooltip to the [newText].
+     */
+    fun updateText(newText: String) {
+        text = newText
+        prepare()
+    }
+
+    /**
      * Sets the position of the [widget] based on the [host] and the specified [alignment].
      */
     private fun setPosition() {
