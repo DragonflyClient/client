@@ -7,7 +7,6 @@ import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
-import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysMod
@@ -1044,13 +1043,16 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             stage.add(Pair("keystroke-${keyStroke.keyDesc}", keyStroke.textField))
         }
 
+        ToggleSneakMod.updateOverlayText()
         stage.add(Pair("togglesneak-text", TextField().apply {
-            x = 10.0
-            y = 10.0
-            width = 100.0
+            x = ToggleSneakMod.posX
+            y = ToggleSneakMod.posY
+            width = ToggleSneakMod.width
             staticText = ToggleSneakMod.overlayText
-            color = ToggleSneakMod.overlayColor
+            color = ToggleSneakMod.overlayTextColor
+            backgroundColor = ToggleSneakMod.overlayBackgroundColor
             fontRenderer = fontManager.defaultFont.fontRenderer(size = ToggleSneakMod.overlaySize, useScale = false)
+            textAlignHorizontal = Alignment.CENTER
         }))
 
     }
