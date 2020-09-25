@@ -61,7 +61,7 @@ class TooltipWidget(
             arc = this@TooltipWidget.arc
             width = containerWidth
             height = containerHeight
-            x = containerX.coerceIn(15.0, (mc.currentScreen?.width?.toDouble() ?: 1920.0) - 15.0)
+            x = containerX.coerceIn(15.0, (mc.currentScreen?.width ?: 1920) - 15.0 - containerWidth)
             y = containerY
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
         } ?: return

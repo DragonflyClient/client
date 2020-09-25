@@ -140,6 +140,10 @@ abstract class Widget<W : Widget<W>>(
      */
     var tooltip: Tooltip? = null
         set(value) {
+            if (field != null) {
+                parentStage?.remove("$value::tooltip")
+                parentAssembled?.structure?.remove("$value::tooltip")
+            }
             field = value
             if (value != null) {
                 value.host = this
