@@ -130,7 +130,7 @@ class IngameMenuUI : GuiScreen() {
                         description = "Are you sure that you want to disconnect from this server? Depending on the server's rules, you may " +
                                 "lose your progress or get punished for leaving the game. \n\n§7You can disable this warning in the Dragonfly settings.",
                         yesText = "Disconnect",
-                        noText = "Keep me playing"
+                        noText = "Never mind"
                     ) { if (it) disconnect() }
                     Modal.showModal(modal)
                 }
