@@ -62,6 +62,8 @@ class TextField(
     override var outlineStroke: Double by property(0.0)
     override var outlineColor: WidgetColor by property(WidgetColor.DEFAULT)
 
+    private var linkClickAction: () -> Unit = {}
+
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
         this.x = alignedX
@@ -110,7 +112,7 @@ class TextField(
             }
         }
 
-        clickAction = { // set the click action for the text field to react to link clicks
+        linkClickAction = { // set the click action for the text field to react to link clicks
             val mouseX = GraphicsEngine.getMouseX()
             val mouseY = GraphicsEngine.getMouseY()
 
@@ -242,4 +244,11 @@ class TextField(
             CENTER -> coordinate + (size / 2) - (textSize / 2)
             END -> coordinate + size - textSize - padding
         }
+
+    override fun handleMousePress(data: MouseData) {
+        super.handleMousePress(data)
+        if (isHovered) {
+            linkClickAction()
+        }
+    }
 }
