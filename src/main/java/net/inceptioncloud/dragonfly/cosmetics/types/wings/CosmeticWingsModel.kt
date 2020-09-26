@@ -21,7 +21,7 @@ class CosmeticWingsModel : CosmeticModel() {
     /**
      * Resource location for the wings texture
      */
-    private val location: ResourceLocation = ResourceLocation("dragonflyres/wings.png")
+    private val location: ResourceLocation = ResourceLocation("dragonflyres/cosmetics/wings.png")
 
     private var wing: ModelRenderer? = null
     private var wingTip: ModelRenderer? = null

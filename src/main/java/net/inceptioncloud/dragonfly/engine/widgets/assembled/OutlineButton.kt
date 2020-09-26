@@ -88,18 +88,18 @@ class OutlineButton(
         if (isHovered) {
             container?.detachAnimation<MorphAnimation>()
             container?.morph(
-                60,
-                EaseQuad.IN_OUT,
+                30, EaseQuad.IN_OUT,
                 Rectangle::color to (hoverColor ?: color.brighter(0.8))
             )?.start()
         } else {
             container?.detachAnimation<MorphAnimation>()
             container?.morph(
-                60,
-                EaseQuad.IN_OUT,
+                30, EaseQuad.IN_OUT,
                 Rectangle::color to color
             )?.start()
         }
+
+        super.handleHoverStateUpdate()
     }
 
     override fun handleMousePress(data: MouseData) {

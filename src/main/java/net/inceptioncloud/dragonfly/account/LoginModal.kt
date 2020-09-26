@@ -22,7 +22,9 @@ import java.net.URL
  * It provides a username and password field as well as an option to register for a new account
  * and skip the login process.
  */
-class LoginModal : ModalWidget("Login", 400.0, 550.0) {
+class LoginModal(
+    val isAutomaticallyOpening: Boolean
+) : ModalWidget("Login", 400.0, 550.0) {
 
     /**
      * The padding of the container box.
@@ -122,22 +124,28 @@ class LoginModal : ModalWidget("Login", 400.0, 550.0) {
         }!!
 
         "skip-text"<TextField> {
-            x = this@LoginModal.x
-            y = register.y + register.height + 25.0
-            width = this@LoginModal.width
-            height = 40.0
-            color = DragonflyPalette.background.brighter(0.5)
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
-            staticText = "Don't ask again"
-            textAlignHorizontal = Alignment.CENTER
-            textAlignVertical = Alignment.CENTER
-            clickAction = {
-                StorageOptions.SKIP_LOGIN.set(true)
-                Modal.hideModal()
-            }
-            hoverAction = {
-                if (isHovered) morph(50, null, TextField::color to DragonflyPalette.background.brighter(0.3))?.start()
-                else morph(50, null, TextField::color to DragonflyPalette.background.brighter(0.5))?.start()
+            if (isAutomaticallyOpening) {
+                x = this@LoginModal.x
+                y = register.y + register.height + 25.0
+                width = this@LoginModal.width
+                height = 40.0
+                color = DragonflyPalette.background.brighter(0.5)
+                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+                staticText = "Don't ask again"
+                textAlignHorizontal = Alignment.CENTER
+                textAlignVertical = Alignment.CENTER
+                clickAction = {
+                    StorageOptions.SKIP_LOGIN.set(true)
+                    Modal.hideModal()
+                }
+                hoverAction = {
+                    if (isHovered) morph(50, null, TextField::color to DragonflyPalette.background.brighter(0.3))?.start()
+                    else morph(50, null, TextField::color to DragonflyPalette.background.brighter(0.5))?.start()
+                }
+            } else {
+                isVisible = false
+                clickAction = {}
+                hoverAction = {}
             }
         }
     }
