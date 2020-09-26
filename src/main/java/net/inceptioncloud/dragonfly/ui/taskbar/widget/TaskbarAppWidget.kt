@@ -100,6 +100,7 @@ class TaskbarAppWidget(
         originY = y
         originWidth = width
         originHeight = height
+        super.handleStageAdd(stage)
     }
 
     override fun canUpdateHoverState(): Boolean = !isPressed && isVisible
