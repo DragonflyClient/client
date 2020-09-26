@@ -111,7 +111,11 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
      * Updates the widget found by the [identifier] (via [getWidget]) and applies the given
      * [block] to it.
      */
-    fun <W : Widget<W>> updateWidget(identifier: String, block: W.() -> Unit): W? = getWidget<W>(identifier)?.apply(block)
+    fun <W : Widget<W>> updateWidget(identifier: String, block: (W.() -> Unit)?): W? {
+        val widget = getWidget<W>(identifier)
+        block?.let { widget?.apply(it) }
+        return widget
+    }
 
     fun inherit(identifier: String) {
         val that = structure[identifier] ?: return
@@ -130,7 +134,7 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
     /**
      * Convenient function for accessing [updateWidget].
      */
-    operator fun <W : Widget<W>> String.invoke(block: W.() -> Unit): W? = updateWidget(this, block)
+    operator fun <W : Widget<W>> String.invoke(block: (W.() -> Unit)? = null): W? = updateWidget(this, block)
 
     /**
      * Assembles the widget by initializing the base widgets.

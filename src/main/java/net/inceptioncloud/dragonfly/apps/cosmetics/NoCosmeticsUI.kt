@@ -96,7 +96,6 @@ class NoCosmeticsUI(
             tooltip = Tooltip("Synchronize cosmetics with database", TooltipAlignment.BELOW)
             onClick {
                 if (text == "Refresh cosmetics") {
-                    text = "Synchronizing..."
                     GlobalScope.launch {
                         val fetched = CosmeticsManager.fetchDragonflyCosmetics()
                         CosmeticsManager.dragonflyAccountCosmetics = fetched
@@ -104,7 +103,7 @@ class NoCosmeticsUI(
                         if (fetched?.isNotEmpty() == true) {
                             CosmeticsUI(previousScreen).switch()
                         } else {
-                            text = "Refresh cosmetics"
+                            this@NoCosmeticsUI.getWidget<TextField>("title")?.staticText = "Still nothing here... Sorry :c"
                         }
                     }
                 }
