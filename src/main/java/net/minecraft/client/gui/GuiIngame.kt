@@ -1041,6 +1041,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         stage.clear()
         
         for(keyStroke in KeystrokesManager.keystrokes) {
+            keyStroke.update()
             stage.add(Pair("keystroke-${keyStroke.keyDesc}", keyStroke.textField))
         }
 

@@ -44,9 +44,13 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
     var keystrokesStartX = 0.0
     var keystrokesStartY = 0.0
 
-    var textField: TextField
+    lateinit var textField: TextField
 
     init {
+        update()
+    }
+
+    fun update() {
         when (KeystrokesMod.position) {
             EnumKeystrokesPosition.TOP_LEFT -> {
                 keystrokesStartX = 10.0
