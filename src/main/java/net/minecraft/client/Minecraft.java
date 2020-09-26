@@ -8,6 +8,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+import dev.decobr.mcgeforce.bindings.MCGeForceHelper;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.diagnostic.CrashDiagnostics;
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService;
@@ -21,7 +22,6 @@ import net.inceptioncloud.dragonfly.event.play.IntegratedServerStartingEvent;
 import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
 import net.inceptioncloud.dragonfly.mods.hotkeys.AddHotkeyModal;
 import net.inceptioncloud.dragonfly.mods.hotkeys.EditHotkeyModal;
-import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysMod;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient;
 import net.inceptioncloud.dragonfly.overlay.modal.Modal;
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget;
@@ -622,6 +622,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
         // ICMM - Opens the Live Transition Tracking Window
         TransitionTracker.INSTANCE.initUI();
+        Dragonfly.geforceHelper = new MCGeForceHelper();
     }
 
     private void registerMetadataSerializers() {
@@ -2684,6 +2685,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         if (current != null) {
             if (current instanceof AddHotkeyModal) {
                 return !((AddHotkeyModal) current).keySelector.isFocused();
+            }else if (current instanceof EditHotkeyModal) {
+                return !((EditHotkeyModal) current).keySelector.isFocused();
             }else {
                 if (current instanceof EditHotkeyModal) {
                     return !((EditHotkeyModal) current).keySelector.isFocused();

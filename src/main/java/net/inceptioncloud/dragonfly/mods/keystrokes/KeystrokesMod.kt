@@ -20,10 +20,18 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
 
     var textActiveColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
     var textInactiveColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
+
     var bgActiveColor by option(WidgetColor(0.9, 0.5, 0.1, 1.0))
     var bgInactiveColor by option(WidgetColor(0.9, 0.9, 0.9, 0.2))
 
     private val listener = KeystrokesModListener()
+    val listener: ChangeListener<Any?> = ChangeListener { _, oldValue, newValue ->
+        if (oldValue is WidgetColor && newValue is WidgetColor) {
+            if (oldValue != newValue) {
+                Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
+            }
+        }
+    }
 
     init {
 

@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly.mods.keystrokes
 
+import net.minecraft.client.Minecraft
+
 object KeystrokesManager {
 
     var keystrokes = mutableListOf<Keystroke>()
@@ -15,8 +17,6 @@ object KeystrokesManager {
     lateinit var use: Keystroke
 
     fun registerKeystrokes() {
-        println("Registering Keystrokes")
-        println(savedKeybindings.size)
         for(keyCode in savedKeybindings.keys) {
             val keyStroke = Keystroke(keyCode, savedKeybindings[keyCode]!!)
             when (savedKeybindings[keyCode]!!) {
@@ -28,10 +28,10 @@ object KeystrokesManager {
                 "key.sprint" -> sprint = keyStroke
                 "key.attack" -> attack = keyStroke
                 "key.use" -> use = keyStroke
-                else -> return
             }
             keystrokes.add(keyStroke)
         }
+        Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
     }
 
     @JvmStatic

@@ -1,5 +1,6 @@
 package net.inceptioncloud.dragonfly.mods.nvidiahighlights
 
+import dev.decobr.mcgeforce.bindings.MCGeForceHelper
 import dev.decobr.mcgeforce.utils.EnumHighlightType
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.*
@@ -12,8 +13,6 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
 
     val gommehd = HashMap<String, String>()
     val royalpixels = HashMap<String, String>()
-
-    var isSystemValid = Dragonfly.geforceHelper.isSystemValid
 
     var enabled by option(false)
 
@@ -30,6 +29,8 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
         TitleControl("General"),
         BooleanControl(!::enabled, "Enable mod") {
             if (isSystemValid) {
+        BooleanControl(::enabled, "Enable mod") {
+            if (Dragonfly.geforceHelper.isSystemValid) {
                 true
             } else {
                 Toast.queue("§c You can't use this feature, take a look at the notes!", 400)

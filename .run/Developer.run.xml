@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Developer Mode" type="Application" factoryName="Application">
+  <configuration default="false" name="Developer" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="Start" />
-    <module name="Dragonfly.dragonfly-client.main" />
+    <module name="dragonfly-client.main" />
     <option name="PROGRAM_PARAMETERS" value="--drgn-developer" />
     <selectedOptions>
       <option name="before.launch.openToolWindow" />

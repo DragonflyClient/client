@@ -43,7 +43,7 @@ class ModManagerUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
             keystroke.space = KeystrokesMod.space
             keystroke.fontSize = KeystrokesMod.fontSize
 
-            Minecraft.getMinecraft().ingameGUI.initKeystrokes()
+            Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
         }
     }
 }

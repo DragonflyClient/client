@@ -44,6 +44,11 @@ class InputTextField(
     override var color: WidgetColor by property(DragonflyPalette.accentNormal)
     var backgroundColor: WidgetColor by property(DragonflyPalette.background)
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
+    var labelScaleFactor: Double by property(0.5)
+
+    @Interpolate override var color: WidgetColor by property(DragonflyPalette.accentNormal)
+    @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
+    @Interpolate var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
 
     var fontRenderer: IFontRenderer? by property(null)
     var padding: Double by property(2.0)
@@ -92,7 +97,7 @@ class InputTextField(
     var realText: String = ""
 
     /** Whether the text label is raised due to present input text or focus state. */
-    var isLabelRaised: Boolean = false
+    val isLabelRaised: Boolean
         get() = isFocused || inputText.isNotEmpty()
 
     /** The position of the cursor as well as the start of the text selection*/
@@ -107,8 +112,10 @@ class InputTextField(
     /** The time in milliseconds the cursor has moved lately */
     private var timeCursorMoved = 0L
 
-    private var labelHeight: Double? = null
-    private var labelY: Double? = null
+    private val labelHeight: Double
+        get() = (fontRenderer?.height ?: 0) + padding * 2
+    private val labelY: Double
+        get() = y + (height - labelHeight) / 2.0
 
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
@@ -119,7 +126,7 @@ class InputTextField(
     /**
      * Called whenever the [isFocused] property changes.
      */
-    private fun focusedStateChanged(focused: Boolean) {
+    fun focusedStateChanged(focused: Boolean) {
         val label = structure["label"] as? TextField ?: error("Structure should contain label!")
         val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
             ?: error("Structure should contain bottom line overlay!")
@@ -127,9 +134,8 @@ class InputTextField(
         label.detachAnimation<MorphAnimation>()
         label.morph(
             30, EaseQuad.IN_OUT,
-            label::scaleFactor to if (isLabelRaised) 0.5 else 1.0,
-            label::x to if (isLabelRaised) x + padding * 0.5 else x,
-            label::y to if (isLabelRaised) y + padding * 0.5 else labelY,
+            label::scaleFactor to if (isLabelRaised) labelScaleFactor else 1.0,
+            label::y to if (isLabelRaised) y + padding * (labelScaleFactor * -8) else labelY,
             label::height to if (isLabelRaised) height / 2.5 else labelHeight,
             label::color to if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
         )?.start()
@@ -192,10 +198,12 @@ class InputTextField(
             it.y = y + (height - it.height) / 2.0
             it.padding = padding
 
-            if (!isLabelRaised) {
-                labelHeight = it.height
-                labelY = it.y
-            }
+            // apply label preferences
+            it.scaleFactor = if (isLabelRaised) labelScaleFactor else 1.0
+            it.x = x
+            it.y = if (isLabelRaised) y + padding * (labelScaleFactor * -8) else labelY
+            it.height = if (isLabelRaised) height / 2.5 else labelHeight
+            it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
         }
 
         val bottomLine = (structure["bottom-line"] as Rectangle).also {

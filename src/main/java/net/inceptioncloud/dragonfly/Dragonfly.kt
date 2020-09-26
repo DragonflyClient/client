@@ -111,6 +111,7 @@ object Dragonfly {
     fun init() {
         Display.setTitle("Dragonfly ${DragonflyVersion.string} for Minecraft 1.8.8")
 
+        Taskbar
         DefaultSubscribers.register(eventBus)
 
         fontManager = FontManager()

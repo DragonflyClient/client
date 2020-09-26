@@ -86,6 +86,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
     public GuiMainMenu()
     {
+
         this.openGLWarning2 = field_96138_a;
         this.splashText = "missingno";
         BufferedReader bufferedreader = null;
@@ -147,6 +148,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
             this.openGLWarning2 = I18n.format("title.oldgl2", new Object[0]);
             this.openGLWarningLink = "https://help.mojang.com/customer/portal/articles/325948?ref=game";
         }
+
     }
 
     /**
