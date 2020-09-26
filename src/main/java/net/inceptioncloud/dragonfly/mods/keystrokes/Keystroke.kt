@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.mods.keystrokes
 
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
@@ -21,11 +22,19 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
             ingameGUI.stage["keystroke-$keyDesc"].apply {
                 if(this is TextField) {
                     if(value) {
-                        morph(20, EaseQuad.IN_OUT, this@Keystroke::backgroundColor to KeystrokesMod.bgActiveColor)?.start()
-                        morph(20, EaseQuad.IN_OUT, this@Keystroke::textColor to KeystrokesMod.textActiveColor)?.start()
+                        detachAnimation<MorphAnimation>()
+                        morph(
+                            20, EaseQuad.IN_OUT,
+                            ::backgroundColor to KeystrokesMod.bgActiveColor,
+                            ::color to KeystrokesMod.textActiveColor
+                        )?.start()
                     } else {
-                        morph(20, EaseQuad.IN_OUT, this@Keystroke::backgroundColor to KeystrokesMod.bgInactiveColor)?.start()
-                        morph(20, EaseQuad.IN_OUT, this@Keystroke::textColor to KeystrokesMod.textInactiveColor)?.start()
+                        detachAnimation<MorphAnimation>()
+                        morph(
+                            20, EaseQuad.IN_OUT,
+                            ::backgroundColor to KeystrokesMod.bgInactiveColor,
+                            ::color to KeystrokesMod.textInactiveColor
+                        )?.start()
                     }
                 }
             }
