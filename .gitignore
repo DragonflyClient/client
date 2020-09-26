@@ -8,6 +8,7 @@ gradle.properties
 /gradle/
 /.idea/
 /.gradle/
+/.run/
 
 # Runtime
 /runtime/saves
