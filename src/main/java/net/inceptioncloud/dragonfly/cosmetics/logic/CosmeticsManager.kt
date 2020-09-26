@@ -217,8 +217,13 @@ object CosmeticsManager {
                 .build()
             val response = Dragonfly.httpClient.newCall(request).execute()
                 .takeIf { it.code == 200 }
-                ?.use { response -> response.body!!.string() }
-                ?.let { Dragonfly.gson.fromJson(it, JsonObject::class.java).asJsonObject }
+                ?.use { response ->
+                    try {
+                        response.body!!.string()
+                    } catch (e: Throwable) {
+                        null
+                    }
+                }?.let { Dragonfly.gson.fromJson(it, JsonObject::class.java).asJsonObject }
 
             if (response?.get("success")?.asBoolean == true) {
                 return true
