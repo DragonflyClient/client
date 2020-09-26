@@ -19,6 +19,8 @@ import net.inceptioncloud.dragonfly.ui.modal.ConfirmModal
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
+import net.minecraft.client.gui.achievement.GuiAchievements
+import net.minecraft.client.gui.achievement.GuiStats
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.realms.RealmsBridge
 import net.minecraft.util.ResourceLocation
@@ -41,12 +43,17 @@ class IngameMenuUI : GuiScreen() {
         }
 
         +Rectangle {
+            val isOpenedFromIngame = mc.previousScreen == null
+
             x = 0.0
             y = 0.0
             width = this@IngameMenuUI.width.toDouble()
             height = this@IngameMenuUI.height.toDouble()
-            color = WidgetColor(0.0, 0.0, 0.0, 0.0)
-            morph(30, EaseQuad.IN_OUT, ::color to WidgetColor(0.0, 0.0, 0.0, 0.8))?.start()
+            color = WidgetColor(0.0, 0.0, 0.0, if (isOpenedFromIngame) 0.0 else 0.8)
+
+            if (isOpenedFromIngame) {
+                morph(30, EaseQuad.IN_OUT, ::color to WidgetColor(0.0, 0.0, 0.0, 0.8))?.start()
+            }
         } id "background-fill"
 
         +Image {
@@ -188,15 +195,24 @@ class IngameMenuUI : GuiScreen() {
             list.add(RoundIconButton().apply {
                 icon = ImageResource("dragonflyres/icons/ingamemenu/lan-share.png")
                 tooltip = Tooltip("Share to LAN", TooltipAlignment.BELOW)
+                clickAction = {
+                    mc.displayGuiScreen(GuiShareToLan(this@IngameMenuUI))
+                }
             })
         }
         list.add(RoundIconButton().apply {
             icon = ImageResource("dragonflyres/icons/ingamemenu/achievements.png")
             tooltip = Tooltip("Achievements", TooltipAlignment.BELOW)
+            clickAction = {
+                mc.displayGuiScreen(GuiAchievements(this@IngameMenuUI, mc.thePlayer.statFileWriter))
+            }
         })
         list.add(RoundIconButton().apply {
             icon = ImageResource("dragonflyres/icons/ingamemenu/statistics.png")
             tooltip = Tooltip("Statistics", TooltipAlignment.BELOW)
+            clickAction = {
+                mc.displayGuiScreen(GuiStats(this@IngameMenuUI, mc.thePlayer.statFileWriter))
+            }
         })
         return list
     }
