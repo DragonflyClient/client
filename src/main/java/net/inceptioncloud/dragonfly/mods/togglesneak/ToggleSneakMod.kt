@@ -31,15 +31,15 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
-        BooleanControl(::enabledSneak.pseudo(), "Enable ToggleSneak"),
-        BooleanControl(::enabledSprint.pseudo(), "Enable ToggleSprint"),
+        BooleanControl(!ToggleSneakMod::enabledSneak, "Enable ToggleSneak"),
+        BooleanControl(!ToggleSneakMod::enabledSprint, "Enable ToggleSprint"),
         TitleControl("InGame Overlay"),
-        BooleanControl(::enabledOverlay.pseudo(), "Enable Overlay"),
-        ColorControl(::overlayTextColor.pseudo(), "Text Color"),
-        ColorControl(::overlayBackgroundColor.pseudo(), "Background Color"),
+        BooleanControl(!ToggleSneakMod::enabledOverlay, "Enable Overlay"),
+        ColorControl(!ToggleSneakMod::overlayTextColor, "Text Color"),
+        ColorControl(!ToggleSneakMod::overlayBackgroundColor, "Background Color"),
         DropdownElement(::overlayPosition,"Position"),
         NumberControl(::overlaySize, "Text Size", min = 5.0, max = 25.0, decimalPlaces = 1),
-        BooleanControl(::overlayHide.pseudo(), "Auto hide background")
+        BooleanControl(!ToggleSneakMod::overlayHide, "Auto hide background")
     )
 
     fun updateOverlayText() {
