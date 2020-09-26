@@ -29,6 +29,7 @@ import net.inceptioncloud.dragonfly.mods.nvidiahighlights.NvidiaHighlightsMod;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Timer;
@@ -46,8 +47,8 @@ public class MCGeForceHelper {
         isSystemValidStatic = validateSystem();
 
         if (isSystemValidStatic) {
-            System.loadLibrary("GfeSDK");
-            System.loadLibrary("MCGeForce");
+            System.load(new File("dragonfly/assets/natives/GfeSDK.dll").getAbsolutePath());
+            System.load(new File("dragonfly/assets/natives/MCGeForce.dll").getAbsolutePath());
 
             initialise();
         }
