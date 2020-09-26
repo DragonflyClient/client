@@ -27,7 +27,7 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
-        BooleanControl(::enabled.pseudo(), "Enable mod") {
+        BooleanControl(!NvidiaHighlightsMod::enabled, "Enable mod") {
             if (Dragonfly.geforceHelper.isSystemValid) {
                 true
             } else {
@@ -50,10 +50,10 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
             }, 1000)
         },
         TitleControl("Options"),
-        NumberControl(::length, "Length", "The length of a Highlight in seconds.", min = 5.0, max = 60.0),
-        BooleanControl(::saveKills.pseudo(), "Save Kills", ""),
-        BooleanControl(::saveDeaths.pseudo(), "Save Deaths", ""),
-        BooleanControl(::saveWins.pseudo(), "Save Wins", ""),
+        NumberControl(!NvidiaHighlightsMod::length, "Length", "The length of a Highlight in seconds.", min = 5.0, max = 60.0),
+        BooleanControl(!NvidiaHighlightsMod::saveKills, "Save Kills", ""),
+        BooleanControl(!NvidiaHighlightsMod::saveDeaths, "Save Deaths", ""),
+        BooleanControl(!NvidiaHighlightsMod::saveWins, "Save Wins", ""),
         TitleControl("Supported Server, Languages, Modes"),
         TextControl("GommeHD.net: German, English"),
         TextControl("  - BedWars: Kills, Deaths, Wins"),
