@@ -13,6 +13,7 @@ import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.ui.modal.ConfirmModal
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
@@ -121,7 +122,7 @@ class IngameMenuUI : GuiScreen() {
             useScale = false
 
             onClick {
-                if (mc.isIntegratedServerRunning) {
+                if (mc.isIntegratedServerRunning || OptionsSectionClient.confirmDisconnect() != true) {
                     disconnect()
                 } else {
                     val modal = ConfirmModal(
