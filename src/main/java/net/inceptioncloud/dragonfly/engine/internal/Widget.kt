@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
 import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.utils.Keep
@@ -65,6 +66,12 @@ abstract class Widget<W : Widget<W>>(
      * part of an assembled widget and thus if [isInAssembled] is true.
      */
     var parentAssembled: AssembledWidget<*>? = null
+        set(value) {
+            if (value != null) {
+                handleAssembledAdd(value)
+            }
+            field = value
+        }
 
     /**
      * The buffer that this widget is rendered with. This value is only non-null if the widget is directly
@@ -126,6 +133,23 @@ abstract class Widget<W : Widget<W>>(
      * The default action that is executed when the widget is hovered.
      */
     var hoverAction: (Boolean) -> Unit = {}
+
+    /**
+     * An optional tooltip that is shown when the widget is hovered to provide additional information
+     * about its behavior to the user.
+     */
+    var tooltip: Tooltip? = null
+        set(value) {
+            if (field != null) {
+                parentStage?.remove("$value::tooltip")
+                parentAssembled?.structure?.remove("$value::tooltip")
+            }
+            field = value
+            if (value != null) {
+                value.host = this
+                value.prepare()
+            }
+        }
 
     /**
      * A stacking list with all animations that are currently being applied to the widget.
@@ -291,6 +315,7 @@ abstract class Widget<W : Widget<W>>(
         isInStateUpdate = true
         try {
             stateChanged()
+            tooltip?.prepare()
         } finally {
             isInStateUpdate = false
         }
@@ -360,15 +385,22 @@ abstract class Widget<W : Widget<W>>(
      * Notifies the widget when it is added to a stage after the [initializerBlock] has been called.
      */
     open fun handleStageAdd(stage: WidgetStage) {
-        /* can be implemented by a subclass */
+        tooltip?.let { stage.add("$widgetId::tooltip" to it.widget) }
+    }
+
+    /**
+     * Notifies the widget when it is added to an assembled widget.
+     */
+    open fun handleAssembledAdd(parent: AssembledWidget<*>) {
+        tooltip?.let { parent.structure.put("$widgetId::tooltip", it.widget) }
     }
 
     /**
      * Called when the hover state of a widget changes.
      */
     open fun handleHoverStateUpdate() {
-        /* can be implemented by a subclass */
         hoverAction(isHovered)
+        tooltip?.animateTooltip(isHovered)
     }
 
     /**

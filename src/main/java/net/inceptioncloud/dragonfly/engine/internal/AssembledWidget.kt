@@ -81,9 +81,9 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
     fun reassemble() {
         structure = assemble().toMutableMap().also {
             it.forEach { (id, widget) ->
+                widget.widgetId = id
                 widget.isInAssembled = true
                 widget.parentAssembled = this
-                widget.widgetId = id
             }
         }
     }

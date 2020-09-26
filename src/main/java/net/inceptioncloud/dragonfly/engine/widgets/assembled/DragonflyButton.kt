@@ -128,6 +128,8 @@ class DragonflyButton(
                 Rectangle::width to offset
             )?.start()
         }
+
+        super.handleHoverStateUpdate()
     }
 
     override fun handleMousePress(data: MouseData) {

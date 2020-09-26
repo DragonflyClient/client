@@ -10,7 +10,7 @@ import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.*;
 import net.inceptioncloud.dragonfly.ui.components.button.*;
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils;
-import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
+import net.inceptioncloud.dragonfly.ui.screens.*;
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar;
 import net.minecraft.client.gui.achievement.*;
 import net.minecraft.client.renderer.GlStateManager;
@@ -73,7 +73,7 @@ public class GuiIngameMenu extends GuiScreen
             .start(0).end(1)
             .fadeIn(25).stay(15).fadeOut(0)
             .autoTransformator(
-                    (ForwardBackward) () -> mc.currentScreen instanceof GuiIngameMenu
+                    (ForwardBackward) () -> mc.currentScreen instanceof IngameMenuUI
             ).build();
 
         transitionHeader = SmoothDoubleTransition.builder()
@@ -86,7 +86,7 @@ public class GuiIngameMenu extends GuiScreen
             .start(0.0F).end(0.7F)
             .fadeIn(0).stay(15).fadeOut(15)
             .autoTransformator(
-                    (ForwardBackward) () -> mc.currentScreen instanceof GuiIngameMenu && !closeRequested
+                    (ForwardBackward) () -> mc.currentScreen instanceof IngameMenuUI && !closeRequested
             ).build();
 
         this.buttonList.forEach(GuiButton::destroy);

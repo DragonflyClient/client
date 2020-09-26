@@ -1,15 +1,17 @@
-package net.inceptioncloud.dragonfly.engine.widgets.assembled
+package net.inceptioncloud.dragonfly.engine.tooltip
 
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Polygon
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
-import net.inceptioncloud.dragonfly.utils.Keep
+import net.inceptioncloud.dragonfly.mc
 
 /**
- * ## Tooltip Assembled Widget
+ * ## TooltipWidget Assembled Widget
  *
  * A simple widget whose purpose is to act as a tooltip for other elements in the ui.
  * It has some useful properties that allow a rich set of animations to be applied to it.
@@ -25,22 +27,28 @@ import net.inceptioncloud.dragonfly.utils.Keep
  * @property text the text that the tooltip shows
  * @property fontRenderer the font renderer that is used to render the tooltip text
  */
-class Tooltip(
-    initializerBlock: (Tooltip.() -> Unit)? = null
-) : AssembledWidget<Tooltip>(initializerBlock), IPosition {
+class TooltipWidget(
+    initializerBlock: (TooltipWidget.() -> Unit)? = null
+) : AssembledWidget<TooltipWidget>(initializerBlock), IPosition {
 
     override var x: Double by property(0.0)
     override var y: Double by property(0.0)
+
+    val containerWidth: Double get() = fontRenderer.getStringWidth(text) + 4 * padding
+    val containerHeight: Double get() = fontRenderer.height + 2 * padding
+    val containerX: Double get() = this@TooltipWidget.x - containerWidth / 2
+    val containerY: Double get() = this@TooltipWidget.y + verticalOffset
 
     var opacity: Double by property(0.0)
     var arrowSize: Double by property(6.0)
 
     var verticalOffset: Double by property(0.0)
-    var padding: Double by property(4.0)
-    var arc: Double by property(10.0)
+    var padding: Double by property(3.0)
+    var arc: Double by property(7.0)
 
-    var text: String by property("Tooltip")
-    var fontRenderer: IFontRenderer? = null
+    var text: String by property("TooltipWidget")
+    var alignment: TooltipAlignment by property(TooltipAlignment.ABOVE)
+    var fontRenderer: IFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "background" to RoundedRectangle(),
@@ -49,14 +57,12 @@ class Tooltip(
     )
 
     override fun updateStructure() {
-        val textWidth = fontRenderer?.getStringWidth(text) ?: return
-
         val background = "background"<RoundedRectangle> {
-            arc = this@Tooltip.arc
-            width = textWidth + 4 * padding
-            height = fontRenderer!!.height + 2 * padding
-            x = this@Tooltip.x - width / 2
-            y = this@Tooltip.y + verticalOffset
+            arc = this@TooltipWidget.arc
+            width = containerWidth
+            height = containerHeight
+            x = containerX.coerceIn(15.0, (mc.currentScreen?.width ?: 1920) - 15.0 - containerWidth)
+            y = containerY
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
         } ?: return
 
@@ -64,22 +70,23 @@ class Tooltip(
             smooth = true
             color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
 
-            val endY = background.y + background.height
-
-            with(points) {
-                clear()
-                add(Point(x - arrowSize, endY))
-                add(Point(x + arrowSize, endY))
-                add(Point(x, endY + arrowSize))
+            with(alignment) {
+                points.clear()
+                points.add(arrowPoint1().point)
+                points.add(arrowPoint2().point)
+                points.add(arrowPoint3().point)
             }
         }
 
         "text"<TextRenderer> {
-            text = this@Tooltip.text
+            text = this@TooltipWidget.text
             x = background.x + padding * 2
             y = background.y + padding
             color = DragonflyPalette.background.altered { alphaDouble = opacity }
-            fontRenderer = this@Tooltip.fontRenderer!!
+            fontRenderer = this@TooltipWidget.fontRenderer
         }
     }
 }
+
+private val Pair<Double, Double>.point: Point
+    get() = Point(first, second)

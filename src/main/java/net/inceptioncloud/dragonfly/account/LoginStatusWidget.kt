@@ -5,6 +5,8 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
+import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 
@@ -23,6 +25,10 @@ class LoginStatusWidget(
     override var color: WidgetColor by property(DragonflyPalette.foreground)
 
     var fontRenderer: IFontRenderer? by property(null)
+
+    init {
+        tooltip = Tooltip("...", TooltipAlignment.BELOW)
+    }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
@@ -64,6 +70,7 @@ class LoginStatusWidget(
                 staticText = account.username
             }
 
+            tooltip?.updateText("Your currently logged in Dragonfly account")
             clickAction = {}
         } else {
             "container"<RoundedRectangle> {
@@ -75,6 +82,7 @@ class LoginStatusWidget(
                 staticText = "Login"
             }
 
+            tooltip?.updateText("Press to login to Dragonfly")
             clickAction = {
                 AuthenticationBridge.showLoginModal()
             }

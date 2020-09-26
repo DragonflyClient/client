@@ -14,6 +14,7 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseBack
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
+import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.taskbar.widget.TaskbarAppWidget
@@ -37,7 +38,10 @@ object Taskbar {
     /**
      * Adds the taskbar to the stage of the given [gui] screen using its default fade in animation.
      */
-    fun initializeTaskbar(gui: GuiScreen): Unit = with(gui) {
+    @JvmOverloads
+    fun initializeTaskbar(gui: GuiScreen, forceAnimate: Boolean = false): Unit = with(gui) {
+        val animate = mc.previousScreen?.stage?.get("taskbar-background") == null || forceAnimate
+
         val easing = EaseBack.withFactor(3.0).OUT
         val duration = 110
 
@@ -53,11 +57,16 @@ object Taskbar {
             height = 0.0
             color = DragonflyPalette.accentNormal
 
-            morph(
-                duration, easing,
-                Rectangle::height to taskbarHeight,
-                Rectangle::y to this@with.height - taskbarHeight
-            )?.start()
+            if (animate) {
+                morph(
+                    duration, easing,
+                    Rectangle::height to taskbarHeight,
+                    Rectangle::y to this@with.height - taskbarHeight
+                )?.start()
+            } else {
+                height = taskbarHeight
+                y = this@with.height - taskbarHeight
+            }
         } id "taskbar-background"
 
         val shadow = +Image {
@@ -68,10 +77,14 @@ object Taskbar {
             resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/exit.png")
             color = WidgetColor(0, 0, 0, 50)
 
-            morph(
-                duration, easing,
-                Image::y to this@with.height - taskbarHeight + exitOffset + 3.0
-            )?.start()
+            if (animate) {
+                morph(
+                    duration, easing,
+                    Image::y to this@with.height - taskbarHeight + exitOffset + 3.0
+                )?.start()
+            } else {
+                y = this@with.height - taskbarHeight + exitOffset + 3.0
+            }
         } id "taskbar-exit-game-shadow"
 
         +Image {
@@ -81,6 +94,7 @@ object Taskbar {
             width = shadow.width
             resourceLocation = shadow.resourceLocation
             color = WidgetColor(255, 255, 255, 200)
+            tooltip = Tooltip("Close Dragonfly")
             clickAction = { mc.shutdown() }
             hoverAction = {
                 if (it) {
@@ -92,10 +106,14 @@ object Taskbar {
                 }
             }
 
-            morph(
-                duration, easing,
-                Image::y to this@with.height - taskbarHeight + exitOffset
-            )?.start()
+            if (animate) {
+                morph(
+                    duration, easing,
+                    Image::y to this@with.height - taskbarHeight + exitOffset
+                )?.start()
+            } else {
+                y = this@with.height - taskbarHeight + exitOffset
+            }
         } id "taskbar-exit-game"
 
         var currentX = width / 2.0 - (taskbarApps.size * size + (taskbarApps.size - 1) * space) / 2.0
@@ -116,15 +134,23 @@ object Taskbar {
                 height = 0.0
                 isVisible = false
 
-                GraphicsEngine.runAfter(index * 50L + 300L) {
+                if (animate) {
+                    GraphicsEngine.runAfter(index * 50L + 300L) {
+                        isVisible = true
+                        morph(
+                            80, easing,
+                            TaskbarAppWidget::x to pos,
+                            TaskbarAppWidget::y to this@with.height - taskbarHeight + (taskbarHeight - size) / 2.0,
+                            TaskbarAppWidget::width to size,
+                            TaskbarAppWidget::height to size
+                        )?.start()
+                    }
+                } else {
+                    x = pos
+                    y = this@with.height - taskbarHeight + (taskbarHeight - size) / 2.0
+                    width = size
+                    height = size
                     isVisible = true
-                    morph(
-                        80, easing,
-                        TaskbarAppWidget::x to pos,
-                        TaskbarAppWidget::y to this@with.height - taskbarHeight + (taskbarHeight - size) / 2.0,
-                        TaskbarAppWidget::width to size,
-                        TaskbarAppWidget::height to size
-                    )?.start()
                 }
             }
 

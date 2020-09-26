@@ -9,7 +9,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.Tooltip
+import net.inceptioncloud.dragonfly.engine.tooltip.TooltipWidget
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.ui.taskbar.TaskbarApp
@@ -56,7 +56,7 @@ class TaskbarAppWidget(
         "shadow" to FilledCircle(),
         "background" to FilledCircle(),
         "icon" to Image(),
-        "tooltip" to Tooltip()
+        "tooltip" to TooltipWidget()
     )
 
     override fun updateStructure() {
@@ -85,7 +85,7 @@ class TaskbarAppWidget(
             resourceLocation = app.resourceLocation
         }
 
-        "tooltip"<Tooltip> {
+        "tooltip"<TooltipWidget> {
             text = app.name
             x = this@TaskbarAppWidget.originX + this@TaskbarAppWidget.originWidth / 2
             y = this@TaskbarAppWidget.originY - 50.0
@@ -100,6 +100,7 @@ class TaskbarAppWidget(
         originY = y
         originWidth = width
         originHeight = height
+        super.handleStageAdd(stage)
     }
 
     override fun canUpdateHoverState(): Boolean = !isPressed && isVisible
@@ -159,14 +160,14 @@ class TaskbarAppWidget(
      * Animates the tooltip of the app depending on whether it should be [shown][show].
      */
     private fun morphTooltip(show: Boolean) {
-        val tooltip = getWidget<Tooltip>("tooltip") ?: return
+        val tooltip = getWidget<TooltipWidget>("tooltip") ?: return
         val offset = 10.0
 
         tooltip.detachAnimation<MorphAnimation>()
         tooltip.morph(
             40, EaseQuad.IN_OUT,
-            Tooltip::opacity to if (show) 1.0 else 0.0,
-            Tooltip::verticalOffset to if (show) -offset else 0.0
+            TooltipWidget::opacity to if (show) 1.0 else 0.0,
+            TooltipWidget::verticalOffset to if (show) -offset else 0.0
         )?.start()
     }
 }

@@ -19,6 +19,7 @@ object LoginSubscriber {
     fun onClientStartup(event: ClientStartupEvent) {
         val session = Minecraft.getMinecraft().session
         if (session.token == null) return
+        if (session.playerID == session.username) return
 
         val sessionAccount = selectedAccount ?: Account(session.username, "", parseWithoutDashes(session.playerID), session.token, "")
         LinkBridge.showModalForAccount(sessionAccount)
