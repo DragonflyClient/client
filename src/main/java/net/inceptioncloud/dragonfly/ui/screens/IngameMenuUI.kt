@@ -8,8 +8,7 @@ import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
@@ -90,6 +89,7 @@ class IngameMenuUI : GuiScreen() {
             y = 450.0
             text = "Back to game"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/ingamemenu/resume.png"))
+            iconSize = height - 15.0
             useScale = false
 
             onClick {
@@ -102,6 +102,7 @@ class IngameMenuUI : GuiScreen() {
 
             text = "Options"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/options.png"))
+            iconSize = height - 15.0
             useScale = false
 
             onClick {
@@ -114,6 +115,7 @@ class IngameMenuUI : GuiScreen() {
 
             text = "Quit game"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/ingamemenu/disconnect.png"))
+            iconSize = height - 20.0
             useScale = false
 
             onClick {
