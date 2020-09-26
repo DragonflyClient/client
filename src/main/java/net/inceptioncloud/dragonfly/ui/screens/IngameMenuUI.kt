@@ -74,7 +74,7 @@ class IngameMenuUI : GuiScreen() {
             height = 96.0
             width = height * aspectRatio
             x = this@IngameMenuUI.width / 2.0 - width / 2.0
-            y = 70.0
+            y = 110.0
         } id "brand-icon"
 
         +LoginStatusWidget {
@@ -88,7 +88,7 @@ class IngameMenuUI : GuiScreen() {
             width = 620.0
             height = 60.0
             x = this@IngameMenuUI.width / 2.0 - width / 2.0
-            y = 450.0
+            y = 430.0
             text = "Back to game"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/ingamemenu/resume.png"))
             iconSize = height - 15.0
@@ -137,7 +137,7 @@ class IngameMenuUI : GuiScreen() {
         } id "quit-button"
 
         val buttonSize = 60.0
-        val buttonGap = 20.0
+        val buttonGap = 35.0
 
         val minorActions = getMinorActions()
         val actionsWidth = minorActions.size * buttonSize + (minorActions.size - 1) * buttonGap
@@ -145,7 +145,7 @@ class IngameMenuUI : GuiScreen() {
 
         for (widget in minorActions) {
             +widget.apply {
-                positionBelow("quit-button", 50.0)
+                positionBelow("quit-button", 60.0)
                 x = xPosition
                 width = buttonSize
                 height = buttonSize
