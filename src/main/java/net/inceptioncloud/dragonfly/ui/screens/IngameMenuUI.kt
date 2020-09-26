@@ -8,6 +8,8 @@ import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
+import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
+import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
@@ -134,6 +136,20 @@ class IngameMenuUI : GuiScreen() {
             }
         } id "quit-button"
 
+        val minorActions = getMinorActions()
+        val actionsWidth = minorActions.size * 60 + (minorActions.size - 1) * 20
+        var xPosition = width / 2.0 - actionsWidth / 2.0
+
+        for (widget in minorActions) {
+            +widget.apply {
+                positionBelow("quit-button", 50.0)
+                x = xPosition
+                width = 60.0
+                height = 60.0
+            } id widget.tooltip!!.text.toLowerCase().replace(" ", "-")
+            xPosition += 60.0 + 20.0
+        }
+
         Taskbar.initializeTaskbar(this)
     }
 
@@ -155,6 +171,30 @@ class IngameMenuUI : GuiScreen() {
             }
             else -> mc.displayGuiScreen(GuiMultiplayer(MainMenuUI()))
         }
+    }
+
+    /**
+     * Returns a list of minor actions that are available as [RoundIconButton]s below
+     * the major actions. Depending on whether the game is currently in a singleplayer
+     * world, the "Share to LAN" button is visible.
+     */
+    private fun getMinorActions(): List<RoundIconButton> {
+        val list = mutableListOf<RoundIconButton>()
+        if (mc.isIntegratedServerRunning) {
+            list.add(RoundIconButton().apply {
+                icon = ImageResource("dragonflyres/icons/ingamemenu/lan-share.png")
+                tooltip = Tooltip("Share to LAN", TooltipAlignment.BELOW)
+            })
+        }
+        list.add(RoundIconButton().apply {
+            icon = ImageResource("dragonflyres/icons/ingamemenu/achievements.png")
+            tooltip = Tooltip("Achievements", TooltipAlignment.BELOW)
+        })
+        list.add(RoundIconButton().apply {
+            icon = ImageResource("dragonflyres/icons/ingamemenu/statistics.png")
+            tooltip = Tooltip("Statistics", TooltipAlignment.BELOW)
+        })
+        return list
     }
 }
 
