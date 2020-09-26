@@ -5,11 +5,8 @@ import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.color.ColorControl
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
-import net.inceptioncloud.dragonfly.mods.keystrokes.EnumKeystrokesPosition
-import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesMod
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
-import tornadofx.loadFont
 
 object ToggleSneakMod : DragonflyMod("ToggleSneak") {
 
@@ -23,11 +20,13 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
     var overlayTextColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
     var overlayBackgroundColor by option(WidgetColor(1.0, 1.0, 1.0, 0.0))
     var overlaySize by option(16)
-    var position by option(EnumToggleSneakPosition.BOTTOM_RIGHT)
+    var overlayPosition by option(EnumToggleSneakPosition.BOTTOM_RIGHT)
+    var overlayHide by option(true)
 
     var posX = 0.0
     var posY = 0.0
     var width = 0.0
+    var height = 0.0
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
@@ -37,11 +36,13 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
         BooleanControl(ToggleSneakMod::enabledOverlay, "Enable Overlay"),
         ColorControl(ToggleSneakMod::overlayTextColor, "Text Color"),
         ColorControl(ToggleSneakMod::overlayBackgroundColor, "Background Color"),
-        DropdownElement(ToggleSneakMod::position,"Position"),
-        NumberControl(ToggleSneakMod::overlaySize, "Text Size", min = 5.0, max = 25.0, decimalPlaces = 1)
+        DropdownElement(ToggleSneakMod::overlayPosition,"Position"),
+        NumberControl(ToggleSneakMod::overlaySize, "Text Size", min = 5.0, max = 25.0, decimalPlaces = 1),
+        BooleanControl(ToggleSneakMod::overlayHide, "Auto hide background")
     )
 
     fun updateOverlayText() {
+
         overlayText = if (enabledOverlay) {
             var resultText = ""
 
@@ -69,32 +70,43 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
             val screenWidth = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
             val screenHeight = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
 
-            when (position) {
+            when (overlayPosition) {
                 EnumToggleSneakPosition.TOP_LEFT -> {
                     posX = 10.0
                     posY = 10.0
                     width = stringWidth + 3.0
+                    height = stringHeight + 3.0
                 }
                 EnumToggleSneakPosition.TOP_RIGHT -> {
                     posX = screenWidth - (stringWidth + 3.0) - 10.0
                     posY = 10.0
+                    width = stringWidth + 3.0
+                    height = stringHeight + 3.0
                 }
                 EnumToggleSneakPosition.BOTTOM_LEFT -> {
                     posX = 10.0
                     posY = screenHeight - stringHeight - 10
+                    width = stringWidth + 3.0
+                    height = stringHeight + 3.0
                 }
                 EnumToggleSneakPosition.BOTTOM_RIGHT -> {
                     posX = screenWidth - (stringWidth + 3.0) - 10
                     posY = screenHeight - stringHeight - 10
+                    width = stringWidth + 3.0
+                    height = stringHeight + 3.0
                 }
                 EnumToggleSneakPosition.HOTBAR_LEFT -> {
                     posX = Minecraft.getMinecraft().ingameGUI.hotbarX - (stringWidth + 3.0) - 10
                     posY = screenHeight - stringHeight - 10
+                    width = stringWidth + 3.0
+                    height = stringHeight + 3.0
                 }
                 EnumToggleSneakPosition.HOTBAR_RIGHT -> {
                     posX =
                         (Minecraft.getMinecraft().ingameGUI.hotbarX + Minecraft.getMinecraft().ingameGUI.hotbarW + 10).toDouble()
                     posY = screenHeight - stringHeight - 10
+                    width = stringWidth + 3.0
+                    height = stringHeight + 3.0
                 }
             }
         }

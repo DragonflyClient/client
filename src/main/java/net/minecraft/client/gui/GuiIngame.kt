@@ -1048,11 +1048,21 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             x = ToggleSneakMod.posX
             y = ToggleSneakMod.posY
             width = ToggleSneakMod.width
+            height = ToggleSneakMod.height
             staticText = ToggleSneakMod.overlayText
             color = ToggleSneakMod.overlayTextColor
-            backgroundColor = ToggleSneakMod.overlayBackgroundColor
+            backgroundColor = if(staticText == "") {
+                if(ToggleSneakMod.overlayHide) {
+                    ToggleSneakMod.overlayBackgroundColor.altered { alphaDouble = 0.0 }
+                }else {
+                    ToggleSneakMod.overlayBackgroundColor
+                }
+            }else {
+                ToggleSneakMod.overlayBackgroundColor
+            }
             fontRenderer = fontManager.defaultFont.fontRenderer(size = ToggleSneakMod.overlaySize, useScale = false)
             textAlignHorizontal = Alignment.CENTER
+            textAlignVertical = Alignment.CENTER
         }))
 
     }
