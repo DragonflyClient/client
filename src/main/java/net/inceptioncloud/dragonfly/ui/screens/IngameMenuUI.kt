@@ -136,18 +136,21 @@ class IngameMenuUI : GuiScreen() {
             }
         } id "quit-button"
 
+        val buttonSize = 60.0
+        val buttonGap = 20.0
+
         val minorActions = getMinorActions()
-        val actionsWidth = minorActions.size * 60 + (minorActions.size - 1) * 20
+        val actionsWidth = minorActions.size * buttonSize + (minorActions.size - 1) * buttonGap
         var xPosition = width / 2.0 - actionsWidth / 2.0
 
         for (widget in minorActions) {
             +widget.apply {
                 positionBelow("quit-button", 50.0)
                 x = xPosition
-                width = 60.0
-                height = 60.0
+                width = buttonSize
+                height = buttonSize
             } id widget.tooltip!!.text.toLowerCase().replace(" ", "-")
-            xPosition += 60.0 + 20.0
+            xPosition += buttonSize + buttonGap
         }
 
         Taskbar.initializeTaskbar(this)
