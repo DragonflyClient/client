@@ -1,10 +1,8 @@
 package net.inceptioncloud.dragonfly.mods.keystrokes
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.minecraft.client.Minecraft
@@ -33,8 +31,8 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
             }
         }
 
-    @Interpolate var backgroundColor = KeystrokesMod.bgInactiveColor
-    @Interpolate var textColor = KeystrokesMod.textInactiveColor
+    var backgroundColor = KeystrokesMod.bgInactiveColor
+    var textColor = KeystrokesMod.textInactiveColor
     var fontSize = KeystrokesMod.fontSize
     var scale = KeystrokesMod.scale
     var space = KeystrokesMod.space

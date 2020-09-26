@@ -18,23 +18,4 @@
       <option name="Make" enabled="true" />
     </method>
   </configuration>
-  <configuration default="false" name="Developer Mode" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="Start" />
-    <module name="Dragonfly.dragonfly-client.main" />
-    <option name="PROGRAM_PARAMETERS" value="--drgn-developer" />
-    <selectedOptions>
-      <option name="before.launch.openToolWindow" />
-      <option name="commandLineParameters" />
-      <option name="environmentVariables" />
-      <option name="jrePath" />
-      <option name="mainClass" />
-      <option name="vmParameters" />
-      <option name="workingDirectory" />
-    </selectedOptions>
-    <option name="VM_PARAMETERS" value="-Djava.library.path=../natives/ -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+UseNUMA -XX:+CMSParallelRemarkEnabled -XX:MaxGCPauseMillis=30 -XX:GCPauseIntervalMillis=150 -XX:+UseAdaptiveGCBoundary -XX:-UseGCOverheadLimit -XX:+UseBiasedLocking -XX:SurvivorRatio=8 -XX:TargetSurvivorRatio=90 -XX:MaxTenuringThreshold=15 -Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates\u00AD=true -XX:+UseFastAccessorMethods -XX:+UseCompressedOops -XX:+OptimizeStringConcat -XX:+AggressiveOpts -XX:ReservedCodeCacheSize=2048M -XX:+UseCodeCacheFlushing -XX:SoftRefLRUPolicyMSPerMB=20000 -XX:ParallelGCThreads=10 -XX:+UnlockCommercialFeatures -Dlog4j.configurationFile=assets\\log_configs\\client-1.7.xml" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/runtime" />
-    <method v="2">
-      <option name="Make" enabled="true" />
-    </method>
-  </configuration>
 </component>

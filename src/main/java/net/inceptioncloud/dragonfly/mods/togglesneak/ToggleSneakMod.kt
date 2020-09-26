@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.mods.togglesneak
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.color.ColorControl
+import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWings.pseudo
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.minecraft.client.Minecraft
@@ -19,7 +20,7 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
     var overlayText = ""
     var overlayTextColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
     var overlayBackgroundColor by option(WidgetColor(1.0, 1.0, 1.0, 0.0))
-    var overlaySize by option(16)
+    var overlaySize by option(16.0)
     var overlayPosition by option(EnumToggleSneakPosition.BOTTOM_RIGHT)
     var overlayHide by option(true)
 
@@ -30,15 +31,15 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
-        BooleanControl(ToggleSneakMod::enabledSneak, "Enable ToggleSneak"),
-        BooleanControl(ToggleSneakMod::enabledSprint, "Enable ToggleSprint"),
+        BooleanControl(::enabledSneak.pseudo(), "Enable ToggleSneak"),
+        BooleanControl(::enabledSprint.pseudo(), "Enable ToggleSprint"),
         TitleControl("InGame Overlay"),
-        BooleanControl(ToggleSneakMod::enabledOverlay, "Enable Overlay"),
-        ColorControl(ToggleSneakMod::overlayTextColor, "Text Color"),
-        ColorControl(ToggleSneakMod::overlayBackgroundColor, "Background Color"),
-        DropdownElement(ToggleSneakMod::overlayPosition,"Position"),
-        NumberControl(ToggleSneakMod::overlaySize, "Text Size", min = 5.0, max = 25.0, decimalPlaces = 1),
-        BooleanControl(ToggleSneakMod::overlayHide, "Auto hide background")
+        BooleanControl(::enabledOverlay.pseudo(), "Enable Overlay"),
+        ColorControl(::overlayTextColor.pseudo(), "Text Color"),
+        ColorControl(::overlayBackgroundColor.pseudo(), "Background Color"),
+        DropdownElement(::overlayPosition,"Position"),
+        NumberControl(::overlaySize, "Text Size", min = 5.0, max = 25.0, decimalPlaces = 1),
+        BooleanControl(::overlayHide.pseudo(), "Auto hide background")
     )
 
     fun updateOverlayText() {
@@ -63,10 +64,10 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
 
         if(overlayText != "") {
 
-            val stringWidth = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize, useScale = false)
+            val stringWidth = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt(), useScale = false)
                 .getStringWidth(overlayText)
             val stringHeight =
-                Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize, useScale = false).height.toDouble()
+                Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt(), useScale = false).height.toDouble()
             val screenWidth = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
             val screenHeight = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
 

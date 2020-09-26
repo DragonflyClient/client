@@ -1,9 +1,9 @@
 package net.inceptioncloud.dragonfly.mods.nvidiahighlights
 
-import dev.decobr.mcgeforce.bindings.MCGeForceHelper
 import dev.decobr.mcgeforce.utils.EnumHighlightType
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.*
+import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWings.pseudo
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.Minecraft
@@ -27,9 +27,7 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
-        BooleanControl(!::enabled, "Enable mod") {
-            if (isSystemValid) {
-        BooleanControl(::enabled, "Enable mod") {
+        BooleanControl(::enabled.pseudo(), "Enable mod") {
             if (Dragonfly.geforceHelper.isSystemValid) {
                 true
             } else {
@@ -42,10 +40,8 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
             Timer().schedule(object : TimerTask() {
                 override fun run() {
                     /*NECESSARY INFO:
-
                         Displaying error toast always, because error message is
                         covered by the GeForce Experience Overlay if the error doesn't occur!
-
                         ERROR: Occurs if overlay will not be open,
                                if no highlight is in the highlights folder of dragonfly.
                      */
@@ -55,9 +51,9 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
         },
         TitleControl("Options"),
         NumberControl(::length, "Length", "The length of a Highlight in seconds.", min = 5.0, max = 60.0),
-        BooleanControl(!::saveKills, "Save Kills", ""),
-        BooleanControl(!::saveDeaths, "Save Deaths", ""),
-        BooleanControl(!::saveWins, "Save Wins", ""),
+        BooleanControl(::saveKills.pseudo(), "Save Kills", ""),
+        BooleanControl(::saveDeaths.pseudo(), "Save Deaths", ""),
+        BooleanControl(::saveWins.pseudo(), "Save Wins", ""),
         TitleControl("Supported Server, Languages, Modes"),
         TextControl("GommeHD.net: German, English"),
         TextControl("  - BedWars: Kills, Deaths, Wins"),

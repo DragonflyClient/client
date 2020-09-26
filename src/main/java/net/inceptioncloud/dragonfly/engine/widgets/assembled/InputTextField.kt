@@ -46,10 +46,6 @@ class InputTextField(
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
     var labelScaleFactor: Double by property(0.5)
 
-    @Interpolate override var color: WidgetColor by property(DragonflyPalette.accentNormal)
-    @Interpolate var backgroundColor: WidgetColor by property(DragonflyPalette.background)
-    @Interpolate var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
-
     var fontRenderer: IFontRenderer? by property(null)
     var padding: Double by property(2.0)
 

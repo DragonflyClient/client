@@ -25,13 +25,6 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
     var bgInactiveColor by option(WidgetColor(0.9, 0.9, 0.9, 0.2))
 
     private val listener = KeystrokesModListener()
-    val listener: ChangeListener<Any?> = ChangeListener { _, oldValue, newValue ->
-        if (oldValue is WidgetColor && newValue is WidgetColor) {
-            if (oldValue != newValue) {
-                Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
-            }
-        }
-    }
 
     init {
 
@@ -98,6 +91,6 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
 @Keep
 private class KeystrokesModListener : ChangeListener<Any?> {
     override fun invoke(oldValue: Any?, newValue: Any?) {
-        Minecraft.getMinecraft().ingameGUI.initKeystrokes()
+        Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
     }
 }
