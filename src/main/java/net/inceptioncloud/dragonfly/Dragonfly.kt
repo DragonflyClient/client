@@ -140,7 +140,7 @@ object Dragonfly {
             e.printStackTrace()
         } finally {
             if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
-                AuthenticationBridge.showLoginModal()
+                AuthenticationBridge.showLoginModal(true)
             }
 
             if (StorageOptions.SEND_DIAGNOSTICS.get() == 0) {

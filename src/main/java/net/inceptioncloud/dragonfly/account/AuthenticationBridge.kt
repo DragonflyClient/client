@@ -77,11 +77,11 @@ object AuthenticationBridge {
      * Preloads the required font renderers before opening the [LoginModal] via [Modal.showModal]
      * to prevent lags during the animation.
      */
-    fun showLoginModal() {
+    fun showLoginModal(isAutomaticallyOpening: Boolean = false) {
         var otherFinished = false
         fun openModal() {
             if (otherFinished) {
-                Modal.showModal(LoginModal())
+                Modal.showModal(LoginModal(isAutomaticallyOpening))
             }
         }
         Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 60, useScale = false) {
