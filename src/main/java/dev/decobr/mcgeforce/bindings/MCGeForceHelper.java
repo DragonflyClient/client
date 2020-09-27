@@ -39,16 +39,25 @@ public class MCGeForceHelper {
 
     public static final MCGeForceHelper instance = new MCGeForceHelper();
     private static final String prefix = "[GeForce Helper] ";
-    public boolean isSystemValid = isSystemValidStatic;
-    public static boolean isSystemValidStatic;
+    public static boolean isSystemValid;
     private static long handlePtr;
 
     static {
-        isSystemValidStatic = validateSystem();
+        isSystemValid = validateSystem();
 
-        if (isSystemValidStatic) {
-            System.load(new File("dragonfly/assets/natives/GfeSDK.dll").getAbsolutePath());
-            System.load(new File("dragonfly/assets/natives/MCGeForce.dll").getAbsolutePath());
+        if (isSystemValid) {
+
+            File gfeSDK = new File("dragonfly/assets/natives/GfeSDK.dll");
+            File mcGeForce = new File("dragonfly/assets/natives/MCGeForce.dll");
+
+            if(gfeSDK.exists() && mcGeForce.exists()) {
+                System.load(new File("dragonfly/assets/natives/GfeSDK.dll").getAbsolutePath());
+                System.load(new File("dragonfly/assets/natives/MCGeForce.dll").getAbsolutePath());
+            }else {
+                isSystemValid = false;
+                LogManager.getLogger().info(prefix + "Library files not found! (Deactivating feature...)");
+            }
+
 
             initialise();
         }
@@ -99,7 +108,7 @@ public class MCGeForceHelper {
     }
 
     private static void callback(int code) {
-        if (isSystemValidStatic) {
+        if (isSystemValid) {
             if (!NVGSDK.succeeded(code)) {
                 LogManager.getLogger().info(prefix + "Received return code: " + NVGSDK.retCodeToString(code));
                 LogManager.getLogger().info(prefix + "Received error from NVIDIA: " + NVGSDK.retCodeToString(code));
@@ -108,7 +117,7 @@ public class MCGeForceHelper {
     }
 
     private static void createCallback(int code, String version) {
-        if (isSystemValidStatic) {
+        if (isSystemValid) {
             instance.createCallbackRetCode = code;
 
             if (NVGSDK.succeeded(code)) {
@@ -120,13 +129,13 @@ public class MCGeForceHelper {
     }
 
     private static void numberOfHighlightsCallback(int amount) {
-        if (isSystemValidStatic) {
+        if (isSystemValid) {
             instance.highlights = amount;
         }
     }
 
     private static void initialise() {
-        if (isSystemValidStatic) {
+        if (isSystemValid) {
             handlePtr = instance.init();
 
             if (handlePtr > 0) {
@@ -136,7 +145,7 @@ public class MCGeForceHelper {
     }
 
     private static void queryAmountOfHighlights() {
-        if (isSystemValidStatic) {
+        if (isSystemValid) {
             getNumOfHighlights(handlePtr, "mcdragonfly");
         }
     }
