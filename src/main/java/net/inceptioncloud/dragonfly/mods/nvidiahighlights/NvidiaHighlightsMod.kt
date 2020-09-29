@@ -28,6 +28,7 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
         BooleanControl(!NvidiaHighlightsMod::enabled, "Enable mod") {
+
             if (Dragonfly.geforceHelper.isSystemValid) {
                 true
             } else {

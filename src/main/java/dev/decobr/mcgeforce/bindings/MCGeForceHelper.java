@@ -50,10 +50,10 @@ public class MCGeForceHelper {
             File gfeSDK = new File("dragonfly/assets/natives/GfeSDK.dll");
             File mcGeForce = new File("dragonfly/assets/natives/MCGeForce.dll");
 
-            if(gfeSDK.exists() && mcGeForce.exists()) {
+            if (gfeSDK.exists() && mcGeForce.exists()) {
                 System.load(new File("dragonfly/assets/natives/GfeSDK.dll").getAbsolutePath());
                 System.load(new File("dragonfly/assets/natives/MCGeForce.dll").getAbsolutePath());
-            }else {
+            } else {
                 isSystemValid = false;
                 LogManager.getLogger().info(prefix + "Library files not found! (Deactivating feature...)");
             }
@@ -76,7 +76,7 @@ public class MCGeForceHelper {
             LogManager.getLogger().info(prefix + "System is qualified! (OS: '" + os + "' - nvsphelper64.exe: 'true')");
             return true;
         } else {
-            LogManager.getLogger().info(prefix + "System is not qualified! (OS: '" + os + "' - nvsphelper64.exe: '" + isShadowPlayRunning +  "')");
+            LogManager.getLogger().info(prefix + "System is not qualified! (OS: '" + os + "' - nvsphelper64.exe: '" + isShadowPlayRunning + "')");
             return false;
         }
     }
@@ -152,6 +152,10 @@ public class MCGeForceHelper {
 
     private static native void getNumOfHighlights(long handle, String groupID);
 
+    public Boolean getIsSystemValid() {
+        return isSystemValid;
+    }
+
     public void deleteCachedHighlights() {
         if (isSystemValid) {
             instance.closeGroup(handlePtr, "mcdragonfly", true);
@@ -171,13 +175,13 @@ public class MCGeForceHelper {
     public void saveHighlight(EnumHighlightType highlightType) {
         if (isSystemValid) {
 
-            if(!NvidiaHighlightsMod.INSTANCE.getEnabled()) {
+            if (!NvidiaHighlightsMod.INSTANCE.getEnabled()) {
                 return;
-            }else if(highlightType == EnumHighlightType.KILL && !NvidiaHighlightsMod.INSTANCE.getSaveKills()) {
+            } else if (highlightType == EnumHighlightType.KILL && !NvidiaHighlightsMod.INSTANCE.getSaveKills()) {
                 return;
-            }else if(highlightType == EnumHighlightType.DEATH && !NvidiaHighlightsMod.INSTANCE.getSaveDeaths()) {
+            } else if (highlightType == EnumHighlightType.DEATH && !NvidiaHighlightsMod.INSTANCE.getSaveDeaths()) {
                 return;
-            }else if(highlightType == EnumHighlightType.WIN && !NvidiaHighlightsMod.INSTANCE.getSaveWins()) {
+            } else if (highlightType == EnumHighlightType.WIN && !NvidiaHighlightsMod.INSTANCE.getSaveWins()) {
                 return;
             }
 

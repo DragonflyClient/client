@@ -56,7 +56,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
             "The size of the keystroke boxes",
             min = 10.0,
             max = 20.0,
-            decimalPlaces = 2,
+            decimalPlaces = 1,
             liveUpdate = true
         ),
         NumberControl(
@@ -65,7 +65,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
             "The size of the text in the keystroke boxes",
             min = 10.0,
             max = 20.0,
-            decimalPlaces = 2,
+            decimalPlaces = 1,
             liveUpdate = true
         ),
         NumberControl(
@@ -74,7 +74,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
             "The space between the keystroke boxes",
             min = 0.0,
             max = 5.0,
-            decimalPlaces = 2,
+            decimalPlaces = 1,
             liveUpdate = true
         ),
         DropdownElement(KeystrokesMod::position, "Position", "Position of the keystroke boxes"),
