@@ -22,7 +22,8 @@ object KeystrokesSubscriber {
     fun buttonPressed(event: MouseInputEvent) {
         if (event.button == -1) return
         for (keyStroke in KeystrokesManager.keystrokes) {
-            if (keyStroke.keyCode == event.button - 100) {
+            if (keyStroke.keyCode == event.button - 100 &&
+                keyStroke.pressed != event.press) {
                 keyStroke.pressed = event.press
             }
         }
@@ -37,5 +38,4 @@ object KeystrokesSubscriber {
     fun resizeWindow(event: ResizeEvent) {
         Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
     }
-
 }
