@@ -202,7 +202,7 @@ class WidgetColor {
     }
 
     override fun toString(): String {
-        return "WidgetColor($red, $green, $blue, $alpha)"
+        return "WidgetColor($red, $green, $blue, $alpha, rainbow=$rainbow)"
     }
 
     /**
