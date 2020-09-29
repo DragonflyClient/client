@@ -1324,6 +1324,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
                 this.mouseHelper.grabMouseCursor();
                 this.displayGuiScreen(null);
                 this.leftClickCounter = 10000;
+                MouseInputEvent.setState(0, false);
+                MouseInputEvent.setState(1, false);
             }
         }
     }
@@ -1336,6 +1338,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             KeyBinding.unPressAllKeys();
             this.inGameHasFocus = false;
             this.mouseHelper.ungrabMouseCursor();
+            MouseInputEvent.setState(0, false);
+            MouseInputEvent.setState(1, false);
         }
     }
 
