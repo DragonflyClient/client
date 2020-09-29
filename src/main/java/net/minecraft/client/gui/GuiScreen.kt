@@ -612,7 +612,6 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         val k = Mouse.getEventButton()
         val mouseData = MouseData(mouseX, mouseY, button = k)
 
-        println("GuiScreen > ")
         val mouseInputEvent = MouseInputEvent(k)
         eventBus.post(mouseInputEvent)
 

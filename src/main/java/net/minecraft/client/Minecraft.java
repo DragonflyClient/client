@@ -109,7 +109,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
-import org.lwjgl.input.*;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.glu.GLU;
 
@@ -1587,20 +1588,35 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.leftClickCounter = 10000;
         }
 
-        if (this.currentScreen == null || this.currentScreen.allowUserInput) {
-            this.mcProfiler.endStartSection("mouse");
-        }
-
-        while(Mouse.next()) {
-            if (this.currentScreen != null) {
-                this.currentScreen.handleMouseInput();
+        if (this.currentScreen != null) {
+            try {
+                this.currentScreen.handleInput();
+            } catch (Throwable throwable1) {
+                CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Updating screen events");
+                CrashReportCategory crashreportcategory = crashreport.makeCategory("Affected screen");
+                crashreportcategory.addCrashSectionCallable("Screen name", () -> Minecraft.this.currentScreen.getClass().getCanonicalName());
+                throw new ReportedException(crashreport);
             }
 
-            if (this.currentScreen == null || this.currentScreen.allowUserInput) {
+            if (this.currentScreen != null) {
+                try {
+                    this.currentScreen.updateScreen();
+                } catch (Throwable throwable) {
+                    CrashReport crashreport1 = CrashReport.makeCrashReport(throwable, "Ticking screen");
+                    CrashReportCategory crashreportcategory1 = crashreport1.makeCategory("Affected screen");
+                    crashreportcategory1.addCrashSectionCallable("Screen name", () -> Minecraft.this.currentScreen.getClass().getCanonicalName());
+                    throw new ReportedException(crashreport1);
+                }
+            }
+        }
+
+        if (this.currentScreen == null || this.currentScreen.allowUserInput) {
+            this.mcProfiler.endStartSection("mouse");
+
+            while (Mouse.next()) {
                 int i = Mouse.getEventButton();
                 KeyBinding.setKeyBindState(i - 100, Mouse.getEventButtonState());
 
-                System.out.println("Minecraft > ");
                 MouseInputEvent mouseInputEvent = new MouseInputEvent(i);
                 Dragonfly.getEventBus().post(mouseInputEvent);
 
@@ -1645,26 +1661,15 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
                     }
                 }
             }
-        }
 
-        if (this.currentScreen == null || this.currentScreen.allowUserInput) {
             if (this.leftClickCounter > 0) {
                 --this.leftClickCounter;
             }
+
             this.mcProfiler.endStartSection("keyboard");
-        }
 
-        while(Keyboard.next()) {
-            if (this.currentScreen != null) {
-                this.currentScreen.handleKeyboardInput();
-            }
-
-            if (this.currentScreen == null || this.currentScreen.allowUserInput) {
+            while (Keyboard.next()) {
                 int k = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
-                System.out.println("handling key " + Keyboard.getKeyName(k));
-                System.out.println("currentScreen = " + currentScreen);
-                if (currentScreen != null)
-                System.out.println("currentScreen.allowUserInput = " + currentScreen.allowUserInput);
 
                 if (this.currentScreen == null) {
                     KeyInputEvent keyInputEvent = new KeyInputEvent(k);
@@ -1784,20 +1789,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
                     }
                 }
             }
-        }
 
-        if (this.currentScreen != null) {
-            try {
-                this.currentScreen.updateScreen();
-            } catch (Throwable throwable) {
-                CrashReport crashreport1 = CrashReport.makeCrashReport(throwable, "Ticking screen");
-                CrashReportCategory crashreportcategory1 = crashreport1.makeCategory("Affected screen");
-                crashreportcategory1.addCrashSectionCallable("Screen name", () -> Minecraft.this.currentScreen.getClass().getCanonicalName());
-                throw new ReportedException(crashreport1);
-            }
-        }
-
-        if (this.currentScreen == null || this.currentScreen.allowUserInput) {
             for (int l = 0; l < 9; ++l) {
                 if (this.gameSettings.keyBindsHotbar[l].isPressed()) {
                     if (this.thePlayer.isSpectator()) {

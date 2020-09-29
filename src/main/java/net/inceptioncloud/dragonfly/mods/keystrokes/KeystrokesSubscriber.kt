@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.event.client.ToggleFullscreenEvent
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
 import net.minecraft.client.Minecraft
-import org.lwjgl.input.Mouse
 
 object KeystrokesSubscriber {
 
@@ -24,7 +23,6 @@ object KeystrokesSubscriber {
         if (event.button == -1) return
         for (keyStroke in KeystrokesManager.keystrokes) {
             if (keyStroke.keyCode == event.button - 100) {
-                println(Mouse.getButtonName(event.button) + ": " + event.press)
                 keyStroke.pressed = event.press
             }
         }
