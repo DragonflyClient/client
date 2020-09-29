@@ -2691,10 +2691,6 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
                 return !((AddHotkeyModal) current).keySelector.isFocused();
             }else if (current instanceof EditHotkeyModal) {
                 return !((EditHotkeyModal) current).keySelector.isFocused();
-            }else {
-                if (current instanceof EditHotkeyModal) {
-                    return !((EditHotkeyModal) current).keySelector.isFocused();
-                }
             }
         }
 
