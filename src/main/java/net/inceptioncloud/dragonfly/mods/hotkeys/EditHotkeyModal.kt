@@ -35,6 +35,8 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
     lateinit var messageTextField: InputTextField
     lateinit var timeTextField: InputTextField
     lateinit var delayTextField: InputTextField
+
+    lateinit var sendInstantCheckBox: CheckBox
     var colorPickerValue = WidgetColor(1.0, 1.0, 1.0, 1.0)
 
     var updateValuesBool = true
@@ -54,6 +56,8 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
         "delay-textfield" to InputTextField(),
         "color-picker" to ColorPreview(),
         "color-text" to TextField(),
+        "send-checkbox" to CheckBox(),
+        "send-text" to TextField(),
         "save-button" to RoundButton(),
         "cancel-button" to RoundButton(),
         "delete-button" to RoundButton()
@@ -193,11 +197,26 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
             }
         }!!
 
-        "color-text"<TextField> {
+        val colorText = "color-text"<TextField> {
             x = colorPicker.x + colorPicker.width + 10.0
             y = colorPicker.y + 2.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
             staticText = "Color"
+            color = DragonflyPalette.foreground
+        }!!
+
+        sendInstantCheckBox = "send-checkbox"<CheckBox> {
+            x = colorText.x + colorText.width + padding
+            y = this@EditHotkeyModal.y + (9 * paddingTop)
+            width = 25.0
+            height = 25.0
+        }!!
+
+        "send-text"<TextField> {
+            x = sendInstantCheckBox.x + sendInstantCheckBox.width + 10.0
+            y = sendInstantCheckBox.y - 7.5
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
+            staticText = "Send instant"
             color = DragonflyPalette.foreground
         }!!
 
@@ -276,7 +295,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
     }
 
     private fun convertThisToHotkey(): Hotkey {
-        val config = ChatHotkeyConfig(messageTextField.realText)
+        val config = ChatHotkeyConfig(messageTextField.realText, sendInstantCheckBox.isChecked)
 
         val data = HotkeyData(
             EnumHotkeyType.CHAT,
@@ -303,6 +322,9 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
         }
         if (originalHotkey.data.requireAlt) {
             altCheckBox.toggle()
+        }
+        if ((originalHotkey as ChatHotkey).config.sendInstant) {
+            sendInstantCheckBox.toggle()
         }
 
         writeTextInInputTextField("message-textfield", (originalHotkey as ChatHotkey).config.message)
