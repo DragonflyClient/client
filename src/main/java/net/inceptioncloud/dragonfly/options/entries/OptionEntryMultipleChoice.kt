@@ -120,12 +120,12 @@ class OptionEntryMultipleChoice(
 
         // update the state of the left arrow
         enableLeftArrow = Gui.getMouseX() in viewX - 3..viewX + viewWidth - 9
-                && Gui.getMouseY() in arrowTop..arrowBottom
+                && Gui.getMouseY().toDouble() in arrowTop..arrowBottom
                 && previous() != null
 
         // update the state of the right arrow
         enableRightArrow = Gui.getMouseX() in viewX + 9..viewX + viewWidth + 3
-                && Gui.getMouseY() in arrowTop..arrowBottom
+                && Gui.getMouseY().toDouble() in arrowTop..arrowBottom
                 && next() != null
 
         // Arrow Left
