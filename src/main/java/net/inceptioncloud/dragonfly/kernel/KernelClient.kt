@@ -5,6 +5,7 @@ import net.dragonfly.kernel.collector.ListenerCollector.registerListeners
 import net.dragonfly.kernel.collector.PacketCollector.registerPackets
 import net.dragonfly.kernel.logger.SocketLogger
 import net.dragonfly.kernel.packets.client.*
+import net.inceptioncloud.dragonfly.mc
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -37,7 +38,7 @@ object KernelClient {
             client.sendTCP(KeepAlivePacket())
         }
 
-        keepActiveSender = fixedRateTimer("Keep Active Sender", false, 1000, 1000 * 30) {
+        keepActiveSender = fixedRateTimer("Keep Active Sender", false, 1000, 1000 * 20) {
             if (isActive) client.sendTCP(KeepActivePacket())
         }
     }
@@ -55,5 +56,5 @@ object KernelClient {
 
     val isConnected: Boolean get() = client.isConnected
 
-    val isActive: Boolean get() = true
+    val isActive: Boolean get() = mc.theWorld != null && System.currentTimeMillis() - mc.lastInteraction < 1000 * 60
 }
