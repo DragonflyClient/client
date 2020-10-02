@@ -85,6 +85,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer
      */
     protected void handleMouseClick (Slot slotIn, int slotId, int clickedButton, int clickType)
     {
+
         this.field_147057_D = true;
         boolean flag = clickType == 1;
         clickType = slotId == -999 && clickType == 0 ? 4 : clickType;

@@ -202,6 +202,7 @@ open class GuiChat : GuiScreen {
      */
     @Throws(IOException::class)
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
+
         if (mouseButton == 0) {
             val iChatComponent = mc.ingameGUI.chatGUI.getChatComponent(Mouse.getX(), Mouse.getY())
             if (handleComponentClick(iChatComponent)) {
