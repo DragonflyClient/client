@@ -125,6 +125,7 @@ object Dragonfly {
 
         Taskbar
         CosmeticsManager
+        KernelClient
 
         try {
             LogManager.getLogger().info("Checking for authenticated Dragonfly account...")
