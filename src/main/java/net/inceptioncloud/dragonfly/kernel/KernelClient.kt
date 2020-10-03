@@ -6,6 +6,8 @@ import net.dragonfly.kernel.collector.PacketCollector.registerPackets
 import net.dragonfly.kernel.logger.SocketLogger
 import net.dragonfly.kernel.packets.client.*
 import net.inceptioncloud.dragonfly.mc
+import org.apache.logging.log4j.LogManager
+import org.reflections.Reflections
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -44,14 +46,19 @@ object KernelClient {
     }
 
     fun disconnect() {
+        LogManager.getLogger().info("Disconnecting from Dragonfly Kernel server...")
         if (!client.isConnected) error("Not connected to Dragonfly Kernel server")
 
         client.close()
+    }
+
+    fun handleDisconnect() {
         keepAliveSender?.cancel()
         keepActiveSender?.cancel()
 
         keepAliveSender = null
         keepActiveSender = null
+        LogManager.getLogger().info("Successfully disconnected.")
     }
 
     val isConnected: Boolean get() = client.isConnected
