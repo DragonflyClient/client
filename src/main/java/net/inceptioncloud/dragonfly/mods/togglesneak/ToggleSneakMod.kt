@@ -19,10 +19,8 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
     var enabledOverlay by option(true)
     var overlayText = ""
     var overlayTextColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
-    var overlayBackgroundColor by option(WidgetColor(1.0, 1.0, 1.0, 0.0))
     var overlaySize by option(16.0)
     var overlayPosition by option(EnumToggleSneakPosition.BOTTOM_RIGHT)
-    var overlayHide by option(true)
 
     var posX = 0.0
     var posY = 0.0
@@ -36,10 +34,8 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
         TitleControl("InGame Overlay"),
         BooleanControl(!ToggleSneakMod::enabledOverlay, "Enable Overlay"),
         ColorControl(!ToggleSneakMod::overlayTextColor, "Text Color"),
-        ColorControl(!ToggleSneakMod::overlayBackgroundColor, "Background Color"),
         DropdownElement(::overlayPosition,"Position"),
-        NumberControl(::overlaySize, "Text Size", min = 5.0, max = 25.0, decimalPlaces = 1),
-        BooleanControl(!ToggleSneakMod::overlayHide, "Auto hide background")
+        NumberControl(::overlaySize, "Text Size", min = 5.0, max = 25.0, decimalPlaces = 1)
     )
 
     fun updateOverlayText() {
