@@ -112,7 +112,7 @@ object Modal {
         if (queue.isEmpty()) {
             GraphicsEngine.runAfter(125) {
                 modalShadow.detachAnimation<MorphAnimation>()
-                modalShadow.morph(75, EaseQuad.IN, Rectangle::color to WidgetColor(0, 0, 0, 0))
+                modalShadow.morph(45, EaseQuad.IN, Rectangle::color to WidgetColor(0, 0, 0, 0))
                     ?.post { _, _ -> stage.remove("modal-shadow") }?.start()
             }
         }
