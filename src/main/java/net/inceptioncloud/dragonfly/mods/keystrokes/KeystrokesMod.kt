@@ -24,6 +24,8 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
     var bgActiveColor by option(WidgetColor(0.9, 0.5, 0.1, 1.0))
     var bgInactiveColor by option(WidgetColor(0.9, 0.9, 0.9, 0.2))
 
+    var animationSpeed by option(20.0)
+
     private val listener = KeystrokesModListener()
 
     init {
@@ -83,7 +85,8 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
         ColorControl(!KeystrokesMod::bgActiveColor, "Background"),
         TitleControl("Colors (released)", "Set the colors of the keystroke box if the corresponding key/button is not pressed"),
         ColorControl(!KeystrokesMod::textInactiveColor, "Text"),
-        ColorControl(!KeystrokesMod::bgInactiveColor, "Background")
+        ColorControl(!KeystrokesMod::bgInactiveColor, "Background"),
+        NumberControl(!KeystrokesMod::animationSpeed, "Animation Speed", min = 0.0, max = 50.0, decimalPlaces = 0, liveUpdate = false)
     )
 
 }

@@ -24,14 +24,14 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
                     if(value) {
                         detachAnimation<MorphAnimation>()
                         morph(
-                            20, EaseQuad.IN_OUT,
+                            KeystrokesMod.animationSpeed.toInt(), EaseQuad.IN_OUT,
                             ::backgroundColor to KeystrokesMod.bgActiveColor,
                             ::color to KeystrokesMod.textActiveColor
                         )?.start()
                     } else {
                         detachAnimation<MorphAnimation>()
                         morph(
-                            20, EaseQuad.IN_OUT,
+                            KeystrokesMod.animationSpeed.toInt(), EaseQuad.IN_OUT,
                             ::backgroundColor to KeystrokesMod.bgInactiveColor,
                             ::color to KeystrokesMod.textInactiveColor
                         )?.start()
