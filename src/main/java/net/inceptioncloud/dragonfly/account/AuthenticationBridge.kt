@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.account
 import com.google.gson.Gson
 import khttp.responses.Response
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyAuthEvent
 import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyLoginEvent
 import net.inceptioncloud.dragonfly.event.post
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
@@ -51,6 +52,7 @@ object AuthenticationBridge {
         tokenFile.writeText(account.token!!)
 
         DragonflyLoginEvent(account).post()
+        DragonflyAuthEvent(account).post()
 
         return account
     }

@@ -13,7 +13,7 @@ plugins {
     application
     java
     idea
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.0"
 }
 
 group = "net.inceptioncloud"
@@ -29,9 +29,11 @@ dependencies {
     testImplementation("junit:junit:4.13")
 
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.0")
     implementation("com.squareup.okhttp3:okhttp:4.3.1")
+    implementation("com.esotericsoftware:kryonet:2.22.0-RC1")
+    implementation("org.javassist:javassist:3.15.0-GA")
 
     // only required for inspector extension
     implementation("no.tornado:tornadofx:1.7.20")
@@ -197,7 +199,6 @@ tasks {
         from(configurations.runtimeClasspath.get()
             .filter { !it.absolutePath.contains("libraries-minecraft") || it.absolutePath.contains("netty-all") }
             .filter { "tornadofx" !in it.absolutePath } // exclude tornadofx
-            .filter { "reflections" !in it.absolutePath } // exclude org.reflections but not kotlin-reflect
             .map { if (it.isDirectory) it else zipTree(it) }
         ) {
             exclude { it.name == "module-info.class" || it.name == "icon_inspector.png" }
