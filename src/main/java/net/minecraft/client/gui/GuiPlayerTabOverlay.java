@@ -10,11 +10,7 @@ import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
-import net.inceptioncloud.dragonfly.ui.playerlist.indicators.Indicator;
-import net.inceptioncloud.dragonfly.ui.playerlist.indicators.IndicatorKt;
-import net.inceptioncloud.dragonfly.ui.playerlist.indicators.SamePartyIndicator;
-import net.inceptioncloud.dragonfly.ui.playerlist.indicators.ThePlayerIndicator;
-import net.inceptioncloud.dragonfly.ui.renderer.HotkeyRenderer;
+import net.inceptioncloud.dragonfly.ui.playerlist.indicators.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -31,7 +27,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldSettings;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,7 +76,7 @@ public class GuiPlayerTabOverlay extends Gui {
     public static String getPlayerName(NetworkPlayerInfo playerInfo) {
         String displayName = playerInfo.getDisplayName() != null ? playerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(playerInfo.getPlayerTeam(), playerInfo.getGameProfile().getName());
 
-        playerInfo.updateIndicator(ThePlayerIndicator.class);
+        playerInfo.updateIndicator(PlayingDragonflyIndicator.class);
         if (playerInfo.updateIndicator(SamePartyIndicator.class)) {
             displayName = displayName.substring(0, displayName.length() - 12);
         }

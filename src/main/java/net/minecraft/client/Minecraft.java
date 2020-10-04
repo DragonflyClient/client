@@ -238,6 +238,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
     public boolean renderChunksMany = true;
     public Timer timer = new Timer(20.0F);
     public ResourceLocation mojangLogo;
+
+    public long lastInteraction;
+
     long systemTime = getSystemTime();
     long field_181543_z = System.nanoTime();
     /**
@@ -1618,6 +1621,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.mcProfiler.endStartSection("mouse");
 
             while (Mouse.next()) {
+                lastInteraction = System.currentTimeMillis();
                 int i = Mouse.getEventButton();
                 KeyBinding.setKeyBindState(i - 100, Mouse.getEventButtonState());
 
@@ -1673,6 +1677,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.mcProfiler.endStartSection("keyboard");
 
             while (Keyboard.next()) {
+                lastInteraction = System.currentTimeMillis();
                 int k = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
 
                 if (this.currentScreen == null) {

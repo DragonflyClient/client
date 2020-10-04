@@ -13,6 +13,8 @@ import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.diagnostic.ui.DiagnosticsPermissionsModal
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyAuthEvent
+import net.inceptioncloud.dragonfly.kernel.KernelClient
 import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
@@ -123,6 +125,7 @@ object Dragonfly {
 
         Taskbar
         CosmeticsManager
+        KernelClient
 
         try {
             LogManager.getLogger().info("Checking for authenticated Dragonfly account...")
@@ -140,6 +143,10 @@ object Dragonfly {
             LogManager.getLogger().warn("Failed to authenticate with Dragonfly:")
             e.printStackTrace()
         } finally {
+            if (account != null) {
+                DragonflyAuthEvent(account!!).post()
+            }
+
             if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
                 AuthenticationBridge.showLoginModal(true)
             }

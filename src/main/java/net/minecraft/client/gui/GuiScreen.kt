@@ -536,11 +536,13 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     fun handleInput() {
         if (Mouse.isCreated()) {
             while (Mouse.next()) {
+                mc.lastInteraction = System.currentTimeMillis()
                 handleMouseInput()
             }
         }
         if (Keyboard.isCreated()) {
             while (Keyboard.next()) {
+                mc.lastInteraction = System.currentTimeMillis()
                 handleKeyboardInput()
             }
         }
