@@ -13,7 +13,8 @@ import kotlin.concurrent.fixedRateTimer
 
 object KernelClient {
 
-    private var client: Client
+    var onlineAccounts: Array<String> = arrayOf()
+    var client: Client
 
     private var keepAliveSender: Timer? = null
     private var keepActiveSender: Timer? = null
@@ -32,8 +33,9 @@ object KernelClient {
         if (client.isConnected) error("Already connected to Dragonfly Kernel Server")
 
         with(client) {
-            connect(500, "kernel.playdragonfly.net", 7331)
+            connect(500, "127.0.0.1", 7331)
             sendTCP(StartSessionRequestPacket(jwt))
+            sendTCP(UpdateMinecraftAccountPacket(mc.session?.profile?.id?.toString()))
         }
 
         keepAliveSender = fixedRateTimer("Keep Alive Sender", false, 1000, 1000 * 60 * 2) {

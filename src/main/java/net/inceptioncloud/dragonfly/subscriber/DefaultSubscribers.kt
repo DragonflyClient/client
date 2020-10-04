@@ -5,8 +5,8 @@ import net.inceptioncloud.dragonfly.options.OptionSaveSubscriber
 import net.inceptioncloud.dragonfly.design.zoom.ZoomSubscriber
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorSubscriber
 import net.inceptioncloud.dragonfly.event.ModEventBus
-import net.inceptioncloud.dragonfly.kernel.KernelAuthSubscriber
-import net.inceptioncloud.dragonfly.kernel.KernelClient
+import net.inceptioncloud.dragonfly.kernel.subscriber.KernelAuthSubscriber
+import net.inceptioncloud.dragonfly.kernel.subscriber.KernelSessionSubscriber
 import net.inceptioncloud.dragonfly.key.StartupGuiSubscriber
 import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysController
 import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesSubscriber
@@ -45,6 +45,7 @@ object DefaultSubscribers {
             register(HotkeysController)
             register(ToggleSneakSubscriber)
             register(KernelAuthSubscriber)
+            register(KernelSessionSubscriber)
         }
     }
 }
