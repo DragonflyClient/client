@@ -26,6 +26,7 @@ class KeySelector(
     var backgroundColor: WidgetColor by property(DragonflyPalette.background)
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
     var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
+    var oldLineColor = lineColor
 
     var fontRenderer: IFontRenderer? by property(null)
 
@@ -87,7 +88,7 @@ class KeySelector(
         }
 
         (structure["bottom-line-overlay"] as Rectangle).also {
-            it.color = color
+            it.color = lineColor
             it.width = 0.0
             it.height = bottomLine.height
             it.x = bottomLine.x
@@ -117,9 +118,10 @@ class KeySelector(
         isFocused = data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
 
         lineColor = if(isFocused) {
+            oldLineColor = lineColor
             DragonflyPalette.accentNormal
         }else {
-            DragonflyPalette.background.brighter(0.4)
+            oldLineColor
         }
 
     }

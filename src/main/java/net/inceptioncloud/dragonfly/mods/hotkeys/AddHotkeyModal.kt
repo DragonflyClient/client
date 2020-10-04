@@ -85,9 +85,8 @@ class AddHotkeyModal() : ModalWidget("Add Hotkey", 430.0, 440.0) {
 
         keySelector = "key-selector"<KeySelector> {
             x = this@AddHotkeyModal.x + paddingLeft
-            y = this@AddHotkeyModal.y + (4 * paddingTop) - 15.0
+            y = this@AddHotkeyModal.y + (4 * paddingTop) + 5.0
             width = 60.0
-            height = 40.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
             blockKeys = listOf(42, 29, 56)
             clearKeys = listOf(14, 1)

@@ -211,11 +211,11 @@ class InputTextField(
         }
 
         (structure["bottom-line-overlay"] as Rectangle).also {
-            it.color = color
             it.width = 0.0
             it.height = bottomLine.height
             it.x = bottomLine.x
             it.y = bottomLine.y
+            it.color = lineColor
         }
 
         (structure["cursor"] as Rectangle).also {
