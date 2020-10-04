@@ -57,7 +57,7 @@ object KernelClient {
         if (client.isConnected) error("Already connected to Dragonfly Kernel Server")
 
         with(client) {
-            connect(500, "127.0.0.1", 7331)
+            connect(500, "kernel.playdragonfly.net", 7331)
             sendTCP(StartSessionRequestPacket(jwt))
             sendTCP(UpdateMinecraftAccountPacket(mc.session?.profile?.id?.toString()))
         }
