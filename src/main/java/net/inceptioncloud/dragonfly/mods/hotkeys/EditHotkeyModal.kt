@@ -373,17 +373,17 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
 
     private fun InputTextField.shake() {
         this.apply {
-            morph(25, EaseQuad.IN, KeySelector::lineColor to DragonflyPalette.accentDark)?.post { _, _ ->
+            morph(25, EaseQuad.IN, InputTextField::lineColor to DragonflyPalette.accentDark)?.post { _, _ ->
                 detachAnimation<MorphAnimation>()
-                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.post { _, _ ->
+                morph(5, EaseQuad.IN, InputTextField::x to (this.x - 10.0))?.post { _, _ ->
                     detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                    morph(5, EaseQuad.IN, InputTextField::x to (this.x + 20.0))?.post { _, _ ->
                         detachAnimation<MorphAnimation>()
-                        morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 20.0))?.post { _, _ ->
+                        morph(5, EaseQuad.IN, InputTextField::x to (this.x - 20.0))?.post { _, _ ->
                             detachAnimation<MorphAnimation>()
-                            morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                            morph(5, EaseQuad.IN, InputTextField::x to (this.x + 20.0))?.post { _, _ ->
                                 detachAnimation<MorphAnimation>()
-                                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.start()
+                                morph(5, EaseQuad.IN, InputTextField::x to (this.x - 10.0))?.start()
                                 lineColor = DragonflyPalette.background.brighter(0.4)
                             }?.start()
                         }?.start()
@@ -397,15 +397,15 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
         this.apply {
             morph(25, EaseQuad.IN, KeySelector::lineColor to DragonflyPalette.accentDark)?.post { _, _ ->
                 detachAnimation<MorphAnimation>()
-                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.post { _, _ ->
+                morph(5, EaseQuad.IN, KeySelector::x to (this.x - 10.0))?.post { _, _ ->
                     detachAnimation<MorphAnimation>()
-                    morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                    morph(5, EaseQuad.IN, KeySelector::x to (this.x + 20.0))?.post { _, _ ->
                         detachAnimation<MorphAnimation>()
-                        morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 20.0))?.post { _, _ ->
+                        morph(5, EaseQuad.IN, KeySelector::x to (this.x - 20.0))?.post { _, _ ->
                             detachAnimation<MorphAnimation>()
-                            morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x + 20.0))?.post { _, _ ->
+                            morph(5, EaseQuad.IN, KeySelector::x to (this.x + 20.0))?.post { _, _ ->
                                 detachAnimation<MorphAnimation>()
-                                morph(5, EaseQuad.IN, KeySelector::x to (keySelector.x - 10.0))?.start()
+                                morph(5, EaseQuad.IN, KeySelector::x to (this.x - 10.0))?.start()
                                 lineColor = DragonflyPalette.background.brighter(0.4)
                             }?.start()
                         }?.start()
