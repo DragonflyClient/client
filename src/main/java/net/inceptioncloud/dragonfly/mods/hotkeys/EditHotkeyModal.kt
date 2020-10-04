@@ -90,8 +90,9 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
 
         keySelector = "key-selector"<KeySelector> {
             x = this@EditHotkeyModal.x + paddingLeft
-            y = this@EditHotkeyModal.y + (4 * paddingTop) + 5.0
+            y = this@EditHotkeyModal.y + (4 * paddingTop) - 10.0
             width = 60.0
+            height = 30.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
             blockKeys = listOf(42, 29, 56)
             clearKeys = listOf(14, 1)
@@ -136,7 +137,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
             height = 25.0
         }!!
 
-        val altText = "alt-text"<TextField> {
+        var altText = "alt-text"<TextField> {
             x = altCheckBox.x + altCheckBox.width + 10.0
             y = altCheckBox.y + 2.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
@@ -328,8 +329,18 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
         }
 
         writeTextInInputTextField("message-textfield", (originalHotkey as ChatHotkey).config.message)
-        writeTextInInputTextField("time-textfield", originalHotkey.data.time.toString())
-        writeTextInInputTextField("delay-textfield", originalHotkey.data.delay.toString())
+
+        if(originalHotkey.data.time.toString().split(".")[1].endsWith("0")) {
+            writeTextInInputTextField("time-textfield", originalHotkey.data.time.toString().split(".")[0])
+        }else {
+            writeTextInInputTextField("time-textfield", originalHotkey.data.time.toString())
+        }
+
+        if(originalHotkey.data.delay.toString().split(".")[1].endsWith("0")) {
+            writeTextInInputTextField("delay-textfield", originalHotkey.data.delay.toString().split(".")[0])
+        }else {
+            writeTextInInputTextField("delay-textfield", originalHotkey.data.delay.toString())
+        }
 
         colorPickerValue = originalHotkey.data.color
     }
