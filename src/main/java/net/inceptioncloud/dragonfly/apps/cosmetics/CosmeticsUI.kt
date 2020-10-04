@@ -10,6 +10,8 @@ import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.cosmetics.types.capes.CapeManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
+import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
+import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
 import net.inceptioncloud.dragonfly.options.*
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.inceptioncloud.dragonfly.utils.Either
@@ -83,7 +85,10 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
             val titleEntry = if (playerName != null) {
                 SidebarEntry("${DragonflyPalette.accentBright.chatCode}$playerName", icon)
             } else {
-                SidebarEntry("${DragonflyPalette.accentDark.chatCode}Not bound", icon)
+                SidebarEntry("${DragonflyPalette.accentDark.chatCode}Not bound", icon).apply {
+                    tooltip = Tooltip("You can link your Dragonfly Cosmetics to your Minecraft accounts in the dashboard. (Click)", TooltipAlignment.BELOW)
+                    openUrl = "https://dashboard.playdragonfly.net/cosmetics?utm_source=client&utm_medium=tooltip&utm_campaign=cosmetics"
+                }
             }.apply {
                 iconMargin = 10.0
                 isSelectable = false
