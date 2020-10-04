@@ -14,20 +14,20 @@ class ChatHotkey(
 ) : Hotkey(data) {
 
     override fun actionPerformed() {
-        if (config.sendInstant) {
-            sendChatMessage(config.message, false)
-        } else {
-            Minecraft.getMinecraft().displayGuiScreen(GuiChat())
-            if (Minecraft.getMinecraft().currentScreen is GuiChat) {
-                (Minecraft.getMinecraft().currentScreen as GuiChat).typeMessage(config.message)
-                (Minecraft.getMinecraft().currentScreen as GuiChat).deactivatedTyping = true
-                Timer().schedule(object : TimerTask() {
-                    override fun run() {
-                        (Minecraft.getMinecraft().currentScreen as GuiChat).deactivatedTyping = false
-                    }
+            if (config.sendInstant) {
+                sendChatMessage(config.message, false)
+            } else {
+                Minecraft.getMinecraft().displayGuiScreen(GuiChat())
+                if (Minecraft.getMinecraft().currentScreen is GuiChat) {
+                    (Minecraft.getMinecraft().currentScreen as GuiChat).typeMessage(config.message)
+                    (Minecraft.getMinecraft().currentScreen as GuiChat).deactivatedTyping = true
+                    Timer().schedule(object : TimerTask() {
+                        override fun run() {
+                            (Minecraft.getMinecraft().currentScreen as GuiChat).deactivatedTyping = false
+                        }
 
-                },1000)
+                    }, 1000)
+                }
             }
-        }
     }
 }

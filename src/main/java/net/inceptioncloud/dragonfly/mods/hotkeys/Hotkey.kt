@@ -1,9 +1,11 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
+import net.inceptioncloud.dragonfly.mods.hotkeys.types.ChatHotkey
 import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyData
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
+import net.minecraft.client.gui.GuiChat
 import net.minecraft.client.gui.ScaledResolution
 import org.lwjgl.input.Keyboard
 import java.util.*
@@ -86,6 +88,7 @@ abstract class Hotkey(val data: HotkeyData) {
      * Progresses forward in the hotkey activation process checking whether the hotkey [isOnDelay].
      */
     fun progressForward() {
+        if(this is ChatHotkey && Minecraft.getMinecraft().currentScreen is GuiChat) return.also { println("returning...") }
         if (isOnDelay) return // don't activate when on delay
         if (inFadeOut && !transition.isAtStart) return // don't activate during fade out
 
