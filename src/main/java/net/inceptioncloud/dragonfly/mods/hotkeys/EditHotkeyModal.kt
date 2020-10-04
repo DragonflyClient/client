@@ -93,7 +93,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
             y = this@EditHotkeyModal.y + (4 * paddingTop) - 15.0
             width = 60.0
             height = 40.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 32, useScale = false)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
             blockKeys = listOf(42, 29, 56)
             clearKeys = listOf(14, 1)
             textAlignment = Alignment.START
