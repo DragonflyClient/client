@@ -217,6 +217,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
             y = sendInstantCheckBox.y - 7.5
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
             staticText = "Send instant"
+            width = this.fontRenderer!!.getStringWidth("instant__").toDouble()
             color = DragonflyPalette.foreground
         }!!
 

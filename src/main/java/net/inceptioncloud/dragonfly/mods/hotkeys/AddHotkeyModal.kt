@@ -212,7 +212,7 @@ class AddHotkeyModal() : ModalWidget("Add Hotkey", 430.0, 440.0) {
             y = sendInstantCheckBox.y - 7.5
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 36, useScale = false)
             staticText = "Send instant"
-            width = this.fontRenderer!!.getStringWidth("instant").toDouble()
+            width = this.fontRenderer!!.getStringWidth("instant__").toDouble()
             color = DragonflyPalette.foreground
         }!!
 
