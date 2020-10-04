@@ -88,7 +88,7 @@ abstract class Hotkey(val data: HotkeyData) {
      * Progresses forward in the hotkey activation process checking whether the hotkey [isOnDelay].
      */
     fun progressForward() {
-        if(this is ChatHotkey && Minecraft.getMinecraft().currentScreen is GuiChat) return.also { println("returning...") }
+        if(this is ChatHotkey && Minecraft.getMinecraft().currentScreen is GuiChat) return
         if (isOnDelay) return // don't activate when on delay
         if (inFadeOut && !transition.isAtStart) return // don't activate during fade out
 
