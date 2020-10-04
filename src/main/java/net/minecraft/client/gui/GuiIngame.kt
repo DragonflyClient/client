@@ -1053,11 +1053,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             height = ToggleSneakMod.height
             staticText = ToggleSneakMod.overlayText
             color = ToggleSneakMod.overlayTextColor
-            backgroundColor = if(staticText == "") {
-                WidgetColor(0.0,0.0,0.0,0.0)
-            }else {
-                WidgetColor(0.0,0.0,0.0,0.5)
-            }
+            backgroundColor = WidgetColor(0.0,0.0,0.0,0.0)
             fontRenderer = fontManager.defaultFont.fontRenderer(size = ToggleSneakMod.overlaySize.toInt(), useScale = true)
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
