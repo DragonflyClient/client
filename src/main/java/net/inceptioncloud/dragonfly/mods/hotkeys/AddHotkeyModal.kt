@@ -90,7 +90,7 @@ class AddHotkeyModal() : ModalWidget("Add Hotkey", 430.0, 440.0) {
             height = 30.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
             blockKeys = listOf(42, 29, 56)
-            clearKeys = listOf(14, 1)
+            clearKeys = listOf()
             textAlignment = Alignment.START
             lineColor = DragonflyPalette.foreground
         }!!
