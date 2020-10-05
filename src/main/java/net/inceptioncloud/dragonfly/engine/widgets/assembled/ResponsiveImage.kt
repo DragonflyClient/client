@@ -23,7 +23,7 @@ import net.minecraft.util.ResourceLocation
  * @property resourceLocation the resource location of the image
  */
 class ResponsiveImage(
-    initializerBlock: (ResponsiveImage.() -> Unit)
+    initializerBlock: (ResponsiveImage.() -> Unit)? = null
 ) : AssembledWidget<ResponsiveImage>(initializerBlock), IPosition, IDimension, IColor {
 
     override var x: Double by property(0.0)
