@@ -47,8 +47,10 @@ abstract class Hotkey(val data: HotkeyData) {
         actionPerformed()
         activateDelay()
 
-        progressBackward()
-        inFadeOut = true
+        if (data.time != 0.0) {
+            progressBackward()
+            inFadeOut = true
+        }
     }
 
     /**
@@ -88,19 +90,25 @@ abstract class Hotkey(val data: HotkeyData) {
      * Progresses forward in the hotkey activation process checking whether the hotkey [isOnDelay].
      */
     fun progressForward() {
-        if(this is ChatHotkey && Minecraft.getMinecraft().currentScreen is GuiChat) return
-        if (isOnDelay) return // don't activate when on delay
-        if (inFadeOut && !transition.isAtStart) return // don't activate during fade out
+        if(this is ChatHotkey && Minecraft.getMinecraft().currentScreen is GuiChat) return println("A")
+        if (isOnDelay) return println("B") // don't activate when on delay
+        if (inFadeOut && !transition.isAtStart) return println("C") // don't activate during fade out
 
         inFadeOut = false
-        transition.setForward()
+
+        if (data.time == 0.0) {
+            execute()
+        } else {
+            transition.setForward()
+        }
     }
 
     /**
      * Progresses backward in the hotkey activation process.
      */
     fun progressBackward() {
-        transition.setBackward()
+        if (data.time != 0.0)
+            transition.setBackward()
     }
 
     /**
