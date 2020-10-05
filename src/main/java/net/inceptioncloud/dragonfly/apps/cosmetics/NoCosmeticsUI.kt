@@ -97,10 +97,9 @@ class NoCosmeticsUI(
             onClick {
                 if (text == "Refresh cosmetics") {
                     GlobalScope.launch {
-                        val fetched = CosmeticsManager.fetchDragonflyCosmetics()
-                        CosmeticsManager.dragonflyAccountCosmetics = fetched
+                        CosmeticsManager.refreshCosmeticsSync()
 
-                        if (fetched?.isNotEmpty() == true) {
+                        if (CosmeticsManager.dragonflyAccountCosmetics?.isNotEmpty() == true) {
                             CosmeticsUI(previousScreen).switch()
                         } else {
                             this@NoCosmeticsUI.getWidget<TextField>("title")?.staticText = "Still nothing here... Sorry :c"
