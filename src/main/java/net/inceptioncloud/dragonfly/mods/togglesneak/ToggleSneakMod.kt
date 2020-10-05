@@ -35,7 +35,7 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
         BooleanControl(!ToggleSneakMod::enabledOverlay, "Enable Overlay"),
         ColorControl(!ToggleSneakMod::overlayTextColor, "Text Color"),
         DropdownElement(::overlayPosition,"Position"),
-        NumberControl(::overlaySize, "Text Size", min = 5.0, max = 25.0, decimalPlaces = 1)
+        NumberControl(::overlaySize, "Font Size", min = 5.0, max = 25.0, decimalPlaces = 1)
     )
 
     fun updateOverlayText() {
