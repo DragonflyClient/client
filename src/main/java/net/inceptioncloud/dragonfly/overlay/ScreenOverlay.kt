@@ -45,7 +45,13 @@ object ScreenOverlay {
     /**
      * The action that is performed with the switch overlay.
      */
-    var overlayAction: (() -> Unit)? = null
+    private var overlayAction: (() -> Unit)? = null
+
+    /**
+     * Whether the client is currently switching to another gui and thus no new gui switch should
+     * be started. Note that this behavior can be overwritten.
+     */
+    private var inSwitchProgress = false
 
     /**
      * Adds a component to the screen [stage].
@@ -62,7 +68,11 @@ object ScreenOverlay {
      * preferences.
      */
     @JvmStatic
-    fun displayGui(gui: GuiScreen) {
+    @JvmOverloads
+    fun displayGui(gui: GuiScreen, force: Boolean = false) {
+        if (inSwitchProgress && !force) return
+        inSwitchProgress = true
+
         val prev = mc.currentScreen
         val companionObject = gui::class.companionObjectInstance
 
@@ -92,7 +102,7 @@ object ScreenOverlay {
     }
 
     /**
-     * Performs the given [action] (mostly a gui change) with a switch overlay while
+     * Performs the given [overlayAction] (mostly a gui change) with a switch overlay while
      * calling it in the moment when the screen is fully covered.
      */
     private fun startSwitchOverlay() {
@@ -135,6 +145,7 @@ object ScreenOverlay {
         tail.morph(90, null, Rectangle::x to dimensions.width.toDouble())?.post { _, _ ->
             stage.remove("switch-overlay")
             stage.remove("switch-overlay-tail")
+            inSwitchProgress = false
         }?.start()
     }
 

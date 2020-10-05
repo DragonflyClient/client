@@ -64,15 +64,6 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
             color = DragonflyPalette.foreground.brighter(0.7)
         } id "background-color"
 
-        +BackNavigation {
-            x = 30.0
-            y = this@ControlsUI.height - height - 30.0
-            action {
-                onClose()
-                previousScreen.switch()
-            }
-        } id "back-navigation"
-
         +Image {
             height = this@ControlsUI.height / 2.0
             width = height

@@ -81,6 +81,7 @@ class MorphAnimation(
             easing: ((Double) -> Double)? = null,
             vararg updates: PropertyUpdate
         ): Animation? {
+            validateDuration(duration)
             val filteredUpdates = filter(updates.toList())
 
             if (findAnimation<MorphAnimation>() != null || !doesModifyState(filteredUpdates))
@@ -98,6 +99,7 @@ class MorphAnimation(
             first: List<PropertyUpdate>,
             second: List<PropertyUpdate>
         ) {
+            validateDuration(duration)
             if (findAnimation<MorphAnimation>() != null)
                 return
 
@@ -109,6 +111,13 @@ class MorphAnimation(
                 start()
                 post { _, widget -> widget.detachAnimation<MorphAnimation>() }
             }
+        }
+
+        /**
+         * Validates the [duration] input by throwing an exception if it makes no sense.
+         */
+        private fun validateDuration(duration: Int) {
+            if (duration <= 0) throw IllegalArgumentException("The duration for an animation must be at least 1!")
         }
 
         /**
