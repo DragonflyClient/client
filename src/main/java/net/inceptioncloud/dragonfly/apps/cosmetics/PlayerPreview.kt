@@ -7,11 +7,13 @@ import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mc
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.*
 import net.minecraft.entity.EntityLivingBase
+import net.minecraft.util.ResourceLocation
 
 class PlayerPreview(
     initializerBlock: (PlayerPreview.() -> Unit)? = null
@@ -50,8 +52,8 @@ class PlayerPreview(
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.CENTER
             padding = width / 8.0
-            backgroundColor = DragonflyPalette.background.darker(0.9)
-            color = DragonflyPalette.foreground
+            backgroundColor = DragonflyPalette.foreground.darker(1.0)
+            color = DragonflyPalette.background
         }
     }
 
@@ -82,8 +84,8 @@ class PlayerPreview(
                 val distanceX = (curr.mouseX - dragStart.mouseX) / (width / 2.0)
                 val distanceY = (curr.mouseY - dragStart.mouseY) / (height / 2.0)
 
-                rotationHorizontal = (originRotationHorizontal + distanceX).coerceIn(-1.0..1.0)
-                rotationVertical = (originRotationVertical + distanceY).coerceIn(-1.0..1.0)
+                rotationHorizontal = (originRotationHorizontal + distanceX)
+                rotationVertical = (originRotationVertical + distanceY)
             }
         }
 

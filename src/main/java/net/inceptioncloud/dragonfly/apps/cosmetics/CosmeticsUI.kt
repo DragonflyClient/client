@@ -9,9 +9,15 @@ import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.cosmetics.types.capes.CapeManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseSine
+import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundButton
 import net.inceptioncloud.dragonfly.options.*
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.inceptioncloud.dragonfly.utils.Either
@@ -28,7 +34,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
     override val controlsWidth: Double get() = width - 400.0 - 120.0 - 43.0 - previewWidth
     override val controlsX: Double get() = sidebarWidth + 60.0
 
-    val previewWidth = 500.0
+    val previewWidth = 400.0
     val previewX: Double get() = controlsX + controlsWidth + 60.0 + 43.0
 
     override val scrollbarX: Double? get() = width - previewWidth
@@ -44,9 +50,37 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
         +PlayerPreview {
             x = previewX
             y = 0.0
-            width = 500.0
+            width = previewWidth
             height = this@CosmeticsUI.height.toDouble()
         } id "preview"
+
+        +RoundButton {
+            width = 250.0
+            height = 40.0
+            x = previewX + previewWidth / 2.0 - width / 2.0
+            y = this@CosmeticsUI.height - height - 30.0
+            textSize = 40
+            text = "Synchronize Cosmetics"
+            arc = 13.0
+            hoverAction = {
+                detachAnimation<MorphAnimation>()
+                morph(
+                    20, EaseQuad.IN_OUT,
+                    ::color to if (it) DragonflyPalette.accentNormal else DragonflyPalette.background
+                )?.start()
+            }
+            onClick {
+                GlobalScope.launch {
+                    CosmeticsManager.refreshCosmeticsSync()
+
+                    if (CosmeticsManager.dragonflyAccountCosmetics?.isNotEmpty() == true) {
+                        CosmeticsUI(previousScreen)
+                    } else {
+                        NoCosmeticsUI(previousScreen)
+                    }.switch()
+                }
+            }
+        } id "sync-cosmetics"
     }
 
     override fun produceSidebar(): Collection<SidebarEntry> {
@@ -150,9 +184,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                     if (!a || !b) success = false
                 }
 
-            if (success) {
-                Toast.queue("§aSuccessfully uploaded cosmetic configurations!", 500)
-            } else {
+            if (!success) {
                 Toast.queue("§cCould not upload all cosmetic configurations! Please try again later.", 500)
             }
         }
