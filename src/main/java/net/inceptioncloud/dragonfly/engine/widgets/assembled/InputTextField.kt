@@ -264,12 +264,14 @@ class InputTextField(
         cursor.isVisible = cursorVisible
 
         if (cursor.x != cursorX && destinationCursorX != cursorX) {
+            val duration = (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20)
             timeCursorMoved = System.currentTimeMillis()
             cursor.detachAnimation<MorphAnimation>()
-            cursor.morph(
-                (cursor.x.diff(cursorX) * 3).toInt().coerceAtMost(20), null,
-                cursor::x to cursorX
-            )?.post { animation, widget -> widget.detachAnimation(animation) }?.start()
+            if (duration > 0)
+                cursor.morph(
+                    duration, null,
+                    cursor::x to cursorX
+                )?.post { animation, widget -> widget.detachAnimation(animation) }?.start()
         }
 
         (structure["input-text"] as TextField).also {
