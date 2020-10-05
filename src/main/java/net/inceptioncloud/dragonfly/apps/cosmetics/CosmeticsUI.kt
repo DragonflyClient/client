@@ -9,7 +9,11 @@ import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.cosmetics.types.capes.CapeManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseSine
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
@@ -58,6 +62,13 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
             textSize = 40
             text = "Synchronize Cosmetics"
             arc = 13.0
+            hoverAction = {
+                detachAnimation<MorphAnimation>()
+                morph(
+                    20, EaseQuad.IN_OUT,
+                    ::color to if (it) DragonflyPalette.accentNormal else DragonflyPalette.background
+                )?.start()
+            }
             onClick {
                 GlobalScope.launch {
                     CosmeticsManager.refreshCosmeticsSync()

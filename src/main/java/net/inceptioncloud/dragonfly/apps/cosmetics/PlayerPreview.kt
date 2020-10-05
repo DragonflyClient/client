@@ -53,7 +53,7 @@ class PlayerPreview(
             textAlignHorizontal = Alignment.CENTER
             padding = width / 8.0
             backgroundColor = DragonflyPalette.foreground.darker(1.0)
-            color = DragonflyPalette.foreground
+            color = DragonflyPalette.background
         }
     }
 
