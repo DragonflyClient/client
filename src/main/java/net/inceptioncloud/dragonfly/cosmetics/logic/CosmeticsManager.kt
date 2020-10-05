@@ -137,19 +137,27 @@ object CosmeticsManager {
     @JvmOverloads
     fun refreshCosmetics(uuid: UUID? = null) {
         GlobalScope.launch {
-            databaseModels = loadDatabaseModels()
-            dragonflyAccountCosmetics = fetchDragonflyCosmetics()
-            mc.addScheduledTask {
-                val targetEntities = if (uuid != null) {
-                    mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id == uuid }
-                } else {
-                    mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id in cache.keys }
-                }
-                clearCache(uuid)
-                targetEntities
-                    ?.mapNotNull { it as? AbstractClientPlayer }
-                    ?.forEach { it.loadCosmetics() } // reload cosmetics for targets
+            refreshCosmeticsSync(uuid)
+        }
+    }
+
+    /**
+     * Performs the cosmetics refresh. This function is called asynchronously by [refreshCosmetics].
+     */
+    fun refreshCosmeticsSync(uuid: UUID? = null) {
+        databaseModels = loadDatabaseModels()
+        dragonflyAccountCosmetics = fetchDragonflyCosmetics()
+        mc.addScheduledTask {
+            val targetEntities = if (uuid != null) {
+                mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id == uuid }
+            } else {
+                mc.theWorld.getEntities(EntityPlayer::class.java) { it?.gameProfile?.id in cache.keys }
             }
+            clearCache(uuid)
+            targetEntities
+                ?.mapNotNull { it as? AbstractClientPlayer }
+                ?.onEach { println(it) }
+                ?.forEach { it.loadCosmetics() } // reload cosmetics for targets
         }
     }
 
