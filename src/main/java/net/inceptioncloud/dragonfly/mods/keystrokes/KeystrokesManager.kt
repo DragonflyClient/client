@@ -1,37 +1,19 @@
 package net.inceptioncloud.dragonfly.mods.keystrokes
 
-import net.minecraft.client.Minecraft
+import net.inceptioncloud.dragonfly.mc
 
 object KeystrokesManager {
 
     var keystrokes = mutableListOf<Keystroke>()
     var savedKeybindings = HashMap<Int, String>()
 
-    lateinit var forward: Keystroke
-    lateinit var backward: Keystroke
-    lateinit var left: Keystroke
-    lateinit var right: Keystroke
-    lateinit var jump: Keystroke
-    lateinit var sprint: Keystroke
-    lateinit var attack: Keystroke
-    lateinit var use: Keystroke
+    val targetDescriptions = listOf("key.forward", "key.back", "key.left", "key.right", "key.jump", "key.attack", "key.use")
 
     fun registerKeystrokes() {
-        for(keyCode in savedKeybindings.keys) {
-            val keyStroke = Keystroke(keyCode, savedKeybindings[keyCode]!!)
-            when (savedKeybindings[keyCode]!!) {
-                "key.forward" -> forward = keyStroke
-                "key.back" -> backward = keyStroke
-                "key.left" -> left = keyStroke
-                "key.right" -> right = keyStroke
-                "key.jump" -> jump = keyStroke
-                "key.sprint" -> sprint = keyStroke
-                "key.attack" -> attack = keyStroke
-                "key.use" -> use = keyStroke
-            }
-            keystrokes.add(keyStroke)
-        }
-        Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
+        savedKeybindings.keys
+            .filter { savedKeybindings[it] in targetDescriptions }
+            .forEach { keystrokes.add(Keystroke(it, savedKeybindings[it]!!)) }
+        mc.ingameGUI.initInGameOverlay()
     }
 
     @JvmStatic
