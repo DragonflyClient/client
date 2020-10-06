@@ -130,14 +130,6 @@ object Dragonfly {
         } catch (e: Exception) {
             LogManager.getLogger().warn("Failed to authenticate with Dragonfly:")
             e.printStackTrace()
-        } finally {
-            if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
-                AuthenticationBridge.showLoginModal()
-            }
-
-            if (StorageOptions.SEND_DIAGNOSTICS.get() == 0) {
-                Modal.showModal(DiagnosticsPermissionsModal())
-            }
         }
         tickTimer = Timer("Dragonfly Tick Timer")
         tickTimer.scheduleAtFixedRate(object : TimerTask() {
