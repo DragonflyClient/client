@@ -119,7 +119,7 @@ open class PublishTask : DefaultTask() {
         )
 
         val response = khttp.post(
-            url = "https://api.inceptioncloud.net/publish?eap=$earlyAccess&stable=$stable",
+            url = "https://api.playdragonfly.net/v1/version/publish?eap=$earlyAccess&stable=$stable",
             auth = BasicAuthorization(readSecret("api_user"), readSecret("api_password")),
             json = json
         )
