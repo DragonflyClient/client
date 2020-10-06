@@ -131,7 +131,7 @@ class InputTextField(
         label.morph(
             30, EaseQuad.IN_OUT,
             label::scaleFactor to if (isLabelRaised) labelScaleFactor else 1.0,
-            label::y to if (isLabelRaised) y + padding * (labelScaleFactor * -8) else labelY,
+            label::y to if (isLabelRaised) y + padding * labelScaleFactor else labelY,
             label::height to if (isLabelRaised) height / 2.5 else labelHeight,
             label::color to if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
         )?.start()
