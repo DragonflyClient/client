@@ -124,7 +124,12 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                                 EaseCubic.IN_OUT,
                                 overlayBorder::x to this@AttachingKeyUI.width.toDouble()
                             )?.post { _, _ ->
-                                Minecraft.getMinecraft().currentScreen = if (result?.success == true) mainMenuUI else enterKeyUI
+                                Minecraft.getMinecraft().currentScreen = if (result?.success == true) {
+                                    Dragonfly.showStartupModals()
+                                    mainMenuUI
+                                } else {
+                                    enterKeyUI
+                                }
                             }?.start()
                         }
                     }?.start()

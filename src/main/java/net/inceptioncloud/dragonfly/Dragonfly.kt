@@ -159,6 +159,21 @@ object Dragonfly {
     }
 
     /**
+     * Opens the modal windows that are supposed to open once the game has started. Since
+     * there are several actions that have to take place before this, these modals are
+     * extracted to this function.
+     */
+    fun showStartupModals() {
+        if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
+            AuthenticationBridge.showLoginModal()
+        }
+
+        if (StorageOptions.SEND_DIAGNOSTICS.get() == 0) {
+            Modal.showModal(DiagnosticsPermissionsModal())
+        }
+    }
+
+    /**
      * Used to shut down the current Dragonfly Instance.
      */
     @JvmStatic
