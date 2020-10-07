@@ -113,7 +113,6 @@ object Dragonfly {
     fun init() {
         Display.setTitle("Dragonfly ${DragonflyVersion.string} for Minecraft 1.8.8")
 
-        Taskbar
         DefaultSubscribers.register(eventBus)
 
         fontManager = FontManager()
@@ -146,15 +145,8 @@ object Dragonfly {
             if (account != null) {
                 DragonflyAuthEvent(account!!).post()
             }
-
-            if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
-                AuthenticationBridge.showLoginModal(true)
-            }
-
-            if (StorageOptions.SEND_DIAGNOSTICS.get() == 0) {
-                Modal.showModal(DiagnosticsPermissionsModal())
-            }
         }
+
         tickTimer = Timer("Dragonfly Tick Timer")
         tickTimer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
@@ -172,6 +164,21 @@ object Dragonfly {
             val event = ClientShutdownEvent()
             eventBus.post(event)
         })
+    }
+
+    /**
+     * Opens the modal windows that are supposed to open once the game has started. Since
+     * there are several actions that have to take place before this, these modals are
+     * extracted to this function.
+     */
+    fun showStartupModals() {
+        if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
+            AuthenticationBridge.showLoginModal()
+        }
+
+        if (StorageOptions.SEND_DIAGNOSTICS.get() == 0) {
+            Modal.showModal(DiagnosticsPermissionsModal())
+        }
     }
 
     /**

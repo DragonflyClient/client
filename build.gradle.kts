@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "net.inceptioncloud"
-version = "1.1.4.4"
+version = "1.1.4.5"
 
 val outputName = "${project.name}-${project.version}-full.jar"
 
