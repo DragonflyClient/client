@@ -5,6 +5,7 @@ import net.dragonfly.kernel.collector.ListenerCollector.registerListeners
 import net.dragonfly.kernel.collector.PacketCollector.registerPackets
 import net.dragonfly.kernel.logger.SocketLogger
 import net.dragonfly.kernel.packets.client.*
+import net.inceptioncloud.dragonfly.kernel.listener.ClientListenerSupplier
 import net.inceptioncloud.dragonfly.kernel.listener.ConnectionListener
 import net.inceptioncloud.dragonfly.mc
 import org.apache.logging.log4j.LogManager
@@ -43,7 +44,7 @@ object KernelClient {
         client = Client().apply {
             start()
             registerPackets()
-            registerListeners("net.inceptioncloud.dragonfly.kernel.listener")
+            registerListeners(ClientListenerSupplier)
         }
     }
 

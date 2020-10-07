@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.kernel.listener
 
 import com.esotericsoftware.kryonet.Connection
-import net.dragonfly.kernel.collector.PacketListener
 import net.dragonfly.kernel.packets.server.StartSessionResponsePacket
 import net.inceptioncloud.dragonfly.kernel.KernelClient
 import org.apache.logging.log4j.LogManager
@@ -10,10 +9,8 @@ import org.apache.logging.log4j.LogManager
  * Listens to the [StartSessionResponsePacket] and reacts based on whether the session start
  * was successful. Disconnects from the server when it wasn't successful.
  */
-@PacketListener
 class StartSessionResponseListener {
 
-    @PacketListener
     fun onSessionStartResponse(connection: Connection, packet: StartSessionResponsePacket) {
         if (packet.success == true) {
             LogManager.getLogger().info("Successfully authenticated on Dragonfly Kernel server");
