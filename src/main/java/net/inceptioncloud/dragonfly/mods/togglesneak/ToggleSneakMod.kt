@@ -3,9 +3,14 @@ package net.inceptioncloud.dragonfly.mods.togglesneak
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.color.ColorControl
-import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWings.pseudo
+import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
+import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
+import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesMod
+import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesMod.not
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 
@@ -21,11 +26,14 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
     var overlayTextColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
     var overlaySize by option(16.0)
     var overlayPosition by option(EnumToggleSneakPosition.BOTTOM_RIGHT)
+    var animationSpeed by option(20.0)
 
     var posX = 0.0
     var posY = 0.0
     var width = 0.0
     var height = 0.0
+
+    lateinit var textField: TextField
 
     override fun publishControls(): List<ControlElement<*>> = listOf(
         TitleControl("General"),
@@ -34,11 +42,14 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
         TitleControl("InGame Overlay"),
         BooleanControl(!ToggleSneakMod::enabledOverlay, "Enable Overlay"),
         ColorControl(!ToggleSneakMod::overlayTextColor, "Text Color"),
-        DropdownElement(::overlayPosition,"Position"),
-        NumberControl(::overlaySize, "Font Size", min = 5.0, max = 25.0, decimalPlaces = 1)
+        DropdownElement(::overlayPosition, "Position"),
+        NumberControl(::overlaySize, "Font Size", min = 5.0, max = 25.0, decimalPlaces = 1),
+        NumberControl(!ToggleSneakMod::animationSpeed, "Animation Speed (seconds)", min = 1.0, max = 100.0, decimalPlaces = 0, liveUpdate = false)
     )
 
-    fun updateOverlayText() {
+    fun updateOverlay() {
+
+        val oldOverlayText = overlayText
 
         overlayText = if (enabledOverlay) {
             var resultText = ""
@@ -58,12 +69,16 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
             ""
         }
 
-        if(overlayText != "") {
+        if (overlayText != "") {
 
-            val stringWidth = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt(), useScale = false)
-                .getStringWidth(overlayText)
+            val stringWidth =
+                Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt(), useScale = false)
+                    .getStringWidth(overlayText)
             val stringHeight =
-                Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt(), useScale = false).height.toDouble()
+                Dragonfly.fontManager.defaultFont.fontRenderer(
+                    size = overlaySize.toInt(),
+                    useScale = false
+                ).height.toDouble()
             val screenWidth = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
             val screenHeight = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
 
@@ -107,6 +122,33 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
                 }
             }
         }
+
+        textField = TextField().apply {
+            x = posX
+            y = posY
+            width = this@ToggleSneakMod.width
+            height = this@ToggleSneakMod.height
+            staticText = overlayText
+            color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            backgroundColor = WidgetColor(0.0, 0.0, 0.0, 0.0)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt(), useScale = true)
+            textAlignHorizontal = Alignment.CENTER
+            textAlignVertical = Alignment.CENTER
+        }
+
+        if(oldOverlayText == "") {
+            textField.apply {
+                morph(
+                    animationSpeed.toInt(), EaseQuad.IN_OUT,
+                    ::color to overlayTextColor
+                )?.start()
+            }
+        }else {
+            textField.apply {
+                color = overlayTextColor
+            }
+        }
+
     }
 
 }

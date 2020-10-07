@@ -2,7 +2,6 @@ package net.minecraft.client.gui
 
 import com.google.common.collect.Iterables
 import com.google.common.collect.Lists
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor
@@ -1045,19 +1044,8 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             stage.add(Pair("keystroke-${keyStroke.keyDesc}", keyStroke.textField))
         }
 
-        ToggleSneakMod.updateOverlayText()
-        stage.add(Pair("togglesneak-text", TextField().apply {
-            x = ToggleSneakMod.posX
-            y = ToggleSneakMod.posY
-            width = ToggleSneakMod.width
-            height = ToggleSneakMod.height
-            staticText = ToggleSneakMod.overlayText
-            color = ToggleSneakMod.overlayTextColor
-            backgroundColor = WidgetColor(0.0,0.0,0.0,0.0)
-            fontRenderer = fontManager.defaultFont.fontRenderer(size = ToggleSneakMod.overlaySize.toInt(), useScale = true)
-            textAlignHorizontal = Alignment.CENTER
-            textAlignVertical = Alignment.CENTER
-        }))
+        ToggleSneakMod.updateOverlay()
+        stage.add(Pair("togglesneak-text", ToggleSneakMod.textField))
 
     }
 
