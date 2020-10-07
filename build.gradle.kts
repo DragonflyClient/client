@@ -151,6 +151,8 @@ tasks {
         keep("class * extends net.inceptioncloud.dragonfly.engine.internal.AssembledWidget { *; }")
         keep("class * extends net.inceptioncloud.dragonfly.mods.core.DragonflyMod { *; }")
         keep("class net.inceptioncloud.dragonfly.mods.core.DragonflyMod { *; }")
+        keep("class net.dragonfly.kernel.packets.Packet { *; }")
+        keep("class * implements net.dragonfly.kernel.packets.Packet { *; }")
 
         keep("class net.minecraft.entity.** { *; }")
         keep("class net.minecraft.village.** { *; }")
@@ -219,6 +221,16 @@ tasks {
 
         destinationDir = file("${System.getenv("APPDATA")}\\.minecraft\\versions\\Dragonfly-1.8.8")
         rename(outputName, "Dragonfly-1.8.8.jar")
+    }
+
+    register<Copy>("copyObfuscated") {
+        dependsOn("fullJar", "obfuscateJar")
+
+        from("build/libs")
+        include("${project.name}-${project.version}-obfuscated.jar")
+
+        destinationDir = file("${System.getenv("APPDATA")}\\.minecraft\\versions\\Dragonfly-1.8.8")
+        rename("${project.name}-${project.version}-obfuscated.jar", "Dragonfly-1.8.8.jar")
     }
 
     register<Copy>("copyJson") {

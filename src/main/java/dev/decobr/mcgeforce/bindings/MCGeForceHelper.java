@@ -26,6 +26,7 @@ package dev.decobr.mcgeforce.bindings;
 import dev.decobr.mcgeforce.utils.EnumHighlightType;
 import dev.decobr.mcgeforce.utils.NVGSDK;
 import net.inceptioncloud.dragonfly.mods.nvidiahighlights.NvidiaHighlightsMod;
+import net.inceptioncloud.dragonfly.utils.Keep;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
@@ -35,6 +36,7 @@ import java.io.InputStreamReader;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@Keep
 public class MCGeForceHelper {
 
     public static final MCGeForceHelper instance = new MCGeForceHelper();
