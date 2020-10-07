@@ -201,6 +201,7 @@ tasks {
         from(configurations.runtimeClasspath.get()
             .filter { !it.absolutePath.contains("libraries-minecraft") || it.absolutePath.contains("netty-all") }
             .filter { "tornadofx" !in it.absolutePath } // exclude tornadofx
+            .filter { "reflections" !in it.absolutePath } // exclude org.reflections but not kotlin-reflect
             .map { if (it.isDirectory) it else zipTree(it) }
         ) {
             exclude { it.name == "module-info.class" || it.name == "icon_inspector.png" }

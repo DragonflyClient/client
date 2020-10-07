@@ -5,6 +5,7 @@ import net.dragonfly.kernel.collector.ListenerCollector.registerListeners
 import net.dragonfly.kernel.collector.PacketCollector.registerPackets
 import net.dragonfly.kernel.logger.SocketLogger
 import net.dragonfly.kernel.packets.client.*
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.kernel.listener.ClientListenerSupplier
 import net.inceptioncloud.dragonfly.kernel.listener.ConnectionListener
 import net.inceptioncloud.dragonfly.mc
@@ -38,6 +39,11 @@ object KernelClient {
      */
     private var keepActiveSender: Timer? = null
 
+    /**
+     * The timer that tries to reconnect to the Kernel server every 3 minutes
+     */
+    private var reconnectTimer: Timer? = null
+
     init {
         SocketLogger.setCustomLogger()
 
@@ -57,18 +63,25 @@ object KernelClient {
         LogManager.getLogger().info("Connecting to Dragonfly Kernel server...")
         if (client.isConnected) error("Already connected to Dragonfly Kernel Server")
 
-        with(client) {
-            connect(500, "kernel.playdragonfly.net", 7331)
-            sendTCP(StartSessionRequestPacket(jwt))
-            sendTCP(UpdateMinecraftAccountPacket(mc.session?.profile?.id?.toString()))
-        }
+        try {
+            with(client) {
+                connect(500, "kernel.playdragonfly.net", 7331)
+                sendTCP(StartSessionRequestPacket(jwt))
+            }
 
-        keepAliveSender = fixedRateTimer("Keep Alive Sender", false, 1000, 1000 * 60 * 2) {
-            client.sendTCP(KeepAlivePacket())
-        }
+            reconnectTimer?.cancel()
+            reconnectTimer = null
 
-        keepActiveSender = fixedRateTimer("Keep Active Sender", false, 1000, 1000 * 20) {
-            if (isActive) client.sendTCP(KeepActivePacket())
+            keepAliveSender = fixedRateTimer("Keep Alive Sender", true, 1000, 1000 * 60 * 2) {
+                client.sendTCP(KeepAlivePacket())
+            }
+
+            keepActiveSender = fixedRateTimer("Keep Active Sender", true, 1000, 1000 * 20) {
+                if (isActive) client.sendTCP(KeepActivePacket())
+            }
+        } catch (e: Throwable) {
+            handleDisconnect()
+            throw e
         }
     }
 
@@ -95,7 +108,19 @@ object KernelClient {
 
         keepAliveSender = null
         keepActiveSender = null
-        LogManager.getLogger().info("Successfully disconnected.")
+
+        LogManager.getLogger().info("Disconnected from Kernel Server")
+
+        if (reconnectTimer == null) {
+            reconnectTimer = fixedRateTimer("Reconnect Timer", true, 30_000, 1000 * 60 * 3) {
+                try {
+                    Dragonfly.account?.token?.let { connect(it) }
+                } catch (e: Throwable) {
+                    LogManager.getLogger().warn("Failed to reconnect to Kernel Server")
+                    LogManager.getLogger().warn(e.toString())
+                }
+            }
+        }
     }
 
     /**
