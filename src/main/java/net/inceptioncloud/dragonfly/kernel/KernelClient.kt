@@ -60,7 +60,6 @@ object KernelClient {
         with(client) {
             connect(500, "kernel.playdragonfly.net", 7331)
             sendTCP(StartSessionRequestPacket(jwt))
-            sendTCP(UpdateMinecraftAccountPacket(mc.session?.profile?.id?.toString()))
         }
 
         keepAliveSender = fixedRateTimer("Keep Alive Sender", false, 1000, 1000 * 60 * 2) {
