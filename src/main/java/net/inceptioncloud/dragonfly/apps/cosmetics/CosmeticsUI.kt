@@ -9,6 +9,7 @@ import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.cosmetics.types.capes.CapeManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentBright
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
@@ -19,15 +20,24 @@ import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundButton
 import net.inceptioncloud.dragonfly.options.*
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
+import net.inceptioncloud.dragonfly.ui.modal.ConfirmModal
 import net.inceptioncloud.dragonfly.utils.Either
 import net.inceptioncloud.dragonfly.utils.MojangRequest
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
 import java.awt.image.BufferedImage
+import java.net.URI
 
 class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
+
+    companion object {
+        private val cosmeticsDashboardURL = URI(
+            "https://dashboard.playdragonfly.net/cosmetics?utm_source=client&utm_medium=tooltip&utm_campaign=cosmetics"
+        )
+    }
 
     override val sidebarWidth: Double = 400.0
 
@@ -46,6 +56,20 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
 
     override fun initGui() {
         super.initGui()
+
+        if (hasUnboundCosmetics()) {
+            Modal.showModal(ConfirmModal(
+                title = "Unbound cosmetics",
+                description = "Looks like you own cosmetics that have ${accentBright.chatCode}not been bound to a Minecraft " +
+                        "${accentBright.chatCode}account§r! Cosmetic items are only visible on the account that they are bound to. \n\n" +
+                        "${accentBright.chatCode}Visit the dashboard§r to bind a cosmetic item to a " +
+                        "Minecraft account that has been linked to your Dragonfly account before.",
+                yesText = "Open cosmetics dashboard",
+                noText = "I don't care",
+                icon = ResourceLocation("dragonflyres/icons/bind.png"),
+                respondImmediately = false
+            ) { if (it) openWebLink(cosmeticsDashboardURL) })
+        }
 
         +PlayerPreview {
             x = previewX
@@ -87,15 +111,13 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
         val cosmetics = cosmetics ?: return listOf()
         val accounts = cosmetics
             .groupBy { it.minecraft }
-            .toSortedMap(
-                Comparator { _, o2 ->
-                    when (o2) {
-                        mc.session?.profile?.id.toString() -> 1
-                        null -> -2
-                        else -> -1
-                    }
+            .toSortedMap { _, o2 ->
+                when (o2) {
+                    mc.session?.profile?.id.toString() -> 1
+                    null -> -2
+                    else -> -1
                 }
-            )
+            }
 
         return accounts.flatMap { entry ->
             var playerName: String? = null
@@ -117,11 +139,13 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
             val playerSkullTexture = playerSkull?.let { DynamicTexture(it) }
             val icon = playerSkullTexture?.let { ImageResource(it) }
             val titleEntry = if (playerName != null) {
-                SidebarEntry("${DragonflyPalette.accentBright.chatCode}$playerName", icon)
+                SidebarEntry("${accentBright.chatCode}$playerName", icon)
             } else {
                 SidebarEntry("${DragonflyPalette.accentDark.chatCode}Not bound", icon).apply {
-                    tooltip = Tooltip("You can link your Dragonfly Cosmetics to your Minecraft accounts in the dashboard. (Click)", TooltipAlignment.BELOW)
-                    openUrl = "https://dashboard.playdragonfly.net/cosmetics?utm_source=client&utm_medium=tooltip&utm_campaign=cosmetics"
+                    tooltip = Tooltip("Click to bind your cosmetics", TooltipAlignment.BELOW)
+                    clickAction = {
+                        openWebLink(cosmeticsDashboardURL)
+                    }
                 }
             }.apply {
                 iconMargin = 10.0
@@ -190,5 +214,8 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
         }
     }
 
-    operator fun <T> Collection<T>.times(amount: Int) = this.flatMap { item -> (0..amount).map { item } }
+    /**
+     * Returns whether the user owns cosmetics that have not been bound to a Minecraft account.
+     */
+    fun hasUnboundCosmetics(): Boolean = cosmetics?.any { it.minecraft == null } == true
 }
