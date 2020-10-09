@@ -13,6 +13,7 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.utils.Keep
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 
@@ -23,6 +24,7 @@ import net.minecraft.util.ResourceLocation
  * control elements are shown based on which sidebar entry is selected. You can
  * fully customize the appearance of this gui by overriding the dedicated members.
  */
+@Keep
 abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     /**
