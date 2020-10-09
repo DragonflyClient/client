@@ -48,13 +48,6 @@ public class GuiPlayerTabOverlay extends Gui {
      */
     private boolean isBeingRendered;
 
-    private final DoubleTransition hotkeyFlyIn = DoubleTransition.builder().start(-10).end(130).amountOfSteps(30).autoTransformator(new ForwardBackward() {
-        @Override
-        public boolean getAsBoolean() {
-            return isBeingRendered && (Minecraft.getSystemTime() - lastTimeOpened) > 5000;
-        }
-    }).build();
-
     private final SmoothDoubleTransition tablistFlyIn = SmoothDoubleTransition.builder()
             .start(1).end(0)
             .fadeIn(5).stay(15).fadeOut(10)
@@ -195,12 +188,13 @@ public class GuiPlayerTabOverlay extends Gui {
 
             if (k4 < list.size()) {
                 NetworkPlayerInfo playerInfo = list.get(k4);
-                String s1 = getPlayerName(playerInfo);
+                String playerName = getPlayerName(playerInfo);
                 GameProfile gameprofile = playerInfo.getGameProfile();
 
                 if (singleplayer) {
                     EntityPlayer entityplayer = this.mc.theWorld.getPlayerEntityByUUID(gameprofile.getId());
-                    boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE) && (gameprofile.getName().equals("Dinnerbone") || gameprofile.getName().equals("Grumm"));
+                    boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE)
+                            && (gameprofile.getName().equals("Dinnerbone") || gameprofile.getName().equals("Grumm"));
                     this.mc.getTextureManager().bindTexture(playerInfo.getLocationSkin());
                     int l2 = 8 + (flag1 ? 8 : 0);
                     int i3 = 8 * (flag1 ? -1 : 1);
@@ -218,10 +212,10 @@ public class GuiPlayerTabOverlay extends Gui {
                 k2 += 1;
 
                 if (playerInfo.getGameType() == WorldSettings.GameType.SPECTATOR) {
-                    s1 = EnumChatFormatting.ITALIC + s1;
-                    fontRenderer.drawStringWithShadow(s1, (float) x, (float) k2, new Color(0, 0, 0, 120).getRGB());
+                    playerName = EnumChatFormatting.ITALIC + playerName;
+                    fontRenderer.drawStringWithShadow(playerName, (float) x, (float) k2, new Color(0, 0, 0, 120).getRGB());
                 } else {
-                    fontRenderer.drawStringWithShadow(s1, (float) x, (float) k2, -1);
+                    fontRenderer.drawStringWithShadow(playerName, (float) x, (float) k2, -1);
                 }
 
                 if (scoreObjective != null && playerInfo.getGameType() != WorldSettings.GameType.SPECTATOR) {
