@@ -12,6 +12,7 @@ import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyLoginEvent
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI
 import net.minecraft.client.Minecraft
+import org.apache.logging.log4j.LogManager
 
 object LoginSubscriber {
 
@@ -28,7 +29,9 @@ object LoginSubscriber {
     @Subscribe
     fun onDragonflyLogin(event: DragonflyLoginEvent) {
         GraphicsEngine.runAfter(200) {
-            ((mc.currentScreen as? MainMenuUI)?.stage?.get("login-status") as? LoginStatusWidget)?.runStructureUpdate()
+            mc.addScheduledTask {
+                ((mc.currentScreen as MainMenuUI).stage["login-status"] as LoginStatusWidget).runStructureUpdate()
+            }
         }
 
         CosmeticsManager.dragonflyAccountCosmetics = CosmeticsManager.fetchDragonflyCosmetics(event.account.uuid)
