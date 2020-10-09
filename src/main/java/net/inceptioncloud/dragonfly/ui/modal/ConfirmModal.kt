@@ -28,8 +28,8 @@ open class ConfirmModal(
     var yesText: String = "Yes",
     var noText: String = "No",
     var icon: ResourceLocation = ResourceLocation("dragonflyres/icons/question_emoji.png"),
-    var respondImmediately: Boolean = false,
-    var responder: (Boolean) -> Unit
+    private var respondImmediately: Boolean = false,
+    private var responder: (Boolean) -> Unit
 ) : ModalWidget("Confirm", 400.0, 600.0) {
 
     /**
@@ -113,6 +113,7 @@ open class ConfirmModal(
     }
 
     private fun respond(value: Boolean) {
+        if (isAnimating) return
         if (respondImmediately) {
             responder(value)
             Modal.hideModal()
