@@ -67,7 +67,7 @@ class WidgetStage(val name: String) {
         contentPrivate += widgetWithId
         widgetWithId.second.widgetId = widgetWithId.first
         widgetWithId.second.parentStage = this
-        (widgetWithId.second as? AssembledWidget<*>)?.runStructureUpdate()
+        widgetWithId.second.notifyStateChanged()
         inspector { observableContent += widgetWithId }
     }
 
@@ -81,7 +81,7 @@ class WidgetStage(val name: String) {
         widgetWithId.forEach {
             it.second.widgetId = it.first
             it.second.parentStage = this
-            (it.second as? AssembledWidget<*>)?.runStructureUpdate()
+            it.second.notifyStateChanged()
         }
         inspector { observableContent += widgetWithId }
     }
