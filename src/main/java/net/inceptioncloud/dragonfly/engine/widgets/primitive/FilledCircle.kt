@@ -33,11 +33,7 @@ class FilledCircle(
     override fun render() {
         color.glBindColor()
 
-        val sections = 150
         val radius = size / 2
-        val angle = 2 * Math.PI / sections
-        var circleX: Float
-        var circleY: Float
 
         glPushMatrix()
         glEnable(GL_BLEND)
@@ -47,10 +43,12 @@ class FilledCircle(
         glEnable(GL_LINE_SMOOTH)
         glBegin(GL_TRIANGLE_FAN)
 
-        for (i in 0 until sections) {
-            circleX = (radius * sin(i * angle)).toFloat()
-            circleY = (radius * cos(i * angle)).toFloat()
-            glVertex2d(x + circleX + radius, y + circleY + radius)
+        glVertex2d(x + radius, y + radius)
+
+        radians.forEach {
+            val offsetX = cos(it) * radius
+            val offsetY = sin(it) * radius
+            glVertex2d(x + radius + offsetX, y + radius + offsetY)
         }
 
         glEnd()

@@ -38,19 +38,25 @@ class Circle(
     }
 
     override fun render() {
+        val radius = size / 2
         color.glBindColor()
 
         glEnable(GL_LINE_SMOOTH)
         glLineWidth(lineWidth)
-
         glBegin(GL_LINE_STRIP)
-        for (i in 360 downTo 0 step 4)
-            glVertex2d(
-                x + size / 2 + (cos(i * PI / 180) * size / 2),
-                y + size / 2 + (sin(i * PI / 180) * size / 2)
-            )
+
+        radians.forEach {
+            val offsetX = cos(it) * radius
+            val offsetY = sin(it) * radius
+            glVertex2d(x + radius + offsetX, y + radius + offsetY)
+        }
 
         glEnd()
         glDisable(GL_LINE_SMOOTH)
     }
 }
+
+/**
+ * The list of angles in a circle represented in radians
+ */
+val radians = (0..628).map { it / 100.0 }
