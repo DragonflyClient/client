@@ -14,7 +14,6 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.ImageResource
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
-import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseSine
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
@@ -34,8 +33,11 @@ import java.net.URI
 class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
 
     companion object {
-        private val cosmeticsDashboardURL = URI(
+        private val urlTooltip = URI(
             "https://dashboard.playdragonfly.net/cosmetics?utm_source=client&utm_medium=tooltip&utm_campaign=cosmetics"
+        )
+        private val urlPopup = URI(
+            "https://dashboard.playdragonfly.net/cosmetics?utm_source=client&utm_medium=popup&utm_campaign=cosmetics"
         )
     }
 
@@ -68,7 +70,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                 noText = "I don't care",
                 icon = ResourceLocation("dragonflyres/icons/bind.png"),
                 respondImmediately = false
-            ) { if (it) openWebLink(cosmeticsDashboardURL) })
+            ) { if (it) openWebLink(urlPopup) })
         }
 
         +PlayerPreview {
@@ -144,7 +146,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                 SidebarEntry("${DragonflyPalette.accentDark.chatCode}Not bound", icon).apply {
                     tooltip = Tooltip("Click to bind your cosmetics", TooltipAlignment.BELOW)
                     clickAction = {
-                        openWebLink(cosmeticsDashboardURL)
+                        openWebLink(urlTooltip)
                     }
                 }
             }.apply {
