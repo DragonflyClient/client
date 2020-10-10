@@ -80,11 +80,22 @@ class MorphAnimation(
             duration: Int = 100,
             easing: ((Double) -> Double)? = null,
             vararg updates: PropertyUpdate
+        ): Animation? = morph(duration, easing, false, *updates)
+
+        /**
+         * Full function for attaching a morph animation to a widget. This function also allows to [combine]
+         * the animation with an existing one.
+         */
+        fun Widget<*>.morph(
+            duration: Int = 100,
+            easing: ((Double) -> Double)? = null,
+            combine: Boolean = true,
+            vararg updates: PropertyUpdate
         ): Animation? {
             validateDuration(duration)
             val filteredUpdates = filter(updates.toList())
 
-            if (findAnimation<MorphAnimation>() != null || !doesModifyState(filteredUpdates))
+            if (!doesModifyState(filteredUpdates) && (combine || findAnimation<MorphAnimation>() != null))
                 return null
 
             return MorphAnimation(filteredUpdates, duration, easing).also { attachAnimation(it) }
