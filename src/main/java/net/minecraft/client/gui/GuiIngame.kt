@@ -139,6 +139,14 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         val scaledWidth = scaledresolution.scaledWidth
         val scaledHeight = scaledresolution.scaledHeight
         mc.entityRenderer.setupOverlayRendering(false)
+
+        for (key in controller.hotkeys) {
+            key.drawProgress()
+        }
+
+        // ICMM Render Stage
+        stage.render()
+
         GlStateManager.enableBlend()
         if (Config.isVignetteEnabled()) {
             renderVignette(mc.thePlayer.getBrightness(partialTicks), scaledresolution)
@@ -312,17 +320,10 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             scoreobjective1
         )
 
-        // ICMM Hotkey Draw
-        for (key in controller.hotkeys) {
-            key.drawProgress()
-        }
-
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
         GlStateManager.disableLighting()
         GlStateManager.enableAlpha()
 
-        // ICMM Render Stage
-        stage.render()
         mc.entityRenderer.setupOverlayRendering(true)
     }
 
