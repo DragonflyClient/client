@@ -393,6 +393,7 @@ public abstract class Render<T extends Entity>
             final int textX = -fontrenderer.getStringWidth(str) / 2;
             GlStateManager.enableTexture2D();
             GlStateManager.enableDepth();
+            GlStateManager.depthMask(true);
 
             if (entityIn instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) entityIn;
