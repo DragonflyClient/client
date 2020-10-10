@@ -34,16 +34,15 @@ class ModManagerUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
         (entry.metadata as? DragonflyMod)?.publishControls()
 
     override fun onClose() {
-        reloadKeystrokesOverlay()
-    }
-
-    private fun reloadKeystrokesOverlay() {
-        for (keystroke in KeystrokesManager.keystrokes) {
-            keystroke.scale = KeystrokesMod.scale
-            keystroke.space = KeystrokesMod.space
-            keystroke.fontSize = KeystrokesMod.fontSize
-
-            Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
+        for(keyStroke in KeystrokesManager.keystrokes) {
+            keyStroke.backgroundColor = KeystrokesMod.bgInactiveColor
+            keyStroke.textColor = KeystrokesMod.textInactiveColor
+            keyStroke.fontSize = KeystrokesMod.fontSize
+            keyStroke.scale = KeystrokesMod.scale
+            keyStroke.space = KeystrokesMod.space
         }
+
+        Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
     }
+
 }

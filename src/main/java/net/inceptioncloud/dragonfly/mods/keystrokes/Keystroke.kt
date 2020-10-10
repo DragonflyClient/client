@@ -182,6 +182,7 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
             staticText = name
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = KeystrokesMod.fontSize.toInt())
         }
+
     }
 
 }
