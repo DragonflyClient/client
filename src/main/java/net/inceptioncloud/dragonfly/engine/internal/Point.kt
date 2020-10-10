@@ -6,4 +6,4 @@ package net.inceptioncloud.dragonfly.engine.internal
  * @param x x position
  * @param y y position
  */
-data class Point(val x: Number, val y: Number)
+data class Point(val x: Double, val y: Double)
