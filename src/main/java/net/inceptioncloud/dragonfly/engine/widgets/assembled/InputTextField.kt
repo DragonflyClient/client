@@ -154,6 +154,7 @@ class InputTextField(
             30, EaseCubic.IN_OUT,
             lineOverlay::width to if (focused) width else 0.0
         )?.start()
+
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -204,15 +205,19 @@ class InputTextField(
             it.width = width
             it.adaptHeight = true
             it.x = x
-            it.y = y + (height - it.height) / 2.0
+            it.y = labelY
             it.padding = padding
 
             // apply label preferences
             it.scaleFactor = if (isLabelRaised) labelScaleFactor else 1.0
             it.x = x
-            it.y = if (isLabelRaised) y + padding * (labelScaleFactor * -8) else labelY
+            it.y = if (isLabelRaised) y + padding * labelScaleFactor else labelY
             it.height = if (isLabelRaised) height / 2.5 else labelHeight
-            it.color = if (isFocused && isLabelRaised) color else unfocusedLabelColor
+            it.color = if (isFocused && isLabelRaised) color else if (isLabelRaised) {
+                unfocusedLabelLiftedColor
+            } else {
+                unfocusedLabelColor
+            }
         }
 
         val bottomLine = (structure["bottom-line"] as Rectangle).also {
