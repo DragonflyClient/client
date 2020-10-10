@@ -1,5 +1,6 @@
 package net.minecraft.item;
 
+import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -40,6 +41,8 @@ public class ItemBucket extends Item
         }
         else
         {
+            boolean syncLiquids = worldIn.isRemote && EnhancedGameExperienceMod.getFixGhostLiquids();
+
             if (movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
             {
                 BlockPos blockpos = movingobjectposition.getBlockPos();
@@ -61,16 +64,20 @@ public class ItemBucket extends Item
 
                     if (material == Material.water && ((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() == 0)
                     {
-                        worldIn.setBlockToAir(blockpos);
-                        playerIn.triggerAchievement(StatList.objectUseStats[Item.getIdFromItem(this)]);
-                        return this.fillBucket(itemStackIn, playerIn, Items.water_bucket);
+                        if (!syncLiquids) {
+                            worldIn.setBlockToAir(blockpos);
+                            playerIn.triggerAchievement(StatList.objectUseStats[Item.getIdFromItem(this)]);
+                            return this.fillBucket(itemStackIn, playerIn, Items.water_bucket);
+                        }
                     }
 
                     if (material == Material.lava && ((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() == 0)
                     {
-                        worldIn.setBlockToAir(blockpos);
-                        playerIn.triggerAchievement(StatList.objectUseStats[Item.getIdFromItem(this)]);
-                        return this.fillBucket(itemStackIn, playerIn, Items.lava_bucket);
+                        if (!syncLiquids) {
+                            worldIn.setBlockToAir(blockpos);
+                            playerIn.triggerAchievement(StatList.objectUseStats[Item.getIdFromItem(this)]);
+                            return this.fillBucket(itemStackIn, playerIn, Items.lava_bucket);
+                        }
                     }
                 }
                 else
@@ -87,7 +94,7 @@ public class ItemBucket extends Item
                         return itemStackIn;
                     }
 
-                    if (this.tryPlaceContainedLiquid(worldIn, blockpos1) && !playerIn.capabilities.isCreativeMode)
+                    if (this.tryPlaceContainedLiquid(worldIn, blockpos1) && !playerIn.capabilities.isCreativeMode && !syncLiquids)
                     {
                         playerIn.triggerAchievement(StatList.objectUseStats[Item.getIdFromItem(this)]);
                         return new ItemStack(Items.bucket);
@@ -156,7 +163,11 @@ public class ItemBucket extends Item
                         worldIn.destroyBlock(pos, true);
                     }
 
-                    worldIn.setBlockState(pos, this.isFull.getDefaultState(), 3);
+                    boolean syncLiquids = worldIn.isRemote && EnhancedGameExperienceMod.getFixGhostLiquids();
+
+                    if (!syncLiquids) {
+                        worldIn.setBlockState(pos, this.isFull.getDefaultState(), 3);
+                    }
                 }
 
                 return true;
