@@ -7,6 +7,7 @@ import net.inceptioncloud.dragonfly.engine.inspector.InspectorService
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService.platform
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
 import tornadofx.*
+import java.util.*
 
 /**
  * ## Widget Stage
@@ -31,7 +32,7 @@ class WidgetStage(val name: String) {
      * Each widget has a unique id which is the key in the map. When adding a new widget to the
      * stage with an already existing id, the widget will be overwritten.
      */
-    private val contentPrivate = mutableMapOf<String, Widget<*>>()
+    private val contentPrivate = Collections.synchronizedMap(mutableMapOf<String, Widget<*>>())
 
     /**
      * An immutable version of [contentPrivate] that is exposed publicly.
@@ -41,7 +42,7 @@ class WidgetStage(val name: String) {
     /**
      * An observable variant of the [content] as a list of pairs.
      */
-    val observableContent: ObservableList<Pair<String, Widget<*>>> = FXCollections.observableArrayList<Pair<String, Widget<*>>>()
+    val observableContent: ObservableList<Pair<String, Widget<*>>> = FXCollections.observableArrayList()
 
     /**
      * Renders all [Widget] objects in the stage.
