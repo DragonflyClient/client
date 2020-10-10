@@ -33,8 +33,6 @@ class SidebarEntry(
     var isSelectable: Boolean = true
     var iconMargin = 7.0
 
-    var openUrl: String? = null
-
     /**
      * The sidebar manager that controls this entry.
      */
@@ -94,15 +92,4 @@ class SidebarEntry(
     override fun handleHoverStateUpdate() {
         tooltip?.animateTooltip(isHovered)
     }
-
-    override fun handleMousePress(data: MouseData) {
-        if(data in textWidget || data in iconWidget)
-        if (openUrl != null) {
-            GuiScreen.openWebLink(URL(openUrl).toURI())
-        }
-    }
-
-    operator fun <W> W?.contains(data: MouseData): Boolean where W : IDimension, W : IPosition =
-        if (this == null) false else data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
-
 }

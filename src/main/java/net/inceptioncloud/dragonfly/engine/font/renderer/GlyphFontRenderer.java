@@ -370,7 +370,7 @@ public class GlyphFontRenderer implements IFontRenderer {
         GlyphPage.Glyph glyph = pageRegular.glyphCharacterMap.get(ch == '▏' ? '|' : ch);
 
         if (glyph == null) {
-            return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch) * 2;
+            return Minecraft.getMinecraft().fontRendererObj.getCharWidthFloat(ch);
         }
 
         return (float) ((pageRegular.getWidth(ch) - 8) / (2.0F * getFontQualityScale()));

@@ -76,18 +76,21 @@ object Modal {
 
         ScreenOverlay.addComponent("modal", modal)
 
-        modal.isModal = true
-        modal.x = screenWidth / 2.0 - modal.width / 4.0
-        modal.y = screenHeight
-        modal.scaleFactor = 0.5
-        modal.onShow()
-        modal.detachAnimation<MorphAnimation>()
-        modal.morph(
-            75, easing.OUT,
-            ModalWidget::scaleFactor to 1.0,
-            ModalWidget::x to screenWidth / 2.0 - modal.width / 2.0,
-            ModalWidget::y to screenHeight / 2.0 - modal.height / 2.0
-        )?.start()
+        with(modal) {
+            isAnimating = true
+            isModal = true
+            x = screenWidth / 2.0 - modal.width / 4.0
+            y = screenHeight
+            scaleFactor = 0.5
+            onShow()
+            detachAnimation<MorphAnimation>()
+            morph(
+                75, easing.OUT,
+                ModalWidget::scaleFactor to 1.0,
+                ModalWidget::x to screenWidth / 2.0 - modal.width / 2.0,
+                ModalWidget::y to screenHeight / 2.0 - modal.height / 2.0
+            )?.post { _, _ -> isAnimating = false }?.start()
+        }
 
         return true
     }
@@ -105,8 +108,7 @@ object Modal {
         val screenWidth = ScreenOverlay.dimensions.getWidth()
         val screenHeight = ScreenOverlay.dimensions.getHeight()
 
-        val modal = stage["modal"]!!
-        modal as IDimension
+        val modal = stage["modal"]!! as ModalWidget
         val modalShadow = stage["modal-shadow"]!!
 
         if (queue.isEmpty()) {
@@ -117,23 +119,27 @@ object Modal {
             }
         }
 
-        modal.detachAnimation<MorphAnimation>()
-        modal.morph(
-            75, easing.IN,
-            ModalWidget::scaleFactor to 0.5,
-            ModalWidget::x to screenWidth / 2.0 - modal.width / 4.0,
-            ModalWidget::y to screenHeight
-        )?.post { _, _ ->
-            stage.remove("modal")
-            currentModal = null
-            inHidingAnimation = false
+        with(modal) {
+            isAnimating = true
+            detachAnimation<MorphAnimation>()
+            morph(
+                75, easing.IN,
+                ModalWidget::scaleFactor to 0.5,
+                ModalWidget::x to screenWidth / 2.0 - width / 4.0,
+                ModalWidget::y to screenHeight
+            )?.post { _, _ ->
+                stage.remove("modal")
+                isAnimating = false
+                currentModal = null
+                inHidingAnimation = false
 
-            responder()
+                responder()
 
-            if (queue.isNotEmpty()) {
-                showModal(queue.poll())
-            }
-        }?.start()
+                if (queue.isNotEmpty()) {
+                    showModal(queue.poll())
+                }
+            }?.start()
+        }
 
         return true
     }

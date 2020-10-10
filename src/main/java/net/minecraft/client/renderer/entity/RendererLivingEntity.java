@@ -1,6 +1,8 @@
 package net.minecraft.client.renderer.entity;
 
 import com.google.common.collect.Lists;
+import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -552,7 +554,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                     GlStateManager.alphaFunc(516, 0.1F);
 
                     if (entity.isSneaking()) {
-                        FontRenderer fontrenderer = this.getFontRendererFromRenderManager();
+                        IFontRenderer fontrenderer = Dragonfly.getFontManager().getRegular();
                         GlStateManager.pushMatrix();
                         GlStateManager.translate(
                                 (float) x,

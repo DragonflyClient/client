@@ -23,6 +23,12 @@ abstract class ModalWidget(
     override var y: Double by property(0.0)
 
     /**
+     * True, if the widget is currently in its animation process in which it should
+     * not respond to user input.
+     */
+    var isAnimating = false
+
+    /**
      * Called when the modal window is shown using [Modal.showModal].
      */
     open fun onShow() {}

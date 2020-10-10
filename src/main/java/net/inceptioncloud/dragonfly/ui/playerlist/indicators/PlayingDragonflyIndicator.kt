@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.scoreboard.ScorePlayerTeam
 import net.minecraft.util.ResourceLocation
 
-class PlayingDragonflyIndicator : Indicator(ResourceLocation("dragonflyres/logos/32x.png"), "§6Dragonfly", -100) {
+class PlayingDragonflyIndicator : Indicator(ResourceLocation("dragonflyres/logos/128x.png"), "§6Dragonfly", -100) {
 
     override fun check(playerInfo: NetworkPlayerInfo) =
         playerInfo.gameProfile.id.toString() in KernelClient.onlineAccounts
