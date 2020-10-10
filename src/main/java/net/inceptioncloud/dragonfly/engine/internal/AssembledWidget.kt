@@ -75,6 +75,11 @@ abstract class AssembledWidget<W : AssembledWidget<W>>(
         structure.values.forEach { it.handleMousePress(data) }
     }
 
+    override fun handleMouseRelease(data: MouseData) {
+        super.handleMouseRelease(data)
+        structure.values.forEach { it.handleMouseRelease(data) }
+    }
+
     /**
      * Assembles the widget and saves it in the [structure] variable.
      */

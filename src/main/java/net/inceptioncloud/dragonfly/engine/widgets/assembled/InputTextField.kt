@@ -8,7 +8,10 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
-import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.structure.IAlign
+import net.inceptioncloud.dragonfly.engine.structure.IColor
+import net.inceptioncloud.dragonfly.engine.structure.IDimension
+import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.GuiScreen.Companion.isCtrlKeyDown
@@ -19,7 +22,7 @@ import org.lwjgl.input.Keyboard.*
 import kotlin.math.abs
 
 val DEFAULT_TEXT_COLOR
-        get() = DragonflyPalette.background.brighter(0.4)
+    get() = DragonflyPalette.background.brighter(0.4)
 
 /**
  * A simple text field that the user can write to. Supports common operations like copying, pasting,
@@ -56,6 +59,8 @@ class InputTextField(
     var maxStringLength: Int by property(200)
 
     var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
+    var unfocusedLabelColor: WidgetColor by property(DEFAULT_TEXT_COLOR)
+    var unfocusedLabelLiftedColor = unfocusedLabelColor
 
     /**
      * Whether the text field is currently focused. If it is, typed keys will be passed on to the input field
@@ -133,7 +138,15 @@ class InputTextField(
             label::scaleFactor to if (isLabelRaised) labelScaleFactor else 1.0,
             label::y to if (isLabelRaised) y + padding * labelScaleFactor else labelY,
             label::height to if (isLabelRaised) height / 2.5 else labelHeight,
-            label::color to if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
+            label::color to if (isFocused && isLabelRaised) {
+                color
+            } else {
+                if (isLabelRaised) {
+                    unfocusedLabelLiftedColor
+                } else {
+                    unfocusedLabelColor
+                }
+            }
         )?.start()
 
         lineOverlay.detachAnimation<MorphAnimation>()
@@ -187,7 +200,7 @@ class InputTextField(
         (structure["label"] as TextField).also {
             it.staticText = label
             it.fontRenderer = fontRenderer
-            it.color = DEFAULT_TEXT_COLOR
+            it.color = unfocusedLabelColor
             it.width = width
             it.adaptHeight = true
             it.x = x
@@ -199,7 +212,7 @@ class InputTextField(
             it.x = x
             it.y = if (isLabelRaised) y + padding * (labelScaleFactor * -8) else labelY
             it.height = if (isLabelRaised) height / 2.5 else labelHeight
-            it.color = if (isFocused && isLabelRaised) color else DEFAULT_TEXT_COLOR
+            it.color = if (isFocused && isLabelRaised) color else unfocusedLabelColor
         }
 
         val bottomLine = (structure["bottom-line"] as Rectangle).also {
@@ -297,8 +310,8 @@ class InputTextField(
         if (!isFocused || (allowList.isNotEmpty() && !allowList.contains(keyCode)))
             return
 
-        if(allowList.isNotEmpty() && allowList.contains(52)) {
-            if(realText.length == (maxStringLength - 1) && keyCode == 52) {
+        if (allowList.isNotEmpty() && allowList.contains(52)) {
+            if (realText.length == (maxStringLength - 1) && keyCode == 52) {
                 return
             }
         }
@@ -361,7 +374,9 @@ class InputTextField(
 
         if (isFocused && data.button == 0) {
             val i: Int = (data.mouseX - x - padding).toInt() // TODO: -4 can be removed
-            val s: String = fontRenderer?.trimStringToWidth(inputText.substring(lineScrollOffset), (width - padding * 2).toInt()) ?: ""
+            val s: String =
+                fontRenderer?.trimStringToWidth(inputText.substring(lineScrollOffset), (width - padding * 2).toInt())
+                    ?: ""
             setCursorPosition(fontRenderer?.trimStringToWidth(s, i)?.length ?: 0 + lineScrollOffset)
         }
     }

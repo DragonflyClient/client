@@ -117,10 +117,10 @@ class KeySelector(
     override fun handleMousePress(data: MouseData) {
         isFocused = data.mouseX.toDouble() in x..x + width && data.mouseY.toDouble() in y..y + height
 
-        lineColor = if(isFocused) {
+        lineColor = if (isFocused) {
             oldLineColor = lineColor
             DragonflyPalette.accentNormal
-        }else {
+        } else {
             oldLineColor
         }
 
