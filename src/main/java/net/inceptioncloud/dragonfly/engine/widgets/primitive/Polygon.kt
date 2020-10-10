@@ -37,7 +37,7 @@ open class Polygon(
         glBegin(GL_TRIANGLE_FAN)
 
         for (point in points)
-            glVertex2d(point.x.toDouble(), point.y.toDouble())
+            glVertex2d(point.x, point.y)
 
         glEnd()
 
