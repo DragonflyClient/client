@@ -397,9 +397,12 @@ public abstract class Render<T extends Entity>
 
             if (entityIn instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) entityIn;
-                boolean onlineWithDragonfly = Arrays.stream(KernelClient.INSTANCE.getOnlineAccounts()).anyMatch(
-                        (it) -> player.getGameProfile().getId().toString().equals(it)
+
+                boolean onlineWithDragonfly = str.equals(player.getDisplayName().getFormattedText())
+                        && Arrays.stream(KernelClient.INSTANCE.getOnlineAccounts()).anyMatch(
+                                (it) -> player.getGameProfile().getId().toString().equals(it)
                 );
+
                 if (onlineWithDragonfly) {
                     final ResourceLocation resourceLocation = new ResourceLocation("dragonflyres/logos/128x.png");
                     final int size = 8;
