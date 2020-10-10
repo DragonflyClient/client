@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.controls.NumberControl
 import net.inceptioncloud.dragonfly.controls.color.ColorPickerModal
 import net.inceptioncloud.dragonfly.controls.color.ColorPreview
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
@@ -9,7 +8,6 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
-import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
@@ -40,7 +38,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
     var updateValuesBool = true
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "title" to TextField(),
         "key-selector" to KeySelector(),
         "shift-checkbox" to CheckBox(),
@@ -66,7 +64,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
     override fun updateStructure() {
         val padding = 100.0
 
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@AddHotkeyModal.x
             y = this@AddHotkeyModal.y
             width = this@AddHotkeyModal.width

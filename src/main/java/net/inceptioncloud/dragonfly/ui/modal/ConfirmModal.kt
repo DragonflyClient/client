@@ -5,7 +5,6 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
-import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.minecraft.util.ResourceLocation
@@ -38,7 +37,7 @@ open class ConfirmModal(
     val padding = 35.0
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "image" to Image(),
         "title" to TextField(),
         "description" to TextField(),
@@ -102,7 +101,7 @@ open class ConfirmModal(
 
         height = noButton.y + noButton.height - y + padding
 
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@ConfirmModal.x
             y = this@ConfirmModal.y
             width = this@ConfirmModal.width

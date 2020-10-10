@@ -9,7 +9,6 @@ import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.minecraft.util.ResourceLocation
-import org.lwjgl.input.Keyboard
 
 /**
  * A modal window that is used to ask the user whether he wants to send diagnostic
@@ -23,7 +22,7 @@ class DiagnosticsPermissionsModal : ModalWidget("Diagnostics Permissions", 400.0
     val padding = 35.0
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "image" to Image(),
         "title" to TextField(),
         "info" to TextField(),
@@ -32,7 +31,7 @@ class DiagnosticsPermissionsModal : ModalWidget("Diagnostics Permissions", 400.0
     )
 
     override fun updateStructure() {
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@DiagnosticsPermissionsModal.x
             y = this@DiagnosticsPermissionsModal.y
             width = this@DiagnosticsPermissionsModal.width

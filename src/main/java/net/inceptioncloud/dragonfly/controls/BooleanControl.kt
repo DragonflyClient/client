@@ -7,7 +7,7 @@ import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuint
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.utils.Either
 import kotlin.reflect.KMutableProperty0
@@ -25,13 +25,13 @@ class BooleanControl(
     val innerMargin = (switchHeight - innerSize) / 2.0
 
     override fun controlAssemble(): Map<String, Widget<*>> = mapOf(
-        "switch-background" to RoundedRectangle(),
-        "switch-foreground" to RoundedRectangle()
+        "switch-background" to RoundRectangle(),
+        "switch-foreground" to RoundRectangle()
     )
 
     override fun controlUpdateStructure() {
 
-        val background = "switch-background"<RoundedRectangle> {
+        val background = "switch-background"<RoundRectangle> {
             width = switchWidth
             height = switchHeight
             x = controlX + controlWidth - width
@@ -40,7 +40,7 @@ class BooleanControl(
             color = computeColor()
         }!!
 
-        "switch-foreground"<RoundedRectangle> {
+        "switch-foreground"<RoundRectangle> {
             width = innerSize
             height = innerSize
             x = computeInnerX(background.x, background.width)
@@ -51,16 +51,16 @@ class BooleanControl(
     }
 
     override fun react(newValue: Boolean) {
-        val background = getWidget<RoundedRectangle>("switch-background")!!
-        val foreground = getWidget<RoundedRectangle>("switch-foreground")!!
+        val background = getWidget<RoundRectangle>("switch-background")!!
+        val foreground = getWidget<RoundRectangle>("switch-foreground")!!
 
-        background.morph(40, EaseQuint.IN_OUT, RoundedRectangle::color to computeColor())?.start()
-        foreground.morph(40, EaseQuint.IN_OUT, RoundedRectangle::x to computeInnerX(background.x, background.width))
+        background.morph(40, EaseQuint.IN_OUT, RoundRectangle::color to computeColor())?.start()
+        foreground.morph(40, EaseQuint.IN_OUT, RoundRectangle::x to computeInnerX(background.x, background.width))
             ?.start()
     }
 
     override fun handleMousePress(data: MouseData) {
-        if (data in getWidget<RoundedRectangle>("switch-background")) {
+        if (data in getWidget<RoundRectangle>("switch-background")) {
             if (changeValue != null && changeValue!!.invoke()) {
                 optionKey.set(!optionKey.get())
             }

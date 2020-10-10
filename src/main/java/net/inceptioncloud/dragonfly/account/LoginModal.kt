@@ -42,7 +42,7 @@ class LoginModal(
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "image" to Image(),
         "title" to TextField(),
         "username-field" to InputTextField(),
@@ -53,7 +53,7 @@ class LoginModal(
     )
 
     override fun updateStructure() {
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@LoginModal.x
             y = this@LoginModal.y
             width = this@LoginModal.width

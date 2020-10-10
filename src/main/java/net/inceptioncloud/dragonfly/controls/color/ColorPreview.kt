@@ -3,7 +3,7 @@ package net.inceptioncloud.dragonfly.controls.color
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 
 class ColorPreview(
     initializerBlock: (ColorPreview.() -> Unit)? = null
@@ -21,13 +21,13 @@ class ColorPreview(
     var borderSize: Double by property(4.0)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
-        "background" to RoundedRectangle(),
-        "color" to RoundedRectangle()
+        "container" to RoundRectangle(),
+        "background" to RoundRectangle(),
+        "color" to RoundRectangle()
     )
 
     override fun updateStructure() {
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@ColorPreview.x
             y = this@ColorPreview.y
             width = this@ColorPreview.width
@@ -36,7 +36,7 @@ class ColorPreview(
             color = containerColor
         }
 
-        "background"<RoundedRectangle> {
+        "background"<RoundRectangle> {
             x = this@ColorPreview.x + borderSize
             y = this@ColorPreview.y + borderSize
             width = this@ColorPreview.width - 2 * borderSize
@@ -45,7 +45,7 @@ class ColorPreview(
             color = backgroundColor
         }
 
-        "color"<RoundedRectangle> {
+        "color"<RoundRectangle> {
             x = this@ColorPreview.x + borderSize
             y = this@ColorPreview.y + borderSize
             width = this@ColorPreview.width - 2 * borderSize

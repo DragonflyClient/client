@@ -11,7 +11,7 @@ import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
@@ -163,7 +163,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
             textAlignHorizontal = Alignment.CENTER
         }
 
-        +RoundedRectangle().apply {
+        +RoundRectangle().apply {
             x = header.x - 3
             y = header.y - 3
             width = 0.0
@@ -209,15 +209,15 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
             // since this block is called on the first draw, we use it to animate the header background
             runAfter(2000) {
-                getWidget<RoundedRectangle>("header-background")?.morph(
+                getWidget<RoundRectangle>("header-background")?.morph(
                     200,
                     EaseCubic.IN_OUT,
-                    RoundedRectangle::width to this@AttachingKeyUI.getWidget<TextField>("header")!!.width + 6
+                    RoundRectangle::width to this@AttachingKeyUI.getWidget<TextField>("header")!!.width + 6
                 )?.start()
                 getWidget<TextField>("header")?.morph(
                     200,
                     EaseCubic.IN_OUT,
-                    RoundedRectangle::color to DragonflyPalette.background
+                    RoundRectangle::color to DragonflyPalette.background
                 )?.start()
             }
         }

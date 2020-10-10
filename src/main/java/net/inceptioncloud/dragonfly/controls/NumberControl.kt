@@ -9,7 +9,7 @@ import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
 import net.inceptioncloud.dragonfly.options.OptionKey
@@ -58,13 +58,13 @@ class NumberControl(
     private val format = DecimalFormat("0." + StringUtils.repeat('0', decimalPlaces), symbols)
 
     override fun controlAssemble(): Map<String, Widget<*>> = mapOf(
-        "slider-background" to RoundedRectangle(),
+        "slider-background" to RoundRectangle(),
         "slider-foreground" to FilledCircle(),
         "current-value" to TextField()
     )
 
     override fun controlUpdateStructure() {
-        "slider-background"<RoundedRectangle> {
+        "slider-background"<RoundRectangle> {
             width = sliderWidth
             height = sliderHeight
             x = sliderX
@@ -151,7 +151,7 @@ class NumberControl(
     }
 
     private fun isTargeted(): Boolean {
-        val b = getWidget<RoundedRectangle>("slider-background")!!
+        val b = getWidget<RoundRectangle>("slider-background")!!
         val mouseX = GraphicsEngine.getMouseX()
         val mouseY = GraphicsEngine.getMouseY()
         return mouseX in b.x..b.x + b.width && mouseY in b.y - 20.0..b.y + b.height + 20.0

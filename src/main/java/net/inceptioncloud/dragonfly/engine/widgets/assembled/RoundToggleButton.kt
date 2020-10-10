@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -35,12 +34,12 @@ class RoundToggleButton(
     private var onClick: () -> Unit = {}
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "text" to TextField()
     )
 
     override fun updateStructure() {
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@RoundToggleButton.x
             y = this@RoundToggleButton.y
             width = this@RoundToggleButton.width
@@ -83,9 +82,9 @@ class RoundToggleButton(
      */
     fun toggle() {
         isToggled = !isToggled
-        getWidget<RoundedRectangle>("container")?.morph(
+        getWidget<RoundRectangle>("container")?.morph(
             30, EaseQuad.IN_OUT,
-            RoundedRectangle::color to statefulBackgroundColor()
+            RoundRectangle::color to statefulBackgroundColor()
         )?.start()
         getWidget<TextField>("text")?.morph(
             30, EaseQuad.IN_OUT,

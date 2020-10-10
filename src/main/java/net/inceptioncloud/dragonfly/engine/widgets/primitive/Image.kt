@@ -3,11 +3,10 @@ package net.inceptioncloud.dragonfly.engine.widgets.primitive
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine.popScale
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine.pushScale
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morphBetween
-import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.structure.*
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui.drawModalRectWithCustomSizedTexture
 import net.minecraft.client.renderer.GlStateManager
@@ -44,11 +43,11 @@ class Image(
     var resourceLocation: ResourceLocation? by property(null)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "placeholder" to RoundedRectangle()
+        "placeholder" to RoundRectangle()
     )
 
     override fun updateStructure() {
-        updateWidget<RoundedRectangle>("placeholder") {
+        updateWidget<RoundRectangle>("placeholder") {
             arc = 3.0
             x = this@Image.x
             y = this@Image.y
@@ -72,7 +71,7 @@ class Image(
         val bound = bindTexture()
 
         if (bound) {
-            getWidget<RoundedRectangle>("placeholder")?.isVisible = false
+            getWidget<RoundRectangle>("placeholder")?.isVisible = false
 
             glDisable(GL_DEPTH_TEST)
             glEnable(GL_BLEND)
@@ -93,7 +92,7 @@ class Image(
             glEnable(GL_DEPTH_TEST)
         } else {
             // draw the placeholder
-            getWidget<RoundedRectangle>("placeholder")?.run {
+            getWidget<RoundRectangle>("placeholder")?.run {
                 isVisible = true
                 morphBetween(
                     duration = 200,

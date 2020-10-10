@@ -28,12 +28,12 @@ class RoundButton(
     private var onClick: () -> Unit = {}
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "text" to TextField()
     )
 
     override fun updateStructure() {
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@RoundButton.x
             y = this@RoundButton.y
             width = this@RoundButton.width

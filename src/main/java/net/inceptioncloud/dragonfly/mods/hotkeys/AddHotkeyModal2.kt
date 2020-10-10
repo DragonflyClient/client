@@ -38,7 +38,7 @@ class AddHotkeyModal2 : ModalWidget("Add Hotkey", 430.0, 440.0) {
     var updateValuesBool = true
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "title" to TextField(),
         "key-selector" to KeySelector(),
         "shift-checkbox" to CheckBox(),
@@ -63,7 +63,7 @@ class AddHotkeyModal2 : ModalWidget("Add Hotkey", 430.0, 440.0) {
         val paddingLeft = 45.0
         val padding = 20.0
 
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@AddHotkeyModal2.x
             y = this@AddHotkeyModal2.y
             width = this@AddHotkeyModal2.width

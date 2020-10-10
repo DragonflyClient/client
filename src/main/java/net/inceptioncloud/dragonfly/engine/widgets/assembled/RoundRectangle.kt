@@ -5,9 +5,9 @@ import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.utils.getCirclePoints
 import org.lwjgl.opengl.GL11.*
 
-class RoundedRectangle(
-    initializerBlock: (RoundedRectangle.() -> Unit)? = null
-) : Widget<RoundedRectangle>(initializerBlock), IPosition, IDimension, IColor {
+class RoundRectangle(
+    initializerBlock: (RoundRectangle.() -> Unit)? = null
+) : Widget<RoundRectangle>(initializerBlock), IPosition, IDimension, IColor {
 
     override var x: Double by property(0.0)
     override var y: Double by property(0.0)

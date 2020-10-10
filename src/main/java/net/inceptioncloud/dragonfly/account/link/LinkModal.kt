@@ -14,7 +14,6 @@ import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
-import org.lwjgl.input.Keyboard
 
 /**
  * A modal window that is used to ask the user whether he wants to link the given
@@ -36,7 +35,7 @@ class LinkModal(
     var isLinking = false
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "image" to Image(),
         "title" to TextField(),
         "info" to TextField(),
@@ -46,7 +45,7 @@ class LinkModal(
     )
 
     override fun updateStructure() {
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@LinkModal.x
             y = this@LinkModal.y
             width = this@LinkModal.width

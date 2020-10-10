@@ -32,7 +32,7 @@ class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "image" to Image(),
         "title" to TextField(),
         "email-field" to InputTextField(),
@@ -41,7 +41,7 @@ class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
     )
 
     override fun updateStructure() {
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@AddAccountModal.x
             y = this@AddAccountModal.y
             width = this@AddAccountModal.width

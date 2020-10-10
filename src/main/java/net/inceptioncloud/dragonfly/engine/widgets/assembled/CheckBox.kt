@@ -35,12 +35,12 @@ class CheckBox(
     private var onClick: () -> Unit = {}
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "check" to Image()
     )
 
     override fun updateStructure() {
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@CheckBox.x
             y = this@CheckBox.y
             width = this@CheckBox.width

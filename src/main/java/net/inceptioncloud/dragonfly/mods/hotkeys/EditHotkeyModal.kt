@@ -1,12 +1,9 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.color.ColorPickerModal
 import net.inceptioncloud.dragonfly.controls.color.ColorPreview
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
@@ -42,7 +39,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
     var updateValuesBool = true
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "title" to TextField(),
         "key-selector" to KeySelector(),
         "shift-checkbox" to CheckBox(),
@@ -68,7 +65,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
         val paddingLeft = 45.0
         val padding = 20.0
 
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@EditHotkeyModal.x
             y = this@EditHotkeyModal.y
             width = this@EditHotkeyModal.width

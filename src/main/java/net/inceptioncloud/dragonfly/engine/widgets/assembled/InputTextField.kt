@@ -158,7 +158,7 @@ class InputTextField(
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "box-round" to RoundedRectangle(),
+        "box-round" to RoundRectangle(),
         "box-sharp" to Rectangle(),
         "bottom-line" to Rectangle(),
         "bottom-line-overlay" to Rectangle(),
@@ -169,7 +169,7 @@ class InputTextField(
     )
 
     override fun updateStructure() {
-        val box = (structure["box-round"] as RoundedRectangle).also {
+        val box = (structure["box-round"] as RoundRectangle).also {
             it.x = x
             it.y = y
             it.width = width

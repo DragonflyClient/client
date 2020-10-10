@@ -5,7 +5,7 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import kotlin.properties.Delegates
@@ -43,7 +43,7 @@ class ToastWidget(
     var expired = false
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "text" to TextField()
     )
 
@@ -63,7 +63,7 @@ class ToastWidget(
             this.fontRenderer = fontRenderer
         }!!.also { it.adaptHeight() }
 
-        val container = updateWidget<RoundedRectangle>("container") {
+        val container = updateWidget<RoundRectangle>("container") {
             val padding = 8.0
             arc = 8.0
             x = textField.x - padding

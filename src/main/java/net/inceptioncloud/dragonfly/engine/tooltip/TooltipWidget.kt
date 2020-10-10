@@ -5,7 +5,7 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Polygon
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.TextRenderer
 import net.inceptioncloud.dragonfly.mc
@@ -51,13 +51,13 @@ class TooltipWidget(
     var fontRenderer: IFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "background" to RoundedRectangle(),
+        "background" to RoundRectangle(),
         "arrow" to Polygon(),
         "text" to TextRenderer()
     )
 
     override fun updateStructure() {
-        val background = "background"<RoundedRectangle> {
+        val background = "background"<RoundRectangle> {
             arc = this@TooltipWidget.arc
             width = containerWidth
             height = containerHeight

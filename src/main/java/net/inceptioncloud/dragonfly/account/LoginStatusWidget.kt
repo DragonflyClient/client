@@ -7,7 +7,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 
 /**
@@ -31,14 +31,14 @@ class LoginStatusWidget(
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "text" to TextField()
     )
 
     override fun updateStructure() {
         val account = Dragonfly.account
 
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = this@LoginStatusWidget.x
             y = this@LoginStatusWidget.y
             width = this@LoginStatusWidget.width
@@ -61,7 +61,7 @@ class LoginStatusWidget(
         }
 
         if (account != null) {
-            "container"<RoundedRectangle> {
+            "container"<RoundRectangle> {
                 color = DragonflyPalette.foreground
             }
 
@@ -73,7 +73,7 @@ class LoginStatusWidget(
             tooltip?.updateText("Your currently logged in Dragonfly account")
             clickAction = {}
         } else {
-            "container"<RoundedRectangle> {
+            "container"<RoundRectangle> {
                 color = DragonflyPalette.accentNormal
             }
 

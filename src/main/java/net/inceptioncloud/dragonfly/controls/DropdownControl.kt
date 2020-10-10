@@ -10,7 +10,7 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuart
 import net.inceptioncloud.dragonfly.engine.structure.IColor
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
@@ -52,10 +52,10 @@ class DropdownElement(
 
     override fun controlAssemble(): Map<String, Widget<*>> {
         val map = mutableMapOf<String, Widget<*>>(
-            "container" to RoundedRectangle(),
+            "container" to RoundRectangle(),
             "selected" to TextField(),
             "icon" to Image(),
-            "expanded::container" to RoundedRectangle()
+            "expanded::container" to RoundRectangle()
         )
 
         for (index in allValues.indices)
@@ -73,7 +73,7 @@ class DropdownElement(
         isInProgress = false
         mc.currentScreen.focusHandler = null
 
-        "container"<RoundedRectangle> {
+        "container"<RoundRectangle> {
             x = containerX
             y = containerY
             width = containerWidth
@@ -109,7 +109,7 @@ class DropdownElement(
         val originY = containerY + containerHeight - 5.0
         val separatorHeight = 2.0
 
-        "expanded::container"<RoundedRectangle> {
+        "expanded::container"<RoundRectangle> {
             x = containerX
             y = originY
             width = containerWidth
@@ -223,7 +223,7 @@ class DropdownElement(
         override fun captureMouseFocus(data: MouseData) = true
         override fun captureKeyboardFocus(key: Int) = true
         override fun handleCapturedMousePress(data: MouseData) {
-            if (data in getWidget<RoundedRectangle>("expanded::container")) {
+            if (data in getWidget<RoundRectangle>("expanded::container")) {
                 handleMousePress(data)
             } else {
                 collapse()

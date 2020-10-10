@@ -56,14 +56,14 @@ class NumberSlider(
     var textYSubtractor = 0.0
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "slider-background" to RoundedRectangle(),
+        "slider-background" to RoundRectangle(),
         "slider-foreground" to FilledCircle(),
         "slider-foreground-inner" to FilledCircle(),
         "current-value" to TextField()
     )
 
     override fun updateStructure() {
-        "slider-background"<RoundedRectangle> {
+        "slider-background"<RoundRectangle> {
             width = this@NumberSlider.width
             height = this@NumberSlider.height
             x = this@NumberSlider.x
@@ -167,7 +167,7 @@ class NumberSlider(
     }
 
     private fun isTargeted(): Boolean {
-        val b = getWidget<RoundedRectangle>("slider-background")!!
+        val b = getWidget<RoundRectangle>("slider-background")!!
         val mouseX = GraphicsEngine.getMouseX()
         val mouseY = GraphicsEngine.getMouseY()
         return mouseX in b.x..b.x + b.width && mouseY in b.y - 20.0..b.y + b.height + 20.0

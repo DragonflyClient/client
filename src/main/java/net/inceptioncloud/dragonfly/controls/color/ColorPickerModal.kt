@@ -45,15 +45,15 @@ class ColorPickerModal(
 
     override fun assemble(): Map<String, Widget<*>> {
         val map = mutableMapOf<String, Widget<*>>(
-            "container" to RoundedRectangle(),
+            "container" to RoundRectangle(),
             "title" to TextField(),
             "hue-slider" to ColorSlider(),
             "saturation-slider" to ColorSlider(),
             "brightness-slider" to ColorSlider(),
             "alpha-slider" to ColorSlider(),
             "color-preview" to ColorPreview(),
-            "hex-container-border" to RoundedRectangle(),
-            "hex-container" to RoundedRectangle(),
+            "hex-container-border" to RoundRectangle(),
+            "hex-container" to RoundRectangle(),
             "hex-text" to TextField(),
             "hex-button-copy" to RoundButton(),
             "hex-button-paste" to RoundButton(),
@@ -80,7 +80,7 @@ class ColorPickerModal(
         val padding = contentX - x
         val sliderDistance = 40.0
 
-        val container = "container"<RoundedRectangle> {
+        val container = "container"<RoundRectangle> {
             x = this@ColorPickerModal.x
             y = this@ColorPickerModal.y
             width = this@ColorPickerModal.width
@@ -140,7 +140,7 @@ class ColorPickerModal(
             height = 8.0
         }!!
 
-        val hexContainerBorder = "hex-container-border"<RoundedRectangle> {
+        val hexContainerBorder = "hex-container-border"<RoundRectangle> {
             width = this@ColorPickerModal.width / 2
             height = 37.0
             x = contentX
@@ -149,7 +149,7 @@ class ColorPickerModal(
             arc = 5.0
         }!!
 
-        val hexContainer = "hex-container"<RoundedRectangle> {
+        val hexContainer = "hex-container"<RoundRectangle> {
             val borderSize = 2
             width = hexContainerBorder.width - borderSize * 2
             height = hexContainerBorder.height - borderSize * 2

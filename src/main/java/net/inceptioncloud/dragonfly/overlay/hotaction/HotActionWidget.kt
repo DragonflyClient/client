@@ -5,7 +5,7 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay
@@ -69,7 +69,7 @@ class HotActionWidget(
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
-        "container" to RoundedRectangle(),
+        "container" to RoundRectangle(),
         "title" to TextField(),
         "message" to TextField(),
         "horizontal-rule" to Rectangle(),
@@ -139,7 +139,7 @@ class HotActionWidget(
             staticText = actions.joinToString(StringUtils.repeat(" ", amountOfSpaces - 1), transform = joinFunc)
         }!!.also { it.adaptHeight() }
 
-        val containerWidget = updateWidget<RoundedRectangle>("container") {
+        val containerWidget = updateWidget<RoundRectangle>("container") {
             x = this@HotActionWidget.x - ARC
             y = this@HotActionWidget.y
             width = containerWidth
