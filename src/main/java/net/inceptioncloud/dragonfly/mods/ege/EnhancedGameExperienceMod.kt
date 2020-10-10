@@ -34,8 +34,6 @@ object EnhancedGameExperienceMod : DragonflyMod("Enhanced Game Experience") {
         if (icon == null) return null
         if (icon.width <= maximumPackIconSize) return icon
 
-        LogManager.getLogger().info("Scaling resource pack icon from ${icon.width}x to ${maximumPackIconSize}x")
-
         val maximumPackIconSize = maximumPackIconSize.toInt()
         val smallImage = BufferedImage(maximumPackIconSize, maximumPackIconSize, BufferedImage.TYPE_INT_ARGB)
         val graphics = smallImage.graphics
