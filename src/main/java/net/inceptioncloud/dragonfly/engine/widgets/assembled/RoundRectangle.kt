@@ -32,11 +32,11 @@ class RoundRectangle(
     private var outlinePoints: List<Point> = listOf()
 
     override fun stateChanged() {
-        outlinePoints = getCirclePoints(x + width - bottomRightArc, y + height - bottomRightArc, bottomRightArc, 0..90) +
+        outlinePoints = getCirclePoints(x + width - topRightArc, y + topRightArc, topRightArc, 270..360) +
+                getCirclePoints(x + width - bottomRightArc, y + height - bottomRightArc, bottomRightArc, 0..90) +
                 getCirclePoints(x + bottomLeftArc, y + height - bottomLeftArc, bottomLeftArc, 90..180) +
                 getCirclePoints(x + topLeftArc, y + topLeftArc, topLeftArc, 180..270) +
-                getCirclePoints(x + width - topRightArc, y + topRightArc, topRightArc, 270..360) +
-                getCirclePoints(x + width - bottomRightArc, y + height - bottomRightArc, bottomRightArc, 0..0)
+                getCirclePoints(x + width - topRightArc, y + topRightArc, topRightArc, 270..270)
     }
 
     override fun render() {
