@@ -1,6 +1,8 @@
 package net.inceptioncloud.dragonfly.overlay.modal
 
+import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.AssembledWidget
+import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import org.lwjgl.input.Keyboard
@@ -37,5 +39,13 @@ abstract class ModalWidget(
         super.handleKeyTyped(char, keyCode)
 
         if (keyCode == Keyboard.KEY_ESCAPE) Modal.hideModal()
+    }
+
+    override fun handleMousePress(data: MouseData) {
+        super.handleMousePress(data)
+
+        if (!isAnimating && data !in this) {
+            Modal.hideModal()
+        }
     }
 }

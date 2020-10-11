@@ -161,9 +161,4 @@ class LinkModal(
             }
         }
     }
-
-    override fun handleMousePress(data: MouseData) {
-        super.handleMousePress(data)
-        structure.values.forEach { it.handleMousePress(data) }
-    }
 }

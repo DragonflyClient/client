@@ -146,11 +146,6 @@ class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
         }
     }
 
-    override fun handleMousePress(data: MouseData) {
-        super.handleMousePress(data)
-        structure.values.forEach { it.handleMousePress(data) }
-    }
-
     override fun handleKeyTyped(char: Char, keyCode: Int) {
         super.handleKeyTyped(char, keyCode)
 
