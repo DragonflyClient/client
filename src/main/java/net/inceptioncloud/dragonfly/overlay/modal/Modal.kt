@@ -7,12 +7,10 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.*
-import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.client.ResizeEvent
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay.stage
-import net.inceptioncloud.dragonfly.overlay.hotaction.HotActionWidget
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -51,7 +49,8 @@ object Modal {
      * the full [modal] window. Returns true if the widget was successfully shown and false
      * if it was added to the queue.
      */
-    fun showModal(modal: ModalWidget): Boolean {
+    @JvmOverloads
+    fun showModal(modal: ModalWidget, callback: () -> Unit = {}): Boolean {
         if (currentModal != null) {
             queue.offer(modal)
             return false
@@ -89,7 +88,10 @@ object Modal {
                 ModalWidget::scaleFactor to 1.0,
                 ModalWidget::x to screenWidth / 2.0 - modal.width / 2.0,
                 ModalWidget::y to screenHeight / 2.0 - modal.height / 2.0
-            )?.post { _, _ -> isAnimating = false }?.start()
+            )?.post { _, _ ->
+                isAnimating = false
+                callback()
+            }?.start()
         }
 
         return true
@@ -99,7 +101,7 @@ object Modal {
      * Hides the [currentModal] if one is set. Returns whether a modal window was hidden.
      */
     @JvmOverloads
-    fun hideModal(responder: () -> Unit = {}): Boolean {
+    fun hideModal(callback: () -> Unit = {}): Boolean {
         if (currentModal == null) return false
         if (inHidingAnimation) return false
 
@@ -133,7 +135,7 @@ object Modal {
                 currentModal = null
                 inHidingAnimation = false
 
-                responder()
+                callback()
 
                 if (queue.isNotEmpty()) {
                     showModal(queue.poll())
