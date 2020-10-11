@@ -1,12 +1,12 @@
 package net.inceptioncloud.dragonfly.engine.font
 
-import com.google.common.hash.Hashing
 import com.google.gson.Gson
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.texture.DynamicTexture
 import org.apache.commons.lang3.builder.EqualsBuilder
 import org.apache.commons.lang3.builder.HashCodeBuilder
+import org.apache.logging.log4j.LogManager
 import org.lwjgl.opengl.GL11
 import java.awt.*
 import java.awt.font.FontRenderContext
@@ -14,10 +14,8 @@ import java.awt.font.TextAttribute
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
-import java.nio.charset.Charset
 import javax.imageio.ImageIO
-import kotlin.math.ceil
-import kotlin.math.sqrt
+import kotlin.math.*
 
 class GlyphPage(val font: Font) {
 
@@ -71,6 +69,7 @@ class GlyphPage(val font: Font) {
 
         @Suppress("UNCHECKED_CAST")
         if (cached != null) {
+            LogManager.getLogger().info("Using cached glyph $identifier from $hash")
             try {
                 val (cachedImage, cachedProperties) = cached
                 bufferedImage = cachedImage
@@ -187,13 +186,19 @@ class GlyphPage(val font: Font) {
     }
 
     /**
+     * A string that uniquely identifies this glyph page.
+     */
+    private val identifier by lazy {
+        with (font) {
+            listOf(name, attributes[TextAttribute.TRACKING], style, imgSize, size).joinToString("-")
+        }
+    }
+
+    /**
      * The hash value that uniquely identifies the glyph page and is used for saving and reading it.
      */
     private val hash by lazy {
-        with(font) {
-            val specifications = listOf(name, attributes[TextAttribute.TRACKING], style, imgSize, size)
-            Hashing.sha1().hashString(specifications.joinToString("-"), Charset.defaultCharset()).toString()
-        }
+        identifier.hashCode().absoluteValue.toString()
     }
 
     /** the file that caches the glyph image */
@@ -215,6 +220,7 @@ class GlyphPage(val font: Font) {
      */
     private fun cacheGlyph() {
         if (OptionsSectionPerformance.saveGlyphs() == true) {
+            LogManager.getLogger().info("Caching glyph $identifier in $hash...")
             ImageIO.write(bufferedImage!!, "png", glyphImage)
             glyphProperties.writeText(Gson().toJson(glyphCharacterMap))
         }
