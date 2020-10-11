@@ -46,8 +46,8 @@ class FilledCircle(
         glVertex2d(x + radius, y + radius)
 
         radians.forEach {
-            val offsetX = cos(it) * radius
-            val offsetY = sin(it) * radius
+            val offsetX = sin(it) * radius
+            val offsetY = cos(it) * radius
             glVertex2d(x + radius + offsetX, y + radius + offsetY)
         }
 
