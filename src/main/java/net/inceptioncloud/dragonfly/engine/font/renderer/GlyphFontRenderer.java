@@ -681,7 +681,9 @@ public class GlyphFontRenderer implements IFontRenderer {
         if (width <= 0) return "";
         int i = this.sizeStringToWidth(text, width);
 
-        if (text.length() <= i) {
+        if (i == 0) {
+            return "";
+        } else if (text.length() <= i) {
             return text;
         } else {
             String s = text.substring(0, i);
@@ -701,6 +703,9 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     @Override
     public int sizeStringToWidth(final String text, final int width) {
+        if (width <= 0) return 0;
+        if (text.isEmpty()) return 0;
+
         int length = text.length();
         float f = 0.0F;
         int index = 0;
