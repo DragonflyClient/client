@@ -1,6 +1,8 @@
 package net.inceptioncloud.dragonfly.engine.font
 
 import com.google.gson.Gson
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionPerformance
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -63,7 +65,7 @@ class GlyphPage(val font: Font) {
         maxHeight += 2.0
         imgSize = (ceil(ceil(sqrt(maxWidth * maxWidth * chars.size) / maxWidth)
             .coerceAtLeast(ceil(sqrt(maxHeight * maxHeight * chars.size) / maxHeight)) * maxWidth.coerceAtLeast(maxHeight)
-        ) * 1.2).toInt() // make sure there is enough space
+        ) * 0.9).toInt() // make sure there is enough space
 
         val cached = getCachedGlyph()
 
@@ -140,7 +142,9 @@ class GlyphPage(val font: Font) {
 
         graphics.dispose()
 
-        cacheGlyph()
+        GlobalScope.launch {
+            cacheGlyph()
+        }
     }
 
     fun bindTexture() {
