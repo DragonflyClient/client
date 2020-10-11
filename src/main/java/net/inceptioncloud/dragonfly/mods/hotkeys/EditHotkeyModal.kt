@@ -94,8 +94,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
             width = 60.0
             height = 30.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 38, useScale = false)
-            blockKeys = listOf(42, 29, 56, 1)
-            textAlignment = Alignment.START
+            blockedKeys = listOf(42, 29, 56, 1)
             lineColor = DragonflyPalette.foreground
         }!!
 
@@ -299,7 +298,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
 
         val data = HotkeyData(
             EnumHotkeyType.CHAT,
-            Keyboard.getKeyIndex(keySelector.currentText),
+            Keyboard.getKeyIndex(keySelector.inputText),
             ctrlCheckBox.isChecked,
             shiftCheckBox.isChecked,
             altCheckBox.isChecked,
@@ -313,7 +312,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
     }
 
     private fun readValuesFromParameter() {
-        keySelector.currentText = Keyboard.getKeyName(originalHotkey.data.key)
+        keySelector.inputText = Keyboard.getKeyName(originalHotkey.data.key)
         if (originalHotkey.data.requireShift) {
             shiftCheckBox.toggle()
         }
@@ -353,7 +352,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 4
     private fun validateForms(): Boolean {
         var error = false
 
-        if (keySelector.currentText == "") {
+        if (keySelector.inputText == "") {
             LogManager.getLogger().info("Error property 'Key' was not set by the user!")
             keySelector.shake()
             error = true
