@@ -32,7 +32,7 @@ class NumberSlider(
 
     var min: Double by property(1.0)
     var max: Double by property(10.0)
-    var decimalPlaces: Int = 0
+    var decimalPlaces: Int by property(0)
     var transformer: (Double) -> Double = { it.keepDecimals(decimalPlaces) }
     var formatter: ((String) -> String)? = null
     var liveUpdate: Boolean = false
@@ -42,18 +42,18 @@ class NumberSlider(
     private var isDragging = false
 
     private val symbols = DecimalFormatSymbols(Locale.ENGLISH)
-    private val format = DecimalFormat("0." + StringUtils.repeat('0', decimalPlaces), symbols)
+    private var format = DecimalFormat("0." + StringUtils.repeat('0', decimalPlaces), symbols)
     
     var currentValue = 5.0
 
     var lineColor = DragonflyPalette.foreground
     var sliderInnerColor = DragonflyPalette.accentNormal
-    var sliderOutterColor = DragonflyPalette.background
+    var sliderOuterColor = DragonflyPalette.background
     var textColor = DragonflyPalette.foreground
     var textSize = 40
     var textWidth = 200.0
     var textHeight = height
-    var textYSubtractor = 0.0
+    var textYSubtrahend = 0.0
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "slider-background" to RoundedRectangle(),
@@ -63,6 +63,8 @@ class NumberSlider(
     )
 
     override fun updateStructure() {
+        format = DecimalFormat("0." + StringUtils.repeat('0', decimalPlaces), symbols)
+
         "slider-background"<RoundedRectangle> {
             width = this@NumberSlider.width
             height = this@NumberSlider.height
@@ -76,7 +78,7 @@ class NumberSlider(
             size = circleSize
             x = computeCircleX()
             y = this@NumberSlider.y + (this@NumberSlider.height / 2) - (size / 2)
-            color = sliderOutterColor
+            color = sliderOuterColor
         }
 
         "slider-foreground-inner"<FilledCircle> {
@@ -92,7 +94,7 @@ class NumberSlider(
             width = textWidth
             height = textHeight
             x = this@NumberSlider.x + this@NumberSlider.width + 15.0
-            y = this@NumberSlider.y - textYSubtractor
+            y = this@NumberSlider.y - textYSubtrahend
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START
             color = textColor
@@ -153,7 +155,7 @@ class NumberSlider(
 
         when {
             data in c -> isDragging = true
-            isTargeted() -> updateCurrentValue()
+            isTargeted() -> react(updateCurrentValue())
         }
     }
 

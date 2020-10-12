@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.mods.hotkeys
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.controls.NumberControl
 import net.inceptioncloud.dragonfly.controls.color.ColorPickerModal
 import net.inceptioncloud.dragonfly.controls.color.ColorPreview
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
@@ -9,7 +8,6 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
-import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
@@ -180,7 +178,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
             lineColor = DragonflyPalette.accentNormal
             sliderInnerColor = DragonflyPalette.foreground
             textHeight = 80.0
-            textYSubtractor = 38.0
+            textYSubtrahend = 38.0
         }
 
         "delay-text"<TextField> {
@@ -202,7 +200,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
             lineColor = DragonflyPalette.accentNormal
             sliderInnerColor = DragonflyPalette.foreground
             textHeight = 80.0
-            textYSubtractor = 38.0
+            textYSubtrahend = 38.0
         }
 
         val colorPicker = "color-picker"<ColorPreview> {
