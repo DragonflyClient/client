@@ -18,6 +18,7 @@ import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundButton
+import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.options.*
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
@@ -30,7 +31,7 @@ import net.minecraft.util.ResourceLocation
 import java.awt.image.BufferedImage
 import java.net.URI
 
-class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
+class CosmeticsUI(previousScreen: GuiScreen = mc.currentScreen) : ControlsUI(previousScreen) {
 
     companion object {
         private val urlTooltip = URI(
