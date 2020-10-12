@@ -22,6 +22,8 @@ abstract class ModalWidget(
     override var x: Double by property(0.0)
     override var y: Double by property(0.0)
 
+    open var isCloseable = true
+
     /**
      * True, if the widget is currently in its animation process in which it should
      * not respond to user input.
@@ -36,6 +38,8 @@ abstract class ModalWidget(
     override fun handleKeyTyped(char: Char, keyCode: Int) {
         super.handleKeyTyped(char, keyCode)
 
-        if (keyCode == Keyboard.KEY_ESCAPE) Modal.hideModal()
+        if(keyCode == Keyboard.KEY_ESCAPE && isCloseable) {
+            Modal.hideModal()
+        }
     }
 }

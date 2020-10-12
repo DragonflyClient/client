@@ -60,6 +60,8 @@ class KeySelector(
     var unfocusedLabelColor: WidgetColor by property(TEXT_COLOR)
     var unfocusedLabelLiftedColor = unfocusedLabelColor
 
+    lateinit var execOnFocusedChange: () -> Unit
+
     /**
      * Whether the text field is currently focused. If it is, typed keys will be passed on to the input field
      * and a cursor will be active. When this property changes, the [focusedStateChanged] function will be called.
@@ -126,6 +128,8 @@ class KeySelector(
      * Called whenever the [isFocused] property changes.
      */
     fun focusedStateChanged(focused: Boolean) {
+        execOnFocusedChange()
+
         val label = structure["label"] as? TextField ?: error("Structure should contain label!")
         val lineOverlay = structure["bottom-line-overlay"] as? Rectangle
             ?: error("Structure should contain bottom line overlay!")

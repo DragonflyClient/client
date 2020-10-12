@@ -97,6 +97,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
             color = DragonflyPalette.accentNormal
             unfocusedLabelColor = DragonflyPalette.foreground.altered { alphaDouble = 0.75 }
             unfocusedLabelLiftedColor = DragonflyPalette.accentNormal
+            execOnFocusedChange = { updateIsCloseable(!this.isFocused) }
         }!!
 
         shiftCheckBox = "shift-checkbox"<CheckBox> {
@@ -384,6 +385,10 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
                 }?.start()
             }?.start()
         }
+    }
+
+    private fun updateIsCloseable(value: Boolean) {
+        this@AddHotkeyModal.isCloseable = value
     }
 
 }
