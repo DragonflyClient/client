@@ -45,6 +45,7 @@ class RoundRectangle(
         glPushMatrix()
         glEnable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
+        glDisable(GL_CULL_FACE)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_LINE_SMOOTH)
         glBegin(GL_TRIANGLE_FAN)

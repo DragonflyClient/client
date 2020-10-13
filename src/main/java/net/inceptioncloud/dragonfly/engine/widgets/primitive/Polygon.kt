@@ -30,6 +30,7 @@ open class Polygon(
 
         glEnable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
+        glDisable(GL_CULL_FACE)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_LINE_SMOOTH)
         if (smooth) glEnable(GL_POLYGON_SMOOTH)

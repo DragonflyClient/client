@@ -1174,7 +1174,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
             if (currentScreen != null) {
                 GlStateManager.clear(256);
-                GlStateManager.disableCull();
 
                 try {
                     if (Reflector.ForgeHooksClient_drawScreen.exists()) {
