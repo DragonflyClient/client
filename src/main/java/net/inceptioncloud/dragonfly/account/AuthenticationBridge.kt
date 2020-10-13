@@ -103,6 +103,6 @@ object AuthenticationBridge {
  * exception with a detailed message if the request wasn't successful.
  */
 fun Response.checkSuccess() {
-    if (statusCode != 200) throw Exception("Invalid response status code: $statusCode")
+    if (!jsonObject.has("success")) throw Exception("Invalid response status code: $statusCode")
     if (!jsonObject.getBoolean("success")) throw Exception(jsonObject.getString("error"))
 }
