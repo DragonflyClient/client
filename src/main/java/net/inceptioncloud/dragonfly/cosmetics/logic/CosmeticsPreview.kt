@@ -22,7 +22,7 @@ object CosmeticsPreview {
     /**
      * Shows the preview for the given cosmetic [item].
      */
-    fun show(item: CosmeticData) {
+    fun show(item: CosmeticItem) {
         val model = CosmeticsManager.getDatabaseModelById(item.cosmeticId)!!
         val image = ImageIO.read(URL(model.get("logo").asString))
         val dynamicTexture = DynamicTexture(image)

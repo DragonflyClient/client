@@ -27,7 +27,7 @@ import java.net.URI
  * @param dynamicTexture The texture of the cosmetic model that has been downloaded from the cdn
  */
 class CosmeticsPreviewModal(
-    val item: CosmeticData,
+    val item: CosmeticItem,
     val model: JsonObject,
     val dynamicTexture: DynamicTexture
 ) : ModalWidget("Cosmetics Preview", 400.0, 550.0) {

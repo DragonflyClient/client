@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.sidebar.SidebarEntry
 import net.inceptioncloud.dragonfly.controls.ui.ControlsUI
-import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData
+import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticItem
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.cosmetics.types.capes.CapeManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
@@ -29,7 +29,6 @@ import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
 import java.awt.image.BufferedImage
-import java.net.URI
 
 class CosmeticsUI(previousScreen: GuiScreen = mc.currentScreen) : ControlsUI(previousScreen) {
 
@@ -162,7 +161,7 @@ class CosmeticsUI(previousScreen: GuiScreen = mc.currentScreen) : ControlsUI(pre
     }
 
     override fun produceControls(entry: SidebarEntry): Collection<ControlElement<*>>? {
-        val data = entry.metadata as? CosmeticData ?: return null
+        val data = entry.metadata as? CosmeticItem ?: return null
         val cosmetic = CosmeticsManager.cosmetics.firstOrNull { it.cosmeticId == data.cosmeticId }
         val controls = cosmetic?.generateControls(data)
         val model = CosmeticsManager.getDatabaseModelById(data.cosmeticId)
@@ -197,7 +196,7 @@ class CosmeticsUI(previousScreen: GuiScreen = mc.currentScreen) : ControlsUI(pre
 
             CosmeticsManager.clearCache(mc.session?.profile?.id)
             sidebarManager.entries
-                .mapNotNull { it.metadata as? CosmeticData }
+                .mapNotNull { it.metadata as? CosmeticItem }
                 .forEach {
                     val a = CosmeticsManager.toggleCosmetic(it.cosmeticQualifier, it.enabled)
                     val b = CosmeticsManager.configureCosmetic(it.cosmeticQualifier, it.config)

@@ -5,9 +5,9 @@ import net.inceptioncloud.dragonfly.utils.Keep
 import kotlin.reflect.KClass
 
 /**
- * Represents a list of [CosmeticData] obtained by fetching the cosmetics of a Minecraft user
+ * Represents a list of [CosmeticItem] obtained by fetching the cosmetics of a Minecraft user
  */
-class CosmeticDataList(list: ArrayList<CosmeticData>) : ArrayList<CosmeticData>(list)
+class CosmeticDataList(list: ArrayList<CosmeticItem>) : ArrayList<CosmeticItem>(list)
 
 /**
  * Represents a list of [JsonObject]s obtained by fetching the database models for the
@@ -28,7 +28,7 @@ class DatabaseModelList(list: ArrayList<JsonObject>) : ArrayList<JsonObject>(lis
  * @param minecraft The UUID of the Minecraft account to which the cosmetic item is bound
  */
 @Keep
-data class CosmeticData(
+data class CosmeticItem(
     val config: JsonObject,
     val cosmeticId: Int,
     val cosmeticQualifier: String,
@@ -57,7 +57,7 @@ data class CosmeticData(
 
     @Deprecated(
         "Performs an unchecked cast to T. Use the parseConfig function with a reified type parameter where possible!",
-        ReplaceWith("data.parseConfig<T>()", "net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData"),
+        ReplaceWith("data.parseConfig<T>()", "net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticItem"),
         DeprecationLevel.WARNING
     )
     fun <T : CosmeticConfig> parseConfigClass(c: KClass<T>): T {

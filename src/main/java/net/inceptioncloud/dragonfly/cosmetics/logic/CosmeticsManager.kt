@@ -163,7 +163,7 @@ object CosmeticsManager {
 
     /**
      * Fetches the cosmetics of the given [uuid] from the Dragonfly servers. This function
-     * will return a list of all [cosmetics][CosmeticData]. If an error occurred during the
+     * will return a list of all [cosmetics][CosmeticItem]. If an error occurred during the
      * request (missing internet connection, account not linked) this function will return
      * null.
      */
@@ -178,7 +178,7 @@ object CosmeticsManager {
 
             if (response.get("success").asBoolean) {
                 val cosmetics = response.getAsJsonArray("cosmetics")
-                val typeToken = ListParameterizedType(CosmeticData::class.java)
+                val typeToken = ListParameterizedType(CosmeticItem::class.java)
                 return CosmeticDataList(Dragonfly.gson.fromJson(cosmetics, typeToken))
             }
         } catch (e: Throwable) {
@@ -202,7 +202,7 @@ object CosmeticsManager {
 
             if (response.get("success").asBoolean) {
                 val cosmetics = response.getAsJsonArray("cosmetics")
-                val typeToken = ListParameterizedType(CosmeticData::class.java)
+                val typeToken = ListParameterizedType(CosmeticItem::class.java)
                 return CosmeticDataList(Dragonfly.gson.fromJson(cosmetics, typeToken))
             }
         } catch (e: Throwable) {

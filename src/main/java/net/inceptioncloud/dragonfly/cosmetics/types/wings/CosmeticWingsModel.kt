@@ -2,8 +2,7 @@ package net.inceptioncloud.dragonfly.cosmetics.types.wings
 
 import net.inceptioncloud.dragonfly.cosmetics.CosmeticModel
 import net.inceptioncloud.dragonfly.cosmetics.CosmeticRenderProperties
-import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticData
-import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticItem
 import net.inceptioncloud.dragonfly.mc
 import net.minecraft.client.model.ModelRenderer
 import net.minecraft.client.renderer.GlStateManager
@@ -49,8 +48,8 @@ class CosmeticWingsModel : CosmeticModel() {
         wing!!.addChild(wingTip) // Make the wingtip rotate around the wing.
     }
 
-    override fun render(player: EntityPlayer, properties: CosmeticRenderProperties, cosmeticData: CosmeticData) {
-        val config = cosmeticData.parseConfig<CosmeticWingsConfig>()
+    override fun render(player: EntityPlayer, properties: CosmeticRenderProperties, cosmeticItem: CosmeticItem) {
+        val config = cosmeticItem.parseConfig<CosmeticWingsConfig>()
         val enableBlending = config.enableBlending
         val enableShadows = config.enableShadows
         val color = config.color

@@ -10,7 +10,6 @@ import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.entity.layers.LayerRenderer
 import net.minecraft.entity.player.EntityPlayer
-import org.apache.logging.log4j.LogManager
 import kotlin.reflect.*
 import kotlin.reflect.jvm.isAccessible
 
@@ -50,16 +49,16 @@ abstract class Cosmetic<ConfigType : CosmeticConfig>(
     abstract fun generateControls(config: ConfigType): Collection<ControlElement<*>>
 
     /**
-     * Convenience function for generating controls with the given [cosmeticData].
+     * Convenience function for generating controls with the given [cosmeticItem].
      */
-    fun generateControls(cosmeticData: CosmeticData): Collection<ControlElement<*>>
-            = generateControls(parseConfig(cosmeticData))
+    fun generateControls(cosmeticItem: CosmeticItem): Collection<ControlElement<*>>
+            = generateControls(parseConfig(cosmeticItem))
 
     /**
-     * Parses the given [data] as the [ConfigType].
+     * Parses the given [item] as the [ConfigType].
      */
-    fun parseConfig(data: CosmeticData): ConfigType {
-        return data.parseConfigClass(configClass)
+    fun parseConfig(item: CosmeticItem): ConfigType {
+        return item.parseConfigClass(configClass)
     }
 
     /**
