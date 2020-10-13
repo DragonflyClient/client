@@ -57,8 +57,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
         "send-checkbox" to CheckBox(),
         "send-text" to TextField(),
         "add-button" to RoundButton(),
-        "cancel-button" to RoundButton(),
-        "delete-button" to RoundButton()
+        "cancel-button" to RoundButton()
     )
 
     override fun updateStructure() {
@@ -86,7 +85,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
 
         keySelector = "key-selector"<KeySelector> {
             x = this@AddHotkeyModal.x + (0.5 * padding)
-            y = this@AddHotkeyModal.y + (1.3 * padding)
+            y = this@AddHotkeyModal.y + (1.2 * padding)
             width = 80.0
             height = 55.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
@@ -148,7 +147,7 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
 
         messageTextField = "message-textfield"<InputTextField> {
             x = this@AddHotkeyModal.x + (0.5 * padding)
-            y = this@AddHotkeyModal.y + (2.3 * padding) - 15.0
+            y = this@AddHotkeyModal.y + (2.05 * padding)
             width = 420.0
             height = 55.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
@@ -168,19 +167,19 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
             color = DragonflyPalette.foreground
         }!!
 
-        "time-slider"<NumberSlider> {
+        timeSlider = "time-slider"<NumberSlider> {
             x = this@AddHotkeyModal.x + (0.5 * padding)
             y = this@AddHotkeyModal.y + (3.7 * padding) - 30.0
             width = 147.0
             height = 7.0
-            decimalPlaces = 2
+            decimalPlaces = 1
             min = 0.0
-            max = 90.0
+            max = 30.0
             lineColor = DragonflyPalette.accentNormal
             sliderInnerColor = DragonflyPalette.foreground
             textHeight = 80.0
             textYSubtrahend = 38.0
-        }
+        }!!
 
         "delay-text"<TextField> {
             x = this@AddHotkeyModal.x + (2.9 * padding)
@@ -190,49 +189,49 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
             color = DragonflyPalette.foreground
         }!!
 
-        "delay-slider"<NumberSlider> {
+        delaySlider = "delay-slider"<NumberSlider> {
             x = this@AddHotkeyModal.x + (2.9 * padding)
             y = this@AddHotkeyModal.y + (3.7 * padding) - 30.0
             width = 147.0
             height = 7.0
-            decimalPlaces = 2
+            decimalPlaces = 1
             min = 0.0
-            max = 90.0
+            max = 30.0
             lineColor = DragonflyPalette.accentNormal
             sliderInnerColor = DragonflyPalette.foreground
             textHeight = 80.0
             textYSubtrahend = 38.0
-        }
+        }!!
 
         val colorPicker = "color-picker"<ColorPreview> {
             x = this@AddHotkeyModal.x + (0.8 * padding)
             y = this@AddHotkeyModal.y + (4 * padding)
-           width = 29.0
-           height = 29.0
-           color = colorPickerValue
-           clickAction = {
-               Modal.showModal(ColorPickerModal(colorPickerValue) {
-                   Modal.showModal(this@AddHotkeyModal)
-                   colorPickerValue = it
-               })
-               Modal.hideModal()
-           }
-       }!!
+            width = 29.0
+            height = 29.0
+            color = colorPickerValue
+            clickAction = {
+                Modal.showModal(ColorPickerModal(colorPickerValue) {
+                    Modal.showModal(this@AddHotkeyModal)
+                    colorPickerValue = it
+                })
+                Modal.hideModal()
+            }
+        }!!
 
-       "color-text"<TextField> {
-           x = colorPicker.x + colorPicker.width + 15.0
-           y = colorPicker.y + 2.0
-           fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
-           staticText = "Color"
-           width = fontRenderer!!.getStringWidth(staticText).toDouble()
-           color = DragonflyPalette.foreground.altered { alphaDouble = 0.75 }
-       }!!
+        "color-text"<TextField> {
+            x = colorPicker.x + colorPicker.width + 15.0
+            y = colorPicker.y + 2.0
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+            staticText = "Color"
+            width = fontRenderer!!.getStringWidth(staticText).toDouble()
+            color = DragonflyPalette.foreground.altered { alphaDouble = 0.75 }
+        }!!
 
         sendInstantCheckBox = "send-checkbox"<CheckBox> {
             x = this@AddHotkeyModal.x + (2.7 * padding)
             y = this@AddHotkeyModal.y + (4 * padding)
-            width = 25.0
-            height = 25.0
+            width = 29.0
+            height = 29.0
         }!!
 
         "send-text"<TextField> {
@@ -264,18 +263,6 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
             text = "Cancel"
             textSize = 50
             color = DragonflyPalette.background.brighter(0.8)
-            arc = 3.0
-            onClick { Modal.hideModal() }
-        }
-
-        "delete-button"<RoundButton> {
-            width = 110.0
-            height = 40.0
-            x = this@AddHotkeyModal.x + (0.5 * padding)
-            y = this@AddHotkeyModal.y + (5 * padding)
-            text = "Delete"
-            textSize = 50
-            color = DragonflyPalette.accentDark
             arc = 3.0
             onClick { Modal.hideModal() }
         }
