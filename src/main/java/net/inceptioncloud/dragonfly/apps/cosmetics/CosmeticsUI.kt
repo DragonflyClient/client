@@ -23,8 +23,8 @@ import net.inceptioncloud.dragonfly.options.*
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.inceptioncloud.dragonfly.ui.modal.ConfirmModal
-import net.inceptioncloud.dragonfly.utils.Either
-import net.inceptioncloud.dragonfly.utils.MojangRequest
+import net.inceptioncloud.dragonfly.utils.*
+import net.inceptioncloud.dragonfly.utils.CampaignLink.Companion.link
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
@@ -34,12 +34,8 @@ import java.net.URI
 class CosmeticsUI(previousScreen: GuiScreen = mc.currentScreen) : ControlsUI(previousScreen) {
 
     companion object {
-        private val urlTooltip = URI(
-            "https://dashboard.playdragonfly.net/cosmetics?utm_source=client&utm_medium=tooltip&utm_campaign=cosmetics"
-        )
-        private val urlPopup = URI(
-            "https://dashboard.playdragonfly.net/cosmetics?utm_source=client&utm_medium=popup&utm_campaign=cosmetics"
-        )
+        private val urlTooltip = "dashboard.playdragonfly.net/cosmetics".link().source("client").medium("tooltip").campaign("cosmetics")
+        private val urlPopup = "dashboard.playdragonfly.net/cosmetics".link().source("client").medium("popup").campaign("cosmetics")
     }
 
     override val sidebarWidth: Double = 400.0
@@ -71,7 +67,7 @@ class CosmeticsUI(previousScreen: GuiScreen = mc.currentScreen) : ControlsUI(pre
                 noText = "I don't care",
                 icon = ResourceLocation("dragonflyres/icons/bind.png"),
                 respondImmediately = false
-            ) { if (it) openWebLink(urlPopup) })
+            ) { if (it) urlPopup.open() })
         }
 
         +PlayerPreview {
@@ -146,9 +142,7 @@ class CosmeticsUI(previousScreen: GuiScreen = mc.currentScreen) : ControlsUI(pre
             } else {
                 SidebarEntry("${DragonflyPalette.accentDark.chatCode}Not bound", icon).apply {
                     tooltip = Tooltip("Click to bind your cosmetics", TooltipAlignment.BELOW)
-                    clickAction = {
-                        openWebLink(urlTooltip)
-                    }
+                    clickAction = { urlTooltip.open() }
                 }
             }.apply {
                 iconMargin = 10.0
