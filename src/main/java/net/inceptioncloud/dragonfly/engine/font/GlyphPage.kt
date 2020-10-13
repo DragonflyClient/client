@@ -65,7 +65,7 @@ class GlyphPage(val font: Font) {
         maxHeight += 2.0
         imgSize = (ceil(ceil(sqrt(maxWidth * maxWidth * chars.size) / maxWidth)
             .coerceAtLeast(ceil(sqrt(maxHeight * maxHeight * chars.size) / maxHeight)) * maxWidth.coerceAtLeast(maxHeight)
-        ) * 0.9).toInt() // make sure there is enough space
+        )).toInt() // make sure there is enough space
 
         val cached = getCachedGlyph()
 
