@@ -36,21 +36,6 @@ abstract class Widget<W : Widget<W>>(
 ) : IDraw {
 
     /**
-     * An object on which some operations are synchronized to provide thread-safety.
-     */
-    var mutex = Any()
-
-    /**
-     * Whether the widget is an internal clone. Can be used to prevent spamming the console.
-     */
-    var isInternalClone = false
-
-    /**
-     * Whether this widget is part of an assembled widget.
-     */
-    var isInAssembled = false
-
-    /**
      * Whether the widget is part of a modal widget. This property is overwritten by
      * [AssembledWidget] to also change the value of it's children.
      */
@@ -63,7 +48,7 @@ abstract class Widget<W : Widget<W>>(
 
     /**
      * The assembled widget that this widget is part of. This value is only non-null if the widget is
-     * part of an assembled widget and thus if [isInAssembled] is true.
+     * part of an assembled widget.
      */
     var parentAssembled: AssembledWidget<*>? = null
         set(value) {
@@ -75,7 +60,7 @@ abstract class Widget<W : Widget<W>>(
 
     /**
      * The buffer that this widget is rendered with. This value is only non-null if the widget is directly
-     * rendered by a stage and not by an assembled widget (if [isInAssembled] is false).
+     * rendered by a stage and not by an assembled widget.
      */
     var parentStage: WidgetStage? = null
         set(value) {
@@ -196,7 +181,7 @@ abstract class Widget<W : Widget<W>>(
         }
 
         if (!animationStack.isNullOrEmpty()) {
-            synchronized(mutex) {
+            synchronized(this) {
                 animationStack.removeAll { it.finished }
                 animationStack.toTypedArray().forEach { it.tick() }
                 animationStack.toTypedArray().forEach {

@@ -166,12 +166,14 @@ class HotActionWidget(
             width = timerBackground.width
             height = timerBackground.height
             color = DragonflyPalette.accentNormal
-        }!!.dynamic {
-            val remaining = 1.0 - ((System.currentTimeMillis() - initialTime) / (duration * 5.0)).coerceIn(0.0, 1.0)
-            width = timerBackground.width * remaining
 
-            if (remaining == 0.0 && !expired) {
-                HotAction.finish(this@HotActionWidget)
+            dynamic {
+                val remaining = 1.0 - ((System.currentTimeMillis() - initialTime) / (duration * 5.0)).coerceIn(0.0, 1.0)
+                width = timerBackground.width * remaining
+
+                if (remaining == 0.0 && !expired) {
+                    HotAction.finish(this@HotActionWidget)
+                }
             }
         }
     }
