@@ -10,7 +10,7 @@ import net.inceptioncloud.dragonfly.options.sections.OptionSectionFactory.Compan
 /**
  * The "Hot Actions" options section.
  */
-object OptionsSectionOverlay {
+object OptionsSectionUI {
 
     /**
      * Whether hot actions should be enabled or not
@@ -98,7 +98,7 @@ object OptionsSectionOverlay {
     @JvmStatic
     fun init() {
         optionSection {
-            title = "Overlay"
+            title = "User Interface"
 
             +enableToastMessages
             +enableHotActions

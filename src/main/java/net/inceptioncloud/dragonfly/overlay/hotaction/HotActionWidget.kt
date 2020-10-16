@@ -8,7 +8,7 @@ import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 import kotlin.properties.Delegates
@@ -44,7 +44,7 @@ class HotActionWidget(
      */
     val joinFunc: (action: Action) -> CharSequence = { action ->
         "§#EF852E${actions.indexOf(action).let {
-            if (OptionsSectionOverlay.hotActionsTriggerMode.key.get() == 0) {
+            if (OptionsSectionUI.hotActionsTriggerMode.key.get() == 0) {
                 "F${it + 7}"
             } else {
                 "${it + 1}."
