@@ -50,6 +50,7 @@ class KeySelector(
     var padding: Double by property(2.0)
 
     var blockedKeys = listOf<Int>()
+    var exitKeys = listOf<Int>()
     var clearKeys = listOf<Int>()
 
     var label: String by property("Input Label")
@@ -314,12 +315,25 @@ class KeySelector(
     }
 
     override fun handleKeyTyped(char: Char, keyCode: Int) {
-        if (!isFocused || (blockedKeys.isNotEmpty() && blockedKeys.contains(keyCode)))
+
+        if(!isFocused) {
             return
+        }
+
+        if(exitKeys.contains(keyCode)) {
+            isFocused = false
+            return
+        }
+
+        if (blockedKeys.contains(keyCode)) {
+            return
+        }
 
         deleteWords(inputText.length * -1)
         if(!clearKeys.contains(keyCode)) {
             writeText(Keyboard.getKeyName(keyCode))
+            isFocused = false
+            return
         }
 
     }
