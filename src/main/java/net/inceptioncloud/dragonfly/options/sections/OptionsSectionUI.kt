@@ -10,7 +10,7 @@ import net.inceptioncloud.dragonfly.options.sections.OptionSectionFactory.Compan
 /**
  * The "Hot Actions" options section.
  */
-object OptionsSectionOverlay {
+object OptionsSectionUI {
 
     /**
      * Whether hot actions should be enabled or not
@@ -93,18 +93,40 @@ object OptionsSectionOverlay {
     }
 
     /**
+     * Define a custom scale for the inventory gui.
+     */
+    @JvmStatic
+    val customInventoryScale = optionEntryMultipleChoice {
+        name = "Custom inventory scale"
+        description = "Specify a custom scale for your inventory gui. Select \"Inherit\" to keep the default gui scale that is used for " +
+                "all other screens."
+
+        +OptionChoice(-1, "Inherit")
+        +OptionChoice(0, "Auto")
+        +OptionChoice(1, "Small")
+        +OptionChoice(2, "Normal")
+        +OptionChoice(3, "Large")
+
+        key {
+            fileKey = "customInventoryScale"
+            default = { -1 }
+        }
+    }
+
+    /**
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
     fun init() {
         optionSection {
-            title = "Overlay"
+            title = "User Interface"
 
             +enableToastMessages
             +enableHotActions
             +hotActionsTriggerMode
             +hotActionsTriggerKey
             +showPingAsNumber
+            +customInventoryScale
         }
     }
 }

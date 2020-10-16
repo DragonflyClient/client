@@ -122,7 +122,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     /**
      * A custom scale factor that is only applied to this gui.
      */
-    val customScaleFactor: Double?
+    open val customScaleFactor: Double?
         get() = if (isNativeResolution) min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0) else null
 
     /**
