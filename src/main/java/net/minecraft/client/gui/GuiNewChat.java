@@ -8,6 +8,7 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor;
 import net.inceptioncloud.dragonfly.mods.nvidiahighlights.NvidiaHighlightsMod;
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionChat;
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion;
@@ -269,8 +270,8 @@ public class GuiNewChat extends Gui {
         this.sentMessages.clear();
     }
 
-    public void printChatMessage(IChatComponent p_146227_1_) {
-        this.printChatMessageWithOptionalDeletion(p_146227_1_, 0);
+    public void printChatMessage(IChatComponent component) {
+        this.printChatMessageWithOptionalDeletion(component, 0);
     }
 
     public int getBorderAmount() {
@@ -281,6 +282,13 @@ public class GuiNewChat extends Gui {
      * prints the ChatComponent to Chat. If the ID is not 0, deletes an existing Chat Line of that ID from the GUI
      */
     public void printChatMessageWithOptionalDeletion(IChatComponent component, int id) {
+        Boolean ignoreEmptyChatMessages = OptionsSectionChat.getIgnoreEmptyChatMessages().invoke();
+        if (ignoreEmptyChatMessages != null && ignoreEmptyChatMessages) {
+            if (component.getUnformattedText().trim().isEmpty()) {
+                return;
+            }
+        }
+
         this.setChatLine(component, id, this.mc.ingameGUI.getUpdateCounter(), false);
         logger.info("[CHAT] " + component.getUnformattedText());
         NvidiaHighlightsMod.INSTANCE.checkMessage(component.getUnformattedText());
