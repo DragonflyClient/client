@@ -93,6 +93,27 @@ object OptionsSectionUI {
     }
 
     /**
+     * Define a custom scale for the inventory gui.
+     */
+    @JvmStatic
+    val customInventoryScale = optionEntryMultipleChoice {
+        name = "Custom inventory scale"
+        description = "Specify a custom scale for your inventory gui. Select \"Inherit\" to keep the default gui scale that is used for " +
+                "all other screens."
+
+        +OptionChoice(-1, "Inherit")
+        +OptionChoice(0, "Auto")
+        +OptionChoice(1, "Small")
+        +OptionChoice(2, "Normal")
+        +OptionChoice(3, "Large")
+
+        key {
+            fileKey = "customInventoryScale"
+            default = { -1 }
+        }
+    }
+
+    /**
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
@@ -105,6 +126,7 @@ object OptionsSectionUI {
             +hotActionsTriggerMode
             +hotActionsTriggerKey
             +showPingAsNumber
+            +customInventoryScale
         }
     }
 }

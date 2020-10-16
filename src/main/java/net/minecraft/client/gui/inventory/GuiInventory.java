@@ -1,7 +1,8 @@
 package net.minecraft.client.gui.inventory;
 
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.renderer.*;
@@ -9,12 +10,20 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MathHelper;
 import org.apache.logging.log4j.LogManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
 public class GuiInventory extends InventoryEffectRenderer
 {
+    /**
+     * The scale factor for the inventory which can be customized using the custom inventory
+     * scale setting.
+     */
+    private Double scaleFactor = null;
+
     /**
      * The old x position of the mouse pointer
      */
@@ -100,6 +109,56 @@ public class GuiInventory extends InventoryEffectRenderer
         } else {
             super.initGui();
         }
+    }
+
+    @Override
+    public void setWorldAndResolution(Minecraft mc, int width, int height) {
+        this.updateScaleFactor();
+        super.setWorldAndResolution(mc, width, height);
+    }
+
+    /**
+     * Updates the {@link #scaleFactor} property based on the custom inventory scale setting.
+     */
+    private void updateScaleFactor() {
+        final Integer customInventoryScale = OptionsSectionUI.getCustomInventoryScale().invoke();
+        if (customInventoryScale != null && customInventoryScale != -1) {
+            if (customInventoryScale == 0) {
+                this.scaleFactor = (double) calculateAutoGuiScale();
+            } else {
+                this.scaleFactor = (double) customInventoryScale;
+            }
+        } else {
+            this.scaleFactor = null;
+        }
+    }
+
+    /**
+     * Calculates the scale factor if "auto" is selected as the custom inventory scale.
+     */
+    private static Integer calculateAutoGuiScale() {
+        Minecraft mc = Minecraft.getMinecraft();
+        int scaledWidth = mc.displayWidth;
+        int scaledHeight = mc.displayHeight;
+        int scaleFactor = 1;
+        boolean flag = mc.isUnicode();
+        int i = 1000;
+
+        while (scaleFactor < i && scaledWidth / ( scaleFactor + 1 ) >= 320 && scaledHeight / ( scaleFactor + 1 ) >= 240) {
+            ++scaleFactor;
+        }
+
+        if (flag && scaleFactor % 2 != 0 && scaleFactor != 1) {
+            --scaleFactor;
+        }
+
+        return scaleFactor;
+    }
+
+    @Nullable
+    @Override
+    public Double getCustomScaleFactor() {
+        return scaleFactor;
     }
 
     /**
