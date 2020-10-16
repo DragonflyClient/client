@@ -1,6 +1,7 @@
 package net.minecraft.client.gui.inventory;
 
 import com.google.common.collect.Sets;
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -102,7 +103,9 @@ public abstract class GuiContainer extends GuiScreen {
     /**
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    public void drawScreen(int _mouseX, int _mouseY, float partialTicks) {
+        int mouseX = (int) GraphicsEngine.getMouseX();
+        int mouseY = (int) GraphicsEngine.getMouseY();
         this.drawDefaultBackground();
         int i = this.guiLeft;
         int j = this.guiTop;
