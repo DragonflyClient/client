@@ -1,14 +1,24 @@
 package net.minecraft.client.renderer;
 
 import java.util.Collection;
+
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class InventoryEffectRenderer extends GuiContainer
 {
+    /**
+     * The scale factor for the inventory which can be customized using the custom inventory
+     * scale setting.
+     */
+    private Double scaleFactor = null;
+
     /** True if there is some potion effect to display */
     private boolean hasActivePotionEffects;
 
@@ -109,5 +119,55 @@ public abstract class InventoryEffectRenderer extends GuiContainer
                 j += l;
             }
         }
+    }
+
+    @Override
+    public void setWorldAndResolution(Minecraft mc, int width, int height) {
+        this.updateScaleFactor();
+        super.setWorldAndResolution(mc, width, height);
+    }
+
+    /**
+     * Updates the {@link #scaleFactor} property based on the custom inventory scale setting.
+     */
+    private void updateScaleFactor() {
+        final Integer customInventoryScale = OptionsSectionUI.getCustomInventoryScale().invoke();
+        if (customInventoryScale != null && customInventoryScale != -1) {
+            if (customInventoryScale == 0) {
+                this.scaleFactor = (double) calculateAutoGuiScale();
+            } else {
+                this.scaleFactor = (double) customInventoryScale;
+            }
+        } else {
+            this.scaleFactor = null;
+        }
+    }
+
+    /**
+     * Calculates the scale factor if "auto" is selected as the custom inventory scale.
+     */
+    private static Integer calculateAutoGuiScale() {
+        Minecraft mc = Minecraft.getMinecraft();
+        int scaledWidth = mc.displayWidth;
+        int scaledHeight = mc.displayHeight;
+        int scaleFactor = 1;
+        boolean flag = mc.isUnicode();
+        int i = 1000;
+
+        while (scaleFactor < i && scaledWidth / ( scaleFactor + 1 ) >= 320 && scaledHeight / ( scaleFactor + 1 ) >= 240) {
+            ++scaleFactor;
+        }
+
+        if (flag && scaleFactor % 2 != 0 && scaleFactor != 1) {
+            --scaleFactor;
+        }
+
+        return scaleFactor;
+    }
+
+    @Nullable
+    @Override
+    public Double getCustomScaleFactor() {
+        return scaleFactor;
     }
 }
