@@ -131,7 +131,7 @@ class TextField(
                 structure.remove(key)
         }
 
-        (structure["background"] as Rectangle).also {
+        (structure["background"] as Rectangle?)?.also {
             it.x = x
             it.y = y
             it.width = width
