@@ -1,6 +1,7 @@
 package net.minecraft.client.gui.inventory;
 
 import com.google.common.collect.Lists;
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.achievement.GuiAchievements;
@@ -478,8 +479,10 @@ public class GuiContainerCreative extends InventoryEffectRenderer
     /**
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
-    public void drawScreen (int mouseX, int mouseY, float partialTicks)
+    public void drawScreen (int _mouseX, int _mouseY, float partialTicks)
     {
+        int mouseX = (int) GraphicsEngine.getMouseX();
+        int mouseY = (int) GraphicsEngine.getMouseY();
         boolean flag = Mouse.isButtonDown(0);
         int i = this.guiLeft;
         int j = this.guiTop;

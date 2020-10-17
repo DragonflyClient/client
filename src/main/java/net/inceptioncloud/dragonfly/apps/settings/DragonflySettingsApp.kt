@@ -13,7 +13,7 @@ object DragonflySettingsApp : TaskbarApp("Dragonfly Settings") {
         OptionsSectionZoom.init()
         OptionsSectionScoreboard.init()
         OptionsSectionPlayer.init()
-        OptionsSectionOverlay.init()
+        OptionsSectionUI.init()
         OptionsSectionChat.init()
         OptionsSectionPerformance.init()
     }

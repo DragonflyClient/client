@@ -16,7 +16,7 @@ object KeyController {
      */
     fun attachKey(key: String): Result = try {
         val response = khttp.post(
-            url = "https://api.playdragonfly.net/keys/attach",
+            url = "https://api.playdragonfly.net/v1/keys/attach",
             timeout = 10.0,
             json = mapOf(
                 "key" to key,
@@ -39,7 +39,7 @@ object KeyController {
         try {
             val key = KeyStorage.getStoredKey() ?: return Result(false, "No key stored on local machine!")
             val response = khttp.post(
-                url = "https://api.playdragonfly.net/keys/validate",
+                url = "https://api.playdragonfly.net/v1/keys/validate",
                 timeout = 30.0,
                 json = mapOf(
                     "key" to key,

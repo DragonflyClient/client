@@ -27,7 +27,7 @@ object DragonflyVersion {
      */
     val update: Update? by lazy {
         val result: String = get(
-            "https://api.inceptioncloud.net/updates" +
+            "https://api.playdragonfly.net/v1/version/updates" +
                     "?channel=${getChannel()?.identifier ?: "stable"}" +
                     "&since=$localVersion"
         ).text

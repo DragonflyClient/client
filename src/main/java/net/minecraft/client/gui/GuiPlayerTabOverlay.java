@@ -6,8 +6,7 @@ import com.mojang.authlib.GameProfile;
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.engine.font.FontWeight;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
-import net.inceptioncloud.dragonfly.options.sections.OptionsSectionOverlay;
-import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
 import net.inceptioncloud.dragonfly.ui.playerlist.indicators.*;
@@ -271,7 +270,7 @@ public class GuiPlayerTabOverlay extends Gui {
     }
 
     protected void drawPing(int param1, int param2, int param3, NetworkPlayerInfo networkPlayerInfoIn) {
-        if(OptionsSectionOverlay.getShowPingAsNumber().invoke()) {
+        if(OptionsSectionUI.getShowPingAsNumber().invoke()) {
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             IFontRenderer fontRenderer = Dragonfly.getFontManager().getDefaultFont().fontRenderer(FontWeight.REGULAR, 12);
