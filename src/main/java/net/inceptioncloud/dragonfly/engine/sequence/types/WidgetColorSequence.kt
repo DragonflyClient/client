@@ -3,7 +3,7 @@ package net.inceptioncloud.dragonfly.engine.sequence.types
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.Sequence
 
-class WidgetColorSequence(from: WidgetColor, to: WidgetColor, duration: Int) :
+class WidgetColorSequence(from: WidgetColor, to: WidgetColor, duration: Long) :
     Sequence<WidgetColor>(from, to, duration) {
 
     override fun interpolate(progress: Double) = when {

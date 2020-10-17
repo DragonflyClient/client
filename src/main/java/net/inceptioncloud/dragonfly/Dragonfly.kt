@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dev.decobr.mcgeforce.bindings.MCGeForceHelper
+import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.account.*
 import net.inceptioncloud.dragonfly.design.splash.DragonflySplashScreen
 import net.inceptioncloud.dragonfly.discord.RichPresenceManager
@@ -258,9 +259,8 @@ object Dragonfly {
         synchronized(this) {
             transitions.toTypedArray().forEach { it.tick() }
             ScreenOverlay.stage.update()
-            Minecraft.getMinecraft().ingameGUI?.stage?.update()
-
-            Minecraft.getMinecraft().currentScreen?.stage?.update()
+            mc.ingameGUI?.stage?.update()
+            mc.currentScreen?.stage?.update()
 
             val tickEvent = ClientTickEvent()
             eventBus.post(tickEvent)
