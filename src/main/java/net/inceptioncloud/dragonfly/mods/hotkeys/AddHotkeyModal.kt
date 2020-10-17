@@ -94,8 +94,9 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
             label = "Key"
             labelScaleFactor = 0.9
             lineColor = DragonflyPalette.foreground
+            focusedLineColor = DragonflyPalette.accentNormal
             color = DragonflyPalette.accentNormal
-            unfocusedLabelColor = DragonflyPalette.foreground.altered { alphaDouble = 0.75 }
+            unfocusedLabelColor = DragonflyPalette.accentNormal
             unfocusedLabelLiftedColor = DragonflyPalette.accentNormal
             execOnFocusedChange = { updateIsCloseable(!this.isFocused) }
         }!!
@@ -155,8 +156,9 @@ class AddHotkeyModal : ModalWidget("Add Hotkey", 505.0, 580.0) {
             label = "Message"
             labelScaleFactor = 0.9
             lineColor = DragonflyPalette.foreground
+            focusedLineColor = DragonflyPalette.accentNormal
             color = DragonflyPalette.accentNormal
-            unfocusedLabelColor = DragonflyPalette.foreground.altered { alphaDouble = 0.75 }
+            unfocusedLabelColor = DragonflyPalette.accentNormal
             unfocusedLabelLiftedColor = DragonflyPalette.accentNormal
         }!!
 

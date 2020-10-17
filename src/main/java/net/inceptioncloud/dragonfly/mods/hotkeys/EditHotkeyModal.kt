@@ -91,11 +91,13 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             height = 55.0
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
             blockedKeys = listOf(1)
+            exitKeys = listOf(1)
             label = "Key"
             labelScaleFactor = 0.9
             lineColor = DragonflyPalette.foreground
+            focusedLineColor = DragonflyPalette.accentNormal
             color = DragonflyPalette.accentNormal
-            unfocusedLabelColor = DragonflyPalette.foreground.altered { alphaDouble = 0.75 }
+            unfocusedLabelColor = DragonflyPalette.accentNormal
             unfocusedLabelLiftedColor = DragonflyPalette.accentNormal
             execOnFocusedChange = { updateIsCloseable(!this.isFocused) }
         }!!
@@ -155,8 +157,9 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             label = "Message"
             labelScaleFactor = 0.9
             lineColor = DragonflyPalette.foreground
+            focusedLineColor = DragonflyPalette.accentNormal
             color = DragonflyPalette.accentNormal
-            unfocusedLabelColor = DragonflyPalette.foreground.altered { alphaDouble = 0.75 }
+            unfocusedLabelColor = DragonflyPalette.accentNormal
             unfocusedLabelLiftedColor = DragonflyPalette.accentNormal
         }!!
 

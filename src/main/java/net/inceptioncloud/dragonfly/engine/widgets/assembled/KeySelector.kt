@@ -58,6 +58,7 @@ class KeySelector(
     var maxStringLength: Int by property(200)
 
     var lineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
+    var focusedLineColor: WidgetColor by property(DragonflyPalette.background.brighter(0.4))
     var unfocusedLabelColor: WidgetColor by property(TEXT_COLOR)
     var unfocusedLabelLiftedColor = unfocusedLabelColor
 
@@ -155,7 +156,8 @@ class KeySelector(
         lineOverlay.detachAnimation<MorphAnimation>()
         lineOverlay.morph(
             30, EaseCubic.IN_OUT,
-            lineOverlay::width to if (focused) width else 0.0
+            lineOverlay::width to if (focused) width else 0.0,
+            lineOverlay::color to if(focused) focusedLineColor else lineColor
         )?.start()
 
     }
