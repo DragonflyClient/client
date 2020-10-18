@@ -14,7 +14,7 @@ object DragonflyVersion {
     /**
      * The version of this client.
      */
-    val localVersion = Version(1, 1, 4, 5)
+    val localVersion = Version(1, 1, 4, 6)
 
     /**
      * The version that is specified as the latest one, fetched lazily from the Inception Cloud
