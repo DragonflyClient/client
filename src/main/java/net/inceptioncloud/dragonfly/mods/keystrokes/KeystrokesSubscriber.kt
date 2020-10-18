@@ -5,6 +5,7 @@ import net.inceptioncloud.dragonfly.event.client.ResizeEvent
 import net.inceptioncloud.dragonfly.event.client.ToggleFullscreenEvent
 import net.inceptioncloud.dragonfly.event.control.KeyInputEvent
 import net.inceptioncloud.dragonfly.event.control.MouseInputEvent
+import net.inceptioncloud.dragonfly.event.gui.StartupGuiEvent
 import net.minecraft.client.Minecraft
 
 object KeystrokesSubscriber {
@@ -38,4 +39,10 @@ object KeystrokesSubscriber {
     fun resizeWindow(event: ResizeEvent) {
         Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
     }
+
+    @Subscribe
+    fun onStartupGui(event: StartupGuiEvent) {
+        KeystrokesManager.registerKeystrokes()
+    }
+
 }
