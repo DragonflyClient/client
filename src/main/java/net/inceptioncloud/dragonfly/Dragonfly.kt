@@ -159,6 +159,8 @@ object Dragonfly {
             }
         }, 0, 5)
 
+        showStartupModals()
+
         Runtime.getRuntime().addShutdownHook(Thread {
             // EVENTBUS - ClientShutdownEvent when the game is being closed
             val event = ClientShutdownEvent()
