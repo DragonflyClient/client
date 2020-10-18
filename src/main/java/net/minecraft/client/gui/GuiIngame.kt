@@ -40,6 +40,8 @@ import net.minecraft.scoreboard.ScorePlayerTeam
 import net.minecraft.util.*
 import optifine.Config
 import optifine.CustomColors
+import org.lwjgl.input.Keyboard
+import org.lwjgl.input.Mouse
 import java.util.*
 import java.util.stream.Collectors
 
@@ -1042,7 +1044,35 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         
         for(keyStroke in KeystrokesManager.keystrokes) {
             keyStroke.update()
-            stage.add(Pair("keystroke-${keyStroke.keyDesc}", keyStroke.textField))
+            val textField = keyStroke.textField
+
+            if(keyStroke.keyCode == -100 || keyStroke.keyCode == -99) {
+                textField.backgroundColor = if(Mouse.isButtonDown(keyStroke.keyCode)) {
+                    KeystrokesMod.bgActiveColor
+                }else {
+                    KeystrokesMod.bgInactiveColor
+                }
+
+                textField.color = if(Mouse.isButtonDown(keyStroke.keyCode)) {
+                    KeystrokesMod.textActiveColor
+                }else {
+                    KeystrokesMod.textInactiveColor
+                }
+            }else {
+                textField.backgroundColor = if(Keyboard.isKeyDown(keyStroke.keyCode)) {
+                    KeystrokesMod.bgActiveColor
+                }else {
+                    KeystrokesMod.bgInactiveColor
+                }
+
+                textField.color = if(Keyboard.isKeyDown(keyStroke.keyCode)) {
+                    KeystrokesMod.textActiveColor
+                }else {
+                    KeystrokesMod.textInactiveColor
+                }
+            }
+
+            stage.add(Pair("keystroke-${keyStroke.keyDesc}", textField))
         }
 
         ToggleSneakMod.updateOverlay()
