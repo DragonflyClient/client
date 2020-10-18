@@ -7,7 +7,6 @@ import net.inceptioncloud.dragonfly.engine.inspector.InspectorSubscriber
 import net.inceptioncloud.dragonfly.event.ModEventBus
 import net.inceptioncloud.dragonfly.kernel.subscriber.KernelAuthSubscriber
 import net.inceptioncloud.dragonfly.kernel.subscriber.KernelSessionSubscriber
-import net.inceptioncloud.dragonfly.key.StartupGuiSubscriber
 import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysController
 import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesSubscriber
 import net.inceptioncloud.dragonfly.mods.togglesneak.ToggleSneakSubscriber
@@ -32,7 +31,6 @@ object DefaultSubscribers {
             register(TickSubscriber())
             register(LastServerSaveSubscriber())
             register(ZoomSubscriber())
-            register(StartupGuiSubscriber)
             register(DeveloperModeSubscriber)
             register(ShutdownSubscriber)
             register(ScreenOverlay)
