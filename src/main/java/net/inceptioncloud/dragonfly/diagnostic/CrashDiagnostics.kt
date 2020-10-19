@@ -18,6 +18,7 @@ object CrashDiagnostics {
     @JvmStatic
     fun submit(report: CrashReport) {
         if (StorageOptions.SEND_DIAGNOSTICS.get() != 1) return
+        if (Dragonfly.isDeveloperMode) return
 
         try {
             LogManager.getLogger().info("Submitting crash report...")
