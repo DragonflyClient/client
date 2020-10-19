@@ -25,10 +25,10 @@ open class VersionTask : DefaultTask() {
     @TaskAction
     fun execute() {
         requireNotNull(newVersion) { "A version for the update must be specified" }
-        globalVersion = newVersion
-        project.version = newVersion!!
         writeVersionToBuildScript()
         writeVersionToClientSource()
+        globalVersion = newVersion
+        project.version = newVersion!!
     }
 
     /**
