@@ -146,9 +146,6 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             key.drawProgress()
         }
 
-        // ICMM Render Stage
-        stage.render()
-
         GlStateManager.enableBlend()
         if (Config.isVignetteEnabled()) {
             renderVignette(mc.thePlayer.getBrightness(partialTicks), scaledresolution)
@@ -156,6 +153,10 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             GlStateManager.enableDepth()
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
         }
+
+        // ICMM Render Stage
+        stage.render()
+
         val itemstack = mc.thePlayer.inventory.armorItemInSlot(3)
         if (mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.item === Item.getItemFromBlock(
                 Blocks.pumpkin
