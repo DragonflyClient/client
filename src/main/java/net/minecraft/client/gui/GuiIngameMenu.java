@@ -1,50 +1,131 @@
 package net.minecraft.client.gui;
 
-import java.io.IOException;
-import net.minecraft.client.gui.achievement.GuiAchievements;
-import net.minecraft.client.gui.achievement.GuiStats;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.resources.I18n;
+import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.apps.about.AboutDragonflyUI;
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI;
+import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager;
+import net.inceptioncloud.dragonfly.design.color.*;
+import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
+import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
+import net.inceptioncloud.dragonfly.transition.supplier.*;
+import net.inceptioncloud.dragonfly.ui.components.button.*;
+import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils;
+import net.inceptioncloud.dragonfly.ui.screens.*;
+import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar;
+import net.minecraft.client.gui.achievement.*;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.realms.RealmsBridge;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class GuiIngameMenu extends GuiScreen
 {
-    private int field_146445_a;
-    private int field_146444_f;
+    private boolean closeRequested = false;
 
     /**
-     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
-     * window resizes, the buttonList is cleared beforehand.
+     * Builds the box of the Game Menu.
      */
-    public void initGui()
-    {
-        this.field_146445_a = 0;
-        this.buttonList.clear();
-        int i = -16;
-        int j = 98;
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + i, I18n.format("menu.returnToMenu", new Object[0])));
+    private SmoothDoubleTransition transitionBox;
 
-        if (!this.mc.isIntegratedServerRunning())
+    /**
+     * Manages the fade-in of the background gradient.
+     */
+    private SmoothDoubleTransition transitionBackground;
+
+    /**
+     * Builds the header of the Game Menu.
+     */
+    private SmoothDoubleTransition transitionHeader;
+
+    /**
+     * The transition that closes the gui when the user requested.
+     */
+    private SmoothDoubleTransition pushOffset;
+
+    private final String aboutString = "About Dragonfly";
+
+    @Override
+    public boolean isNativeResolution() {
+        return true;
+    }
+
+    /**
+     * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
+     */
+    public void initGui ()
+    {
+        pushOffset = SmoothDoubleTransition.builder()
+            .start(0).end(1)
+            .fadeIn(20).stay(20).fadeOut(0)
+            .autoTransformator((ForwardNothing) () -> closeRequested)
+            .reachEnd(() ->
+            {
+                mc.displayGuiScreen(null);
+                mc.setIngameFocus();
+            })
+            .build();
+
+        transitionBox = SmoothDoubleTransition.builder()
+            .start(0).end(1)
+            .fadeIn(25).stay(15).fadeOut(0)
+            .autoTransformator(
+                    (ForwardBackward) () -> mc.currentScreen instanceof IngameMenuUI
+            ).build();
+
+        transitionHeader = SmoothDoubleTransition.builder()
+            .start(0.0).end(1.0)
+            .fadeIn(0).stay(20).fadeOut(20)
+            .autoTransformator((ForwardBackward) transitionBox::isAtEnd)
+            .build();
+
+        transitionBackground = SmoothDoubleTransition.builder()
+            .start(0.0F).end(0.7F)
+            .fadeIn(0).stay(15).fadeOut(15)
+            .autoTransformator(
+                    (ForwardBackward) () -> mc.currentScreen instanceof IngameMenuUI && !closeRequested
+            ).build();
+
+        this.buttonList.forEach(GuiButton::destroy);
+        this.buttonList.clear();
+
+        /* Back to Game */
+        this.buttonList.add(new SimpleButton(4, this.width / 2 - 100, this.height / 4 + 36, "Back to Game"));
+        /* Achievements */
+        this.buttonList.add(new SimpleButton(5, this.width / 2 - 100, this.height / 4 + 60, 98, 20, "Achievements"));
+        /* Statistics */
+        this.buttonList.add(new SimpleButton(6, this.width / 2 + 2, this.height / 4 + 60, 98, 20, "Statistics"));
+
+        if (mc.isIntegratedServerRunning())
         {
-            ((GuiButton)this.buttonList.get(0)).displayString = I18n.format("menu.disconnect", new Object[0]);
+            /* Options */
+            this.buttonList.add(new SimpleButton(0, this.width / 2 - 100, this.height / 4 + 84, 98, 20, "Options"));
+            /* Share to LAN */
+            this.buttonList.add(new SimpleButton(9, this.width / 2 + 2, this.height / 4 + 84, 98, 20, "Share to LAN"));
+        } else {
+            /* Options */
+            this.buttonList.add(new SimpleButton(0, this.width / 2 - 100, this.height / 4 + 84, "Options"));
         }
 
-        this.buttonList.add(new GuiButton(4, this.width / 2 - 100, this.height / 4 + 24 + i, I18n.format("menu.returnToGame", new Object[0])));
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + i, 98, 20, I18n.format("menu.options", new Object[0])));
-        GuiButton guibutton;
-        this.buttonList.add(guibutton = new GuiButton(7, this.width / 2 + 2, this.height / 4 + 96 + i, 98, 20, I18n.format("menu.shareToLan", new Object[0])));
-        this.buttonList.add(new GuiButton(5, this.width / 2 - 100, this.height / 4 + 48 + i, 98, 20, I18n.format("gui.achievements", new Object[0])));
-        this.buttonList.add(new GuiButton(6, this.width / 2 + 2, this.height / 4 + 48 + i, 98, 20, I18n.format("gui.stats", new Object[0])));
-        guibutton.enabled = this.mc.isSingleplayer() && !this.mc.getIntegratedServer().getPublic();
+        /* Dragonfly Settings */
+        this.buttonList.add(new SimpleButton(7, this.width / 2 - 100, this.height / 4 + 108, "Dragonfly Settings"));
+        /* Quit World */
+        this.buttonList.add(new ConfirmationButton(this, 1, this.width / 2 - 100, this.height / 4 + 132, this.mc.isIntegratedServerRunning() ? "Save and Quit to Title" : "Disconnect"));
+
+        this.buttonList.add(new ImageButton(99, 5, this.height - 15 - 5, 15, 15, new ResourceLocation("dragonflyres/icons/sync.png")));
+
+        Taskbar.INSTANCE.initializeTaskbar(this);
     }
 
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException
+    protected void actionPerformed (GuiButton button) throws IOException
     {
-        switch (button.id)
-        {
+        switch (button.id) {
             case 0:
                 this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
                 break;
@@ -54,20 +135,15 @@ public class GuiIngameMenu extends GuiScreen
                 boolean flag1 = this.mc.isConnectedToRealms();
                 button.enabled = false;
                 this.mc.theWorld.sendQuittingDisconnectingPacket();
-                this.mc.loadWorld((WorldClient)null);
+                this.mc.loadWorld(null);
 
-                if (flag)
-                {
-                    this.mc.displayGuiScreen(new GuiMainMenu());
-                }
-                else if (flag1)
-                {
+                if (flag) {
+                    this.mc.displayGuiScreen(new MainMenuUI());
+                } else if (flag1) {
                     RealmsBridge realmsbridge = new RealmsBridge();
-                    realmsbridge.switchToRealms(new GuiMainMenu());
-                }
-                else
-                {
-                    this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
+                    realmsbridge.switchToRealms(new MainMenuUI());
+                } else {
+                    this.mc.displayGuiScreen(new GuiMultiplayer(new MainMenuUI()));
                 }
 
             case 2:
@@ -76,8 +152,7 @@ public class GuiIngameMenu extends GuiScreen
                 break;
 
             case 4:
-                this.mc.displayGuiScreen((GuiScreen)null);
-                this.mc.setIngameFocus();
+                requestClose();
                 break;
 
             case 5:
@@ -89,26 +164,124 @@ public class GuiIngameMenu extends GuiScreen
                 break;
 
             case 7:
-                this.mc.displayGuiScreen(new GuiShareToLan(this));
+                mc.displayGuiScreen(new DragonflySettingsUI(this));
+                break;
+
+            case 9:
+                mc.displayGuiScreen(new GuiShareToLan(this));
+                break;
+
+            case 99:
+                CosmeticsManager.refreshCosmetics();
+                break;
         }
     }
 
-    /**
-     * Called from the main game loop to update the screen.
-     */
-    public void updateScreen()
+    private void requestClose ()
     {
-        super.updateScreen();
-        ++this.field_146444_f;
+        this.closeRequested = true;
     }
 
     /**
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void drawScreen (int mouseX, int mouseY, float partialTicks)
     {
-        this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRendererObj, I18n.format("menu.game", new Object[0]), this.width / 2, 40, 16777215);
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        if (!closeRequested && Mouse.isGrabbed())
+            Mouse.setGrabbed(false);
+
+        /* Background */
+        drawRect(0, 0, this.width, this.height, new Color(0F, 0F, 0F, (float) transitionBackground.get()).getRGB());
+
+        /* Game Menu Box Dimensions */
+        int padding = 10;
+        int top = this.height / 4 + 12 - padding;
+        int bottom = this.height / 4 + 152 + padding;
+        int left = this.width / 2 - 100 - padding;
+        int right = this.width / 2 + 100 + padding;
+        int width = right - left;
+
+        int pushOffset = (int) (this.pushOffset.get() * (this.height - top));
+        top += pushOffset;
+        bottom += pushOffset;
+
+        /* Apply transition dimensions to the location */
+        final double factor = 1 - transitionBox.get();
+        int subWidth = (int) ((right - left) * factor);
+        int subHeight = (int) ((bottom - top) * factor);
+        top += subHeight / 2;
+        bottom -= subHeight / 2;
+        left += subWidth / 2;
+        right -= subWidth / 2;
+        this.buttonList.stream().filter(SimpleButton.class::isInstance).map(SimpleButton.class::cast).forEach(guiButton -> guiButton.setOpacity((float) transitionHeader.get()));
+
+        /* Header */
+        int headerWidth = (int) (transitionHeader.get() * width);
+        int headerCenter = left + (width / 2);
+        int headerLeft = headerCenter - (headerWidth / 2);
+        drawGradientHorizontal(headerLeft, top - 1, headerLeft + headerWidth, top, CloudColor.DESIRE.getRGB(), CloudColor.ROYAL.getRGB());
+
+        /* Game Menu Box */
+        drawRect(left, top, right, bottom, GreyToneColor.DARK_GREY.getRGB());
+
+        /* Title */
+        final float opacity = (float) transitionHeader.get();
+        final Color color = new Color(1, 1, 1, Math.max(0.05f, opacity));
+        IFontRenderer fontRenderer = Dragonfly.getFontManager().retrieveOrBuild(" Medium", 22);
+
+        drawCenteredString(fontRenderer, "Ingame Menu", left + (width / 2), top + 9, color.getRGB());
+        GlStateManager.color(1f, 1f, 1f, color.getAlpha() / 255f);
+        RenderUtils.drawLine(left + (width / 2D) - 12, top + 23, left + (width / 2D) + 12, top + 23, 1);
+
+        for (GuiButton guiButton : new ArrayList<>(this.buttonList)) {
+            final int realY = guiButton.yPosition;
+            guiButton.setPositionY(guiButton.yPosition + pushOffset);
+            guiButton.drawButton(this.mc, mouseX, mouseY);
+            guiButton.setPositionY(realY);
+        }
+
+        for (GuiLabel guiLabel : new ArrayList<>(this.labelList)) {
+            guiLabel.drawLabel(this.mc, mouseX, mouseY);
+        }
+
+        // About
+        fontRenderer = Dragonfly.getFontManager().getRegular();
+        fontRenderer.drawString(aboutString, 5, 5, Color.WHITE.getRGB(), true);
+
+        stage.render();
+    }
+
+    @Override
+    protected void keyTyped (final char typedChar, final int keyCode) throws IOException
+    {
+        if (keyCode == 1) {
+            requestClose();
+        }
+    }
+
+    @Override
+    public void onGuiClosed ()
+    {
+        transitionBackground.destroy();
+        transitionBox.destroy();
+        transitionHeader.destroy();
+        pushOffset.destroy();
+
+        super.onGuiClosed();
+    }
+
+    /**
+     * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
+     */
+    @Override
+    protected void mouseClicked (final int mouseX, final int mouseY, final int mouseButton) throws IOException
+    {
+        final IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
+        if (mouseX >= 5 && mouseX <= 5 + fontRenderer.getStringWidth(aboutString)
+            && mouseY >= 5 && mouseY <= 5 + fontRenderer.getHeight()) {
+            this.mc.displayGuiScreen(new AboutDragonflyUI(this));
+        }
+
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 }

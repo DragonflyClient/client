@@ -595,8 +595,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
         this.ingameGUI = new GuiIngame(this);
 
         final GuiScreen targetStartupGui = this.serverName != null
-                ? new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort)
-                : new GuiMainMenu();
+                ? new GuiConnecting(new MainMenuUI(), this, this.serverName, this.serverPort)
+                : new MainMenuUI();
 
         final StartupGuiEvent event = new StartupGuiEvent(targetStartupGui);
         Dragonfly.getEventBus().post(event);
@@ -1352,7 +1352,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      */
     public void displayInGameMenu() {
         if (this.currentScreen == null) {
-            this.displayGuiScreen(new GuiIngameMenu());
+            this.displayGuiScreen(new IngameMenuUI());
 
             if (this.isSingleplayer() && !this.theIntegratedServer.getPublic()) {
                 this.mcSoundHandler.pauseSounds();

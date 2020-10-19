@@ -47,7 +47,7 @@ object Main {
         val specProxyUser: OptionSpec<String> = optionParser.accepts("proxyUser").withRequiredArg()
         val specProxyPass: OptionSpec<String> = optionParser.accepts("proxyPass").withRequiredArg()
         val specUsername: OptionSpec<String> =
-            optionParser.accepts("username").withRequiredArg().defaultsTo("DragonflyUser")
+            optionParser.accepts("username").withRequiredArg().defaultsTo("Player" + Minecraft.getSystemTime() % 1000L)
         val specUUID: OptionSpec<String> = optionParser.accepts("uuid").withRequiredArg()
         val specAccessToken: OptionSpec<String> = optionParser.accepts("accessToken").withRequiredArg().required()
         val specVersion: OptionSpec<String> = optionParser.accepts("version").withRequiredArg().required()

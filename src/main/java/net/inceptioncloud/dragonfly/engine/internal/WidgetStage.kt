@@ -41,7 +41,7 @@ class WidgetStage(val name: String) {
     /**
      * An observable variant of the [content] as a list of pairs.
      */
-    val observableContent: ObservableList<Pair<String, Widget<*>>> = FXCollections.observableArrayList()
+    val observableContent: ObservableList<Pair<String, Widget<*>>> = FXCollections.observableArrayList<Pair<String, Widget<*>>>()
 
     /**
      * Renders all [Widget] objects in the stage.
@@ -49,7 +49,12 @@ class WidgetStage(val name: String) {
      * This calls the [Widget.drawNative] function on all widgets whose visibility property ([Widget.isVisible]) evaluates
      * to true. If it doesn't, the draw function won't be called.
      */
-    fun render() {
+    fun render() = synchronized(this) {
+        content.values.toTypedArray()
+            .sortedBy { it.stagePriority }
+            .filter { it.isVisible }.forEach {
+                it.draw()
+            }
     }
 
     /**
@@ -58,42 +63,83 @@ class WidgetStage(val name: String) {
      * After the widget object has been added, it will automatically be included in the render
      * and update process. To add multiple widgets, use [add].
      */
-    fun add(widgetWithId: Pair<String, Widget<*>>) {}
+    fun add(widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
+        contentPrivate += widgetWithId
+        widgetWithId.second.widgetId = widgetWithId.first
+        widgetWithId.second.parentStage = this
+        (widgetWithId.second as? AssembledWidget<*>)?.runStructureUpdate()
+        inspector { observableContent += widgetWithId }
+    }
 
     /**
      * Adds multiple [Widget] objects to the stage.
      *
      * @see add
      */
-    fun add(vararg widgetWithId: Pair<String, Widget<*>>) {}
+    fun add(vararg widgetWithId: Pair<String, Widget<*>>) = synchronized(this) {
+        contentPrivate += widgetWithId
+        widgetWithId.forEach {
+            it.second.widgetId = it.first
+            it.second.parentStage = this
+            (it.second as? AssembledWidget<*>)?.runStructureUpdate()
+        }
+        inspector { observableContent += widgetWithId }
+    }
 
     /**
      * Clears the stage by removing all widgets from it.
      */
-    fun clear() {}
+    fun clear() = synchronized(this) {
+        contentPrivate.clear()
+        contentPrivate.forEach {
+            it.value.widgetId = null
+            it.value.parentStage = null
+        }
+        inspector { observableContent.clear() }
+    }
 
     /**
      * Removes the widget with the specified [id] from the stage.
      */
-    fun remove(id: String) {}
+    fun remove(id: String) = synchronized(this) {
+        val widget = contentPrivate.remove(id)
+        widget?.widgetId = null
+        widget?.parentStage = null
+        inspector { observableContent.remove(id to widget) }
+    }
 
     /**
      * Removes the given [widget] from the stage.
      */
-    fun remove(widget: Widget<*>) {}
+    fun remove(widget: Widget<*>) = synchronized(this) {
+        contentPrivate.entries.filter { it.value == widget }
+            .forEach { remove(it.key) }
+    }
 
     /**
      * Finds a widget in the stage by searching for its id. Since every id is unique, there
      * will never be more than one result. If no widget was found, this function returns null.
      */
-    operator fun get(id: String): Widget<*>? = null
+    operator fun get(id: String): Widget<*>? = synchronized(this) {
+        return contentPrivate.getOrDefault(id, null)
+    }
 
     /**
      * Updates the content on mod tick.
      *
      * Calls the [Widget.update] function on every widget regardless of the visibility state.
      */
-    fun update() {}
+    fun update() = synchronized(this) {
+        if (GraphicsEngine.getMouseX() != mouseX && GraphicsEngine.getMouseY() != mouseY) {
+            mouseX = GraphicsEngine.getMouseX()
+            mouseY = GraphicsEngine.getMouseY()
+            handleMouseMove(MouseData(mouseX.toInt(), mouseY.toInt()))
+        }
+
+        contentPrivate.values.toTypedArray()
+            .sortedBy { it.stagePriority }
+            .forEach { it.update() }
+    }
 
     /**
      * Calls the given [block] on the JavaFx platform if the inspector is launched or in the
@@ -114,26 +160,44 @@ class WidgetStage(val name: String) {
     /**
      * Called when the mouse was moved.
      */
-    private fun handleMouseMove(data: MouseData) {}
+    private fun handleMouseMove(data: MouseData) = Defaults.handleMouseMove(
+        contentPrivate.values.sortedBy { it.stagePriority }, data
+    )
 
     /**
      * Called when a mouse button is pressed.
      */
-    fun handleMousePress(data: MouseData) {}
+    fun handleMousePress(data: MouseData) {
+        contentPrivate.values
+            .sortedBy { it.stagePriority }
+            .forEach { it.handleMousePress(data) }
+    }
 
     /**
      * Called when a mouse button is released.
      */
-    fun handleMouseRelease(data: MouseData) {}
+    fun handleMouseRelease(data: MouseData) {
+        contentPrivate.values
+            .sortedBy { it.stagePriority }
+            .forEach { it.handleMouseRelease(data) }
+    }
 
     /**
      * Called when the mouse is moved while a button is holt down.
      */
-    fun handleMouseDrag(data: MouseData) {}
+    fun handleMouseDrag(data: MouseData) {
+        contentPrivate.values
+            .sortedBy { it.stagePriority }
+            .forEach { it.handleMouseDrag(data) }
+    }
 
     /**
      * Called when a key on the keyboard is typed.
      */
-    fun handleKeyTyped(char: Char, keyCode: Int) {}
+    fun handleKeyTyped(char: Char, keyCode: Int) {
+        contentPrivate.values
+            .sortedBy { it.stagePriority }
+            .forEach { it.handleKeyTyped(char, keyCode) }
+    }
     //</editor-fold>
 }
