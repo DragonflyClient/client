@@ -108,7 +108,7 @@ public class GlyphFontRenderer implements IFontRenderer {
      */
     private float blue;
 
-    private boolean useScale;
+    private double scale;
 
     /**
      * Default Constructor
@@ -118,13 +118,13 @@ public class GlyphFontRenderer implements IFontRenderer {
             GlyphPage pageBold,
             GlyphPage pageItalic,
             GlyphPage pageBoldItalic,
-            boolean useScale
+            double scale
     ) {
         this.pageRegular = pageRegular;
         this.pageBold = pageBold;
         this.pageItalic = pageItalic;
         this.pageBoldItalic = pageBoldItalic;
-        this.useScale = useScale;
+        this.scale = scale;
 
         for (int i = 0; i < 32; ++i) {
             int j = (i >> 3 & 1) * 85;
@@ -147,14 +147,15 @@ public class GlyphFontRenderer implements IFontRenderer {
         }
     }
 
+    public static final int nativeSize = 50;
+
     /**
      * Convenient Builder
      */
     public static GlyphFontRenderer create(
             String fontName,
             int size,
-            double letterSpacing,
-            boolean useScale
+            double letterSpacing
     ) {
         // If the font isn't already loaded, import it from a .ttf file
         if (!LOADED_FONTS.contains(fontName)) {
@@ -169,24 +170,23 @@ public class GlyphFontRenderer implements IFontRenderer {
             }
         }
 
-        final double quality = Math.round(OptionsSectionPerformance.getFontQuality().invoke() * 10.0) / 10.0;
         final char[] chars = GraphicsEngine.CHARACTERS;
-        final int scaledSize = useScale ? (int) (size * quality) : size;
+        final double scale = size / (double) nativeSize;
 
-        GlyphPage regularPage = new GlyphPage(makeFont(fontName, Font.PLAIN, scaledSize, letterSpacing));
+        GlyphPage regularPage = new GlyphPage(makeFont(fontName, Font.PLAIN, letterSpacing));
         regularPage.generateGlyphPage(chars);
 
-        GlyphPage boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, scaledSize, letterSpacing));
+        GlyphPage boldPage = new GlyphPage(makeFont(fontName, Font.BOLD, letterSpacing));
         boldPage.generateGlyphPage(chars);
 
-        GlyphPage italicPage = new GlyphPage(makeFont(fontName, Font.ITALIC, scaledSize, letterSpacing));
+        GlyphPage italicPage = new GlyphPage(makeFont(fontName, Font.ITALIC, letterSpacing));
         italicPage.generateGlyphPage(chars);
 
-        GlyphPage boldItalicPage = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, scaledSize, letterSpacing));
+        GlyphPage boldItalicPage = new GlyphPage(makeFont(fontName, Font.BOLD | Font.ITALIC, letterSpacing));
         boldItalicPage.generateGlyphPage(chars);
 
         return new GlyphFontRenderer(
-                regularPage, boldPage, italicPage, boldItalicPage, useScale
+                regularPage, boldPage, italicPage, boldItalicPage, scale
         );
     }
 
@@ -194,15 +194,11 @@ public class GlyphFontRenderer implements IFontRenderer {
      * Quick Method to access {@link OptionsSectionPerformance#getFontQuality()}
      */
     public double getFontQualityScale() {
-        if (!useScale)
-            return 1.0;
-
-        final double quality = OptionsSectionPerformance.getFontQuality().invoke();
-        return Math.round(quality * 10.0) / 10.0;
+        return 1.0 / (Math.round(scale * 10.0) / 10.0);
     }
 
-    private static Font makeFont(String name, int style, int size, double letterSpacing) {
-        return FontManager.applyLetterSpacing(new Font(name, style, size), letterSpacing);
+    private static Font makeFont(String name, int style, double letterSpacing) {
+        return FontManager.applyLetterSpacing(new Font(name, style, GlyphFontRenderer.nativeSize), letterSpacing);
     }
 
     @Override
@@ -245,18 +241,22 @@ public class GlyphFontRenderer implements IFontRenderer {
      * Draws the specified string.
      */
     @Override
-    public int drawString(String text, float x, float y, int color, boolean dropShadow) {
+    public int drawString(String text, float x, float y, int rgb, boolean dropShadow) {
         y -= 3;
         GlStateManager.enableAlpha();
         this.resetStyles();
-        int i;
+        int i = 0;
 
         if (dropShadow) {
-            i = this.renderString(text, x + 0.7F, y + 0.7F, color, true);
-            i = Math.max(i, this.renderString(text, x, y, color, false));
-        } else {
-            i = this.renderString(text, x, y, color, false);
+            i = this.renderString(text, x + 0.7F, y + 0.7F, rgb, true);
         }
+
+        Color color = new Color(rgb);
+        Color shadowColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 30);
+
+        i = this.renderString(text, x - 0.25f, y - 0.25f, shadowColor.getRGB(), false);
+        i = Math.max(i, this.renderString(text, x + 0.25f, y + 0.25f, shadowColor.getRGB(), false));
+        i = Math.max(i, this.renderString(text, x, y, color.getRGB(), false));
 
         return i;
     }
@@ -680,6 +680,7 @@ public class GlyphFontRenderer implements IFontRenderer {
     public String wrapFormattedStringToWidth(final String text, final int width) {
         if (width <= 0) return "";
         int i = this.sizeStringToWidth(text, width);
+        if (i == 0) return "";
 
         if (text.length() <= i) {
             return text;

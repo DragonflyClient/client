@@ -63,7 +63,7 @@ public class FontManager {
         if (cache.containsKey(info))
             return cache.get(info);
 
-        final GlyphFontRenderer fontRenderer = GlyphFontRenderer.create(info.name, info.size, info.letterSpacing, true);
+        final GlyphFontRenderer fontRenderer = GlyphFontRenderer.create(info.name, info.size, info.letterSpacing);
         cache.put(info, fontRenderer);
 
         return fontRenderer;

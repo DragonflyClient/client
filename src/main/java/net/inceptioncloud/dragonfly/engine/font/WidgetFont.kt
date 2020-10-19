@@ -72,8 +72,7 @@ class WidgetFont @JvmOverloads constructor(
             GlyphFontRenderer.create(
                 fontWeights[fingerprint.fontWeight],
                 fingerprint.size,
-                fingerprint.letterSpacing,
-                useScale
+                fingerprint.letterSpacing
             ).also { cachedFontRenderer[fingerprint] = it }
         }
     }
