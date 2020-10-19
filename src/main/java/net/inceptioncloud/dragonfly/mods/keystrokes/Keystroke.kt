@@ -22,20 +22,33 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
 
             ingameGUI.stage["keystroke-$keyDesc"].apply {
                 if(this is TextField) {
+
+                    val animationSpeed = KeystrokesMod.animationSpeed
+
                     if(value) {
-                        detachAnimation<MorphAnimation>()
-                        morph(
-                            KeystrokesMod.animationSpeed.toInt(), EaseQuad.IN_OUT,
-                            ::backgroundColor to KeystrokesMod.bgActiveColor,
-                            ::color to KeystrokesMod.textActiveColor
-                        )?.start()
+                        if(animationSpeed == 0.0) {
+                            backgroundColor = KeystrokesMod.bgActiveColor
+                            color = KeystrokesMod.textActiveColor
+                        }else {
+                            detachAnimation<MorphAnimation>()
+                            morph(
+                                (animationSpeed * 200).toInt(), EaseQuad.IN_OUT,
+                                ::backgroundColor to KeystrokesMod.bgActiveColor,
+                                ::color to KeystrokesMod.textActiveColor
+                            )?.start()
+                        }
                     } else {
-                        detachAnimation<MorphAnimation>()
-                        morph(
-                            KeystrokesMod.animationSpeed.toInt(), EaseQuad.IN_OUT,
-                            ::backgroundColor to KeystrokesMod.bgInactiveColor,
-                            ::color to KeystrokesMod.textInactiveColor
-                        )?.start()
+                        if(animationSpeed == 0.0) {
+                            backgroundColor = KeystrokesMod.bgInactiveColor
+                            color = KeystrokesMod.textInactiveColor
+                        }else {
+                            detachAnimation<MorphAnimation>()
+                            morph(
+                                (animationSpeed * 200).toInt(), EaseQuad.IN_OUT,
+                                ::backgroundColor to KeystrokesMod.bgInactiveColor,
+                                ::color to KeystrokesMod.textInactiveColor
+                            )?.start()
+                        }
                     }
                 }
             }
