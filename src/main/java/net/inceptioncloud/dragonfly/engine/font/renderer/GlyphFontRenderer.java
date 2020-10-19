@@ -147,7 +147,7 @@ public class GlyphFontRenderer implements IFontRenderer {
         }
     }
 
-    public static final int nativeSize = 50;
+    public static final int nativeSize = 100;
 
     /**
      * Convenient Builder
@@ -254,9 +254,10 @@ public class GlyphFontRenderer implements IFontRenderer {
         Color color = new Color(rgb);
         Color shadowColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 30);
 
-        i = this.renderString(text, x - 0.25f, y - 0.25f, shadowColor.getRGB(), false);
-        i = Math.max(i, this.renderString(text, x + 0.25f, y + 0.25f, shadowColor.getRGB(), false));
-        i = Math.max(i, this.renderString(text, x, y, color.getRGB(), false));
+        float aa = 0.50f;
+        i = this.renderString(text, x - aa, y - aa, shadowColor.getRGB(), false);
+        i = Math.max(i, this.renderString(text, x + aa, y + aa, shadowColor.getRGB(), false));
+        i = Math.max(i, this.renderString(text, x, y, rgb, false));
 
         return i;
     }
