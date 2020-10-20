@@ -51,10 +51,10 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
             }, 1000)
         },
         TitleControl("Options"),
-        NumberControl(!NvidiaHighlightsMod::length, "Length", "The length of a Highlight in seconds.", min = 5.0, max = 60.0),
-        BooleanControl(!NvidiaHighlightsMod::saveKills, "Save Kills", "Whether kills are saved as Nvidia Highlight or nor"),
-        BooleanControl(!NvidiaHighlightsMod::saveDeaths, "Save Deaths", "Whether deaths are saved as Nvidia Highlight or nor"),
-        BooleanControl(!NvidiaHighlightsMod::saveWins, "Save Wins", "Whether wins are saved as Nvidia Highlight or nor"),
+        NumberControl(!NvidiaHighlightsMod::length, "Length", "The length of a highlight in seconds.", min = 5.0, max = 60.0),
+        BooleanControl(!NvidiaHighlightsMod::saveKills, "Save Kills", "Whether kills are saved as nvidia highlight or nor"),
+        BooleanControl(!NvidiaHighlightsMod::saveDeaths, "Save Deaths", "Whether deaths are saved as nvidia highlight or nor"),
+        BooleanControl(!NvidiaHighlightsMod::saveWins, "Save Wins", "Whether wins are saved as nvidia highlight or nor"),
         TitleControl("Supported Server, Languages, Modes"),
         TextControl("GommeHD.net: German, English"),
         TextControl("  - BedWars: Kills, Deaths, Wins"),
@@ -63,8 +63,8 @@ object NvidiaHighlightsMod : DragonflyMod("Nvidia Highlights") {
         TextControl("RoyalPixels: German"),
         TextControl("  - SkyWars: Kills, Deaths, Wins"),
         TitleControl("Note"),
-        TextControl("- To use this feature you need to have an Nvidia Graphics Card, Nvidia GeForce Experience installed and an Windows System"),
-        TextControl("- Please make sure you have allowed Highlighting for Minecraft in your Nvidia GeForce Experience Settings")
+        TextControl("- To use this feature you need to have an nvidia graphics card, nvidia geforce experience installed and an windows system"),
+        TextControl("- Please make sure you have allowed highlighting for Minecraft in your nvidia geforce experience settings")
     )
 
     private fun registerMap() {

@@ -86,7 +86,7 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
         TitleControl("Colors (released)", "Set the colors of the keystroke box if the corresponding key/button is not pressed"),
         ColorControl(!KeystrokesMod::textInactiveColor, "Text"),
         ColorControl(!KeystrokesMod::bgInactiveColor, "Background"),
-        NumberControl(!KeystrokesMod::animationSpeed, "Animation Speed (seconds)", min = 0.0, max = 1.0, decimalPlaces = 2, liveUpdate = false)
+        NumberControl(!KeystrokesMod::animationSpeed, "Animation Speed (seconds)", "Duration of the text fade-in animation", min = 0.0, max = 1.0, decimalPlaces = 2, liveUpdate = false)
     )
 
 }
