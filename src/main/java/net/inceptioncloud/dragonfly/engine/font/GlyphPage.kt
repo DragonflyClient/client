@@ -90,6 +90,8 @@ class GlyphPage(val font: Font) {
                 maxFontHeight = glyphCharacterMap.map { it.value.height }.max()!!
                 return
             } catch (e: Exception) {
+                glyphImage.deleteOnExit()
+                glyphProperties.deleteOnExit()
                 e.printStackTrace()
             }
         }
