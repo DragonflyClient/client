@@ -37,12 +37,13 @@ object AuthenticationBridge {
      * [username] and [password]. Returns the responded [DragonflyAccount] or throws an
      * exception if any error (like invalid credentials) occurred.
      */
-    fun login(username: String, password: String): DragonflyAccount {
+    fun login(username: String, password: String, code: String? = null): DragonflyAccount {
         val response = khttp.post(
             url = "https://api.playdragonfly.net/v1/authentication/login",
             json = mapOf(
                 "name" to username,
-                "password" to password
+                "password" to password,
+                "code" to code
             )
         )
 
@@ -103,6 +104,7 @@ object AuthenticationBridge {
  * exception with a detailed message if the request wasn't successful.
  */
 fun Response.checkSuccess() {
-    if (statusCode != 200) throw Exception("Invalid response status code: $statusCode")
+    if (jsonObject.has("require2FA") && jsonObject.getBoolean("require2FA")) throw TwoFactorAuthException()
     if (!jsonObject.getBoolean("success")) throw Exception(jsonObject.getString("error"))
+    if (statusCode != 200) throw Exception("Invalid response status code: $statusCode")
 }

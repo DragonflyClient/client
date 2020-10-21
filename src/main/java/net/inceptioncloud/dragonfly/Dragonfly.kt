@@ -175,7 +175,7 @@ object Dragonfly {
      */
     fun showStartupModals() {
         if (account == null && !StorageOptions.SKIP_LOGIN.get()) {
-            AuthenticationBridge.showLoginModal()
+            AuthenticationBridge.showLoginModal(true)
         }
 
         if (StorageOptions.SEND_DIAGNOSTICS.get() == 0) {
