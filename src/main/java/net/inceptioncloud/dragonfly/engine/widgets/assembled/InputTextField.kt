@@ -119,6 +119,8 @@ class InputTextField(
     private val labelY: Double
         get() = y + (height - labelHeight) / 2.0
 
+    var characterFilter: ((Char) -> Boolean)? = null
+
     init {
         val (alignedX, alignedY) = align(x, y, width, height)
         this.x = alignedX
@@ -369,7 +371,7 @@ class InputTextField(
                 } else {
                     deleteFromCursor(1)
                 }
-                else -> if (ChatAllowedCharacters.isAllowedCharacter(char)) {
+                else -> if (ChatAllowedCharacters.isAllowedCharacter(char) && characterFilter?.invoke(char) != false) {
                     writeText(char.toString())
                 }
             }
@@ -411,6 +413,7 @@ class InputTextField(
 
         var result = ""
         val allowedCharacters = ChatAllowedCharacters.filterAllowedCharacters(newText)
+            .filter { characterFilter?.invoke(it) != false }
 
         val i = cursorPosition.coerceAtMost(selectionEnd)
         val j = cursorPosition.coerceAtLeast(selectionEnd)
