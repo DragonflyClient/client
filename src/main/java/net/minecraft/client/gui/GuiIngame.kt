@@ -6,10 +6,12 @@ import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
-import net.inceptioncloud.dragonfly.engine.internal.*
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.internal.Widget
+import net.inceptioncloud.dragonfly.engine.internal.WidgetIdBuilder
+import net.inceptioncloud.dragonfly.engine.internal.WidgetStage
 import net.inceptioncloud.dragonfly.mods.hotkeys.HotkeysMod
-import net.inceptioncloud.dragonfly.mods.keystrokes.*
+import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesManager
+import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesMod
 import net.inceptioncloud.dragonfly.mods.togglesneak.ToggleSneakMod
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardBackground
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionScoreboard.scoreboardScores
@@ -512,7 +514,7 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
             ) else displayableScores
         var i = (fontMedium.getStringWidth(objective.displayName) * 1.2).toInt()
         for (score in trimmedScores) {
-            val scoreplayerteam = scoreboard.getPlayersTeam((score as Score).playerName)
+            val scoreplayerteam = scoreboard.getPlayersTeam(score.playerName)
             val s = ScorePlayerTeam.formatPlayerName(
                 scoreplayerteam,
                 score.playerName
@@ -1042,38 +1044,40 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
     fun initInGameOverlay() {
         stage.clear()
-        
-        for(keyStroke in KeystrokesManager.keystrokes) {
+
+        for (keyStroke in KeystrokesManager.keystrokes) {
             keyStroke.update()
-            val textField = keyStroke.textField
+            if (KeystrokesMod.enabled) {
+                val textField = keyStroke.textField
 
-            if(keyStroke.keyCode == -100 || keyStroke.keyCode == -99) {
-                textField.backgroundColor = if(Mouse.isButtonDown(keyStroke.keyCode)) {
-                    KeystrokesMod.bgActiveColor
-                }else {
-                    KeystrokesMod.bgInactiveColor
+                if (keyStroke.keyCode == -100 || keyStroke.keyCode == -99) {
+                    textField.backgroundColor = if (Mouse.isButtonDown(keyStroke.keyCode)) {
+                        KeystrokesMod.bgActiveColor
+                    } else {
+                        KeystrokesMod.bgInactiveColor
+                    }
+
+                    textField.color = if (Mouse.isButtonDown(keyStroke.keyCode)) {
+                        KeystrokesMod.textActiveColor
+                    } else {
+                        KeystrokesMod.textInactiveColor
+                    }
+                } else {
+                    textField.backgroundColor = if (Keyboard.isKeyDown(keyStroke.keyCode)) {
+                        KeystrokesMod.bgActiveColor
+                    } else {
+                        KeystrokesMod.bgInactiveColor
+                    }
+
+                    textField.color = if (Keyboard.isKeyDown(keyStroke.keyCode)) {
+                        KeystrokesMod.textActiveColor
+                    } else {
+                        KeystrokesMod.textInactiveColor
+                    }
                 }
 
-                textField.color = if(Mouse.isButtonDown(keyStroke.keyCode)) {
-                    KeystrokesMod.textActiveColor
-                }else {
-                    KeystrokesMod.textInactiveColor
-                }
-            }else {
-                textField.backgroundColor = if(Keyboard.isKeyDown(keyStroke.keyCode)) {
-                    KeystrokesMod.bgActiveColor
-                }else {
-                    KeystrokesMod.bgInactiveColor
-                }
-
-                textField.color = if(Keyboard.isKeyDown(keyStroke.keyCode)) {
-                    KeystrokesMod.textActiveColor
-                }else {
-                    KeystrokesMod.textInactiveColor
-                }
+                stage.add(Pair("keystroke-${keyStroke.keyDesc}", textField))
             }
-
-            stage.add(Pair("keystroke-${keyStroke.keyDesc}", textField))
         }
 
         ToggleSneakMod.updateOverlay()
