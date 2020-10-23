@@ -4,8 +4,6 @@ import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.types.DoubleSequence
 import net.inceptioncloud.dragonfly.engine.sequence.types.WidgetColorSequence
 
-const val SEQUENCE_ALREADY_BEGUN = "The sequence has already begun! Changes to the behavior can no longer be made."
-
 /**
  * ## Sequence
  *
@@ -54,16 +52,7 @@ abstract class Sequence<T>(
      * with`x -> x * x`.
      */
     protected var easing: ((Double) -> Double)? = null
-
-    /**
-     * A function to interpolate the value.
-     *
-     * Responsible for providing the transition between the [from] and the [to] value by
-     * interpolating it.
-     *
-     * @param progress the the quotient of the [expiredTime] and the [duration] transformed by the [easing] function
-     */
-    abstract fun interpolate(progress: Double): T
+        private set
 
     /**
      * The expired time of the sequence.
@@ -74,6 +63,9 @@ abstract class Sequence<T>(
     protected val expiredTime: Long
         get() = (startTime?.let { System.currentTimeMillis() - it })?.coerceIn(0L..duration) ?: 0L
 
+    /**
+     * The time when the animation was started.
+     */
     private var startTime: Long? = null
 
     /**
@@ -91,49 +83,23 @@ abstract class Sequence<T>(
         }
 
     /**
-     * Steps into the next execution of the sequence.
-     *
-     * Increments the [expiredTime] value by one and calculates a new progress value. After transforming
-     * it by invoking the [easing] function, the interpolation will be executed and the value
-     * will be stored in the [current] variable.
+     * Starts the animation.
      */
-    fun next() {
+    fun start() {
         if (startTime == null) {
             startTime = System.currentTimeMillis()
         }
     }
 
     /**
-     * Steps into the previous execution of the sequence.
+     * A function to interpolate the value.
      *
-     * Decrements the [expiredTime] value by one and calculates a new progress value. After transforming
-     * it by invoking the [easing] function, the interpolation will be executed and the value
-     * will be stored in the [current] variable.
+     * Responsible for providing the transition between the [from] and the [to] value by
+     * interpolating it.
      *
-     * *This is has the opposite effect of calling the [next] function.*
+     * @param progress the the quotient of the [expiredTime] and the [duration] transformed by the [easing] function
      */
-    /*fun previous() {
-        if (time == duration) {
-            // Fire the end hook
-            endHook?.invoke(this)
-        }
-
-        time = (time - 1).coerceAtLeast(0).coerceAtMost(duration)
-
-        var progress: Double = time / duration.toDouble()
-
-        // Fire the progress hook
-        progressHook?.invoke(this, progress)
-
-        progress = easing?.invoke(progress) ?: progress
-        current = interpolate(progress)
-
-        if (time == 0) {
-            current = from
-            // Fire the start hook
-            startHook?.invoke(this)
-        }
-    }*/
+    abstract fun interpolate(progress: Double): T
 
     /* --- Building Methods --- */
 
@@ -142,13 +108,11 @@ abstract class Sequence<T>(
      */
     fun withEasing(function: ((Double) -> Double)?): Sequence<T> {
         if (expiredTime != 0L)
-            throw IllegalStateException(SEQUENCE_ALREADY_BEGUN)
+            throw IllegalStateException("The sequence has already begun! Changes to the behavior can no longer be made.")
 
         this.easing = function
         return this
     }
-
-    /* --- Static Methods --- */
 
     companion object {
         @Suppress("UNCHECKED_CAST")

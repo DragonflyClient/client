@@ -67,7 +67,7 @@ class AttachmentBuilder<Child : Widget<Child>>(
             LogManager.getLogger().debug("Started animation ${animation::class.simpleName}")
         }
 
-        synchronized(widget.mutex) {
+        synchronized(widget.animationStack) {
             widget.animationStack.add(animation)
         }
         widget.update()

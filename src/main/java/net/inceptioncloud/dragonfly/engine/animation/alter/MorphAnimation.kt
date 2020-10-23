@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.engine.sequence.Sequence
 import org.apache.logging.log4j.LogManager
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
 typealias PropertyUpdate = Pair<KProperty<*>, Any?>
@@ -48,7 +47,7 @@ class MorphAnimation(
         } else false
     }
 
-    override fun applyToShape(base: Widget<*>) {
+    override fun applyToWidget(base: Widget<*>) {
         for ((property, sequence) in propertySequences) {
             property.setter.call(base, sequence.current)
         }
@@ -58,11 +57,9 @@ class MorphAnimation(
         }
     }
 
-    override fun tick() {
-        if (!running)
-            return
-
-        propertySequences.values.forEach { it.next() }
+    override fun start(): Animation {
+        propertySequences.values.forEach { it.start() }
+        return super.start()
     }
 
     override fun isApplicable(widget: Widget<*>) = true

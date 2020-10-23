@@ -36,11 +36,6 @@ abstract class Widget<W : Widget<W>>(
 ) : IDraw {
 
     /**
-     * An object on which some operations are synchronized to provide thread-safety.
-     */
-    var mutex = Any()
-
-    /**
      * Whether the widget is an internal clone. Can be used to prevent spamming the console.
      */
     var isInternalClone = false
@@ -196,11 +191,10 @@ abstract class Widget<W : Widget<W>>(
         }
 
         if (!animationStack.isNullOrEmpty()) {
-            synchronized(mutex) {
+            synchronized(animationStack) {
                 animationStack.removeAll { it.finished }
-                animationStack.toTypedArray().forEach { it.tick() }
                 animationStack.toTypedArray().forEach {
-                    it.applyToShape(this)
+                    it.applyToWidget(this)
                     it.companions.forEach { lambda -> lambda(this) }
                 }
             }

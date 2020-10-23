@@ -114,20 +114,12 @@ abstract class Animation {
      *
      * @param base a version of the widget that holds initial values
      */
-    abstract fun applyToShape(base: Widget<*>)
+    abstract fun applyToWidget(base: Widget<*>)
 
     /**
      * Checks if the animation is available for the given widget type.
      */
     abstract fun isApplicable(widget: Widget<*>): Boolean
-
-    /**
-     * Performs a tick on the animation.
-     *
-     * This is called from the [Widget.update] function. If the animation uses one or more
-     * [transitions][Transition], the [Transition.directedUpdate] method should be called here.
-     */
-    abstract fun tick()
 }
 
 /**
