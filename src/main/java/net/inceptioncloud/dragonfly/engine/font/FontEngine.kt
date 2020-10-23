@@ -1,6 +1,9 @@
 package net.inceptioncloud.dragonfly.engine.font
 
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
+import java.awt.Font
+import java.awt.font.TextAttribute
+import java.util.HashMap
 
 /**
  * The new core of the Dragonfly font renderer
@@ -45,3 +48,12 @@ enum class Typography(val size: Int, val tracking: Double, val weight: FontWeigh
  * Convenience function for building a font renderer based on a typography preset.
  */
 fun font(typography: Typography) = typography.buildFontRenderer()
+
+/**
+ * Convenience function for changing the tracking value of a font.
+ */
+fun Font.withTracking(tracking: Double): Font {
+    val attributes: MutableMap<TextAttribute, Double> = HashMap()
+    attributes[TextAttribute.TRACKING] = tracking
+    return deriveFont(attributes)
+}

@@ -41,15 +41,6 @@ public class FontManager {
     }
 
     /**
-     * Applies a certain letter spacing to the font.
-     */
-    public static Font applyLetterSpacing(Font font, double spacing) {
-        Map<TextAttribute, Double> attributes = new HashMap<>();
-        attributes.put(TextAttribute.TRACKING, spacing);
-        return font.deriveFont(attributes);
-    }
-
-    /**
      * Build a new Custom Font Renderer or use an already created one.
      *
      * @param name The font name

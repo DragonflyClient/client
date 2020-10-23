@@ -198,7 +198,7 @@ public class GlyphFontRenderer implements IFontRenderer {
     }
 
     private static Font makeFont(String name, int style, double letterSpacing) {
-        return FontManager.applyLetterSpacing(new Font(name, style, GlyphFontRenderer.nativeSize), letterSpacing);
+        return FontEngineKt.withTracking(new Font(name, style, GlyphFontRenderer.nativeSize), letterSpacing);
     }
 
     @Override
