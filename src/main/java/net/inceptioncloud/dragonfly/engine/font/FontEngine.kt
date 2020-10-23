@@ -32,11 +32,11 @@ object FontEngine {
 enum class Typography(val size: Int, val tracking: Double, val weight: FontWeight = FontWeight.REGULAR) {
 
     HEADING_1(72, -0.02),
-    HEADING_2(48, -0.01),
-    HEADING_3(32, 0.0),
+    HEADING_2(60, -0.01),
+    HEADING_3(48, 0.0),
+    HEADING_4(36, 0.0),
     BASE(24, 0.0),
-    SMALL(16, 0.02),
-    SMALLEST(14, 0.04);
+    SMALLEST(16, 0.04);
 
     /**
      * Builds the font renderer based on the constructor properties.
