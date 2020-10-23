@@ -26,7 +26,7 @@ object AuthenticationBridge {
     /**
      * The Dragonfly-internal file in which the saved accounts are stored.
      */
-    private val tokenFile = File(Dragonfly.secretsDirectory, "token.txt")
+    private val tokenFile = File(Dragonfly.secretsDirectory, "lulw.png")
 
     /**
      * The secret key that is used for encryption of the Dragonfly token.
@@ -45,7 +45,7 @@ object AuthenticationBridge {
      */
     fun readToken(): String? = kotlin.runCatching {
         if (!tokenFile.exists()) return null
-        val content = tokenFile.readText().replace("\n", "")
+        val content = String(tokenFile.readBytes()).replace("\n", "")
 
         val cipher = Cipher.getInstance("AES")
         cipher.init(Cipher.DECRYPT_MODE, secretKey)
@@ -62,9 +62,10 @@ object AuthenticationBridge {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey)
 
             val content = Base64.getEncoder().encodeToString(cipher.doFinal(token.toByteArray()))
-            tokenFile.writeText(content.toCharArray().joinToString("") {
+            val text = content.toCharArray().joinToString("") {
                 if (Random.nextBoolean() && Random.nextBoolean() && Random.nextBoolean()) "$it\n" else "$it"
-            })
+            }
+            tokenFile.writeBytes(text.toByteArray())
         } catch (e: Throwable) {
             LogManager.getLogger().error("Failed to store token!")
             e.printStackTrace()
