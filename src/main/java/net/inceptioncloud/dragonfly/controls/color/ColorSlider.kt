@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.controls.color
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.*
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
@@ -25,26 +24,26 @@ open class ColorSlider(
     initializerBlock: (ColorSlider.() -> Unit)? = null
 ) : AssembledWidget<ColorSlider>(initializerBlock), IPosition, IDimension {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(0.0)
-    override var height: Double by property(0.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(0.0F)
+    override var height: Float by property(0.0F)
 
-    val innerPadding = 2.0
+    val innerPadding = 2.0f
 
     var min: Int = 0
     var max: Int = 360
-    var colorInterpolator: (Double) -> Color = { Color.getHSBColor(it.toFloat(), 1f, 1f) }
+    var colorInterpolator: (Float) -> Color = { Color.getHSBColor(it, 1f, 1f) }
     var colorLetter: String by property("H")
 
     var currentProgress: Int = 0
         set(value) {
             field = value
-            currentColor = colorInterpolator((value - min) / (max - min).toDouble())
+            currentColor = colorInterpolator((value - min) / (max - min).toFloat())
         }
     var currentColor: Color = Color.WHITE
 
-    private val circleSize = 20.0
+    private val circleSize = 20.0f
     private var isDragging = false
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -71,10 +70,10 @@ open class ColorSlider(
 
         // -50
         "color-letter"<TextField> {
-            width = 20.0
-            height = 40.0
-            x = this@ColorSlider.x - width - 30.0
-            y = this@ColorSlider.y + (this@ColorSlider.height / 2) - height / 2 - 2.0
+            width = 20.0f
+            height = 40.0f
+            x = this@ColorSlider.x - width - 30.0f
+            y = this@ColorSlider.y + (this@ColorSlider.height / 2) - height / 2 - 2.0f
             staticText = colorLetter
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START
@@ -84,10 +83,10 @@ open class ColorSlider(
 
         // +60
         "current-value"<TextField> {
-            width = 40.0
-            height = 40.0
-            x = this@ColorSlider.x + this@ColorSlider.width + 20.0
-            y = this@ColorSlider.y + (this@ColorSlider.height / 2) - height / 2 - 2.0
+            width = 40.0f
+            height = 40.0f
+            x = this@ColorSlider.x + this@ColorSlider.width + 20.0f
+            y = this@ColorSlider.y + (this@ColorSlider.height / 2) - height / 2 - 2.0f
             staticText = currentProgress.toString()
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.END
@@ -97,16 +96,16 @@ open class ColorSlider(
     }
 
     override fun render() {
-        val partWidth = 1.0
+        val partWidth = 1.0f
 
         GlStateManager.pushMatrix()
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0F)
 
         RenderUtils.drawArc(
-            x.toFloat(), (y + (height / 2)).toFloat(),
+            x, (y + (height / 2)),
             90, 270,
-            (height / 2).toFloat(), (height / 2).toFloat(),
-            colorInterpolator(0.0)
+            (height / 2), (height / 2),
+            colorInterpolator(0.0f)
         )
 
         for (i in 0..width.toInt()) {
@@ -117,10 +116,10 @@ open class ColorSlider(
         }
 
         RenderUtils.drawArc(
-            (x + width).toFloat(), (y + (height / 2)).toFloat(),
+            (x + width), (y + (height / 2)),
             270, 450,
-            (height / 2).toFloat(), (height / 2).toFloat(),
-            colorInterpolator(1.0)
+            (height / 2), (height / 2),
+            colorInterpolator(1.0f)
         )
 
         GlStateManager.popMatrix()
@@ -128,9 +127,9 @@ open class ColorSlider(
         super.render()
     }
 
-    private fun computeCircleX(): Double {
+    private fun computeCircleX(): Float {
         val room = (max - min)
-        val progress = (currentProgress.coerceIn(min..max) - min) / room.toDouble()
+        val progress = (currentProgress.coerceIn(min..max) - min) / room.toFloat()
         return x + (progress * width) - (circleSize / 2)
     }
 
@@ -138,7 +137,7 @@ open class ColorSlider(
         super.update()
 
         if (isDragging) {
-            val newX = GraphicsEngine.getMouseX().coerceIn(x..x + width) - circleSize / 2.0
+            val newX = GraphicsEngine.getMouseX().coerceIn(x..x + width) - circleSize / 2
             currentProgress = calculateMouseValue()
 
             "slider-foreground"<FilledCircle> {

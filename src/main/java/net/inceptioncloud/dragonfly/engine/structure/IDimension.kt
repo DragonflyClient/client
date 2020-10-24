@@ -14,7 +14,7 @@ interface IDimension {
      *
      * @see height
      */
-    var width: Double
+    var width: Float
 
     /**
      * The height of the object.
@@ -23,5 +23,5 @@ interface IDimension {
      *
      * @see width
      */
-    var height: Double
+    var height: Float
 }

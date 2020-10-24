@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.engine.tooltip
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.Typography
 import net.inceptioncloud.dragonfly.engine.font.font
@@ -33,20 +32,20 @@ class TooltipWidget(
     initializerBlock: (TooltipWidget.() -> Unit)? = null
 ) : AssembledWidget<TooltipWidget>(initializerBlock), IPosition {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
 
-    val containerWidth: Double get() = fontRenderer.getStringWidth(text) + 4 * padding
-    val containerHeight: Double get() = fontRenderer.height + 2 * padding
-    val containerX: Double get() = this@TooltipWidget.x - containerWidth / 2
-    val containerY: Double get() = this@TooltipWidget.y + verticalOffset
+    val containerWidth: Float get() = fontRenderer.getStringWidth(text) + 4 * padding
+    val containerHeight: Float get() = fontRenderer.height + 2 * padding
+    val containerX: Float get() = this@TooltipWidget.x - containerWidth / 2
+    val containerY: Float get() = this@TooltipWidget.y + verticalOffset
 
-    var opacity: Double by property(0.0)
-    var arrowSize: Double by property(6.0)
+    var opacity: Float by property(0.0F)
+    var arrowSize: Float by property(6.0F)
 
-    var verticalOffset: Double by property(0.0)
-    var padding: Double by property(3.0)
-    var arc: Double by property(7.0)
+    var verticalOffset: Float by property(0.0F)
+    var padding: Float by property(3.0F)
+    var arc: Float by property(7.0F)
 
     var text: String by property("TooltipWidget")
     var alignment: TooltipAlignment by property(TooltipAlignment.ABOVE)
@@ -63,14 +62,14 @@ class TooltipWidget(
             arc = this@TooltipWidget.arc
             width = containerWidth
             height = containerHeight
-            x = containerX.coerceIn(15.0, (mc.currentScreen?.width ?: 1920) - 15.0 - containerWidth)
+            x = containerX.coerceIn(15.0F, (mc.currentScreen?.width ?: 1920) - 15.0F - containerWidth)
             y = containerY
-            color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
+            color = DragonflyPalette.foreground.altered { alphaFloat = opacity }
         } ?: return
 
         "arrow"<Polygon> {
             smooth = true
-            color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
+            color = DragonflyPalette.foreground.altered { alphaFloat = opacity }
 
             with(alignment) {
                 points.clear()
@@ -84,11 +83,11 @@ class TooltipWidget(
             text = this@TooltipWidget.text
             x = background.x + padding * 2
             y = background.y + padding
-            color = DragonflyPalette.background.altered { alphaDouble = opacity }
+            color = DragonflyPalette.background.altered { alphaFloat = opacity }
             fontRenderer = this@TooltipWidget.fontRenderer
         }
     }
 }
 
-private val Pair<Double, Double>.point: Point
+private val Pair<Float, Float>.point: Point
     get() = Point(first, second)

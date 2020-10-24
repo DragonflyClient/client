@@ -36,10 +36,10 @@ class HotActionWidget(
     initializerBlock: (HotActionWidget.() -> Unit)? = null
 ) : AssembledWidget<HotActionWidget>(initializerBlock), IPosition, IDimension {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(30.0)
-    override var width: Double by property(-1.0)
-    override var height: Double by property(-1.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(30.0F)
+    override var width: Float by property(-1.0f)
+    override var height: Float by property(-1.0f)
 
     /**
      * The function that is used to convert an [Action] to a representing string
@@ -89,7 +89,7 @@ class HotActionWidget(
         val messageWidth = messageFR.getStringWidth(message)
         val titleWidth = titleFR.getStringWidth(title)
         val actionWidth = messageFR.getStringWidth(actions.joinToString(" ", transform = joinFunc))
-        val containerWidth = listOf(messageWidth, titleWidth, actionWidth).max()!!.coerceAtMost(500) + PADDING * 2.0
+        val containerWidth = listOf(messageWidth, titleWidth, actionWidth).max()!!.coerceAtMost(500) + PADDING * 2.0f
 
         val titleWidget = updateWidget<TextField>("title") {
             x = this@HotActionWidget.x
@@ -109,22 +109,22 @@ class HotActionWidget(
             padding = PADDING
             fontRenderer = messageFR
             staticText = message
-            color = DragonflyPalette.foreground.altered { alphaDouble = 0.8 }
+            color = DragonflyPalette.foreground.altered { alphaFloat = 0.8f }
             adaptHeight = true
         }!!.also { it.adaptHeight() }
 
         val horizontalRule = updateWidget<Rectangle>("horizontal-rule") {
             x = this@HotActionWidget.x
-            y = messageWidget.end() + 2.0
+            y = messageWidget.end() + 2.0f
             width = containerWidth - ARC
-            height = 0.5
-            color = DragonflyPalette.foreground.altered { alphaDouble = 0.5 }
+            height = 0.5f
+            color = DragonflyPalette.foreground.altered { alphaFloat = 0.5f }
         }!!
 
         val actionsWidget = updateWidget<TextField>("actions") {
-            x = this@HotActionWidget.x - 1.0
-            y = horizontalRule.end() + 2.0
-            width = containerWidth - ARC + 1.0
+            x = this@HotActionWidget.x - 1.0f
+            y = horizontalRule.end() + 2.0f
+            width = containerWidth - ARC + 1.0f
             padding = PADDING
             fontRenderer = messageFR
             textAlignHorizontal = Alignment.CENTER
@@ -145,9 +145,9 @@ class HotActionWidget(
             x = this@HotActionWidget.x - ARC
             y = this@HotActionWidget.y
             width = containerWidth
-            height = actionsWidget.end() - this@HotActionWidget.y + 3.0
+            height = actionsWidget.end() - this@HotActionWidget.y + 3.0f
             arc = ARC
-            color = DragonflyPalette.background.altered { alphaDouble = 0.8 }
+            color = DragonflyPalette.background.altered { alphaFloat = 0.8f }
 
             // assign the width and height to the global widget dimensions
             this@HotActionWidget.width = width
@@ -170,7 +170,7 @@ class HotActionWidget(
             color = DragonflyPalette.accentNormal
         }!!.dynamic {
             val remaining = 1.0 - ((System.currentTimeMillis() - initialTime) / (duration * 5.0)).coerceIn(0.0, 1.0)
-            width = timerBackground.width * remaining
+            width = (timerBackground.width * remaining).toFloat()
 
             if (remaining == 0.0 && !expired) {
                 HotAction.finish(this@HotActionWidget)
@@ -182,17 +182,17 @@ class HotActionWidget(
 /**
  * The amount of padding that the different text fields use
  */
-const val PADDING = 3.0
+const val PADDING = 3.0f
 
 /**
  * The corner-arc value of the hot action container
  */
-const val ARC = 3.0
+const val ARC = 3.0f
 
 /**
  * Convenient function to get the vertical end of a widget using the position and the dimension
  * of the widget
  */
-fun Widget<*>.end(): Double = if (this is IPosition && (this is IDimension || this is ISize)) {
+fun Widget<*>.end(): Float = if (this is IPosition && (this is IDimension || this is ISize)) {
     y + Defaults.getSizeOrDimension(this).second
 } else error("You should not use this method on the widget $this")

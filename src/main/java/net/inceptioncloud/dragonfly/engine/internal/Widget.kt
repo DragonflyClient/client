@@ -112,7 +112,7 @@ abstract class Widget<W : Widget<W>>(
     /**
      * The factor with which the widget is scaled when drawing.
      */
-    var scaleFactor: Double = 1.0
+    var scaleFactor: Float = 1.0F
 
     /**
      * Whether the widget is currently hovered.
@@ -216,14 +216,14 @@ abstract class Widget<W : Widget<W>>(
         GlStateManager.scale(scaleFactor)
 
         if (this is IPosition && mc.currentScreen != null) {
-            GlStateManager.translate(x * (1 / scaleFactor) - x, y * (1 / scaleFactor) - y, 0.0)
+            GlStateManager.translate(x * (1 / scaleFactor) - x, y * (1 / scaleFactor) - y, 0.0F)
         }
 
         drawNative()
 
         if (isInspected && this is IPosition && (this is IDimension || this is ISize)) {
             val (width, height) = Defaults.getSizeOrDimension(this)
-            Gui.drawRect(x, y, x + width, y + height, WidgetColor(0x1abc9c).apply { alphaDouble = 0.5 }.rgb)
+            Gui.drawRect(x, y, x + width, y + height, WidgetColor(0x1abc9c).apply { alphaFloat = 0.5F }.rgb)
         }
 
         GlStateManager.popMatrix()

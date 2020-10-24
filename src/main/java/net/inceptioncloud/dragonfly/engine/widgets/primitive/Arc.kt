@@ -34,17 +34,17 @@ class Arc(
     initializerBlock: (Arc.() -> Unit)? = null
 ) : Widget<Arc>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(50.0)
-    override var height: Double by property(50.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(50.0F)
+    override var height: Float by property(50.0F)
     override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
     var start: Int by property(0)
     var end: Int by property(90)
 
     override fun render() {
-        val factor = 5.0
+        val factor = 5.0f
         val centerX = x + width / 2
         val centerY = y + height / 2
         GraphicsEngine.pushScale(1 / factor)
@@ -53,7 +53,7 @@ class Arc(
 
         glDisable(GL_POLYGON_SMOOTH)
         glBegin(GL_POLYGON)
-        glVertex2d(centerX * factor, centerY * factor)
+        glVertex2f(centerX * factor, centerY * factor)
 
         for (i in end downTo start) {
             glVertex2d(

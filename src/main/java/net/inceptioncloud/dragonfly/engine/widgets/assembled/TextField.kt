@@ -34,15 +34,13 @@ import kotlin.math.floor
  */
 class TextField(
     initializerBlock: (TextField.() -> Unit)? = null
-) : AssembledWidget<TextField>(initializerBlock), IPosition, IDimension, IColor, IAlign, IOutline {
+) : AssembledWidget<TextField>(initializerBlock), IPosition, IDimension, IColor, IOutline {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(50.0)
-    override var height: Double by property(50.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(50.0F)
+    override var height: Float by property(50.0F)
     override var color: WidgetColor by property(WidgetColor.DEFAULT)
-    override var horizontalAlignment: Alignment by property(START)
-    override var verticalAlignment: Alignment by property(START)
     var adaptHeight: Boolean by property(false)
 
     var staticText: String by property("No static text set")
@@ -54,20 +52,17 @@ class TextField(
     var fontRenderer: IFontRenderer? by property(null)
 
     var backgroundColor: WidgetColor by property(WidgetColor(0, 0, 0, 0))
-    var padding: Double by property(0.0)
+    var padding: Float by property(0.0F)
     var dropShadow: Boolean by property(false)
-    var shadowDistance: Double by property(2.0)
+    var shadowDistance: Float by property(2.0F)
     var shadowColor: WidgetColor? by property(null)
 
-    override var outlineStroke: Double by property(0.0)
+    override var outlineStroke: Float by property(0.0F)
     override var outlineColor: WidgetColor by property(WidgetColor.DEFAULT)
 
     private var linkClickAction: () -> Unit = {}
 
     init {
-        val (alignedX, alignedY) = align(x, y, width, height)
-        this.x = alignedX
-        this.y = alignedY
         adaptHeight()
     }
 
@@ -108,7 +103,7 @@ class TextField(
                     END -> y + height - size + index * fontRenderer!!.height - padding
                 }
                 it.text = line.insertLinks(it, extractedLinks, links)
-                it.x = alignText(textAlignHorizontal, x, width, fontRenderer!!.getStringWidth(it.text).toDouble())
+                it.x = alignText(textAlignHorizontal, x, width, fontRenderer!!.getStringWidth(it.text))
             }
         }
 
@@ -157,7 +152,7 @@ class TextField(
             val before = substring(0, match.range.first)
             val text = match.groupValues[2].replace("_", " ")
             links.add(Link(
-                fontRenderer!!.getStringWidth(before).toDouble(), textRenderer.y, textRenderer.height,
+                fontRenderer!!.getStringWidth(before).toFloat(), textRenderer.y, textRenderer.height,
                 text, extractedLinks[match.groupValues[1]]!!
             ))
             text
@@ -203,10 +198,6 @@ class TextField(
         val previousHeight = height
         height = (size + padding * 2)
 
-        if (verticalAlignment == END) {
-            y += previousHeight - height
-        }
-
         if (textAlignVertical == CENTER || textAlignVertical == END) {
             LogManager.getLogger().warn(
                 "Using adapted height on a text field with vertical alignment of 'center' or 'end' will remove the effect of the alignment"
@@ -237,7 +228,7 @@ class TextField(
      * @param size the size for the given dimension (width, height)
      * @param textSize the text size for the given dimension (text width, text height)
      */
-    private fun alignText(alignment: Alignment, coordinate: Double, size: Double, textSize: Double): Double =
+    private fun alignText(alignment: Alignment, coordinate: Float, size: Float, textSize: Int): Float =
         when (alignment) {
             START -> coordinate + padding
             CENTER -> coordinate + (size / 2) - (textSize / 2)

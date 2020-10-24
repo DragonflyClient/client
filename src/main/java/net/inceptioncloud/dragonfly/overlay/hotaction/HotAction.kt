@@ -51,14 +51,13 @@ object HotAction {
         val next = queue.poll()
 
         next.runStructureUpdate()
-        next.x = -next.width - 5.0
+        next.x = -next.width - 5.0f
         next.runStructureUpdate()
 
         ScreenOverlay.addComponent("hot-action", next)
         next.morph(
-            70,
-            EaseCubic.IN_OUT,
-            next::x to 0.0
+            70, EaseCubic.IN_OUT,
+            next::x to 0.0f
         )?.start()
     }
 

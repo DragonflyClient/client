@@ -1,8 +1,5 @@
 package net.inceptioncloud.dragonfly.engine.widgets.primitive
 
-import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.engine.font.FontWeight
-import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
@@ -28,14 +25,14 @@ class TextRenderer(
     var showBounds: Boolean by property(false)
     var dropShadow: Boolean by property(false)
     var shadowColor: WidgetColor? by property(null)
-    var shadowDistance: Double? by property(null)
+    var shadowDistance: Float? by property(null)
 
     var fontRenderer: IFontRenderer? by property(null)
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double = 0.0
-    override var height: Double = 0.0
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float = 0.0F
+    override var height: Float = 0.0F
     override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
     override fun preRender() {
@@ -47,25 +44,25 @@ class TextRenderer(
     }
 
     override fun render() {
-        if (color.alphaDouble <= 0.1)
+        if (color.alphaFloat <= 0.1)
             return
 
         if (fontRenderer == null)
             return
 
-        val posX = x.toFloat()
-        val posY = if (fontRenderer is GlyphFontRenderer) y.toFloat() + 3F else y.toFloat()
+        val posX = x
+        val posY = if (fontRenderer is GlyphFontRenderer) y + 3F else y
 
         color.glBindColor()
-        height = fontRenderer!!.height.toDouble()
+        height = fontRenderer!!.height.toFloat()
         width = if (dropShadow) {
             fontRenderer!!.drawStringWithCustomShadow(
                 text, posX.toInt(), posY.toInt(), color.rgb,
                 shadowColor?.rgb ?: WidgetColor(0.0, 0.0, 0.0, 0.5).rgb,
-                shadowDistance?.toFloat() ?: 1F
-            ).toDouble() - posX
+                shadowDistance ?: 1F
+            ) - posX
         } else {
-            fontRenderer!!.drawString(text, posX, posY, color.rgb, dropShadow).toDouble() - posX
+            fontRenderer!!.drawString(text, posX, posY, color.rgb, dropShadow) - posX
         }
 
         if (showBounds) {
@@ -78,8 +75,8 @@ class TextRenderer(
             return
 
         // override to support aligning in assembled widgets
-        height = fontRenderer!!.height.toDouble()
-        width = fontRenderer!!.getStringWidth(text).toDouble()
+        height = fontRenderer!!.height.toFloat()
+        width = fontRenderer!!.getStringWidth(text).toFloat()
     }
 
     /**

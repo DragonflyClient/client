@@ -11,30 +11,30 @@ class Line(
     initializerBlock: (Line.() -> Unit)? = null
 ) : Widget<Line>(initializerBlock), IPosition, IColor, IDimension {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
     override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
-    var endX: Double by property(10.0)
-    var endY: Double by property(10.0)
-    var lineWidth: Double by property(1.0)
+    var endX: Float by property(10.0F)
+    var endY: Float by property(10.0F)
+    var lineWidth: Float by property(1.0F)
 
-    override var width: Double
+    override var width: Float
         get() = (endX - x).also { supplyDimensionWarning() }
-        set(value) {}
+        set(_) {}
 
-    override var height: Double
+    override var height: Float
         get() = (endY - y).also { supplyDimensionWarning() }
-        set(value) {}
+        set(_) {}
 
     override fun render() {
         color.glBindColor()
-        glLineWidth(lineWidth.toFloat())
+        glLineWidth(lineWidth)
 
         glBegin(GL_LINES)
 
-        glVertex2d(x, y)
-        glVertex2d(endX, endY)
+        glVertex2f(x, y)
+        glVertex2f(endX, endY)
 
         glEnd()
     }

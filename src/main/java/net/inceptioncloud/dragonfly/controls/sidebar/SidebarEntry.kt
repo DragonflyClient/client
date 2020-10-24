@@ -17,10 +17,10 @@ class SidebarEntry(
     val metadata: Any? = null
 ) : AssembledWidget<SidebarEntry>(), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(353.0)
-    override var height: Double by property(53.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(353.0F)
+    override var height: Float by property(53.0F)
 
     override var color: WidgetColor by property(DragonflyPalette.background)
 
@@ -29,7 +29,7 @@ class SidebarEntry(
     var isSelected = false
 
     var isSelectable: Boolean = true
-    var iconMargin = 7.0
+    var iconMargin = 7.0f
 
     /**
      * The sidebar manager that controls this entry.
@@ -52,13 +52,13 @@ class SidebarEntry(
             width = this@SidebarEntry.width
             height = this@SidebarEntry.height
             color = this@SidebarEntry.color
-            arc = 5.0
+            arc = 5.0f
         }
 
         iconWidget = "icon"<Image> {
             if (icon == null) {
-                x = this@SidebarEntry.x + 4.0
-                width = 0.0
+                x = this@SidebarEntry.x + 4.0f
+                width = 0.0f
                 isVisible = false
             } else {
                 x = this@SidebarEntry.x + iconMargin
@@ -82,7 +82,7 @@ class SidebarEntry(
             fontRenderer = font(Typography.LARGE)
             color = DragonflyPalette.foreground
             dropShadow = true
-            shadowDistance = 2.0
+            shadowDistance = 2.0f
             shadowColor = WidgetColor(0, 0, 0, 80)
         }!!
     }

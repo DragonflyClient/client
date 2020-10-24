@@ -14,23 +14,17 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
  */
 class RoundedRectangle(
     initializerBlock: (RoundedRectangle.() -> Unit)? = null
-) : AssembledWidget<RoundedRectangle>(initializerBlock), IPosition, IDimension, IColor, IAlign {
+) : AssembledWidget<RoundedRectangle>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(50.0)
-    override var height: Double by property(50.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(50.0F)
+    override var height: Float by property(50.0F)
     override var color: WidgetColor by property(WidgetColor.DEFAULT)
-    override var horizontalAlignment: Alignment by property(Alignment.START)
-    override var verticalAlignment: Alignment by property(Alignment.START)
 
-    var arc: Double by property(0.0)
+    var arc: Float by property(0.0F)
 
     init {
-        val (alignedX, alignedY) = align(x, y, width, height)
-        this.x = alignedX
-        this.y = alignedY
-
         val smallest = width.coerceAtMost(height) / 2
         this.arc = arc.coerceAtMost(smallest)
     }

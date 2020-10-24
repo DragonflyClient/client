@@ -9,10 +9,10 @@ class WidgetColorSequence(from: WidgetColor, to: WidgetColor, duration: Long) :
     override fun interpolate(progress: Double) = when {
         to.rainbow -> to
         else -> WidgetColor(
-            (to.redDouble - from.redDouble) * progress + from.redDouble,
-            (to.greenDouble - from.greenDouble) * progress + from.greenDouble,
-            (to.blueDouble - from.blueDouble) * progress + from.blueDouble,
-            (to.alphaDouble - from.alphaDouble) * progress + from.alphaDouble
+            (to.redFloat - from.redFloat) * progress + from.redFloat,
+            (to.greenFloat - from.greenFloat) * progress + from.greenFloat,
+            (to.blueFloat - from.blueFloat) * progress + from.blueFloat,
+            (to.alphaFloat - from.alphaFloat) * progress + from.alphaFloat
         )
     }
 }

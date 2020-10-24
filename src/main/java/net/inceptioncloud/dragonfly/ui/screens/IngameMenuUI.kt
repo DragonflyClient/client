@@ -47,10 +47,10 @@ class IngameMenuUI : GuiScreen() {
         +Rectangle {
             val isOpenedFromIngame = mc.previousScreen == null
 
-            x = 0.0
-            y = 0.0
-            width = this@IngameMenuUI.width.toDouble()
-            height = this@IngameMenuUI.height.toDouble()
+            x = 0.0f
+            y = 0.0f
+            width = this@IngameMenuUI.width.toFloat()
+            height = this@IngameMenuUI.height.toFloat()
             color = WidgetColor(0.0, 0.0, 0.0, if (isOpenedFromIngame) 0.0 else 0.8)
 
             if (isOpenedFromIngame) {
@@ -59,49 +59,49 @@ class IngameMenuUI : GuiScreen() {
         } id "background-fill"
 
         +Image {
-            x = 10.0
-            y = 10.0
-            width = 50.0
-            height = 50.0
+            x = 10.0f
+            y = 10.0f
+            width = 50.0f
+            height = 50.0f
             dynamicTexture = playerSkullTexture
             resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/steve-skull.png")
         } id "player-skull"
 
         +TextField {
-            x = 75.0
-            y = 10.0
-            width = 300.0
-            height = 50.0
+            x = 75.0f
+            y = 10.0f
+            width = 300.0f
+            height = 50.0f
             staticText = mc.session.username
             Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50)
             textAlignVertical = Alignment.CENTER
         } id "player-name"
 
         +Image {
-            val aspectRatio = 617.0 / 96.0
+            val aspectRatio = 617 / 96.0f
 
             resourceLocation = ResourceLocation("dragonflyres/logos/ingame-menu.png")
-            height = 96.0
+            height = 96.0f
             width = height * aspectRatio
-            x = this@IngameMenuUI.width / 2.0 - width / 2.0
-            y = 110.0
+            x = this@IngameMenuUI.width / 2 - width / 2
+            y = 110.0f
         } id "brand-icon"
 
         +LoginStatusWidget {
             fontRenderer = font(Typography.BASE)
-            width = fontRenderer!!.getStringWidth(Dragonfly.account?.username ?: "Login") + 50.0
-            x = this@IngameMenuUI.width - width - 10.0
-            y = 10.0
+            width = fontRenderer!!.getStringWidth(Dragonfly.account?.username ?: "Login") + 50.0f
+            x = this@IngameMenuUI.width - width - 10.0f
+            y = 10.0f
         } id "login-status"
 
         +DragonflyButton {
-            width = 620.0
-            height = 60.0
-            x = this@IngameMenuUI.width / 2.0 - width / 2.0
-            y = 430.0
+            width = 620.0f
+            height = 60.0f
+            x = this@IngameMenuUI.width / 2 - width / 2
+            y = 430.0f
             text = "Back to game"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/ingamemenu/resume.png"))
-            iconSize = height - 15.0
+            iconSize = height - 15.0f
             useScale = false
 
             onClick {
@@ -110,11 +110,11 @@ class IngameMenuUI : GuiScreen() {
         } id "resume-button"
 
         +DragonflyButton {
-            positionBelow("resume-button", 10.0)
+            positionBelow("resume-button", 10.0f)
 
             text = "Options"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/options.png"))
-            iconSize = height - 15.0
+            iconSize = height - 15.0f
             useScale = false
 
             onClick {
@@ -123,11 +123,11 @@ class IngameMenuUI : GuiScreen() {
         } id "options-button"
 
         +DragonflyButton {
-            positionBelow("options-button", 10.0)
+            positionBelow("options-button", 10.0f)
 
             text = "Quit game"
             icon = ImageResource(ResourceLocation("dragonflyres/icons/ingamemenu/disconnect.png"))
-            iconSize = height - 20.0
+            iconSize = height - 20.0f
             useScale = false
 
             onClick {
@@ -146,16 +146,16 @@ class IngameMenuUI : GuiScreen() {
             }
         } id "quit-button"
 
-        val buttonSize = 60.0
-        val buttonGap = 35.0
+        val buttonSize = 60.0f
+        val buttonGap = 35.0f
 
         val minorActions = getMinorActions()
         val actionsWidth = minorActions.size * buttonSize + (minorActions.size - 1) * buttonGap
-        var xPosition = width / 2.0 - actionsWidth / 2.0
+        var xPosition = width / 2 - actionsWidth / 2
 
         for (widget in minorActions) {
             +widget.apply {
-                positionBelow("quit-button", 60.0)
+                positionBelow("quit-button", 60.0f)
                 x = xPosition
                 width = buttonSize
                 height = buttonSize

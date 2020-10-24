@@ -12,5 +12,5 @@ interface ISize {
      *
      * It specifies both the width and the height of the widget.
      */
-    var size: Double
+    var size: Float
 }

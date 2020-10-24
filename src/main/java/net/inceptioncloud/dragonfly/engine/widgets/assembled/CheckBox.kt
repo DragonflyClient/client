@@ -19,16 +19,16 @@ class CheckBox(
     initializerBlock: (CheckBox.() -> Unit)? = null
 ) : AssembledWidget<CheckBox>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(200.0)
-    override var height: Double by property(20.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(200.0F)
+    override var height: Float by property(20.0F)
     override var color: WidgetColor by property(DragonflyPalette.foreground)
     var check: Image? = null
 
     val resourceLocation = ResourceLocation("dragonflyres/icons/check.png")
 
-    var arc: Double by property(3.0)
+    var arc: Float by property(3.0F)
 
     var isChecked: Boolean = false
     var enableClickSound: Boolean = true
@@ -50,16 +50,16 @@ class CheckBox(
         }
 
         check = "check"<Image> {
-            x = this@CheckBox.x + 3.0
-            y = this@CheckBox.y + 3.0
-            width = this@CheckBox.width - 6.0
-            height = this@CheckBox.height - 6.0
+            x = this@CheckBox.x + 3.0f
+            y = this@CheckBox.y + 3.0f
+            width = this@CheckBox.width - 6.0f
+            height = this@CheckBox.height - 6.0f
             resourceLocation = this@CheckBox.resourceLocation
             color = color.altered {
-                alphaDouble = if (isChecked) {
-                    1.0
+                alphaFloat = if (isChecked) {
+                    1.0f
                 } else {
-                    0.0
+                    0.0f
                 }
             }
         }
@@ -91,10 +91,10 @@ class CheckBox(
         getWidget<Image>("check")?.morph(
             30, EaseQuad.IN_OUT,
             Image::color to check?.color?.altered {
-                alphaDouble = if (isChecked) {
-                    1.0
+                alphaFloat = if (isChecked) {
+                    1.0f
                 } else {
-                    0.0
+                    0.0f
                 }
             }
         )?.start()

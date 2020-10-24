@@ -5,6 +5,6 @@ package net.inceptioncloud.dragonfly.engine.internal
  */
 data class SizedImage(
     val image: ImageResource,
-    val width: Double,
-    val height: Double
+    val width: Float,
+    val height: Float
 )

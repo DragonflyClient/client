@@ -23,13 +23,13 @@ class ColorControl(
     )
 
     override fun controlUpdateStructure() {
-        height = height.coerceAtLeast(40.0)
+        height = height.coerceAtLeast(40.0f)
 
         "color-preview"<ColorPreview> {
-            width = 38.0
-            height = 38.0
+            width = 38.0f
+            height = 38.0f
             x = controlX + controlWidth - width
-            y = this@ColorControl.y + (this@ColorControl.height - height) / 2.0
+            y = this@ColorControl.y + (this@ColorControl.height - height) / 2
             color = optionKey.get()
             clickAction = {
                 Modal.showModal(ColorPickerModal(optionKey))
@@ -37,7 +37,7 @@ class ColorControl(
         }
 
         "hex-code"<TextField> {
-            width = controlWidth - 50.0
+            width = controlWidth - 50
             height = this@ColorControl.height
             x = controlX
             y = this@ColorControl.y
@@ -45,7 +45,7 @@ class ColorControl(
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.END
             fontRenderer = font(Typography.BASE)
-            color = DragonflyPalette.background.altered { alphaDouble = 0.6 }
+            color = DragonflyPalette.background.altered { alphaFloat = 0.6f }
         }
     }
 

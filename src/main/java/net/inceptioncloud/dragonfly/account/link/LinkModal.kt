@@ -23,12 +23,12 @@ import net.inceptioncloud.dragonfly.engine.font.font
  */
 class LinkModal(
     val account: Account
-) : ModalWidget("Link Minecraft", 400.0, 600.0) {
+) : ModalWidget("Link Minecraft", 400.0F, 600.0F) {
 
     /**
      * The padding of the container box.
      */
-    val padding = 35.0
+    val padding = 35.0F
 
     /**
      * Whether the modal window is currently in the linking process. If this value is true,
@@ -53,22 +53,22 @@ class LinkModal(
             width = this@LinkModal.width
             height = this@LinkModal.height
             color = DragonflyPalette.background
-            arc = 10.0
+            arc = 10.0F
         }
 
         val image = "image"<Image> {
-            width = 100.0
+            width = 100.0F
             height = width
             x = this@LinkModal.x + (this@LinkModal.width - width) / 2
-            y = this@LinkModal.y + 25.0
+            y = this@LinkModal.y + 25.0F
             resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/steve-skull.png")
         }!!
 
         val title = "title"<TextField> {
             x = this@LinkModal.x
-            y = image.y + image.height + 10.0
+            y = image.y + image.height + 10.0F
             width = this@LinkModal.width
-            height = 60.0
+            height = 60.0F
             fontRenderer = font(Typography.HEADING_2)
             staticText = "Link Minecraft Account"
             textAlignHorizontal = Alignment.CENTER
@@ -77,9 +77,9 @@ class LinkModal(
 
         val info = "info"<TextField> {
             x = this@LinkModal.x + this@LinkModal.padding
-            y = title.y + title.height + 20.0
+            y = title.y + title.height + 20.0F
             width = this@LinkModal.width - 2 * this@LinkModal.padding
-            height = 170.0
+            height = 170.0F
             staticText = "In order to activate certain features like cosmetics and statistics, " +
                     "you have to link your Minecraft account to your Dragonfly account.\n" +
                     "Do you wish to link §6${account.displayName} §rwith your Dragonfly account §6${Dragonfly.account?.username}§r?"
@@ -89,9 +89,9 @@ class LinkModal(
 
         val link = "link-button"<OutlineButton> {
             x = this@LinkModal.x + this@LinkModal.padding
-            y = info.y + info.height + 30.0
+            y = info.y + info.height + 30.0F
             width = this@LinkModal.width - (padding * 2)
-            height = 40.0
+            height = 40.0F
             text = "Link"
             color = DragonflyPalette.accentNormal
             onClick {
@@ -101,9 +101,9 @@ class LinkModal(
 
         val dontLink = "dont-link-button"<OutlineButton> {
             x = this@LinkModal.x + this@LinkModal.padding
-            y = link.y + link.height + 20.0
+            y = link.y + link.height + 20.0f
             width = this@LinkModal.width - (padding * 2)
-            height = 40.0
+            height = 40.0f
             text = "Don't link"
             onClick {
                 Modal.hideModal()
@@ -112,9 +112,9 @@ class LinkModal(
 
         "skip-text"<TextField> {
             x = this@LinkModal.x
-            y = dontLink.y + dontLink.height + 25.0
+            y = dontLink.y + dontLink.height + 25.0f
             width = this@LinkModal.width
-            height = 40.0
+            height = 40.0f
             color = DragonflyPalette.background.brighter(0.5)
             fontRenderer = font(Typography.SMALL)
             staticText = "Don't ask again"

@@ -28,7 +28,7 @@ object GraphicsEngine {
     /**
      * A stack that contains all currently applied scale factors.
      */
-    private val scaleStack: Stack<Double> = Stack()
+    private val scaleStack: Stack<Float> = Stack()
 
     /**
      * All characters that can be rendered by the [GlyphFontRenderer].
@@ -42,18 +42,18 @@ object GraphicsEngine {
      * is read from it.
      */
     @JvmStatic
-    fun getScaleFactor(): Double {
+    fun getScaleFactor(): Float {
         return (Minecraft.getMinecraft().currentScreen?.scaleFactor
-            ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor.toDouble())
+            ?: ScaledResolution(Minecraft.getMinecraft()).scaleFactor.toFloat())
     }
 
     /**
      * Pushes a scale to the [scaleStack] and applies it using [GlStateManager.scale].
      */
     @JvmStatic
-    fun pushScale(factor: Double) {
+    fun pushScale(factor: Float) {
         scaleStack.push(factor)
-        GlStateManager.scale(factor, factor, 1.0)
+        GlStateManager.scale(factor, factor, 1.0f)
     }
 
     /**
@@ -62,15 +62,15 @@ object GraphicsEngine {
     @JvmStatic
     fun popScale() {
         val factor = scaleStack.pop()
-        GlStateManager.scale(1 / factor, 1 / factor, 1.0)
+        GlStateManager.scale(1 / factor, 1 / factor, 1.0f)
     }
 
     /**
      * Gets the current mouse x position or 0, if the [Minecraft.currentScreen] is null.
      */
     @JvmStatic
-    fun getMouseX(): Double {
-        if (Minecraft.getMinecraft().currentScreen == null) return 0.0
+    fun getMouseX(): Float {
+        if (Minecraft.getMinecraft().currentScreen == null) return 0.0F
         return Mouse.getX() / getScaleFactor()
     }
 
@@ -78,8 +78,8 @@ object GraphicsEngine {
      * Gets the current mouse y position or 0, if the [Minecraft.currentScreen] is null.
      */
     @JvmStatic
-    fun getMouseY(): Double {
-        if (Minecraft.getMinecraft().currentScreen == null) return 0.0
+    fun getMouseY(): Float {
+        if (Minecraft.getMinecraft().currentScreen == null) return 0.0F
         return Minecraft.getMinecraft().currentScreen.height - Mouse.getY() / getScaleFactor()
     }
 

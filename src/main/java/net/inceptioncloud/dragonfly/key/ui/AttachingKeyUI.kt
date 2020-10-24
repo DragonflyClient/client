@@ -35,7 +35,7 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
     override var backgroundFill: WidgetColor? = WidgetColor(30, 30, 30, 255)
 
-    override var backgroundImage: SizedImage? = SizedImage(ImageResource("dragonflyres/ingame_background_2.png"), 3840.0, 2160.0)
+    override var backgroundImage: SizedImage? = SizedImage(ImageResource("dragonflyres/ingame_background_2.png"), 3840.0f, 2160.0f)
 
     override var canManuallyClose: Boolean = false
 
@@ -93,17 +93,17 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
                     )?.post { _, _ ->
                         // create the overlay and the overlay border when the screen is covered
                         val overlay = Rectangle {
-                            x = 0.0
-                            y = 0.0
-                            width = this@AttachingKeyUI.width.toDouble()
-                            height = this@AttachingKeyUI.height.toDouble()
+                            x = 0.0f
+                            y = 0.0f
+                            width = this@AttachingKeyUI.width.toFloat()
+                            height = this@AttachingKeyUI.height.toFloat()
                             color = if (result!!.success) WidgetColor(0x34c464) else WidgetColor(0xff6663)
                         }
                         val overlayBorder = Rectangle {
-                            x = -20.0
-                            y = 0.0
-                            width = this@AttachingKeyUI.width.toDouble()
-                            height = this@AttachingKeyUI.height.toDouble()
+                            x = -20.0f
+                            y = 0.0f
+                            width = this@AttachingKeyUI.width.toFloat()
+                            height = this@AttachingKeyUI.height.toFloat()
                             color = DragonflyPalette.background
                         }
 
@@ -152,10 +152,10 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
 
     override fun initGui() {
         val header = TextField().apply {
-            x = this@AttachingKeyUI.width / 2 - 125.0
-            y = this@AttachingKeyUI.height / 2 - 30.0
-            width = 250.0
-            height = 20.0
+            x = this@AttachingKeyUI.width / 2 - 125.0f
+            y = this@AttachingKeyUI.height / 2 - 30.0f
+            width = 250.0f
+            height = 20.0f
             staticText = "Attaching key to current device..."
             Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 30)
             color = DragonflyPalette.foreground
@@ -166,21 +166,21 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
         +RoundedRectangle().apply {
             x = header.x - 3
             y = header.y - 3
-            width = 0.0
+            width = 0.0f
             height = header.height + 6
             color = DragonflyPalette.accentBright
-            arc = 3.0
+            arc = 3.0f
         } id "header-background"
         +header id "header"
 
         +FilledCircle {
-            x = this@AttachingKeyUI.width / 2 - 15.0
-            y = this@AttachingKeyUI.height / 2.0 + 5.0 - 3.5
-            size = 7.0
+            x = this@AttachingKeyUI.width / 2 - 15.0f
+            y = this@AttachingKeyUI.height / 2 + 5.0f - 3.5f
+            size = 7.0f
             color = DragonflyPalette.accentNormal
         }.apply {
             if (result != null) {
-                size = sqrt(this@AttachingKeyUI.width.toDouble().pow(2.0) + this@AttachingKeyUI.height.toDouble().pow(2.0))
+                size = sqrt(this@AttachingKeyUI.width.toFloat().pow(2.0f) + this@AttachingKeyUI.height.toFloat().pow(2.0f))
                 x = this@AttachingKeyUI.width / 2 - size / 2
                 y = this@AttachingKeyUI.height / 2 - size / 2
                 color = if (result?.success == true) WidgetColor(0x34c464) else WidgetColor(0xff6663)
@@ -188,9 +188,9 @@ class AttachingKeyUI(val key: String) : GuiScreen() {
         } id "loading-circle-1"
 
         +FilledCircle {
-            size = 7.0
-            x = this@AttachingKeyUI.width / 2 + 8.0
-            y = this@AttachingKeyUI.height / 2.0 + 5.0 - 3.5
+            size = 7.0f
+            x = this@AttachingKeyUI.width / 2 + 8.0f
+            y = this@AttachingKeyUI.height / 2 + 5.0f - 3.5f
             color = DragonflyPalette.accentNormal
         }.apply { isVisible = result == null } id "loading-circle-2"
     }

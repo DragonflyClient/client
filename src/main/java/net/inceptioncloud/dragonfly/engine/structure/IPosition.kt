@@ -15,7 +15,7 @@ interface IPosition {
      *
      * @see y
      */
-    var x: Double
+    var x: Float
 
     /**
      * The y-position of the object on the screen.
@@ -25,5 +25,5 @@ interface IPosition {
      *
      * @see x
      */
-    var y: Double
+    var y: Float
 }

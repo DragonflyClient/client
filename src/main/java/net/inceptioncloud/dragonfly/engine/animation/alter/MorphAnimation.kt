@@ -49,7 +49,12 @@ class MorphAnimation(
 
     override fun applyToWidget(base: Widget<*>) {
         for ((property, sequence) in propertySequences) {
-            property.setter.call(base, sequence.current)
+            val current = sequence.current
+            if (property.returnType == Float::class && current is Double) {
+                property.setter.call(base, current.toFloat())
+            } else {
+                property.setter.call(base, current)
+            }
         }
 
         if (propertySequences.values.any { it.isAtEnd }) {

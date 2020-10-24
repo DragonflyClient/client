@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.controls
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.OutlineButton
@@ -25,10 +24,10 @@ class ButtonControl(
     override fun updateStructure() {
 
         "button"<OutlineButton> {
-            width = 200.0
-            height = 50.0
+            width = 200.0f
+            height = 50.0f
             this@ButtonControl.height = height
-            x = this@ButtonControl.x + this@ButtonControl.width - 200.0
+            x = this@ButtonControl.x + this@ButtonControl.width - 200.0f
             y = this@ButtonControl.y
             text = this@ButtonControl.text
             hoverColor = DragonflyPalette.accentNormal
@@ -38,7 +37,7 @@ class ButtonControl(
         val nameWidget = "name"<TextField> {
             x = this@ButtonControl.x
             y = this@ButtonControl.y
-            width = this@ButtonControl.width * (2 / 3.0)
+            width = this@ButtonControl.width * (2 / 3.0f)
             adaptHeight = true
             fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
@@ -47,10 +46,10 @@ class ButtonControl(
 
         if (description == null) {
             "description"<TextField> {
-                x = 0.0
-                y = 0.0
-                width = 0.0
-                height = 0.0
+                x = 0.0f
+                y = 0.0f
+                width = 0.0f
+                height = 0.0f
                 isVisible = false
             }
 
@@ -59,10 +58,10 @@ class ButtonControl(
             val descriptionWidget = "description"<TextField> {
                 x = this@ButtonControl.x
                 y = nameWidget.y + nameWidget.height
-                width = this@ButtonControl.width * (2 / 3.0)
+                width = this@ButtonControl.width * (2 / 3.0f)
                 adaptHeight = true
                 fontRenderer = font(Typography.SMALLEST)
-                color = DragonflyPalette.background.altered { alphaDouble = 0.4 }
+                color = DragonflyPalette.background.altered { alphaFloat = 0.4f }
                 staticText = description
             }!!.also { it.adaptHeight() }
 
@@ -71,9 +70,9 @@ class ButtonControl(
 
     }
 
-    override var x by Delegates.notNull<Double>()
-    override var y by Delegates.notNull<Double>()
-    override var width by Delegates.notNull<Double>()
-    override var height: Double = -1.0
+    override var x: Float by Delegates.notNull()
+    override var y: Float by Delegates.notNull()
+    override var width: Float by Delegates.notNull()
+    override var height: Float = -1.0f
 
 }

@@ -11,10 +11,10 @@ class TextControl(
     val text: String
 ) : ControlElement<TextControl>() {
 
-    override var x by Delegates.notNull<Double>()
-    override var y by Delegates.notNull<Double>()
-    override var width by Delegates.notNull<Double>()
-    override var height: Double = -1.0
+    override var x: Float by Delegates.notNull()
+    override var y: Float by Delegates.notNull()
+    override var width: Float by Delegates.notNull()
+    override var height: Float = -1.0f
 
     override fun assemble(): Map<String, Widget<*>> = buildMap {
         put("name", TextField())
@@ -24,13 +24,13 @@ class TextControl(
         val nameWidget = "name"<TextField> {
             x = this@TextControl.x
             y = this@TextControl.y
-            width = this@TextControl.width * (2 / 3.0)
+            width = this@TextControl.width * (2 / 3.0f)
             adaptHeight = true
             fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
             staticText = text
         }!!.also { it.adaptHeight() }
 
-        height += nameWidget.height + 2.0
+        height += nameWidget.height + 2.0f
     }
 }

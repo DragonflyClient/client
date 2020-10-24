@@ -108,19 +108,19 @@ object ScreenOverlay {
     private fun startSwitchOverlay() {
         val overlay = Rectangle().apply {
             stagePriority = -100
-            x = 0.0
-            y = 0.0
-            width = 0.0
-            height = dimensions.height.toDouble()
+            x = 0.0f
+            y = 0.0f
+            width = 0.0f
+            height = dimensions.height.toFloat()
             color = DragonflyPalette.accentNormal
         }
 
         val tail = Rectangle().apply {
             stagePriority = -101
-            x = 0.0
-            y = 0.0
-            width = 0.0
-            height = dimensions.height.toDouble()
+            x = 0.0f
+            y = 0.0f
+            width = 0.0f
+            height = dimensions.height.toFloat()
             color = DragonflyPalette.background
         }
 
@@ -158,14 +158,14 @@ object ScreenOverlay {
 
         val overlay = stage["switch-overlay"] as? Rectangle
         if (overlay != null && overlayAction != null &&
-            overlay.width == dimensions.width.toDouble() && overlay.x == 0.0
+            overlay.width == dimensions.width.toFloat() && overlay.x == 0.0f
         ) {
             stage.add("switch-overlay-full" to Rectangle().apply {
                 stagePriority = -99
-                x = 0.0
-                y = 0.0
-                width = dimensions.width.toDouble()
-                height = dimensions.height.toDouble()
+                x = 0.0f
+                y = 0.0f
+                width = dimensions.width.toFloat()
+                height = dimensions.height.toFloat()
                 color = DragonflyPalette.accentNormal
             })
             stage.update()

@@ -46,12 +46,12 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
     var scale = KeystrokesMod.scale
     var space = KeystrokesMod.space
     var name = ""
-    var posX = 0.0
-    var posY = 0.0
-    var width = 0.0
-    var height = 0.0
-    var keystrokesStartX = 0.0
-    var keystrokesStartY = 0.0
+    var posX = 0.0f
+    var posY = 0.0f
+    var width = 0.0f
+    var height = 0.0f
+    var keystrokesStartX = 0.0f
+    var keystrokesStartY = 0.0f
 
     lateinit var textField: TextField
 
@@ -60,113 +60,97 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
     }
 
     fun update() {
+        val scale = KeystrokesMod.scale.toFloat()
+        val space = KeystrokesMod.space.toFloat()
+        val scaledWidth = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
+        val scaledHeight = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+
         when (KeystrokesMod.position) {
             EnumKeystrokesPosition.TOP_LEFT -> {
-                keystrokesStartX = 10.0
-                keystrokesStartY = 10.0
+                keystrokesStartX = 10.0f
+                keystrokesStartY = 10.0f
             }
             EnumKeystrokesPosition.TOP_RIGHT -> {
-                val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
-                val scale = KeystrokesMod.scale
-                val space = KeystrokesMod.space
-
-                keystrokesStartX = width - ((scale * 3) + (space * 2)) - 10
-                keystrokesStartY = 10.0
+                keystrokesStartX = scaledWidth - ((scale * 3) + (space * 2)) - 10
+                keystrokesStartY = 10.0f
             }
             EnumKeystrokesPosition.BOTTOM_LEFT -> {
-                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = KeystrokesMod.scale
-                val space = KeystrokesMod.space
-
-                keystrokesStartX = 10.0
-                keystrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+                keystrokesStartX = 10.0f
+                keystrokesStartY = scaledHeight - ((scale * 4) + (space * 3)) - 10
             }
             EnumKeystrokesPosition.BOTTOM_RIGHT -> {
-                val width = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
-                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = KeystrokesMod.scale
-                val space = KeystrokesMod.space
-
-                keystrokesStartX = width - ((scale * 3) + (space * 2)) - 10
-                keystrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+                keystrokesStartX = scaledWidth - ((scale * 3) + (space * 2)) - 10
+                keystrokesStartY = scaledHeight - ((scale * 4) + (space * 3)) - 10
             }
             EnumKeystrokesPosition.HOTBAR_LEFT -> {
-                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = KeystrokesMod.scale
-                val space = KeystrokesMod.space
-
                 keystrokesStartX = Minecraft.getMinecraft().ingameGUI.hotbarX - ((scale * 3) + (space * 2)) - 10
-                keystrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+                keystrokesStartY = scaledHeight - ((scale * 4) + (space * 3)) - 10
             }
             EnumKeystrokesPosition.HOTBAR_RIGHT -> {
-                val height = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
-                val scale = KeystrokesMod.scale
-                val space = KeystrokesMod.space
-
-                keystrokesStartX = (Minecraft.getMinecraft().ingameGUI.hotbarX + Minecraft.getMinecraft().ingameGUI.hotbarW + 10).toDouble()
-                keystrokesStartY = height - ((scale * 4) + (space * 3)) - 10
+                keystrokesStartX = (Minecraft.getMinecraft().ingameGUI.hotbarX + Minecraft.getMinecraft().ingameGUI.hotbarW + 10).toFloat()
+                keystrokesStartY = scaledHeight - ((scale * 4) + (space * 3)) - 10
             }
         }
 
         when (keyDesc) {
             "key.forward" -> {
-                width = KeystrokesMod.scale
-                height = KeystrokesMod.scale
-                posX = keystrokesStartX + width + KeystrokesMod.space
+                this.width = scale
+                this.height = scale
+                posX = keystrokesStartX + this.width + space
                 posY = keystrokesStartY
                 name = Keyboard.getKeyName(keyCode)
             }
             "key.left" -> {
-                width = KeystrokesMod.scale
-                height = KeystrokesMod.scale
+                this.width = scale
+                this.height = scale
                 posX = keystrokesStartX
-                posY = keystrokesStartY + width + KeystrokesMod.space
+                posY = keystrokesStartY + this.width + space
                 name = Keyboard.getKeyName(keyCode)
             }
             "key.back" -> {
-                width = KeystrokesMod.scale
-                height = KeystrokesMod.scale
-                posX = keystrokesStartX + width + KeystrokesMod.space
-                posY = keystrokesStartY + width + KeystrokesMod.space
+                this.width = scale
+                this.height = scale
+                posX = keystrokesStartX + this.width + space
+                posY = keystrokesStartY + this.width + space
                 name = Keyboard.getKeyName(keyCode)
             }
             "key.right" -> {
-                width = KeystrokesMod.scale
-                height = KeystrokesMod.scale
-                posX = keystrokesStartX + (2 * width) + (2 * KeystrokesMod.space)
-                posY = keystrokesStartY + width + KeystrokesMod.space
+                this.width = scale
+                this.height = scale
+                posX = keystrokesStartX + (2 * this.width) + (2 * space)
+                posY = keystrokesStartY + this.width + space
                 name = Keyboard.getKeyName(keyCode)
             }
             "key.jump" -> {
-                width = (3 * KeystrokesMod.scale) + (2 * KeystrokesMod.space)
-                height = KeystrokesMod.scale
+                this.width = (3 * scale) + (2 * space)
+                this.height = scale
                 posX = keystrokesStartX
-                posY = keystrokesStartY + (2 * height) + (2 * KeystrokesMod.space)
+                posY = keystrokesStartY + (2 * this.height) + (2 * space)
                 name = Keyboard.getKeyName(keyCode)
             }
             "key.attack" -> {
-                width = (1.5 * KeystrokesMod.scale) + (KeystrokesMod.space / 2)
-                height = KeystrokesMod.scale
+                this.width = (1.5f * scale) + (space / 2)
+                this.height = scale
                 posX = keystrokesStartX
-                posY = keystrokesStartY + (3 * height) + (3 * KeystrokesMod.space)
+                posY = keystrokesStartY + (3 * this.height) + (3 * space)
                 name = Mouse.getButtonName(keyCode + 100)
                     .replace("BUTTON0", "LMB")
                     .replace("BUTTON1", "RMB")
                     .replace("BUTTON2", "MMB")
             }
             "key.use" -> {
-                width = (1.5 * KeystrokesMod.scale) + (KeystrokesMod.space / 2)
-                height = KeystrokesMod.scale
-                posX = keystrokesStartX + 1.5 * KeystrokesMod.scale + (1.5 * KeystrokesMod.space)
-                posY = keystrokesStartY + (3 * height) + (3 * KeystrokesMod.space)
+                this.width = (1.5f * scale) + (space / 2)
+                this.height = scale
+                posX = keystrokesStartX + 1.5f * scale + (1.5f * space)
+                posY = keystrokesStartY + (3 * this.height) + (3 * space)
                 name = Mouse.getButtonName(keyCode + 100)
                     .replace("BUTTON0", "LMB")
                     .replace("BUTTON1", "RMB")
                     .replace("BUTTON2", "MMB")
             }
             else -> {
-                posX = -1000.0
-                posY = -1000.0
+                posX = -1000.0f
+                posY = -1000.0f
             }
         }
 
@@ -182,7 +166,6 @@ class Keystroke(val keyCode: Int, val keyDesc: String) {
             staticText = name
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = KeystrokesMod.fontSize.toInt())
         }
-
     }
 
 }

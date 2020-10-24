@@ -156,7 +156,7 @@ class WidgetFont @JvmOverloads constructor(
                 .filter { (other, _) -> other.fontWeight == fingerprint.fontWeight && other.letterSpacing == fingerprint.letterSpacing }
                 .sortedBy { (other, _) -> other.size }
                 .firstOrNull { (other, _) -> other.size / fingerprint.size.toDouble() in 1.0..2.0 }
-                ?.let { (other, base) -> ScaledFontRenderer(base, (other.size / fingerprint.size.toDouble())) }
+                ?.let { (other, base) -> ScaledFontRenderer(base, (other.size / fingerprint.size.toFloat())) }
         }
 
 

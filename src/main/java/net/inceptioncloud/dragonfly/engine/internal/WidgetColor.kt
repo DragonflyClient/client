@@ -152,7 +152,7 @@ class WidgetColor {
      * Binds the values of the color object to the current OpenGL context.
      */
     fun glBindColor() {
-        GL11.glColor4d(redDouble, greenDouble, blueDouble, alphaDouble)
+        GL11.glColor4f(redFloat, greenFloat, blueFloat, alphaFloat)
     }
 
     /**
@@ -369,10 +369,10 @@ class WidgetColor {
      *
      * Performs range checking before setting the value. (0.0 - 1.0)
      */
-    var redDouble
-        get() = base.red / 255.0
+    var redFloat
+        get() = base.red / 255.0F
         set(value) {
-            base = Color((value.coerceIn(0.0..1.0).toFloat() * 255).toInt(), green, blue, alpha)
+            base = Color((value.coerceIn(0.0F..1.0F) * 255).toInt(), green, blue, alpha)
         }
 
     /**
@@ -380,10 +380,10 @@ class WidgetColor {
      *
      * Performs range checking before setting the value. (0.0 - 1.0)
      */
-    var greenDouble
-        get() = base.green / 255.0
+    var greenFloat
+        get() = base.green / 255.0F
         set(value) {
-            base = Color(red, (value.coerceIn(0.0..1.0).toFloat() * 255).toInt(), blue, alpha)
+            base = Color(red, (value.coerceIn(0.0F..1.0F) * 255).toInt(), blue, alpha)
         }
 
     /**
@@ -391,10 +391,10 @@ class WidgetColor {
      *
      * Performs range checking before setting the value. (0.0 - 1.0)
      */
-    var blueDouble
-        get() = base.blue / 255.0
+    var blueFloat
+        get() = base.blue / 255.0F
         set(value) {
-            base = Color(red, green, (value.coerceIn(0.0..1.0).toFloat() * 255).toInt(), alpha)
+            base = Color(red, green, (value.coerceIn(0.0F..1.0F) * 255).toInt(), alpha)
         }
 
     /**
@@ -402,10 +402,10 @@ class WidgetColor {
      *
      * Performs range checking before setting the value. (0.0 - 1.0)
      */
-    var alphaDouble
-        get() = base.alpha / 255.0
+    var alphaFloat
+        get() = base.alpha / 255.0F
         set(value) {
-            base = Color(red, green, blue, (value.coerceIn(0.0..1.0).toFloat() * 255).toInt())
-            actualAlpha = (value.coerceIn(0.0..1.0).toFloat() * 255).toInt()
+            base = Color(red, green, blue, (value.coerceIn(0.0F..1.0F) * 255).toInt())
+            actualAlpha = (value.coerceIn(0.0F..1.0F) * 255).toInt()
         }
 }

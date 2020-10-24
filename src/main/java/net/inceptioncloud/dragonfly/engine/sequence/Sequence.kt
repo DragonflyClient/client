@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.sequence
 
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
-import net.inceptioncloud.dragonfly.engine.sequence.types.DoubleSequence
+import net.inceptioncloud.dragonfly.engine.sequence.types.FloatSequence
 import net.inceptioncloud.dragonfly.engine.sequence.types.WidgetColorSequence
 
 /**
@@ -116,9 +116,11 @@ abstract class Sequence<T>(
 
     companion object {
         @Suppress("UNCHECKED_CAST")
-        fun <T> generateSequence(start: T, end: T, duration: Int): Sequence<T> = when (start) {
-            is WidgetColor -> WidgetColorSequence(start, end as WidgetColor, duration.toLong() * 5) as Sequence<T>
-            is Double -> DoubleSequence(start, end as Double, duration.toLong() * 5) as Sequence<T>
+        fun <T> generateSequence(start: T, end: T, duration: Int): Sequence<T> = when {
+            start is WidgetColor && end is WidgetColor -> WidgetColorSequence(start, end as WidgetColor, duration.toLong() * 5) as Sequence<T>
+            start is Float && end is Float -> FloatSequence(start, end, duration.toLong() * 5) as Sequence<T>
+            start is Float && end is Double -> FloatSequence(start, end.toFloat(), duration.toLong() * 5) as Sequence<T>
+            start is Double && end is Float -> FloatSequence(start.toFloat(), end, duration.toLong() * 5) as Sequence<T>
             else -> throw IllegalArgumentException("No sequence found for this type! ($start; $end)")
         }
     }

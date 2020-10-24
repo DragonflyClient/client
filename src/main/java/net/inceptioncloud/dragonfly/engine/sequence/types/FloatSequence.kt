@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.engine.sequence.types
 
 import net.inceptioncloud.dragonfly.engine.sequence.Sequence
 
-class DoubleSequence(from: Double, to: Double, duration: Long) : Sequence<Double>(from, to, duration) {
+class FloatSequence(from: Float, to: Float, duration: Long) : Sequence<Float>(from, to, duration) {
     /**
      * A function to interpolate the value.
      *
@@ -11,7 +11,7 @@ class DoubleSequence(from: Double, to: Double, duration: Long) : Sequence<Double
      *
      * @param progress the the quotient of the [expiredTime] and the [duration] transformed by the [easing] function
      */
-    override fun interpolate(progress: Double): Double {
-        return (to - from) * progress + from
+    override fun interpolate(progress: Double): Float {
+        return ((to - from) * progress + from).toFloat()
     }
 }

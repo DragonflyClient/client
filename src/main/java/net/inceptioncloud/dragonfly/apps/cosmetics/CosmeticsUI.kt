@@ -41,15 +41,15 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
         )
     }
 
-    override val sidebarWidth: Double = 400.0
+    override val sidebarWidth: Float = 400.0f
 
-    override val controlsWidth: Double get() = width - 400.0 - 120.0 - 43.0 - previewWidth
-    override val controlsX: Double get() = sidebarWidth + 60.0
+    override val controlsWidth: Float get() = width - 400.0f - 120.0f - 43.0f - previewWidth
+    override val controlsX: Float get() = sidebarWidth + 60.0f
 
-    val previewWidth = 400.0
-    val previewX: Double get() = controlsX + controlsWidth + 60.0 + 43.0
+    val previewWidth = 400.0f
+    val previewX: Float get() = controlsX + controlsWidth + 60.0f + 43.0f
 
-    override val scrollbarX: Double? get() = width - previewWidth
+    override val scrollbarX: Float? get() = width - previewWidth
 
     override val placeholderImage: ResourceLocation? = ResourceLocation("dragonflyres/vectors/equipment.png")
     override val placeholderText: String? = "Select a cosmetic item from the left to customize it."
@@ -75,19 +75,19 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
 
         +PlayerPreview {
             x = previewX
-            y = 0.0
+            y = 0.0f
             width = previewWidth
-            height = this@CosmeticsUI.height.toDouble()
+            height = this@CosmeticsUI.height.toFloat()
         } id "preview"
 
         +RoundButton {
-            width = 250.0
-            height = 40.0
-            x = previewX + previewWidth / 2.0 - width / 2.0
-            y = this@CosmeticsUI.height - height - 30.0
+            width = 250.0f
+            height = 40.0f
+            x = previewX + previewWidth / 2 - width / 2
+            y = this@CosmeticsUI.height - height - 30.0f
             textSize = 40
             text = "Synchronize Cosmetics"
-            arc = 13.0
+            arc = 13.0f
             hoverAction = {
                 detachAnimation<MorphAnimation>()
                 morph(
@@ -150,7 +150,7 @@ class CosmeticsUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
                     }
                 }
             }.apply {
-                iconMargin = 10.0
+                iconMargin = 10.0f
                 isSelectable = false
             }
 

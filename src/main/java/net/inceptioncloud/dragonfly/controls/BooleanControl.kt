@@ -19,10 +19,10 @@ class BooleanControl(
     var changeValue: (() -> Boolean)? = { true }
 ) : OptionControlElement<Boolean>(either, name, description) {
 
-    val switchWidth = 50.0
-    val switchHeight = 24.0
-    val innerSize = 18.0
-    val innerMargin = (switchHeight - innerSize) / 2.0
+    val switchWidth = 50.0f
+    val switchHeight = 24.0f
+    val innerSize = 18.0f
+    val innerMargin = (switchHeight - innerSize) / 2
 
     override fun controlAssemble(): Map<String, Widget<*>> = mapOf(
         "switch-background" to RoundedRectangle(),
@@ -35,8 +35,8 @@ class BooleanControl(
             width = switchWidth
             height = switchHeight
             x = controlX + controlWidth - width
-            y = this@BooleanControl.y + (this@BooleanControl.height - height) / 2.0
-            arc = height / 2.0
+            y = this@BooleanControl.y + (this@BooleanControl.height - height) / 2
+            arc = height / 2
             color = computeColor()
         }!!
 
@@ -44,8 +44,8 @@ class BooleanControl(
             width = innerSize
             height = innerSize
             x = computeInnerX(background.x, background.width)
-            y = this@BooleanControl.y + (this@BooleanControl.height - height) / 2.0
-            arc = height / 2.0
+            y = this@BooleanControl.y + (this@BooleanControl.height - height) / 2
+            arc = height / 2
             color = WidgetColor(255, 255, 255)
         }
     }
@@ -71,6 +71,6 @@ class BooleanControl(
     private fun computeColor() =
         if (optionKey.get()) DragonflyPalette.accentNormal else WidgetColor(230, 230, 230)
 
-    private fun computeInnerX(backgroundX: Double, backgroundWidth: Double) =
+    private fun computeInnerX(backgroundX: Float, backgroundWidth: Float) =
         if (optionKey.get()) backgroundX + backgroundWidth - innerMargin - innerSize else backgroundX + innerMargin
 }

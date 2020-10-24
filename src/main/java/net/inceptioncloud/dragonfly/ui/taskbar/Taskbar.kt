@@ -45,16 +45,16 @@ object Taskbar {
         val easing = EaseBack.withFactor(3.0).OUT
         val duration = 110
 
-        val size = 55.0
-        val space = 20.0
-        val taskbarHeight = 80.0
-        val exitOffset = 20.0
+        val size = 55.0f
+        val space = 20.0f
+        val taskbarHeight = 80.0f
+        val exitOffset = 20.0f
 
         +Rectangle {
-            x = 0.0
-            y = this@with.height.toDouble()
-            width = this@with.width.toDouble()
-            height = 0.0
+            x = 0.0f
+            y = this@with.height.toFloat()
+            width = this@with.width.toFloat()
+            height = 0.0f
             color = DragonflyPalette.accentNormal
 
             if (animate) {
@@ -70,8 +70,8 @@ object Taskbar {
         } id "taskbar-background"
 
         val shadow = +Image {
-            x = exitOffset + 3.0
-            y = this@with.height.toDouble() + 3.0
+            x = exitOffset + 3.0f
+            y = this@with.height.toFloat() + 3.0f
             height = taskbarHeight - exitOffset * 2
             width = height
             resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/exit.png")
@@ -80,16 +80,16 @@ object Taskbar {
             if (animate) {
                 morph(
                     duration, easing,
-                    Image::y to this@with.height - taskbarHeight + exitOffset + 3.0
+                    Image::y to this@with.height - taskbarHeight + exitOffset + 3.0f
                 )?.start()
             } else {
-                y = this@with.height - taskbarHeight + exitOffset + 3.0
+                y = this@with.height - taskbarHeight + exitOffset + 3.0f
             }
         } id "taskbar-exit-game-shadow"
 
         +Image {
-            x = shadow.x - 3.0
-            y = shadow.y - 3.0
+            x = shadow.x - 3.0f
+            y = shadow.y - 3.0f
             height = shadow.height
             width = shadow.width
             resourceLocation = shadow.resourceLocation
@@ -116,13 +116,13 @@ object Taskbar {
             }
         } id "taskbar-exit-game"
 
-        var currentX = width / 2.0 - (taskbarApps.size * size + (taskbarApps.size - 1) * space) / 2.0
+        var currentX = width / 2 - (taskbarApps.size * size + (taskbarApps.size - 1) * space) / 2
 
         for ((index, app) in taskbarApps.withIndex()) {
             val pos = currentX
             val appWidget = +TaskbarAppWidget(app) {
                 x = currentX
-                y = this@with.height - taskbarHeight + (taskbarHeight - size) / 2.0
+                y = this@with.height - taskbarHeight + (taskbarHeight - size) / 2
                 width = size
                 height = size
             } id "app-${app.name.toLowerCase().replace(" ", "-")}"
@@ -130,8 +130,8 @@ object Taskbar {
             appWidget.apply {
                 x += size / 2
                 y += size / 2
-                width = 0.0
-                height = 0.0
+                width = 0.0f
+                height = 0.0f
                 isVisible = false
 
                 if (animate) {
@@ -140,14 +140,14 @@ object Taskbar {
                         morph(
                             80, easing,
                             TaskbarAppWidget::x to pos,
-                            TaskbarAppWidget::y to this@with.height - taskbarHeight + (taskbarHeight - size) / 2.0,
+                            TaskbarAppWidget::y to this@with.height - taskbarHeight + (taskbarHeight - size) / 2,
                             TaskbarAppWidget::width to size,
                             TaskbarAppWidget::height to size
                         )?.start()
                     }
                 } else {
                     x = pos
-                    y = this@with.height - taskbarHeight + (taskbarHeight - size) / 2.0
+                    y = this@with.height - taskbarHeight + (taskbarHeight - size) / 2
                     width = size
                     height = size
                     isVisible = true

@@ -18,10 +18,10 @@ class PlayerPreview(
     initializerBlock: (PlayerPreview.() -> Unit)? = null
 ) : AssembledWidget<PlayerPreview>(initializerBlock), IPosition, IDimension {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(0.0)
-    override var height: Double by property(0.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(0.0F)
+    override var height: Float by property(0.0F)
 
     private var rotationHorizontal: Double = 0.0
     private var rotationVertical: Double = 0.0
@@ -50,7 +50,7 @@ class PlayerPreview(
             height = this@PlayerPreview.height
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.CENTER
-            padding = width / 8.0
+            padding = width / 8
             backgroundColor = DragonflyPalette.foreground.darker(1.0)
             color = DragonflyPalette.background
         }

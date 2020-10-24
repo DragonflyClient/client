@@ -27,7 +27,7 @@ import kotlin.math.absoluteValue
  */
 class Scrollbar(
     val guiScreen: GuiScreen,
-    val overflowY: Double = 0.0
+    val overflowY: Float = 0.0f
 ) {
 
     /**
@@ -53,7 +53,7 @@ class Scrollbar(
      * changed instead of directly scrolling the given distance. The [update] function uses
      * it to scroll the required amount until the current position closely matches this value.
      */
-    private var positionToGo: Double = 0.0
+    private var positionToGo: Float = 0.0f
 
     /**
      * Called by the [scrollbarWidget] whenever it is updated (usually every Dragonfly tick).
@@ -64,7 +64,7 @@ class Scrollbar(
         if (!isEnabled) return
         if (positionToGo == scrollbarWidget.currentY) return
 
-        var distance = (positionToGo - scrollbarWidget.currentY) / 20.0
+        var distance = (positionToGo - scrollbarWidget.currentY) / 20.0f
 
         if (distance.absoluteValue < 0.1) {
             distance = (positionToGo - scrollbarWidget.currentY)
@@ -93,7 +93,7 @@ class Scrollbar(
                 1
             }
 
-            var distance = wheel * (scrollbarWidget.contentHeight / 20.0)
+            var distance = wheel * (scrollbarWidget.contentHeight / 20.0f)
             if (positionToGo + distance < 0.0) {
                 distance = -positionToGo
             } else if (positionToGo + distance > scrollbarWidget.contentHeight - scrollbarWidget.screenHeight) {
@@ -110,15 +110,15 @@ class Scrollbar(
      * before the scrollbar is used.
      */
     fun prepareWidget(): ScrollbarWidget = scrollbarWidget.apply {
-        positionToGo = 0.0
+        positionToGo = 0.0f
 
-        visiblePart = 0.0
-        verticalPositionPart = 0.0
-        progress = 0.0
+        visiblePart = 0.0f
+        verticalPositionPart = 0.0f
+        progress = 0.0f
 
         contentHeight = calculateContentHeight()
-        screenHeight = guiScreen.height.toDouble()
-        currentY = 0.0
+        screenHeight = guiScreen.height.toFloat()
+        currentY = 0.0f
 
         height = screenHeight
 
@@ -141,13 +141,13 @@ class Scrollbar(
      * respect an other start y-position than 0.0. It searches for the widget whose bottom
      * coordinate is the greatest and returns that coordinate.
      */
-    private fun calculateContentHeight(): Double = (content.filter { it is IPosition && it is IDimension }
+    private fun calculateContentHeight(): Float = (content.filter { it is IPosition && it is IDimension }
         .map {
             it as IPosition
             it as IDimension
 
             it.y + it.height
-        }.max() ?: 0.0) + overflowY
+        }.max() ?: 0.0F) + overflowY
 }
 
 /**

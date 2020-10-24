@@ -31,17 +31,17 @@ class DragonflyButton(
     initializerBlock: (DragonflyButton.() -> Unit)? = null
 ) : AssembledWidget<DragonflyButton>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(200.0)
-    override var height: Double by property(20.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(200.0F)
+    override var height: Float by property(20.0F)
     override var color: WidgetColor by property(DragonflyPalette.accentNormal)
 
     var backgroundColor: WidgetColor by property(DragonflyPalette.background)
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
     var text: String by property("Button")
     var icon: ImageResource? by property(null)
-    var iconSize: Double? by property(null)
+    var iconSize: Float? by property(null)
     var useScale: Boolean by property(true)
 
     var enableClickSound: Boolean = true
@@ -66,13 +66,13 @@ class DragonflyButton(
 
         val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt())
         val stringWidth = buttonFontRenderer.getStringWidth(text)
-        val iconMarginRight = height / 5.0
-        val iconSize = this.iconSize ?: height - 6.0
+        val iconMarginRight = height / 5
+        val iconSize = this.iconSize ?: height - 6
         val totalWidth = stringWidth + iconSize + iconMarginRight
 
         val iconWidget = "icon"<Image> {
-            x = this@DragonflyButton.x + (this@DragonflyButton.width - totalWidth) / 2.0
-            y = this@DragonflyButton.y + (this@DragonflyButton.height - iconSize) / 2.0
+            x = this@DragonflyButton.x + (this@DragonflyButton.width - totalWidth) / 2
+            y = this@DragonflyButton.y + (this@DragonflyButton.height - iconSize) / 2
             width = iconSize
             height = iconSize
             dynamicTexture = icon?.dynamicTexture
@@ -80,8 +80,8 @@ class DragonflyButton(
         }!!
 
         "icon-shadow"<Image> {
-            x = iconWidget.x + 2.0
-            y = iconWidget.y + 2.0
+            x = iconWidget.x + 2.0f
+            y = iconWidget.y + 2.0f
             width = iconSize
             height = iconSize
             dynamicTexture = icon?.dynamicTexture
@@ -91,25 +91,25 @@ class DragonflyButton(
 
         "text"<TextRenderer> {
             x = iconWidget.x + iconSize + iconMarginRight
-            y = this@DragonflyButton.y + (this@DragonflyButton.height - buttonFontRenderer.height) / 2.0 - 1.0
+            y = this@DragonflyButton.y + (this@DragonflyButton.height - buttonFontRenderer.height) / 2 - 1.0f
             text = this@DragonflyButton.text
             color = this@DragonflyButton.foregroundColor
             fontRenderer = buttonFontRenderer
             dropShadow = true
-            shadowDistance = 2.0
+            shadowDistance = 2.0f
         }
 
         "overlay"<Rectangle> {
             x = this@DragonflyButton.x
             y = this@DragonflyButton.y
-            width = this@DragonflyButton.width / 40.0
+            width = this@DragonflyButton.width / 40
             height = this@DragonflyButton.height
             color = this@DragonflyButton.color
         }
     }
 
     override fun handleHoverStateUpdate() {
-        val offset = width / 40.0
+        val offset = width / 40
         val overlayWidget = getWidget<Rectangle>("overlay")
 
         if (isHovered) {

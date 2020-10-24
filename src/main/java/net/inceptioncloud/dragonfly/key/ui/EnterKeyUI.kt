@@ -26,7 +26,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
 
     override var backgroundFill: WidgetColor? = WidgetColor(30, 30, 30, 255)
 
-    override var backgroundImage: SizedImage? = SizedImage(ImageResource("dragonflyres/ingame_background_2.png"), 3840.0, 2160.0)
+    override var backgroundImage: SizedImage? = SizedImage(ImageResource("dragonflyres/ingame_background_2.png"), 3840.0f, 2160.0f)
 
     override var canManuallyClose: Boolean = false
 
@@ -44,25 +44,25 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
         val headerFR = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 30)
 
         val keyImage = +Image {
-            x = this@EnterKeyUI.width / 2 - headerFR.getStringWidth("Activate Dragonfly") / 2 - 15.0
-            y = 10.0
-            width = 20.0
-            height = 20.0
+            x = this@EnterKeyUI.width / 2 - headerFR.getStringWidth("Activate Dragonfly") / 2 - 15.0f
+            y = 10.0f
+            width = 20.0f
+            height = 20.0f
             resourceLocation = ResourceLocation("dragonflyres/icons/key.png")
         } id "key-image"
 
         +TextRenderer {
-            x = keyImage.x + 30.0
-            y = 10.0
+            x = keyImage.x + 30.0f
+            y = 10.0f
             fontRenderer = headerFR
             text = "Activate Dragonfly"
         } id "header"
 
         val description = +TextField {
-            x = this@EnterKeyUI.width / 2.0 - (this@EnterKeyUI.width * 0.3).toInt().coerceAtMost(150).toDouble()
-            y = this@EnterKeyUI.height * 0.15
-            width = (this@EnterKeyUI.width * 0.6).toInt().coerceAtMost(300).toDouble()
-            height = 90.0
+            x = this@EnterKeyUI.width / 2 - (this@EnterKeyUI.width * 0.3f).toInt().coerceAtMost(150).toFloat()
+            y = this@EnterKeyUI.height * 0.15f
+            width = (this@EnterKeyUI.width * 0.6f).toInt().coerceAtMost(300).toFloat()
+            height = 90.0f
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
             staticText = "Please enter your Dragonfly key or press the button next to the input field to paste it from your clipboard.\n\n" +
@@ -75,7 +75,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
             x = description.x
             y = description.y + description.height + 10
             width = description.width
-            height = 30.0
+            height = 30.0f
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.END
             staticText = message ?: ""
@@ -85,11 +85,11 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
         } id "message"
 
         val keyInput = +InputTextField().apply {
-            x = this@EnterKeyUI.width / 2.0 - 110.0
-            y = description.y + description.height + 50.0
+            x = this@EnterKeyUI.width / 2 - 110.0f
+            y = description.y + description.height + 50.0f
             color = DragonflyPalette.accentNormal
-            width = 200.0
-            height = 20.0
+            width = 200.0f
+            height = 20.0f
             label = "32-digit key with hyphens"
             maxStringLength = 32
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer()

@@ -26,10 +26,10 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
     var overlayPosition by option(EnumToggleSneakPosition.BOTTOM_RIGHT)
     var animationSpeed by option(20.0)
 
-    var posX = 0.0
-    var posY = 0.0
-    var width = 0.0
-    var height = 0.0
+    var posX = 0.0f
+    var posY = 0.0f
+    var width = 0.0f
+    var height = 0.0f
 
     lateinit var textField: TextField
 
@@ -69,50 +69,48 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
 
         if (overlayText != "") {
 
-            val stringWidth =
-                Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt())
-                    .getStringWidth(overlayText)
-            val stringHeight = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt()).height.toDouble()
+            val stringWidth = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt()).getStringWidth(overlayText)
+            val stringHeight = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt()).height.toFloat()
             val screenWidth = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
             val screenHeight = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
+            val ingameGUI = Minecraft.getMinecraft().ingameGUI
 
             when (overlayPosition) {
                 EnumToggleSneakPosition.TOP_LEFT -> {
-                    posX = 10.0
-                    posY = 10.0
-                    width = stringWidth + 3.0
-                    height = stringHeight + 3.0
+                    posX = 10.0f
+                    posY = 10.0f
+                    width = stringWidth + 3.0f
+                    height = stringHeight + 3.0f
                 }
                 EnumToggleSneakPosition.TOP_RIGHT -> {
-                    posX = screenWidth - (stringWidth + 3.0) - 10.0
-                    posY = 10.0
-                    width = stringWidth + 3.0
-                    height = stringHeight + 3.0
+                    posX = screenWidth - (stringWidth + 3.0f) - 10.0f
+                    posY = 10.0f
+                    width = stringWidth + 3.0f
+                    height = stringHeight + 3.0f
                 }
                 EnumToggleSneakPosition.BOTTOM_LEFT -> {
-                    posX = 10.0
+                    posX = 10.0f
                     posY = screenHeight - stringHeight - 10
-                    width = stringWidth + 3.0
-                    height = stringHeight + 3.0
+                    width = stringWidth + 3.0f
+                    height = stringHeight + 3.0f
                 }
                 EnumToggleSneakPosition.BOTTOM_RIGHT -> {
-                    posX = screenWidth - (stringWidth + 3.0) - 10
+                    posX = screenWidth - (stringWidth + 3.0f) - 10
                     posY = screenHeight - stringHeight - 10
-                    width = stringWidth + 3.0
-                    height = stringHeight + 3.0
+                    width = stringWidth + 3.0f
+                    height = stringHeight + 3.0f
                 }
                 EnumToggleSneakPosition.HOTBAR_LEFT -> {
-                    posX = Minecraft.getMinecraft().ingameGUI.hotbarX - (stringWidth + 3.0) - 10
+                    posX = ingameGUI.hotbarX - (stringWidth + 3.0f) - 10
                     posY = screenHeight - stringHeight - 10
-                    width = stringWidth + 3.0
-                    height = stringHeight + 3.0
+                    width = stringWidth + 3.0f
+                    height = stringHeight + 3.0f
                 }
                 EnumToggleSneakPosition.HOTBAR_RIGHT -> {
-                    posX =
-                        (Minecraft.getMinecraft().ingameGUI.hotbarX + Minecraft.getMinecraft().ingameGUI.hotbarW + 10).toDouble()
+                    posX = (ingameGUI.hotbarX + ingameGUI.hotbarW + 10).toFloat()
                     posY = screenHeight - stringHeight - 10
-                    width = stringWidth + 3.0
-                    height = stringHeight + 3.0
+                    width = stringWidth + 3.0f
+                    height = stringHeight + 3.0f
                 }
             }
         }

@@ -39,7 +39,7 @@ class Tooltip(
      */
     fun prepare() {
         widget.apply {
-            opacity = 0.0
+            opacity = 0.0F
             stagePriority = 999
             alignment = this@Tooltip.alignment
             text = this@Tooltip.text
@@ -82,7 +82,7 @@ class Tooltip(
     /**
      * Calculates the vertical position based on the [host] and the [alignment].
      */
-    private fun getVerticalPosition(): Double {
+    private fun getVerticalPosition(): Float {
         val host = host
         val (_, height) = Defaults.getSizeOrDimension(host)
         if (host !is IPosition) error("Host widget must have a position!")

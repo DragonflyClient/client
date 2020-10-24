@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.apps.about
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.engine.switch
@@ -26,24 +25,24 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
 
     override fun initGui() {
         +Rectangle {
-            x = 0.0
-            y = 0.0
-            width = this@AboutDragonflyUI.width.toDouble()
-            height = this@AboutDragonflyUI.height.toDouble()
+            x = 0.0f
+            y = 0.0f
+            width = this@AboutDragonflyUI.width.toFloat()
+            height = this@AboutDragonflyUI.height.toFloat()
             color = DragonflyPalette.foreground.brighter(0.7)
         } id "background"
 
         +Image {
             resourceLocation = ResourceLocation("dragonflyres/logos/about-dragonfly.png")
-            height = 90.0
-            width = 468.0
-            x = this@AboutDragonflyUI.width / 2.0 - width / 2.0
-            y = 60.0
+            height = 90.0f
+            width = 468.0f
+            x = this@AboutDragonflyUI.width / 2.0f - width / 2.0f
+            y = 60.0f
         } id "logo-about-dragonfly"
 
         +TextField {
-            positionBelow("logo-about-dragonfly", 60.0)
-            width = (this@AboutDragonflyUI.width * (3 / 4.0)).coerceAtMost(1280.0)
+            positionBelow("logo-about-dragonfly", 60.0f)
+            width = (this@AboutDragonflyUI.width * (3 / 4.0f)).coerceAtMost(1280.0f)
             x = this@AboutDragonflyUI.width / 2 - width / 2
             adaptHeight = true
             fontRenderer = font(Typography.HEADING_2)
@@ -52,7 +51,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         } id "inception-cloud-header"
 
         +TextField {
-            positionBelow("inception-cloud-header", 5.0)
+            positionBelow("inception-cloud-header", 5.0f)
             adaptHeight = true
             fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
@@ -61,34 +60,34 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         } id "inception-cloud-text"
 
         +SocialMediaPreview(Network.TWITTER, "§7@§rInceptionCloud", "https://twitter.com/InceptionCloud") {
-            positionBelow("inception-cloud-text", 20.0)
-            height = 56.0
-            width = 300.0
+            positionBelow("inception-cloud-text", 20.0f)
+            height = 56.0f
+            width = 300.0f
         } id "twitter-preview"
 
         +SocialMediaPreview(Network.INSTAGRAM, "§7@§rInceptionCloud", "https://instagram.com/InceptionCloud") {
-            positionBelow("inception-cloud-text", 20.0)
-            height = 56.0
-            width = 300.0
-            x += 320.0
+            positionBelow("inception-cloud-text", 20.0f)
+            height = 56.0f
+            width = 300.0f
+            x += 320.0f
         } id "instagram-preview"
 
         +SocialMediaPreview(Network.GITHUB, "§7@§rInceptionCloud", "https://github.com/InceptionCloud") {
-            positionBelow("inception-cloud-text", 20.0)
-            height = 56.0
-            width = 300.0
-            x += 320.0 * 2
+            positionBelow("inception-cloud-text", 20.0f)
+            height = 56.0f
+            width = 300.0f
+            x += 320.0f * 2
         } id "github-preview"
 
         +SocialMediaPreview(Network.DISCORD, "§7icnet.dev/§rdiscord", "https://icnet.dev/discord") {
-            positionBelow("inception-cloud-text", 20.0)
-            height = 56.0
-            width = 300.0
-            x += 320.0 * 3
+            positionBelow("inception-cloud-text", 20.0f)
+            height = 56.0f
+            width = 300.0f
+            x += 320.0f * 3
         } id "discord-preview"
 
         +TextField {
-            positionBelow("inception-cloud-text", 140.0)
+            positionBelow("inception-cloud-text", 140.0f)
             adaptHeight = true
             fontRenderer = font(Typography.HEADING_2)
             color = DragonflyPalette.background
@@ -96,7 +95,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         } id "dragonfly-products-header"
 
         +TextField {
-            positionBelow("dragonfly-products-header", 5.0)
+            positionBelow("dragonfly-products-header", 5.0f)
             adaptHeight = true
             fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
@@ -105,7 +104,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         } id "dragonfly-products-text"
 
         +TextField {
-            positionBelow("dragonfly-products-text", 40.0)
+            positionBelow("dragonfly-products-text", 40.0f)
             adaptHeight = true
             fontRenderer = font(Typography.HEADING_2)
             color = DragonflyPalette.background
@@ -113,7 +112,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         } id "credits-header"
 
         +TextField {
-            positionBelow("credits-header", 5.0)
+            positionBelow("credits-header", 5.0f)
             adaptHeight = true
             fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background

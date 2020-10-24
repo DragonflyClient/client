@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.ui.modal
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
@@ -31,12 +30,12 @@ open class ConfirmModal(
     var icon: ResourceLocation = ResourceLocation("dragonflyres/icons/question_emoji.png"),
     private var respondImmediately: Boolean = false,
     private var responder: (Boolean) -> Unit
-) : ModalWidget("Confirm", 400.0, 600.0) {
+) : ModalWidget("Confirm", 400.0f, 600.0f) {
 
     /**
      * The padding of the container box.
      */
-    val padding = 35.0
+    val padding = 35.0f
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
@@ -49,16 +48,16 @@ open class ConfirmModal(
 
     override fun updateStructure() {
         val image = "image"<Image> {
-            width = 96.0
+            width = 96.0f
             height = width
             x = this@ConfirmModal.x + (this@ConfirmModal.width - width) / 2
-            y = this@ConfirmModal.y + 25.0
+            y = this@ConfirmModal.y + 25.0f
             resourceLocation = icon
         }!!
 
         val title = "title"<TextField> {
             x = this@ConfirmModal.x + this@ConfirmModal.padding
-            y = image.y + image.height + 35.0
+            y = image.y + image.height + 35.0f
             width = this@ConfirmModal.width - 2 * this@ConfirmModal.padding
             fontRenderer = font(Typography.HEADING_2)
             staticText = title
@@ -69,7 +68,7 @@ open class ConfirmModal(
 
         val description = "description"<TextField> {
             x = this@ConfirmModal.x + this@ConfirmModal.padding
-            y = title.y + title.height + 35.0
+            y = title.y + title.height + 35.0f
             width = this@ConfirmModal.width - 2 * this@ConfirmModal.padding
             staticText = description
             fontRenderer = font(Typography.SMALL)
@@ -80,9 +79,9 @@ open class ConfirmModal(
 
         val yesButton = "yes-button"<OutlineButton> {
             x = this@ConfirmModal.x + this@ConfirmModal.padding
-            y = description.y + description.height + 35.0
+            y = description.y + description.height + 35.0f
             width = this@ConfirmModal.width - (padding * 2)
-            height = 40.0
+            height = 40.0f
             text = yesText
             color = DragonflyPalette.accentNormal
             onClick {
@@ -92,9 +91,9 @@ open class ConfirmModal(
 
         val noButton = "no-button"<OutlineButton> {
             x = this@ConfirmModal.x + this@ConfirmModal.padding
-            y = yesButton.y + yesButton.height + 20.0
+            y = yesButton.y + yesButton.height + 20.0f
             width = this@ConfirmModal.width - (padding * 2)
-            height = 40.0
+            height = 40.0f
             text = noText
             onClick {
                 respond(false)
@@ -109,7 +108,7 @@ open class ConfirmModal(
             width = this@ConfirmModal.width
             height = this@ConfirmModal.height
             color = DragonflyPalette.background
-            arc = 10.0
+            arc = 10.0f
         }
     }
 

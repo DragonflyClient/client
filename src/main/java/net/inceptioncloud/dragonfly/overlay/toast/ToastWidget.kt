@@ -26,12 +26,12 @@ class ToastWidget(
 
     var text: String by property("This is a toast message")
     var duration: Int by property(200)
-    var opacity: Double by property(0.0)
+    var opacity: Float by property(0.0F)
 
-    override var x: Double by property(-1.0)
-    override var y: Double by property(-1.0)
-    override var width: Double by property(-1.0)
-    override var height: Double by property(-1.0)
+    override var x: Float by property(-1.0f)
+    override var y: Float by property(-1.0f)
+    override var width: Float by property(-1.0f)
+    override var height: Float by property(-1.0f)
 
     /**
      * The time of initialization that is used for the timer (set when invoking [updateStructure])
@@ -54,24 +54,24 @@ class ToastWidget(
         val fontRenderer = font(Typography.SMALL)
 
         val textField = updateWidget<TextField>("text") {
-            width = (fontRenderer.getStringWidth(text).toDouble() + 8.0).coerceAtMost(ScreenOverlay.dimensions.width / 2.0)
+            width = (fontRenderer.getStringWidth(text).toFloat() + 8.0f).coerceAtMost(ScreenOverlay.dimensions.width / 2f)
             x = (ScreenOverlay.dimensions.width) / 2 - (width / 2)
-            y = this@ToastWidget.y + 6.0
+            y = this@ToastWidget.y + 6.0f
             staticText = text
             adaptHeight = true
-            color = DragonflyPalette.foreground.altered { alphaDouble = opacity }
+            color = DragonflyPalette.foreground.altered { alphaFloat = opacity }
             textAlignHorizontal = Alignment.CENTER
             this.fontRenderer = fontRenderer
         }!!.also { it.adaptHeight() }
 
         val container = updateWidget<RoundedRectangle>("container") {
-            val padding = 8.0
-            arc = 8.0
+            val padding = 8.0f
+            arc = 8.0f
             x = textField.x - padding
-            y = textField.y - padding + 2.0
+            y = textField.y - padding + 2.0f
             width = textField.width + (padding * 2)
-            height = textField.height + (padding * 2) - 2.0
-            color = DragonflyPalette.background.altered { alphaDouble = 0.8 * opacity }
+            height = textField.height + (padding * 2) - 2.0f
+            color = DragonflyPalette.background.altered { alphaFloat = 0.8f * opacity }
         }!!
 
         this.x = container.x

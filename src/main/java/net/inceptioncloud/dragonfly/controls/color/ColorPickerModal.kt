@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.controls.color
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.toWidgetColor
@@ -17,7 +16,7 @@ import java.awt.Color
 class ColorPickerModal(
     val initialColor: WidgetColor,
     val responder: (WidgetColor) -> Unit
-) : ModalWidget("Color Picker", 620.0, 630.0) {
+) : ModalWidget("Color Picker", 620.0f, 630.0f) {
 
     companion object {
 
@@ -76,11 +75,11 @@ class ColorPickerModal(
 
     override fun updateStructure() {
         val sliderWidth = this@ColorPickerModal.width - 200
-        val actualSliderWidth = sliderWidth + 110.0
+        val actualSliderWidth = sliderWidth + 110.0f
         val contentX = x + (width / 2) - (actualSliderWidth / 2)
-        val sliderX = contentX + 50.0
+        val sliderX = contentX + 50.0f
         val padding = contentX - x
-        val sliderDistance = 40.0
+        val sliderDistance = 40.0f
 
         val container = "container"<RoundedRectangle> {
             x = this@ColorPickerModal.x
@@ -88,7 +87,7 @@ class ColorPickerModal(
             width = this@ColorPickerModal.width
             height = this@ColorPickerModal.height
             color = DragonflyPalette.background
-            arc = 10.0
+            arc = 10.0f
         }!!
 
         val title = "title"<TextField> {
@@ -104,51 +103,51 @@ class ColorPickerModal(
 
         val hueSlider = "hue-slider"<ColorSlider> {
             x = sliderX
-            y = title.y + title.height + 55.0
+            y = title.y + title.height + 55.0f
             width = this@ColorPickerModal.width - 200
-            height = 8.0
+            height = 8.0f
         }!!
 
         val saturationSlider = "saturation-slider"<ColorSlider> {
             max = 100
             colorLetter = "S"
-            colorInterpolator = { Color.getHSBColor(hue, it.toFloat(), 1f) }
+            colorInterpolator = { Color.getHSBColor(hue, it, 1f) }
 
             x = sliderX
             y = hueSlider.y + sliderDistance
             width = this@ColorPickerModal.width - 200
-            height = 8.0
+            height = 8.0f
         }!!
 
         val brightnessSlider = "brightness-slider"<ColorSlider> {
             max = 100
             colorLetter = "B"
-            colorInterpolator = { Color.getHSBColor(hue, saturation, it.toFloat()) }
+            colorInterpolator = { Color.getHSBColor(hue, saturation, it) }
 
             x = sliderX
             y = saturationSlider.y + sliderDistance
             width = this@ColorPickerModal.width - 200
-            height = 8.0
+            height = 8.0f
         }!!
 
         val alphaSlider = "alpha-slider"<ColorSlider> {
             max = 100
             colorLetter = "A"
-            colorInterpolator = { fullColor.altered { alphaDouble = it }.base }
+            colorInterpolator = { fullColor.altered { alphaFloat = it }.base }
 
             x = sliderX
             y = brightnessSlider.y + sliderDistance
             width = this@ColorPickerModal.width - 200
-            height = 8.0
+            height = 8.0f
         }!!
 
         val hexContainerBorder = "hex-container-border"<RoundedRectangle> {
             width = this@ColorPickerModal.width / 2
-            height = 37.0
+            height = 37.0f
             x = contentX
             y = alphaSlider.y + 45
             color = DragonflyPalette.foreground
-            arc = 5.0
+            arc = 5.0f
         }!!
 
         val hexContainer = "hex-container"<RoundedRectangle> {
@@ -158,7 +157,7 @@ class ColorPickerModal(
             x = hexContainerBorder.x + borderSize
             y = hexContainerBorder.y + borderSize
             color = DragonflyPalette.background
-            arc = 4.0
+            arc = 4.0f
         }!!
 
         "hex-text"<TextField> {
@@ -173,42 +172,42 @@ class ColorPickerModal(
         }
 
         val hexButtonPaste = "hex-button-paste"<RoundButton> {
-            width = 85.0
+            width = 85.0f
             height = hexContainerBorder.height
             x = this@ColorPickerModal.x + this@ColorPickerModal.width - width - padding
             y = hexContainerBorder.y
             text = "Paste"
             textSize = 50
             color = DragonflyPalette.background.brighter(0.8)
-            arc = 10.0
+            arc = 10.0f
             onClick { pasteHex() }
         }!!
 
         "hex-button-copy"<RoundButton> {
-            width = 80.0
+            width = 80.0f
             height = hexContainerBorder.height
-            x = hexButtonPaste.x - width - 10.0
+            x = hexButtonPaste.x - width - 10.0f
             y = hexContainerBorder.y
             text = "Copy"
             textSize = 50
             color = DragonflyPalette.background.brighter(0.8)
-            arc = 10.0
+            arc = 10.0f
             onClick { copyHex() }
         }
 
         val colorPreview = "color-preview"<ColorPreview> {
             x = contentX
             y = hexContainerBorder.y + hexContainerBorder.height + 80
-            width = 90.0
-            height = 90.0
+            width = 90.0f
+            height = 90.0f
             color = fullColor
             backgroundColor = container.color
-            borderSize = 3.0
+            borderSize = 3.0f
         }!!
 
         "rainbow-toggle"<RoundToggleButton> {
-            width = 115.0
-            height = 37.0
+            width = 115.0f
+            height = 37.0f
             x = contentX
             y = this@ColorPickerModal.y + this@ColorPickerModal.height - height - padding
             text = "Rainbow"
@@ -216,33 +215,33 @@ class ColorPickerModal(
             color = DragonflyPalette.background.brighter(0.8)
             toggleTextColor = color
             toggleColor = DragonflyPalette.foreground
-            arc = 10.0
+            arc = 10.0f
             onClick {
                 if (isToggled) setColor(WidgetColor(1.0, 0.0, 0.0, 1.0))
             }
         }
 
         val confirmButton = "confirm-button"<RoundButton> {
-            width = 110.0
-            height = 37.0
+            width = 110.0f
+            height = 37.0f
             x = this@ColorPickerModal.x + this@ColorPickerModal.width - width - padding
             y = this@ColorPickerModal.y + this@ColorPickerModal.height - height - padding
             text = "Confirm"
             textSize = 50
             color = DragonflyPalette.accentNormal
-            arc = 10.0
+            arc = 10.0f
             onClick { confirm() }
         }!!
 
         "reset-button"<RoundButton> {
-            width = 85.0
-            height = 37.0
-            x = confirmButton.x - width - 10.0
+            width = 85.0f
+            height = 37.0f
+            x = confirmButton.x - width - 10.0f
             y = this@ColorPickerModal.y + this@ColorPickerModal.height - height - padding
             text = "Reset"
             textSize = 50
             color = DragonflyPalette.background.brighter(0.8)
-            arc = 10.0
+            arc = 10.0f
             onClick { reset() }
         }
 
@@ -281,16 +280,16 @@ class ColorPickerModal(
         }
     }
 
-    private fun updateFlatColors(contentX: Double, originY: Double) {
-        var currentX = contentX + 90.0 + 20.0
+    private fun updateFlatColors(contentX: Float, originY: Float) {
+        var currentX = contentX + 90.0f + 20.0f
         for ((index, color) in flatColors.withIndex()) {
             "preset-flat-$index"<ColorPreview> {
                 this.color = color
                 x = currentX
-                width = 40.0
-                height = 40.0
+                width = 40.0f
+                height = 40.0f
                 backgroundColor = DragonflyPalette.background
-                borderSize = 2.0
+                borderSize = 2.0f
                 clickAction = {
                     setRainbow(false)
                     setColor(this.color)
@@ -299,33 +298,33 @@ class ColorPickerModal(
                 if (index % 2 == 0) {
                     y = originY
                 } else {
-                    y = originY + 50.0
-                    currentX += 50.0
+                    y = originY + 50.0f
+                    currentX += 50.0f
                 }
             }
         }
     }
 
-    private fun updateDragonflyColors(padding: Double, originY: Double) {
-        var currentX = x + width - padding - 40.0
+    private fun updateDragonflyColors(padding: Float, originY: Float) {
+        var currentX = x + width - padding - 40.0f
         for ((index, color) in dragonflyColors.withIndex()) {
             "preset-drgn-$index"<ColorPreview> {
                 this.color = color
                 x = currentX
-                width = 40.0
-                height = 40.0
+                width = 40.0f
+                height = 40.0f
                 backgroundColor = DragonflyPalette.background
-                borderSize = 2.0
+                borderSize = 2.0f
                 clickAction = {
                     setRainbow(false)
                     setColor(this.color)
                 }
 
                 if (index % 2 == 0) {
-                    y = originY + 50.0
+                    y = originY + 50.0f
                 } else {
                     y = originY
-                    currentX -= 50.0
+                    currentX -= 50.0f
                 }
             }
         }
@@ -341,7 +340,7 @@ class ColorPickerModal(
         hueSlider.updateCurrent((hsb[0] * 360).toInt(), false)
         saturationSlider.updateCurrent((hsb[1] * 100).toInt(), false)
         brightnessSlider.updateCurrent((hsb[2] * 100).toInt(), false)
-        alphaSlider.updateCurrent((color.alphaDouble * 100).toInt(), false)
+        alphaSlider.updateCurrent((color.alphaFloat * 100).toInt(), false)
     }
 
     /**

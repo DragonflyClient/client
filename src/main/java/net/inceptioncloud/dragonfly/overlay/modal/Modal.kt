@@ -7,12 +7,10 @@ import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Compan
 import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.*
-import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.event.client.ResizeEvent
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay.stage
-import net.inceptioncloud.dragonfly.overlay.hotaction.HotActionWidget
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -60,13 +58,13 @@ object Modal {
         LogManager.getLogger().info("Displaying modal: ${modal.name}");
         currentModal = modal
 
-        val screenWidth = ScreenOverlay.dimensions.getWidth()
-        val screenHeight = ScreenOverlay.dimensions.getHeight()
+        val screenWidth = ScreenOverlay.dimensions.getWidth().toFloat()
+        val screenHeight = ScreenOverlay.dimensions.getHeight().toFloat()
 
         if (stage["modal-shadow"] == null) {
             val modalShadow = ScreenOverlay.addComponent("modal-shadow", Rectangle().apply {
-                x = 0.0
-                y = 0.0
+                x = 0.0f
+                y = 0.0f
                 width = screenWidth
                 height = screenHeight
                 color = WidgetColor(0, 0, 0, 0)
@@ -79,16 +77,16 @@ object Modal {
         with(modal) {
             isAnimating = true
             isModal = true
-            x = screenWidth / 2.0 - modal.width / 4.0
+            x = screenWidth / 2 - modal.width / 4
             y = screenHeight
-            scaleFactor = 0.5
+            scaleFactor = 0.5f
             onShow()
             detachAnimation<MorphAnimation>()
             morph(
                 75, easing.OUT,
-                ModalWidget::scaleFactor to 1.0,
-                ModalWidget::x to screenWidth / 2.0 - modal.width / 2.0,
-                ModalWidget::y to screenHeight / 2.0 - modal.height / 2.0
+                ModalWidget::scaleFactor to 1.0f,
+                ModalWidget::x to screenWidth / 2 - modal.width / 2,
+                ModalWidget::y to screenHeight / 2 - modal.height / 2
             )?.post { _, _ -> isAnimating = false }?.start()
         }
 
@@ -147,15 +145,15 @@ object Modal {
     @Subscribe
     fun onResize(event: ResizeEvent) {
         (stage["modal"] as? ModalWidget)?.apply {
-            scaleFactor = 1.0
-            x = ScreenOverlay.dimensions.getWidth() / 2.0 - width / 2.0
-            y = ScreenOverlay.dimensions.getHeight() / 2.0 - height / 2.0
+            scaleFactor = 1.0f
+            x = ScreenOverlay.dimensions.getWidth().toFloat() / 2 - width / 2
+            y = ScreenOverlay.dimensions.getHeight().toFloat() / 2 - height / 2
         }
         (stage["modal-shadow"] as? Rectangle)?.apply {
-            x = 0.0
-            y = 0.0
-            width = ScreenOverlay.dimensions.getWidth()
-            height = ScreenOverlay.dimensions.getHeight()
+            x = 0.0f
+            y = 0.0f
+            width = ScreenOverlay.dimensions.getWidth().toFloat()
+            height = ScreenOverlay.dimensions.getHeight().toFloat()
             color = WidgetColor(0, 0, 0, 200)
         }
     }

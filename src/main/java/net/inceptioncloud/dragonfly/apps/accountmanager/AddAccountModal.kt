@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.apps.accountmanager
 
 import kotlinx.coroutines.*
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.link.LinkBridge
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
@@ -16,12 +15,12 @@ import org.lwjgl.input.Keyboard
 import net.inceptioncloud.dragonfly.engine.font.Typography
 import net.inceptioncloud.dragonfly.engine.font.font
 
-class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
+class AddAccountModal : ModalWidget("Add Account", 400.0f, 500.0f) {
 
     /**
      * The padding of the container box.
      */
-    val padding = 35.0
+    val padding = 35.0f
 
     /**
      * Whether the modal window is currently in the authentication process. If this value is true,
@@ -49,22 +48,22 @@ class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
             width = this@AddAccountModal.width
             height = this@AddAccountModal.height
             color = DragonflyPalette.background
-            arc = 10.0
+            arc = 10.0f
         }
 
         val image = "image"<Image> {
-            width = 100.0
+            width = 100.0f
             height = width
             x = this@AddAccountModal.x + (this@AddAccountModal.width - width) / 2
-            y = this@AddAccountModal.y + 25.0
+            y = this@AddAccountModal.y + 25.0f
             resourceLocation = ResourceLocation("dragonflyres/logos/minecraft.png")
         }!!
 
         val title = "title"<TextField> {
             x = this@AddAccountModal.x
-            y = image.y + image.height + 10.0
+            y = image.y + image.height + 10.0f
             width = this@AddAccountModal.width
-            height = 60.0
+            height = 60.0f
             fontRenderer = font(Typography.HEADING_2)
             staticText = "Authenticate Minecraft Account"
             textAlignHorizontal = Alignment.CENTER
@@ -73,18 +72,18 @@ class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
 
         val email = "email-field"<InputTextField> {
             x = this@AddAccountModal.x + this@AddAccountModal.padding
-            y = title.y + title.height + 20.0
+            y = title.y + title.height + 20.0f
             width = this@AddAccountModal.width - 2 * this@AddAccountModal.padding
-            height = 50.0
+            height = 50.0f
             label = "Email"
             fontRenderer = font(Typography.BASE)
         }!!
 
         "password-field"<InputTextField> {
             x = this@AddAccountModal.x + this@AddAccountModal.padding
-            y = email.y + email.height + 10.0
+            y = email.y + email.height + 10.0f
             width = this@AddAccountModal.width - 2 * this@AddAccountModal.padding
-            height = 50.0
+            height = 50.0f
             label = "Password"
             fontRenderer = font(Typography.BASE)
             isPassword = true
@@ -92,7 +91,7 @@ class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
 
         "authenticate-button"<OutlineButton> {
             width = this@AddAccountModal.width - (padding * 2)
-            height = 40.0
+            height = 40.0f
             x = this@AddAccountModal.x + this@AddAccountModal.padding
             y = this@AddAccountModal.y + this@AddAccountModal.height - padding - height
             text = "Authenticate"

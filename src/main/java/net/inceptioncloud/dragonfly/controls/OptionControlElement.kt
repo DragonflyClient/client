@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.controls
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
@@ -26,13 +25,13 @@ abstract class OptionControlElement<T>(
     val description: String? = null
 ) : ControlElement<OptionControlElement<T>>() {
 
-    final override var x by Delegates.notNull<Double>()
-    final override var y by Delegates.notNull<Double>()
-    final override var width by Delegates.notNull<Double>()
-    override var height: Double = -1.0
+    final override var x: Float by Delegates.notNull()
+    final override var y: Float by Delegates.notNull()
+    final override var width: Float by Delegates.notNull()
+    override var height: Float = -1.0f
 
-    val controlX by lazy { x + width * (2 / 3.0) }
-    val controlWidth by lazy { width / 3.0 }
+    val controlX by lazy { x + width * (2 / 3.0f) }
+    val controlWidth by lazy { width / 3 }
 
     @Suppress("UNCHECKED_CAST")
     val optionKey = either.b ?: either.a!!.run {
@@ -60,7 +59,7 @@ abstract class OptionControlElement<T>(
         val nameWidget = "name"<TextField> {
             x = this@OptionControlElement.x
             y = this@OptionControlElement.y
-            width = this@OptionControlElement.width * (2 / 3.0)
+            width = this@OptionControlElement.width * (2 / 3.0f)
             adaptHeight = true
             fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
@@ -69,10 +68,10 @@ abstract class OptionControlElement<T>(
 
         if (description == null) {
             "description"<TextField> {
-                x = 0.0
-                y = 0.0
-                width = 0.0
-                height = 0.0
+                x = 0.0f
+                y = 0.0f
+                width = 0.0f
+                height = 0.0f
                 isVisible = false
             }
 
@@ -80,25 +79,25 @@ abstract class OptionControlElement<T>(
         } else {
             val descriptionWidget = "description"<TextField> {
                 x = this@OptionControlElement.x
-                y = nameWidget.y + nameWidget.height + 2.0
-                width = this@OptionControlElement.width * (2 / 3.0)
+                y = nameWidget.y + nameWidget.height + 2.0f
+                width = this@OptionControlElement.width * (2 / 3.0f)
                 adaptHeight = true
                 fontRenderer = font(Typography.SMALLEST)
-                color = DragonflyPalette.background.altered { alphaDouble = 0.4 }
+                color = DragonflyPalette.background.altered { alphaFloat = 0.4f }
                 staticText = description
             }!!.also { it.adaptHeight() }
 
-            height = nameWidget.height + descriptionWidget.height + 2.0
+            height = nameWidget.height + descriptionWidget.height + 2.0f
         }
 
         controlUpdateStructure()
 
         "reset"<Image> {
-            width = 28.0
+            width = 28.0f
             height = width
-            x = this@OptionControlElement.x + this@OptionControlElement.width + 15.0
+            x = this@OptionControlElement.x + this@OptionControlElement.width + 15.0f
             y = this@OptionControlElement.y + this@OptionControlElement.height / 2 - height / 2
-            color = accentNormal.altered { alphaDouble = if (isDirty()) 1.0 else 0.0 }
+            color = accentNormal.altered { alphaFloat = if (isDirty()) 1.0f else 0.0f }
             isVisible = isResettable
             resourceLocation = ResourceLocation("dragonflyres/icons/reset.png")
             clickAction = {
@@ -120,7 +119,7 @@ abstract class OptionControlElement<T>(
             if (dirtyState != dirty) {
                 dirtyState = dirty
                 detachAnimation<MorphAnimation>()
-                morph(30, EaseQuad.IN_OUT, Image::color to accentNormal.altered { alphaDouble = if (dirty) 1.0 else 0.0 })?.start()
+                morph(30, EaseQuad.IN_OUT, Image::color to accentNormal.altered { alphaFloat = if (dirty) 1.0f else 0.0f })?.start()
             }
         }
     }

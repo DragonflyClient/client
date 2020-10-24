@@ -119,6 +119,10 @@ public class Gui
         GlStateManager.disableBlend();
     }
 
+    public static void drawRect(float left, float top, float right, float bottom, int color) {
+        drawRect((double) left, top, right, bottom, color);
+    }
+
     /**
      * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
      * topColor, bottomColor

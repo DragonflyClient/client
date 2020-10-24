@@ -9,16 +9,16 @@ class ColorPreview(
     initializerBlock: (ColorPreview.() -> Unit)? = null
 ) : AssembledWidget<ColorPreview>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(0.0)
-    override var height: Double by property(0.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(0.0F)
+    override var height: Float by property(0.0F)
     override var color: WidgetColor by property(DragonflyPalette.accentNormal)
 
     var containerColor: WidgetColor by property(WidgetColor(0xE5E5E5))
     var backgroundColor: WidgetColor by property(containerColor)
-    var arc: Double by property(3.0)
-    var borderSize: Double by property(4.0)
+    var arc: Float by property(3.0F)
+    var borderSize: Float by property(4.0F)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to RoundedRectangle(),
@@ -41,7 +41,7 @@ class ColorPreview(
             y = this@ColorPreview.y + borderSize
             width = this@ColorPreview.width - 2 * borderSize
             height = this@ColorPreview.height - 2 * borderSize
-            arc = this@ColorPreview.arc / 2.0
+            arc = this@ColorPreview.arc / 2
             color = backgroundColor
         }
 
@@ -50,7 +50,7 @@ class ColorPreview(
             y = this@ColorPreview.y + borderSize
             width = this@ColorPreview.width - 2 * borderSize
             height = this@ColorPreview.height - 2 * borderSize
-            arc = this@ColorPreview.arc / 2.0
+            arc = this@ColorPreview.arc / 2
             color = this@ColorPreview.color
         }
     }

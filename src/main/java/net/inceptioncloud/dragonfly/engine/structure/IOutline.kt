@@ -19,5 +19,5 @@ interface IOutline {
     /**
      * The width (stroke) of the outline.
      */
-    var outlineStroke: Double
+    var outlineStroke: Float
 }

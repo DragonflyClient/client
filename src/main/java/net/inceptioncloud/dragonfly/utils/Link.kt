@@ -10,9 +10,9 @@ package net.inceptioncloud.dragonfly.utils
  * @param url The url which the link links to
  */
 data class Link(
-    val x: Double,
-    val y: Double,
-    val height: Double,
+    val x: Float,
+    val y: Float,
+    val height: Float,
     val text: String,
     val url: String
 )

@@ -13,10 +13,10 @@ class RoundIconButton(
     initializerBlock: (RoundIconButton.() -> Unit)? = null
 ) : AssembledWidget<RoundIconButton>(initializerBlock), IPosition, IDimension {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(60.0)
-    override var height: Double by property(60.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(60.0F)
+    override var height: Float by property(60.0F)
 
     var backgroundColor by property(DragonflyPalette.background)
     var foregroundColor by property(DragonflyPalette.foreground)
@@ -24,8 +24,8 @@ class RoundIconButton(
 
     var icon: ImageResource? by property(null)
 
-    private val outlineWidth = 2.0
-    private val iconMargin = 10.0
+    private val outlineWidth = 2.0f
+    private val iconMargin = 10.0f
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "outline" to FilledCircle(),
@@ -63,8 +63,8 @@ class RoundIconButton(
         "icon"<Image> {
             x = this@RoundIconButton.x + iconMargin
             y = this@RoundIconButton.y + iconMargin
-            width = (this@RoundIconButton.width - iconMargin * 2).coerceAtLeast(0.0)
-            height = (this@RoundIconButton.height - iconMargin * 2).coerceAtLeast(0.0)
+            width = (this@RoundIconButton.width - iconMargin * 2).coerceAtLeast(0.0f)
+            height = (this@RoundIconButton.height - iconMargin * 2).coerceAtLeast(0.0f)
             resourceLocation = icon?.resourceLocation
             dynamicTexture = icon?.dynamicTexture
         }

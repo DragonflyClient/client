@@ -42,7 +42,7 @@ object Toast {
         val next = queue.poll()
 
         next.runStructureUpdate()
-        next.y = ScreenOverlay.dimensions.height - 130.0
+        next.y = ScreenOverlay.dimensions.height - 130.0f
         next.runStructureUpdate()
 
         ScreenOverlay.addComponent("toast", next)
@@ -50,8 +50,8 @@ object Toast {
         next.morph(
             60,
             EaseCubic.IN_OUT,
-            next::y to ScreenOverlay.dimensions.height - 180.0,
-            next::opacity to 1.0
+            next::y to ScreenOverlay.dimensions.height - 180.0f,
+            next::opacity to 1.0f
         )?.start()
 
         return true

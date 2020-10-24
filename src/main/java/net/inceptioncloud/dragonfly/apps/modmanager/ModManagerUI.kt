@@ -16,13 +16,13 @@ class ModManagerUI(previousScreen: GuiScreen) : ControlsUI(previousScreen) {
 
     companion object : OneTimeUILoader(500)
 
-    override val sidebarWidth = 500.0
+    override val sidebarWidth: Float = 500.0f
 
-    override val controlsWidth: Double
-        get() = (width - sidebarWidth - 600.0).coerceIn(1000.0..1500.0)
+    override val controlsWidth: Float
+        get() = (width - sidebarWidth - 600.0f).coerceIn(1000.0f..1500.0f)
 
-    override val controlsX: Double
-        get() = sidebarWidth + (width - sidebarWidth) / 2.0 - controlsWidth / 2.0
+    override val controlsX: Float
+        get() = sidebarWidth + (width - sidebarWidth) / 2 - controlsWidth / 2
 
     override val placeholderImage: ResourceLocation? = ResourceLocation("dragonflyres/vectors/rocket.png")
     override val placeholderText: String? = "Choose a mod in the sidebar to (de-)activate it and customize it's appearance, behavior and much more."

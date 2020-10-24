@@ -18,10 +18,10 @@ class LoginStatusWidget(
     initializerBlock: (LoginStatusWidget.() -> Unit)? = null
 ) : AssembledWidget<LoginStatusWidget>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(200.0)
-    override var height: Double by property(50.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(200.0F)
+    override var height: Float by property(50.0F)
     override var color: WidgetColor by property(DragonflyPalette.foreground)
 
     var fontRenderer: IFontRenderer? by property(null)
@@ -43,7 +43,7 @@ class LoginStatusWidget(
             y = this@LoginStatusWidget.y
             width = this@LoginStatusWidget.width
             height = this@LoginStatusWidget.height
-            arc = 10.0
+            arc = 10.0F
         }
 
         "text"<TextField> {
@@ -51,12 +51,12 @@ class LoginStatusWidget(
             y = this@LoginStatusWidget.y
             width = this@LoginStatusWidget.width
             height = this@LoginStatusWidget.height
-            padding = 5.0
+            padding = 5.0F
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
             fontRenderer = this@LoginStatusWidget.fontRenderer
             dropShadow = true
-            shadowDistance = 1.5
+            shadowDistance = 1.5F
             shadowColor = WidgetColor(0, 0, 0, 50)
         }
 

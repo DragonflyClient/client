@@ -24,10 +24,10 @@ class NumberSlider(
     initializerBlock: (NumberSlider.() -> Unit)? = null
 ): AssembledWidget<NumberSlider>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(200.0)
-    override var height: Double by property(20.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(200.0F)
+    override var height: Float by property(20.0F)
     override var color: WidgetColor by property(DragonflyPalette.foreground)
 
     var min: Double by property(1.0)
@@ -37,7 +37,7 @@ class NumberSlider(
     var formatter: ((String) -> String)? = null
     var liveUpdate: Boolean = false
 
-    private val circleSize = 16.0
+    private val circleSize = 16.0f
 
     private var isDragging = false
 
@@ -51,9 +51,9 @@ class NumberSlider(
     var sliderOuterColor = DragonflyPalette.background
     var textColor = DragonflyPalette.foreground
     var textSize = 40
-    var textWidth = 200.0
+    var textWidth = 200.0f
     var textHeight = height
-    var textYSubtrahend = 0.0
+    var textYSubtrahend = 0.0f
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "slider-background" to RoundedRectangle(),
@@ -69,8 +69,8 @@ class NumberSlider(
             width = this@NumberSlider.width
             height = this@NumberSlider.height
             x = this@NumberSlider.x
-            y = this@NumberSlider.y + (this@NumberSlider.height - height) / 2.0
-            arc = height / 2.0
+            y = this@NumberSlider.y + (this@NumberSlider.height - height) / 2
+            arc = height / 2
             color = lineColor
         }
 
@@ -93,7 +93,7 @@ class NumberSlider(
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = textSize)
             width = textWidth
             height = textHeight
-            x = this@NumberSlider.x + this@NumberSlider.width + 15.0
+            x = this@NumberSlider.x + this@NumberSlider.width + 15.0f
             y = this@NumberSlider.y - textYSubtrahend
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START
@@ -101,10 +101,10 @@ class NumberSlider(
         }
     }
 
-    private fun computeCircleX(): Double {
+    private fun computeCircleX(): Float {
         val room = (max - min)
         val progress = (currentValue.coerceIn(min..max) - min) / room
-        return x + (progress * width) - (circleSize / 2)
+        return (x + (progress * width) - (circleSize / 2)).toFloat()
     }
 
     fun react(newValue: Double) {
@@ -135,10 +135,10 @@ class NumberSlider(
 
         if (isDragging) {
             "slider-foreground"<FilledCircle> {
-                x = GraphicsEngine.getMouseX().coerceIn(this@NumberSlider.x..this@NumberSlider.x + width) - circleSize / 2.0
+                x = GraphicsEngine.getMouseX().coerceIn(this@NumberSlider.x..this@NumberSlider.x + width) - circleSize / 2
             }
             "slider-foreground-inner"<FilledCircle> {
-                x = GraphicsEngine.getMouseX().coerceIn(this@NumberSlider.x..this@NumberSlider.x + width) - circleSize / 2.0 + 2.0
+                x = GraphicsEngine.getMouseX().coerceIn(this@NumberSlider.x..this@NumberSlider.x + width) - circleSize / 2 + 2f
             }
             "current-value"<TextField> {
                 staticText = formatString(calculateMouseValue())

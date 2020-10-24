@@ -32,9 +32,9 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
      */
     protected open val controlsManager = ControlsManager(
         guiScreen = this,
-        originY = 40.0,
-        overflowY = 40.0,
-        margin = 15.0
+        originY = 40.0f,
+        overflowY = 40.0f,
+        margin = 15.0f
     )
 
     /**
@@ -42,11 +42,11 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
      */
     protected open val sidebarManager = SidebarManager(
         guiScreen = this,
-        x = 0.0,
-        y = 0.0,
-        entryHeight = 55.0,
-        entryPadding = 15.0,
-        entryGap = 5.0
+        x = 0.0f,
+        y = 0.0f,
+        entryHeight = 55.0f,
+        entryPadding = 15.0f,
+        entryGap = 5.0f
     ).apply {
         produceEntries(::produceSidebar)
         consumeEntry { id, entry ->
@@ -59,27 +59,27 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
 
     override fun initGui() {
         +Rectangle {
-            x = 0.0
-            y = 0.0
-            width = this@ControlsUI.width.toDouble()
-            height = this@ControlsUI.height.toDouble()
+            x = 0.0f
+            y = 0.0f
+            width = this@ControlsUI.width.toFloat()
+            height = this@ControlsUI.height.toFloat()
             color = DragonflyPalette.foreground.brighter(0.7)
         } id "background-color"
 
         +Image {
-            height = this@ControlsUI.height / 2.0
+            height = this@ControlsUI.height / 2f
             width = height
-            x = controlsX + (controlsWidth / 2.0 - width / 2.0)
-            y = this@ControlsUI.height / 2.5 - height / 2.0
+            x = controlsX + (controlsWidth / 2 - width / 2)
+            y = this@ControlsUI.height / 2.5f - height / 2
             resourceLocation = placeholderImage
             isVisible = placeholderImage != null
         } id "placeholder-image"
 
         +TextField {
-            positionBelow("placeholder-image", 10.0)
-            width = controlsWidth / 2.0
+            positionBelow("placeholder-image", 10.0f)
+            width = controlsWidth / 2
             adaptHeight = true
-            x = controlsX + controlsWidth / 2.0 - width / 2.0
+            x = controlsX + controlsWidth / 2 - width / 2
             staticText = placeholderText ?: ""
             fontRenderer = font(Typography.HEADING_2)
             color = DragonflyPalette.background
@@ -99,7 +99,7 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
         sidebarManager.reset()
         sidebarManager.apply {
             width = sidebarWidth
-            height = this@ControlsUI.height.toDouble()
+            height = this@ControlsUI.height.toFloat()
             entryWidth = sidebarEntryWidth
             reset()
             show()
@@ -156,28 +156,28 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
      * The width of the sidebar. This property has no default value and thus must
      * be implemented by the subclass.
      */
-    abstract val sidebarWidth: Double
+    abstract val sidebarWidth: Float
 
     /**
      * The width of an entry in the sidebar
      */
-    open val sidebarEntryWidth: Double get() = sidebarWidth - 30.0
+    open val sidebarEntryWidth: Float get() = sidebarWidth - 30.0f
 
     /**
      * The x position of the controls
      */
-    open val controlsX: Double get() = sidebarWidth
+    open val controlsX: Float get() = sidebarWidth
 
     /**
      * The width of the controls. If no other widgets are on the screen, this value
      * and the [sidebarWidth] should together fill 100% of the gui width.
      */
-    abstract val controlsWidth: Double
+    abstract val controlsWidth: Float
 
     /**
      * The x position of the scrollbar
      */
-    open val scrollbarX: Double? = null
+    open val scrollbarX: Float? = null
 
     /**
      * An image that is shown when no controls section in the sidebar is selected

@@ -41,7 +41,7 @@ class WidgetStage(val name: String) {
     /**
      * An observable variant of the [content] as a list of pairs.
      */
-    val observableContent: ObservableList<Pair<String, Widget<*>>> = FXCollections.observableArrayList<Pair<String, Widget<*>>>()
+    val observableContent: ObservableList<Pair<String, Widget<*>>> = FXCollections.observableArrayList()
 
     /**
      * Renders all [Widget] objects in the stage.
@@ -154,8 +154,8 @@ class WidgetStage(val name: String) {
     }
 
     //<editor-fold desc="Mouse Events">
-    var mouseX: Double = 0.0
-    var mouseY: Double = 0.0
+    var mouseX: Float = 0.0f
+    var mouseY: Float = 0.0f
 
     /**
      * Called when the mouse was moved.

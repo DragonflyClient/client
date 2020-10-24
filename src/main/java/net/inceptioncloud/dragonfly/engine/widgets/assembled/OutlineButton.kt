@@ -32,15 +32,15 @@ class OutlineButton(
     initializerBlock: (OutlineButton.() -> Unit)? = null
 ) : AssembledWidget<OutlineButton>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(200.0)
-    override var height: Double by property(20.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(200.0F)
+    override var height: Float by property(20.0F)
     override var color: WidgetColor by property(DragonflyPalette.background)
     var hoverColor: WidgetColor? by property(null)
 
     var text: String by property("Button")
-    var outlineStroke: Double by property(2.0)
+    var outlineStroke: Float by property(2.0F)
     var outlineColor: WidgetColor by property(DragonflyPalette.foreground)
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
 
@@ -74,7 +74,7 @@ class OutlineButton(
             color = this@OutlineButton.foregroundColor
             fontRenderer = buttonFontRenderer
             dropShadow = true
-            shadowDistance = 2.0
+            shadowDistance = 2.0f
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
         }

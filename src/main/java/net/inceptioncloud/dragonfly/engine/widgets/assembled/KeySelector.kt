@@ -8,7 +8,6 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
-import net.inceptioncloud.dragonfly.engine.structure.IAlign
 import net.inceptioncloud.dragonfly.engine.structure.IColor
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
@@ -32,22 +31,20 @@ val TEXT_COLOR
  */
 class KeySelector(
     initializerBlock: (KeySelector.() -> Unit)? = null
-) : AssembledWidget<KeySelector>(initializerBlock), IPosition, IDimension, IAlign, IColor {
+) : AssembledWidget<KeySelector>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(100.0)
-    override var height: Double by property(20.0)
-    override var horizontalAlignment: Alignment by property(Alignment.START)
-    override var verticalAlignment: Alignment by property(Alignment.START)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(100.0F)
+    override var height: Float by property(20.0F)
 
     override var color: WidgetColor by property(DragonflyPalette.accentNormal)
     var backgroundColor: WidgetColor by property(DragonflyPalette.background)
     var foregroundColor: WidgetColor by property(DragonflyPalette.foreground)
-    var labelScaleFactor: Double by property(0.5)
+    var labelScaleFactor: Float by property(0.5F)
 
     var fontRenderer: IFontRenderer? by property(null)
-    var padding: Double by property(2.0)
+    var padding: Float by property(2.0F)
 
     var blockedKeys = listOf<Int>()
     var exitKeys = listOf<Int>()
@@ -115,16 +112,10 @@ class KeySelector(
     /** The time in milliseconds the cursor has moved lately */
     private var timeCursorMoved = 0L
 
-    private val labelHeight: Double
+    private val labelHeight: Float
         get() = (fontRenderer?.height ?: 0) + padding * 2
-    private val labelY: Double
-        get() = y + (height - labelHeight) / 2.0
-
-    init {
-        val (alignedX, alignedY) = align(x, y, width, height)
-        this.x = alignedX
-        this.y = alignedY
-    }
+    private val labelY: Float
+        get() = y + (height - labelHeight) / 2.0F
 
     /**
      * Called whenever the [isFocused] property changes.
@@ -179,7 +170,7 @@ class KeySelector(
             it.y = y
             it.width = width
             it.height = height
-            it.arc = width / 100.0
+            it.arc = width / 100.0F
             it.color = backgroundColor
         }
 
@@ -196,9 +187,9 @@ class KeySelector(
             it.fontRenderer = fontRenderer
             it.color = foregroundColor
             it.width = width
-            it.height = height - height / 5.0
+            it.height = height - height / 5.0F
             it.x = x
-            it.y = y + height / (if (isPassword) 3.0 else 5.0)
+            it.y = y + height / (if (isPassword) 3.0F else 5.0F)
             it.padding = padding
             it.textAlignVertical = Alignment.CENTER
         }
@@ -214,10 +205,10 @@ class KeySelector(
             it.padding = padding
 
             // apply label preferences
-            it.scaleFactor = if (isLabelRaised) labelScaleFactor else 1.0
+            it.scaleFactor = if (isLabelRaised) labelScaleFactor else 1.0F
             it.x = x
             it.y = if (isLabelRaised) y + padding * labelScaleFactor else labelY
-            it.height = if (isLabelRaised) height / 2.5 else labelHeight
+            it.height = if (isLabelRaised) height / 2.5F else labelHeight
             it.color = if (isFocused && isLabelRaised) color else if (isLabelRaised) {
                 unfocusedLabelLiftedColor
             } else {
@@ -227,14 +218,14 @@ class KeySelector(
 
         val bottomLine = (structure["bottom-line"] as Rectangle).also {
             it.width = width
-            it.height = height / 20.0
+            it.height = height / 20.0F
             it.x = x
             it.y = y + height - it.height
             it.color = lineColor
         }
 
         (structure["bottom-line-overlay"] as Rectangle).also {
-            it.width = 0.0
+            it.width = 0.0F
             it.height = bottomLine.height
             it.x = bottomLine.x
             it.y = bottomLine.y
@@ -242,9 +233,9 @@ class KeySelector(
         }
 
         (structure["cursor"] as Rectangle).also {
-            it.height = inputText.fontRenderer?.height?.toDouble() ?: 0.0
-            it.width = height / 33.3
-            it.color = color.altered { alphaDouble = 0.0 }
+            it.height = inputText.fontRenderer?.height?.toFloat() ?: 0.0F
+            it.width = height / 33.3F
+            it.color = color.altered { alphaFloat = 0.0F }
             it.y = y + height - it.height - bottomLine.height - 1
         }
     }
@@ -268,11 +259,11 @@ class KeySelector(
         val cursorNotAtEnd = cursorPosition < inputText.length || inputText.length >= maxStringLength
         var cursorX = x1 + padding
         val closedRange = 0..visibleText.length
-        val selectionWidth: Double = fontRenderer?.getStringWidth(
+        val selectionWidth: Float = fontRenderer?.getStringWidth(
             visibleText.substring(
                 cursorPos.coerceAtMost(end).coerceIn(closedRange), end.coerceAtLeast(cursorPos).coerceIn(closedRange)
             )
-        )?.toDouble() ?: 0.0
+        )?.toFloat() ?: 0.0F
 
         if (!cursorInBounds) {
             cursorX = if (cursorPos > 0) x + width else x
@@ -280,7 +271,7 @@ class KeySelector(
             --x1
         }
 
-        cursorX += 0.5
+        cursorX += 0.5F
 
         val cursor = (structure["cursor"] as Rectangle)
         val destinationCursorX = cursor.findAnimation<MorphAnimation>()?.updates?.find { it.first == cursor::x }?.second
@@ -309,7 +300,7 @@ class KeySelector(
             it.height = cursor.height
             it.x = if (selectionEnd < cursorPos + lineScrollOffset) cursorX - it.width else cursorX
             it.y = cursor.y
-            it.color = color.clone().apply { alphaDouble = 0.5 }
+            it.color = color.clone().apply { alphaFloat = 0.5F }
             it.isVisible = end != cursorPos
         }
 
@@ -505,4 +496,4 @@ class KeySelector(
     private fun getNthWordFromCursor(n: Int): Int = getNthWordFromPos(n, cursorPosition)
 }
 
-private fun Double.diff(other: Double): Double = this.coerceAtLeast(other) - other.coerceAtMost(this)
+private fun Float.diff(other: Float): Float = this.coerceAtLeast(other) - other.coerceAtMost(this)

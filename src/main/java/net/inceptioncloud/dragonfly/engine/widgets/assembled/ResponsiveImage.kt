@@ -26,14 +26,14 @@ class ResponsiveImage(
     initializerBlock: (ResponsiveImage.() -> Unit)? = null
 ) : AssembledWidget<ResponsiveImage>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(50.0)
-    override var height: Double by property(50.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(50.0F)
+    override var height: Float by property(50.0F)
     override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
-    var originalWidth: Double by property(width)
-    var originalHeight: Double by property(width)
+    var originalWidth: Float by property(width)
+    var originalHeight: Float by property(width)
     var resourceLocation: ResourceLocation? by property(null)
     var dynamicTexture: DynamicTexture? by property(null)
 

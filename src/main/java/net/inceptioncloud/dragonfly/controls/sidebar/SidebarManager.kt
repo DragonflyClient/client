@@ -38,14 +38,14 @@ typealias EntryConsumer = (id: String?, entry: SidebarEntry?) -> Unit
  */
 class SidebarManager(
     val guiScreen: GuiScreen,
-    var x: Double = 0.0,
-    var y: Double = 0.0,
-    var width: Double = 0.0,
-    var height: Double = 0.0,
-    var entryHeight: Double = 0.0,
-    var entryWidth: Double = 0.0,
-    var entryPadding: Double = 0.0,
-    var entryGap: Double = 0.0
+    var x: Float = 0.0f,
+    var y: Float = 0.0f,
+    var width: Float = 0.0f,
+    var height: Float = 0.0f,
+    var entryHeight: Float = 0.0f,
+    var entryWidth: Float = 0.0f,
+    var entryPadding: Float = 0.0f,
+    var entryGap: Float = 0.0f
 ) {
     /**
      * Produces the entries for this sidebar
@@ -120,7 +120,7 @@ class SidebarManager(
                 sidebarManager = this@SidebarManager
                 width = entryWidth
                 height = entryHeight
-                x = this@SidebarManager.x + (this@SidebarManager.width / 2.0) - (width / 2.0)
+                x = this@SidebarManager.x + (this@SidebarManager.width / 2.0f) - (width / 2.0f)
                 y = currentY
                 color = if (this@SidebarManager.selected == id) accentNormal else background
                 attachTo(scrollbar)
@@ -133,7 +133,7 @@ class SidebarManager(
         entries = producedEntries.toMutableList()
 
         stage.add("sidebar-scrollbar" to scrollbar.prepareWidget().apply {
-            width = 5.0
+            width = 5.0f
             x = this@SidebarManager.x + this@SidebarManager.width - width
             y = this@SidebarManager.y
         })

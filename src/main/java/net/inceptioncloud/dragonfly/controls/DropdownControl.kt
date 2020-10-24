@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.controls
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
@@ -38,16 +37,16 @@ class DropdownElement(
 
     val allValues: List<Enum<*>> = optionKey.typeClass.enumConstants.toList()
 
-    private val padding = 10.0
+    private val padding = 10.0f
     private val fontRenderer = font(Typography.BASE)
 
     private val containerWidth by lazy {
-        allValues.map { fontRenderer.getStringWidth(it.toPrettyString()) }.max()!!.coerceIn(100..controlWidth.toInt()) + padding * 2 + 50.0
+        allValues.map { fontRenderer.getStringWidth(it.toPrettyString()) }.max()!!.coerceIn(100..controlWidth.toInt()) + padding * 2 + 50.0f
     }
-    private val containerHeight = 40.0
+    private val containerHeight = 40.0f
     private val containerX by lazy { x + width - containerWidth }
-    private val containerY: Double
-        get() = y + (height - containerHeight) / 2.0
+    private val containerY: Float
+        get() = y + (height - containerHeight) / 2
 
     private var isExpanded = false
     private var isInProgress = false
@@ -69,7 +68,7 @@ class DropdownElement(
     }
 
     override fun controlUpdateStructure() {
-        val iconSize = 20.0
+        val iconSize = 20F
         height = height.coerceAtLeast(containerHeight)
         isExpanded = false
         isInProgress = false
@@ -81,7 +80,7 @@ class DropdownElement(
             width = containerWidth
             height = containerHeight
             color = DragonflyPalette.accentNormal
-            arc = 5.0
+            arc = 5F
             clickAction = {
                 if (!isExpanded) expand()
             }
@@ -90,7 +89,7 @@ class DropdownElement(
         "selected"<TextField> {
             x = containerX + this@DropdownElement.padding
             y = containerY
-            width = containerWidth - padding * 2 - 50.0
+            width = containerWidth - padding * 2 - 50F
             height = containerHeight
             staticText = optionKey.get().toPrettyString()
             color = DragonflyPalette.foreground
@@ -102,14 +101,14 @@ class DropdownElement(
             width = iconSize
             height = iconSize
             x = containerX + containerWidth - padding - width
-            y = containerY + (containerHeight - height) / 2.0
+            y = containerY + (containerHeight - height) / 2
             resourceLocation = ResourceLocation("dragonflyres/icons/expand.png")
             color = DragonflyPalette.foreground
         }
 
         // expanded container
-        val originY = containerY + containerHeight - 5.0
-        val separatorHeight = 2.0
+        val originY = containerY + containerHeight - 5F
+        val separatorHeight = 2F
 
         "expanded::container"<RoundedRectangle> {
             x = containerX
@@ -117,7 +116,7 @@ class DropdownElement(
             width = containerWidth
             height = (containerHeight * allValues.size) + (separatorHeight * (allValues.size - 1))
             color = WidgetColor(230, 230, 230, 0)
-            arc = 5.0
+            arc = 5F
         }
 
         for ((index, value) in allValues.withIndex()) {
@@ -126,7 +125,7 @@ class DropdownElement(
                 y = originY + (containerHeight * index) + (separatorHeight * index)
                 height = containerHeight
                 width = containerWidth - this@DropdownElement.padding
-                color = DragonflyPalette.background.altered { alphaDouble = 0.0 }
+                color = DragonflyPalette.background.altered { alphaFloat = 0F }
                 staticText = value.toPrettyString()
                 textAlignVertical = Alignment.CENTER
                 fontRenderer = this@DropdownElement.fontRenderer
@@ -186,8 +185,8 @@ class DropdownElement(
                 it.detachAnimation<MorphAnimation>()
                 it.morph(
                     30, EaseQuart.OUT,
-                    IColor::color to it.color.altered { alphaDouble = 1.0 },
-                    IPosition::y to it.y + 20.0
+                    IColor::color to it.color.altered { alphaFloat = 1F },
+                    IPosition::y to it.y + 20F
                 )?.post { _, _ -> isInProgress = false }?.start()
             }
     }
@@ -203,14 +202,14 @@ class DropdownElement(
                 it as IColor
                 it as IPosition
 
-                val targetColor = if (it is TextField) DragonflyPalette.background.altered { alphaDouble = 0.0 }
-                else it.color.altered { alphaDouble = 0.0 }
+                val targetColor = if (it is TextField) DragonflyPalette.background.altered { alphaFloat = 0F }
+                else it.color.altered { alphaFloat = 0F }
 
                 it.detachAnimation<MorphAnimation>()
                 it.morph(
                     30, EaseQuart.IN,
                     IColor::color to targetColor,
-                    IPosition::y to it.y - 20.0
+                    IPosition::y to it.y - 20F
                 )?.post { _, _ ->
                     isInProgress = false
                     stagePriority = 0

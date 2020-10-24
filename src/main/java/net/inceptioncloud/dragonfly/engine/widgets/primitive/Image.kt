@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.engine.widgets.primitive
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine.popScale
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine.pushScale
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morphBetween
-import net.inceptioncloud.dragonfly.engine.contains
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseCubic
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -33,13 +32,13 @@ class Image(
     initializerBlock: (Image.() -> Unit)? = null
 ) : AssembledWidget<Image>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(50.0)
-    override var height: Double by property(50.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(50.0F)
+    override var height: Float by property(50.0F)
     override var color: WidgetColor by property(WidgetColor.DEFAULT)
 
-    var scale: Double by property(1.0)
+    var scale: Float by property(1.0F)
     var dynamicTexture: DynamicTexture? by property(null)
     var resourceLocation: ResourceLocation? by property(null)
 
@@ -49,7 +48,7 @@ class Image(
 
     override fun updateStructure() {
         updateWidget<RoundedRectangle>("placeholder") {
-            arc = 3.0
+            arc = 3.0f
             x = this@Image.x
             y = this@Image.y
             width = this@Image.width
@@ -84,7 +83,7 @@ class Image(
             pushScale(scale)
             drawModalRectWithCustomSizedTexture(
                 (x / scale).toInt(), (y / scale).toInt(), 0f, 0f,
-                (width / scale).toInt(), (height / scale).toInt(), (width / scale).toFloat(), (height / scale).toFloat()
+                (width / scale).toInt(), (height / scale).toInt(), (width / scale), (height / scale)
             )
             popScale()
 

@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.ui.taskbar.widget
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
@@ -35,24 +34,24 @@ class TaskbarAppWidget(
     initializerBlock: (TaskbarAppWidget.() -> Unit)? = null
 ) : AssembledWidget<TaskbarAppWidget>(initializerBlock), IPosition, IDimension {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(200.0)
-    override var height: Double by property(20.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(200.0F)
+    override var height: Float by property(20.0F)
 
     var backgroundColor: WidgetColor by property(DragonflyPalette.background)
 
-    var originX by Delegates.notNull<Double>()
-    var originY by Delegates.notNull<Double>()
-    var originWidth by Delegates.notNull<Double>()
-    var originHeight by Delegates.notNull<Double>()
+    var originX by Delegates.notNull<Float>()
+    var originY by Delegates.notNull<Float>()
+    var originWidth by Delegates.notNull<Float>()
+    var originHeight by Delegates.notNull<Float>()
 
     var isPressed: Boolean = false
-    val pressGrow = 8.0
-    val hoverGrow = 6.0
+    val pressGrow = 8.0f
+    val hoverGrow = 6.0f
 
-    val shadowOffset = 2.0
-    val iconMargin = 6.0
+    val shadowOffset = 2.0f
+    val iconMargin = 6.0f
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "shadow" to FilledCircle(),
@@ -66,7 +65,7 @@ class TaskbarAppWidget(
             x = this@TaskbarAppWidget.x - shadowOffset
             y = this@TaskbarAppWidget.y - shadowOffset
             size = this@TaskbarAppWidget.width + shadowOffset * 2
-            color = backgroundColor.altered { alphaDouble = 0.9 }
+            color = backgroundColor.altered { alphaFloat = 0.9f }
             smooth = true
             isVisible = width > 0.0
         }
@@ -82,18 +81,18 @@ class TaskbarAppWidget(
         "icon"<Image> {
             x = this@TaskbarAppWidget.x + iconMargin
             y = this@TaskbarAppWidget.y + iconMargin
-            width = (this@TaskbarAppWidget.width - iconMargin * 2).coerceAtLeast(0.0)
-            height = (this@TaskbarAppWidget.height - iconMargin * 2).coerceAtLeast(0.0)
+            width = (this@TaskbarAppWidget.width - iconMargin * 2).coerceAtLeast(0.0f)
+            height = (this@TaskbarAppWidget.height - iconMargin * 2).coerceAtLeast(0.0f)
             resourceLocation = app.resourceLocation
         }
 
         "tooltip"<TooltipWidget> {
             text = app.name
             x = this@TaskbarAppWidget.originX + this@TaskbarAppWidget.originWidth / 2
-            y = this@TaskbarAppWidget.originY - 50.0
+            y = this@TaskbarAppWidget.originY - 50.0f
             fontRenderer = font(Typography.SMALL)
-            padding = 3.0
-            arc = 7.0
+            padding = 3.0f
+            arc = 7.0f
         }
     }
 

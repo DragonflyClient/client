@@ -20,10 +20,10 @@ class SocialMediaPreview(
     initializerBlock: (SocialMediaPreview.() -> Unit)? = null
 ) : AssembledWidget<SocialMediaPreview>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(0.0)
-    override var height: Double by property(0.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(0.0F)
+    override var height: Float by property(0.0F)
     override var color: WidgetColor by property(DragonflyPalette.background)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -42,10 +42,10 @@ class SocialMediaPreview(
         }
 
         "text"<TextField> {
-            x = this@SocialMediaPreview.x + this@SocialMediaPreview.height + 10.0
-            y = this@SocialMediaPreview.y - 2.0
-            width = this@SocialMediaPreview.width - this@SocialMediaPreview.height - 10.0
-            height = this@SocialMediaPreview.height - 2.0
+            x = this@SocialMediaPreview.x + this@SocialMediaPreview.height + 10.0f
+            y = this@SocialMediaPreview.y - 2.0f
+            width = this@SocialMediaPreview.width - this@SocialMediaPreview.height - 10.0f
+            height = this@SocialMediaPreview.height - 2.0f
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt())
             textAlignVertical = Alignment.CENTER
             staticText = text

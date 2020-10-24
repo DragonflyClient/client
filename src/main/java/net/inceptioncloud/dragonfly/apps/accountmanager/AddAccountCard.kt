@@ -10,7 +10,6 @@ import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
-import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.minecraft.util.ResourceLocation
 
@@ -18,14 +17,14 @@ class AddAccountCard(
     initializerBlock: (AddAccountCard.() -> Unit)? = null
 ) : AssembledWidget<AddAccountCard>(initializerBlock), IPosition, IDimension {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double = -1.0
-    override var height: Double by property(450.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float = -1.0f
+    override var height: Float by property(450.0F)
 
     val accentColor: WidgetColor = DragonflyPalette.foreground
 
-    var opacity: Double by property(0.2)
+    var opacity: Float by property(0.2F)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "container" to Rectangle(),
@@ -40,17 +39,17 @@ class AddAccountCard(
             y = this@AddAccountCard.y
             width = this@AddAccountCard.width
             height = this@AddAccountCard.height
-            color = accentColor.altered { alphaDouble = opacity }
+            color = accentColor.altered { alphaFloat = opacity }
             outlineColor = accentColor
-            outlineStroke = 2.0
+            outlineStroke = 2.0f
         }
 
         "icon"<Image> {
             resourceLocation = ResourceLocation("dragonflyres/icons/add.png")
-            width = 90.0
-            height = 90.0
-            x = this@AddAccountCard.x + this@AddAccountCard.width / 2.0 - width / 2.0
-            y = this@AddAccountCard.y + this@AddAccountCard.height / 2.0 - height / 2.0
+            width = 90.0f
+            height = 90.0f
+            x = this@AddAccountCard.x + this@AddAccountCard.width / 2 - width / 2
+            y = this@AddAccountCard.y + this@AddAccountCard.height / 2 - height / 2
         }
     }
 

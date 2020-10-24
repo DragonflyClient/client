@@ -14,13 +14,13 @@ class RoundToggleButton(
     initializerBlock: (RoundToggleButton.() -> Unit)? = null
 ) : AssembledWidget<RoundToggleButton>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double by property(200.0)
-    override var height: Double by property(20.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float by property(200.0F)
+    override var height: Float by property(20.0F)
     override var color: WidgetColor by property(DragonflyPalette.background)
 
-    var arc: Double by property(3.0)
+    var arc: Float by property(3.0F)
 
     var text: String by property("Button")
     var textSize: Int by property(30)
@@ -52,9 +52,9 @@ class RoundToggleButton(
 
         "text"<TextField> {
             x = this@RoundToggleButton.x
-            y = this@RoundToggleButton.y - 1.0
+            y = this@RoundToggleButton.y - 1.0f
             width = this@RoundToggleButton.width
-            height = this@RoundToggleButton.height - 1.0
+            height = this@RoundToggleButton.height - 1.0f
             staticText = this@RoundToggleButton.text
             color = statefulTextColor()
             fontRenderer = buttonFontRenderer

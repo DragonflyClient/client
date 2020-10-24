@@ -10,9 +10,9 @@ class EngineTestUI : GuiScreen() {
         Keyboard.enableRepeatEvents(true)
 
         +TextField {
-            x = 50.0
-            y = 50.0
-            width = 185.0
+            x = 50.0f
+            y = 50.0f
+            width = 185.0f
             staticText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore " +
                     "magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, " +
                     "no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" +
@@ -22,7 +22,7 @@ class EngineTestUI : GuiScreen() {
         } id "test"
 
         GraphicsEngine.runAfter(10_000) {
-            getWidget<TextField>("test")!!.x = 100.0
+            getWidget<TextField>("test")!!.x = 100.0f
         }
     }
 

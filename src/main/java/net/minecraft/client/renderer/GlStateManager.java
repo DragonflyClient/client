@@ -465,6 +465,10 @@ public class GlStateManager
         GL11.glScalef(x, y, z);
     }
 
+    public static void scale(float factor) {
+        scale(factor, factor, factor);
+    }
+
     public static void scale (double x, double y, double z)
     {
         GL11.glScaled(x, y, z);

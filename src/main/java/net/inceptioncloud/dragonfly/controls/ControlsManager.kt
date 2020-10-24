@@ -15,12 +15,12 @@ import net.minecraft.client.gui.GuiScreen
  */
 class ControlsManager(
     val guiScreen: GuiScreen,
-    var originX: Double = 0.0,
-    var originY: Double = 0.0,
-    var overflowY: Double = 0.0,
-    var width: Double = 0.0,
-    var margin: Double = 0.0,
-    var scrollbarX: Double? = null
+    var originX: Float = 0.0f,
+    var originY: Float = 0.0f,
+    var overflowY: Float = 0.0f,
+    var width: Float = 0.0f,
+    var margin: Float = 0.0f,
+    var scrollbarX: Float? = null
 ) {
     /**
      * Scrollbar to which the controls are attached.
@@ -61,9 +61,9 @@ class ControlsManager(
         }
 
         stage.add("scrollbar" to scrollbar.prepareWidget().apply {
-            width = 7.0
-            x = (scrollbarX ?: guiScreen.width.toDouble()) - width
-            y = 0.0
+            width = 7.0f
+            x = (scrollbarX ?: guiScreen.width.toFloat()) - width
+            y = 0.0f
         })
     }
 

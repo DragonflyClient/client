@@ -26,12 +26,12 @@ import net.inceptioncloud.dragonfly.engine.font.font
  */
 class LoginModal(
     val isAutomaticallyOpening: Boolean
-) : ModalWidget("Login", 400.0, 550.0) {
+) : ModalWidget("Login", 400.0F, 550.0F) {
 
     /**
      * The padding of the container box.
      */
-    val padding = 35.0
+    val padding = 35.0F
 
     /**
      * Whether the modal window is currently in the authentication process. If this value is true,
@@ -61,22 +61,22 @@ class LoginModal(
             width = this@LoginModal.width
             height = this@LoginModal.height
             color = DragonflyPalette.background
-            arc = 10.0
+            arc = 10.0F
         }
 
         val image = "image"<Image> {
-            width = 100.0
+            width = 100.0F
             height = width
             x = this@LoginModal.x + (this@LoginModal.width - width) / 2
-            y = this@LoginModal.y + 25.0
+            y = this@LoginModal.y + 25.0F
             resourceLocation = ResourceLocation("dragonflyres/logos/default.png")
         }!!
 
         val title = "title"<TextField> {
             x = this@LoginModal.x
-            y = image.y + image.height + 10.0
+            y = image.y + image.height + 10.0F
             width = this@LoginModal.width
-            height = 60.0
+            height = 60.0F
             fontRenderer = font(Typography.HEADING_2)
             staticText = "Dragonfly Login"
             textAlignHorizontal = Alignment.CENTER
@@ -85,18 +85,18 @@ class LoginModal(
 
         val username = "username-field"<InputTextField> {
             x = this@LoginModal.x + this@LoginModal.padding
-            y = title.y + title.height + 20.0
+            y = title.y + title.height + 20.0F
             width = this@LoginModal.width - 2 * this@LoginModal.padding
-            height = 50.0
+            height = 50.0F
             label = "Username"
             fontRenderer = font(Typography.BASE)
         }!!
 
         val password = "password-field"<InputTextField> {
             x = this@LoginModal.x + this@LoginModal.padding
-            y = username.y + username.height + 10.0
+            y = username.y + username.height + 10.0F
             width = this@LoginModal.width - 2 * this@LoginModal.padding
-            height = 50.0
+            height = 50.0F
             label = "Password"
             fontRenderer = font(Typography.BASE)
             isPassword = true
@@ -104,9 +104,9 @@ class LoginModal(
 
         val login = "login-button"<OutlineButton> {
             x = this@LoginModal.x + this@LoginModal.padding
-            y = password.y + password.height + 40.0
+            y = password.y + password.height + 40.0F
             width = this@LoginModal.width - (padding * 2)
-            height = 40.0
+            height = 40.0F
             text = "Login"
             color = DragonflyPalette.accentNormal
             onClick {
@@ -116,9 +116,9 @@ class LoginModal(
 
         val register = "register-button"<OutlineButton> {
             x = this@LoginModal.x + this@LoginModal.padding
-            y = login.y + login.height + 20.0
+            y = login.y + login.height + 20.0F
             width = this@LoginModal.width - (padding * 2)
-            height = 40.0
+            height = 40.0F
             text = "Register"
             onClick {
                 GuiScreen.openWebLink(URL("https://playdragonfly.net/register").toURI())
@@ -128,9 +128,9 @@ class LoginModal(
         "skip-text"<TextField> {
             if (isAutomaticallyOpening) {
                 x = this@LoginModal.x
-                y = register.y + register.height + 25.0
+                y = register.y + register.height + 25.0F
                 width = this@LoginModal.width
-                height = 40.0
+                height = 40.0F
                 color = DragonflyPalette.background.brighter(0.5)
                 fontRenderer = font(Typography.SMALL)
                 staticText = "Don't ask again"

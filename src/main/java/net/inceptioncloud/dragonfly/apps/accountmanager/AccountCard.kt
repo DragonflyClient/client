@@ -30,10 +30,10 @@ class AccountCard(
     initializerBlock: (AccountCard.() -> Unit)? = null
 ) : AssembledWidget<AccountCard>(initializerBlock), IPosition, IDimension {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double = -1.0
-    override var height: Double by property(450.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float = -1.0f
+    override var height: Float by property(450.0F)
 
     var isSelected: Boolean by property(false)
     var isExpired: Boolean by property(false)
@@ -63,36 +63,36 @@ class AccountCard(
             y = this@AccountCard.y
             width = this@AccountCard.width
             height = this@AccountCard.height
-            color = accentColor.altered { alphaDouble = 0.2 }
+            color = accentColor.altered { alphaFloat = 0.2f }
             outlineColor = accentColor
-            outlineStroke = 2.0
+            outlineStroke = 2.0f
         }
 
         "expired-icon"<Image> {
             if (isExpired) {
                 isVisible = true
 
-                width = 40.0
-                height = 40.0
-                x = this@AccountCard.x + this@AccountCard.width - width / 2.0
-                y = this@AccountCard.y - height / 2.0
+                width = 40.0f
+                height = 40.0f
+                x = this@AccountCard.x + this@AccountCard.width - width / 2.0f
+                y = this@AccountCard.y - height / 2.0f
                 resourceLocation = ResourceLocation("dragonflyres/icons/expired.png")
             } else isVisible = false
         }
 
         val skull = "skull"<Image> {
-            width = 100.0
-            height = 100.0
-            x = this@AccountCard.x + (this@AccountCard.width - width) / 2.0
-            y = this@AccountCard.y + 30.0
+            width = 100.0f
+            height = 100.0f
+            x = this@AccountCard.x + (this@AccountCard.width - width) / 2.0f
+            y = this@AccountCard.y + 30.0f
             resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/steve-skull.png")
         }!!
 
         "skull-shadow"<Rectangle> {
             width = skull.width
             height = skull.height
-            x = skull.x + 2.0
-            y = skull.y + 2.0
+            x = skull.x + 2.0f
+            y = skull.y + 2.0f
             color = WidgetColor(0, 0, 0, 50)
         }
 
@@ -100,7 +100,7 @@ class AccountCard(
             Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 60)
 
             x = this@AccountCard.x
-            y = skull.y + skull.height + 20.0
+            y = skull.y + skull.height + 20.0f
             width = this@AccountCard.width
             adaptHeight = true
             staticText = account.displayName
@@ -112,7 +112,7 @@ class AccountCard(
             Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 35)
 
             x = this@AccountCard.x
-            y = name.y + name.height + 7.0
+            y = name.y + name.height + 7.0f
             width = this@AccountCard.width
             adaptHeight = true
             staticText = censorEmail(account.email)
@@ -120,12 +120,12 @@ class AccountCard(
             dropShadow = true
         }!!.also { it.adaptHeight() }
 
-        val buttonMargin = 10.0
+        val buttonMargin = 10.0f
         val mc = Minecraft.getMinecraft()
 
         val secondaryButton = "secondary-button"<OutlineButton> {
             width = this@AccountCard.width - buttonMargin * 2
-            height = 45.0
+            height = 45.0f
             x = this@AccountCard.x + buttonMargin
             y = this@AccountCard.y + this@AccountCard.height - buttonMargin - height
 
@@ -175,7 +175,7 @@ class AccountCard(
 
         "primary-button"<OutlineButton> {
             width = this@AccountCard.width - buttonMargin * 2
-            height = 45.0
+            height = 45.0f
             x = this@AccountCard.x + buttonMargin
             y = secondaryButton.y - height - buttonMargin
             text = "Logout"
@@ -213,9 +213,9 @@ class AccountCard(
         /**
          * Calculates the with of the [AccountCard] based on the [name] of the account.
          */
-        fun getCardWidth(name: String): Double {
+        fun getCardWidth(name: String): Float {
             val fontRenderer = font(Typography.HEADING_2)
-            return (fontRenderer.getStringWidth(name) + 20.0).coerceAtLeast(250.0)
+            return (fontRenderer.getStringWidth(name) + 20.0f).coerceAtLeast(250.0f)
         }
 
         /**

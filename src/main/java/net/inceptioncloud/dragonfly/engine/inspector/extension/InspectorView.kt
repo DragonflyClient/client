@@ -179,7 +179,6 @@ class InspectorView : View("Dragonfly Inspector") {
                         forSupertype(widget, ISize::class).addTo(displayedProperties)
                         forSupertype(widget, IColor::class).addTo(displayedProperties)
                         forSupertype(widget, IOutline::class).addTo(displayedProperties)
-                        forSupertype(widget, IAlign::class).addTo(displayedProperties)
                         forSupertype(widget, Widget::class).addTo(displayedProperties)
 
                         val customProperties = widget::class.memberProperties

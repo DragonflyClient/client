@@ -74,10 +74,10 @@ class DragonflySettingsUI(private val previousScreen: GuiScreen) : GuiScreen() {
     override fun initGui() {
         +Image {
             resourceLocation = ResourceLocation("dragonflyres/icons/info.png")
-            x = 0.0
-            y = 0.0
-            width = 14.0
-            height = 14.0
+            x = 0.0f
+            y = 0.0f
+            width = 14.0f
+            height = 14.0f
             color = WidgetColor(255, 255, 255, 0)
         } id "help-icon"
 
@@ -107,8 +107,8 @@ class DragonflySettingsUI(private val previousScreen: GuiScreen) : GuiScreen() {
                 if (helpAttachedEntry != null) {
                     getWidget<Image>("help-icon")?.apply {
                         isVisible = true
-                        x = helpAttachedEntry!!.x - 19.0
-                        y = helpAttachedEntry!!.y + 3.0
+                        x = helpAttachedEntry!!.x - 19.0f
+                        y = helpAttachedEntry!!.y + 3.0f
                     }
                 }
             }
@@ -166,20 +166,18 @@ class DragonflySettingsUI(private val previousScreen: GuiScreen) : GuiScreen() {
             helpAttachedEntry = newFocusedEntry
             if (helpIcon?.color?.alpha != 255) {
                 helpIcon?.run {
-                    x = focusedEntry!!.x - 19.0
-                    y = focusedEntry!!.y + 3.0
+                    x = focusedEntry!!.x - 19.0f
+                    y = focusedEntry!!.y + 3.0f
                     morph(
-                        50,
-                        null,
+                        50, null,
                         ::color to WidgetColor(255, 255, 255, 255)
                     )?.start()
                 }
             } else {
                 helpIcon.morph(
-                    25,
-                    null,
-                    helpIcon::x to focusedEntry!!.x - 19.0,
-                    helpIcon::y to focusedEntry!!.y + 3.0
+                    25, null,
+                    helpIcon::x to focusedEntry!!.x - 19.0f,
+                    helpIcon::y to focusedEntry!!.y + 3.0f
                 )?.start()
             }
         }

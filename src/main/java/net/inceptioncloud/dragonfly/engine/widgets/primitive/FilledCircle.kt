@@ -13,22 +13,14 @@ import kotlin.math.sin
  */
 class FilledCircle(
     initializerBlock: (FilledCircle.() -> Unit)? = null
-) : Widget<FilledCircle>(initializerBlock), IPosition, IColor, IAlign, ISize {
+) : Widget<FilledCircle>(initializerBlock), IPosition, IColor, ISize {
 
-    override var x by property(0.0)
-    override var y by property(0.0)
-    override var size: Double by property(50.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var size: Float by property(50.0F)
     override var color: WidgetColor by property(WidgetColor.DEFAULT)
-    override var horizontalAlignment: Alignment by property(Alignment.START)
-    override var verticalAlignment: Alignment by property(Alignment.START)
 
     var smooth: Boolean by property(false)
-
-    init {
-        val (alignedX, alignedY) = align(x, y, size, size)
-        this.x = alignedX
-        this.y = alignedY
-    }
 
     override fun render() {
         color.glBindColor()
@@ -50,7 +42,7 @@ class FilledCircle(
         for (i in 0 until sections) {
             circleX = (radius * sin(i * angle)).toFloat()
             circleY = (radius * cos(i * angle)).toFloat()
-            glVertex2d(x + circleX + radius, y + circleY + radius)
+            glVertex2f(x + circleX + radius, y + circleY + radius)
         }
 
         glEnd()

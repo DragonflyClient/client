@@ -487,13 +487,13 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
         this.mc = mc
 
         if (customScaleFactor != null) {
-            this.scaleFactor = customScaleFactor!!
+            this.scaleFactor = customScaleFactor!!.toFloat()
             this.width = (mc.displayWidth / scaleFactor).toInt()
             this.height = (mc.displayHeight / scaleFactor).toInt()
         } else {
             this.width = width
             this.height = height
-            this.scaleFactor = ScaledResolution(mc).scaleFactor.toDouble()
+            this.scaleFactor = ScaledResolution(mc).scaleFactor.toFloat()
         }
 
         itemRender = mc.renderItem
@@ -503,10 +503,10 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
 
         backgroundImage?.let {
             +ResponsiveImage {
-                x = 0.0
-                y = 0.0
-                this.width = this@GuiScreen.width.toDouble()
-                this.height = this@GuiScreen.height.toDouble()
+                x = 0.0f
+                y = 0.0f
+                this.width = this@GuiScreen.width.toFloat()
+                this.height = this@GuiScreen.height.toFloat()
                 originalWidth = it.width
                 originalHeight = it.height
                 resourceLocation = it.image.resourceLocation
@@ -521,7 +521,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
     /**
      * Cache for the scale factor that is used in this gui screen.
      */
-    var scaleFactor = 0.0
+    var scaleFactor = 0.0F
 
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the window resizes, the buttonList is cleared beforehand.
@@ -787,7 +787,7 @@ abstract class GuiScreen : Gui(), GuiYesNoCallback {
      * Positions the widget below another widget that is retrieved by its [id][thatId] while
      * leaving the given [amount of vertical space][margin] between them.
      */
-    fun <W> W.positionBelow(thatId: String, margin: Double) where W : IPosition, W : IDimension {
+    fun <W> W.positionBelow(thatId: String, margin: Float) where W : IPosition, W : IDimension {
         val that = stage[thatId] ?: return
         if (that !is IPosition) return
         if (that !is IDimension) return

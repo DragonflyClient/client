@@ -13,10 +13,10 @@ class BackNavigation(
     initializerBlock: (BackNavigation.() -> Unit)? = null
 ) : AssembledWidget<BackNavigation>(initializerBlock), IPosition, IDimension, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var width: Double = -1.0
-    override var height: Double = 40.0
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var width: Float = -1.0f
+    override var height: Float = 40.0f
     override var color: WidgetColor by property(DragonflyPalette.foreground)
 
     private var action: () -> Unit = {}
@@ -37,9 +37,9 @@ class BackNavigation(
 
         val text = "text"<TextField> {
             staticText = "Back"
-            x = icon.x + icon.width + 10.0
+            x = icon.x + icon.width + 10.0f
             y = this@BackNavigation.y
-            width = 100.0
+            width = 100.0f
             height = this@BackNavigation.height
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START

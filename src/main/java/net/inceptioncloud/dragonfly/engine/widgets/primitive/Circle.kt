@@ -21,21 +21,13 @@ import kotlin.math.*
  */
 class Circle(
     initializerBlock: (Circle.() -> Unit)? = null
-) : Widget<Circle>(initializerBlock), IPosition, ISize, IColor, IAlign {
+) : Widget<Circle>(initializerBlock), IPosition, ISize, IColor {
 
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
-    override var size: Double by property(50.0)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
+    override var size: Float by property(50.0F)
     override var color: WidgetColor by property(WidgetColor.DEFAULT)
-    override var horizontalAlignment: Alignment by property(Alignment.START)
-    override var verticalAlignment: Alignment by property(Alignment.START)
     var lineWidth: Float by property(2F)
-
-    init {
-        val (alignedX, alignedY) = align(x, y, size, size)
-        this.x = alignedX
-        this.y = alignedY
-    }
 
     override fun render() {
         color.glBindColor()

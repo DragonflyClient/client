@@ -13,7 +13,7 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine
  */
 class ScaledFontRenderer(
     val base: IFontRenderer,
-    val scale: Double
+    val scale: Float
 ) : IFontRenderer {
 
     override fun trimStringToWidth(text: String?, width: Int): String {

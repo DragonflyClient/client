@@ -48,10 +48,10 @@ class NumberControl(
         liveUpdate: Boolean = false
     ) : this(Either(a = property), name, description, min, max, decimalPlaces, transformer, formatter, liveUpdate)
 
-    private val sliderWidth by lazy { controlWidth / 1.5 }
+    private val sliderWidth by lazy { controlWidth / 1.5f }
     private val sliderX by lazy { controlX + controlWidth - sliderWidth }
-    private val sliderHeight = 6.0
-    private val circleSize = 16.0
+    private val sliderHeight = 6.0f
+    private val circleSize = 16.0f
 
     private var isDragging = false
 
@@ -69,35 +69,35 @@ class NumberControl(
             width = sliderWidth
             height = sliderHeight
             x = sliderX
-            y = this@NumberControl.y + (this@NumberControl.height - height) / 2.0
-            arc = height / 2.0
+            y = this@NumberControl.y + (this@NumberControl.height - height) / 2
+            arc = height / 2
             color = WidgetColor(230, 230, 230)
         }
 
         "slider-foreground"<FilledCircle> {
             size = circleSize
             x = computeCircleX()
-            y = this@NumberControl.y + (this@NumberControl.height - size) / 2.0
+            y = this@NumberControl.y + (this@NumberControl.height - size) / 2
             color = DragonflyPalette.accentNormal
         }
 
         "current-value"<TextField> {
-            width = controlWidth / 3.0 - 15.0
+            width = controlWidth / 3.0f - 15.0f
             height = this@NumberControl.height
-            x = sliderX - width - 15.0
+            x = sliderX - width - 15.0f
             y = this@NumberControl.y
             staticText = formatString(transformer(optionKey.get()))
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.END
             fontRenderer = font(Typography.BASE)
-            color = DragonflyPalette.background.altered { alphaDouble = 0.6 }
+            color = DragonflyPalette.background.altered { alphaFloat = 0.6f }
         }
     }
 
-    private fun computeCircleX(): Double {
+    private fun computeCircleX(): Float {
         val room = (max - min)
         val progress = (optionKey.get().coerceIn(min..max) - min) / room
-        return sliderX + (progress * sliderWidth) - (circleSize / 2)
+        return (sliderX + (progress * sliderWidth) - (circleSize / 2)).toFloat()
     }
 
     override fun react(newValue: Double) {
@@ -121,7 +121,7 @@ class NumberControl(
 
         if (isDragging) {
             "slider-foreground"<FilledCircle> {
-                x = GraphicsEngine.getMouseX().coerceIn(sliderX..sliderX + sliderWidth) - circleSize / 2.0
+                x = GraphicsEngine.getMouseX().coerceIn(sliderX..sliderX + sliderWidth) - circleSize / 2F
             }
             "current-value"<TextField> {
                 staticText = formatString(calculateMouseValue())

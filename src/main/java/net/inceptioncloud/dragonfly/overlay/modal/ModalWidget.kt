@@ -14,13 +14,13 @@ import org.lwjgl.input.Keyboard
  * @param desiredHeight the height of the window
  */
 abstract class ModalWidget(
-    val name: String, desiredWidth: Double, desiredHeight: Double
+    val name: String, desiredWidth: Float, desiredHeight: Float
 ): AssembledWidget<ModalWidget>(), IDimension, IPosition {
 
-    override var width: Double by property(desiredWidth)
-    override var height: Double by property(desiredHeight)
-    override var x: Double by property(0.0)
-    override var y: Double by property(0.0)
+    override var width: Float by property(desiredWidth)
+    override var height: Float by property(desiredHeight)
+    override var x: Float by property(0.0F)
+    override var y: Float by property(0.0F)
 
     open var isCloseable = true
 

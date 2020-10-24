@@ -12,15 +12,7 @@ enum class TooltipAlignment {
         override fun TooltipWidget.arrowPoint3() = x to containerY - arrowSize
     };
 
-    open fun TooltipWidget.arrowPoint1(): Pair<Double, Double> {
-        error("Not implemented")
-    }
-
-    open fun TooltipWidget.arrowPoint2(): Pair<Double, Double> {
-        error("Not implemented")
-    }
-
-    open fun TooltipWidget.arrowPoint3(): Pair<Double, Double> {
-        error("Not implemented")
-    }
+    abstract fun TooltipWidget.arrowPoint1(): Pair<Float, Float>
+    abstract fun TooltipWidget.arrowPoint2(): Pair<Float, Float>
+    abstract fun TooltipWidget.arrowPoint3(): Pair<Float, Float>
 }
