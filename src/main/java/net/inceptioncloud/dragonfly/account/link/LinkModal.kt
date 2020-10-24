@@ -14,7 +14,8 @@ import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
-import org.lwjgl.input.Keyboard
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 
 /**
  * A modal window that is used to ask the user whether he wants to link the given
@@ -68,7 +69,7 @@ class LinkModal(
             y = image.y + image.height + 10.0
             width = this@LinkModal.width
             height = 60.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            fontRenderer = font(Typography.HEADING_2)
             staticText = "Link Minecraft Account"
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
@@ -82,7 +83,7 @@ class LinkModal(
             staticText = "In order to activate certain features like cosmetics and statistics, " +
                     "you have to link your Minecraft account to your Dragonfly account.\n" +
                     "Do you wish to link §6${account.displayName} §rwith your Dragonfly account §6${Dragonfly.account?.username}§r?"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+            fontRenderer = font(Typography.SMALL)
             textAlignHorizontal = Alignment.CENTER
         }!!
 
@@ -115,7 +116,7 @@ class LinkModal(
             width = this@LinkModal.width
             height = 40.0
             color = DragonflyPalette.background.brighter(0.5)
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+            fontRenderer = font(Typography.SMALL)
             staticText = "Don't ask again"
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER

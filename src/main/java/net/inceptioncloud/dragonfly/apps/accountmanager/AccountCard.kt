@@ -9,6 +9,8 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.foreground
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
@@ -95,7 +97,7 @@ class AccountCard(
         }
 
         val name = "name"<TextField> {
-            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 60, useScale = false)
+            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 60)
 
             x = this@AccountCard.x
             y = skull.y + skull.height + 20.0
@@ -107,7 +109,7 @@ class AccountCard(
         }!!.also { it.adaptHeight() }
 
         "email"<TextField> {
-            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 35, useScale = false)
+            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 35)
 
             x = this@AccountCard.x
             y = name.y + name.height + 7.0
@@ -212,7 +214,7 @@ class AccountCard(
          * Calculates the with of the [AccountCard] based on the [name] of the account.
          */
         fun getCardWidth(name: String): Double {
-            val fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60)
+            val fontRenderer = font(Typography.HEADING_2)
             return (fontRenderer.getStringWidth(name) + 20.0).coerceAtLeast(250.0)
         }
 

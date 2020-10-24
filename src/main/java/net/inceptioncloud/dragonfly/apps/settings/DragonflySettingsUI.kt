@@ -222,7 +222,7 @@ class DragonflySettingsUI(private val previousScreen: GuiScreen) : GuiScreen() {
         val titleString = "Dragonfly Settings"
         val y = 15 - fontSize / 2 + 2
         val fontRenderer: IFontRenderer? =
-            font.fontRendererAsync(size = fontSize * 2, fontWeight = FontWeight.MEDIUM)
+            font.fontRendererAsync(fontWeight = FontWeight.MEDIUM, size = fontSize * 2)
         val stringWidth = fontRenderer?.getStringWidth(titleString)
 
         drawRect(0, 0, width, 30, BluePalette.FOREGROUND.rgb)

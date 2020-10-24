@@ -3,6 +3,8 @@ package net.inceptioncloud.dragonfly.account
 import com.google.gson.Gson
 import khttp.responses.Response
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyAuthEvent
 import net.inceptioncloud.dragonfly.event.dragonfly.DragonflyLoginEvent
 import net.inceptioncloud.dragonfly.event.post
@@ -80,20 +82,7 @@ object AuthenticationBridge {
      * to prevent lags during the animation.
      */
     fun showLoginModal(isAutomaticallyOpening: Boolean = false) {
-        var otherFinished = false
-        fun openModal() {
-            if (otherFinished) {
-                Modal.showModal(LoginModal(isAutomaticallyOpening))
-            }
-        }
-        Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 60, useScale = false) {
-            openModal()
-            otherFinished = true
-        }
-        Dragonfly.fontManager.defaultFont.fontRendererAsync(size = 50, useScale = false) {
-            openModal()
-            otherFinished = true
-        }
+        Modal.showModal(LoginModal(isAutomaticallyOpening))
     }
 }
 

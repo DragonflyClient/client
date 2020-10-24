@@ -52,7 +52,7 @@ object DeveloperModeSubscriber {
     }
 
     private fun renderDeveloperInfo(title: String, content: String, screenWidth: Double, y: Double) {
-        val fontRenderer = Dragonfly.fontManager.monospaceFont.fontRenderer(size = 38, useScale = false)
+        val fontRenderer = Dragonfly.fontManager.monospaceFont.fontRenderer(size = 38)
         val height = fontRenderer.height
         val framesTitleWidth = fontRenderer.getStringWidth(title)
         val framesWidth = framesTitleWidth + fontRenderer.getStringWidth(content)

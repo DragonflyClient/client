@@ -3,14 +3,14 @@ package net.inceptioncloud.dragonfly.apps.about
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
-import net.inceptioncloud.dragonfly.engine.font.FontWeight
-import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 
 /**
  * A modern UI that displays information about Dragonfly.
@@ -46,7 +46,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
             width = (this@AboutDragonflyUI.width * (3 / 4.0)).coerceAtMost(1280.0)
             x = this@AboutDragonflyUI.width / 2 - width / 2
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 72, useScale = false, fontWeight = FontWeight.MEDIUM)
+            fontRenderer = font(Typography.HEADING_2)
             color = DragonflyPalette.background
             staticText = "Inception Cloud"
         } id "inception-cloud-header"
@@ -54,7 +54,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         +TextField {
             positionBelow("inception-cloud-header", 5.0)
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 56, useScale = false)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
             staticText = "Dragonfly is a product by Inception Cloud that is maintained by the Dragonfly team. " +
                     "Find out more at [${accentNormal.chatCode}https://inceptioncloud.net§r][https://inceptioncloud.net]."
@@ -90,7 +90,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         +TextField {
             positionBelow("inception-cloud-text", 140.0)
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 72, useScale = false, fontWeight = FontWeight.MEDIUM)
+            fontRenderer = font(Typography.HEADING_2)
             color = DragonflyPalette.background
             staticText = "Dragonfly Products"
         } id "dragonfly-products-header"
@@ -98,7 +98,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         +TextField {
             positionBelow("dragonfly-products-header", 5.0)
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 56, useScale = false)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
             staticText = "Dragonfly comes along with other related products. All these products can be found " +
                     "on our Dragonfly website at [${accentNormal.chatCode}https://playdragonfly.net§r][https://playdragonfly.net]."
@@ -107,7 +107,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         +TextField {
             positionBelow("dragonfly-products-text", 40.0)
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 72, useScale = false, fontWeight = FontWeight.MEDIUM)
+            fontRenderer = font(Typography.HEADING_2)
             color = DragonflyPalette.background
             staticText = "Credits (Third Parties)"
         } id "credits-header"
@@ -115,7 +115,7 @@ class AboutDragonflyUI(val parentScreen: GuiScreen) : GuiScreen() {
         +TextField {
             positionBelow("credits-header", 5.0)
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 56, useScale = false)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
             staticText = "${accentNormal.chatCode}· §rDragonfly uses several open source libraries whose licences can be " +
                     "found ${accentNormal.chatCode}here§r.\n" +

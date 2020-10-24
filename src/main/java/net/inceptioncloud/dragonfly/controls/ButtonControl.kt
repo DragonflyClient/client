@@ -5,6 +5,8 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.OutlineButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import kotlin.properties.Delegates
 
 class ButtonControl(
@@ -38,7 +40,7 @@ class ButtonControl(
             y = this@ButtonControl.y
             width = this@ButtonControl.width * (2 / 3.0)
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
             staticText = name
         }!!.also { it.adaptHeight() }
@@ -59,7 +61,7 @@ class ButtonControl(
                 y = nameWidget.y + nameWidget.height
                 width = this@ButtonControl.width * (2 / 3.0)
                 adaptHeight = true
-                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
+                fontRenderer = font(Typography.SMALLEST)
                 color = DragonflyPalette.background.altered { alphaDouble = 0.4 }
                 staticText = description
             }!!.also { it.adaptHeight() }

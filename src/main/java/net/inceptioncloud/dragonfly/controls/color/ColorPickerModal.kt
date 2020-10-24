@@ -5,6 +5,8 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.toWidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
@@ -94,7 +96,7 @@ class ColorPickerModal(
             y = this@ColorPickerModal.y + padding
             width = this@ColorPickerModal.width
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            fontRenderer = font(Typography.HEADING_2)
             staticText = this@ColorPickerModal.name
             textAlignHorizontal = Alignment.CENTER
             color = DragonflyPalette.foreground
@@ -165,7 +167,7 @@ class ColorPickerModal(
             x = hexContainer.x + 5
             y = hexContainer.y - 1
             color = DragonflyPalette.foreground
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+            fontRenderer = font(Typography.SMALL)
             dynamicText = { fullColor.toHexString() }
             textAlignVertical = Alignment.CENTER
         }

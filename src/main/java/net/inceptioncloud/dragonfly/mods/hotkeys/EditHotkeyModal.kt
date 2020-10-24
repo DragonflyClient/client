@@ -19,6 +19,8 @@ import net.inceptioncloud.dragonfly.mods.hotkeys.types.data.HotkeyData
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
@@ -78,7 +80,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             y = this@EditHotkeyModal.y + (0.3 * padding)
             width = this@EditHotkeyModal.width
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 100, useScale = false)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 100)
             staticText = this@EditHotkeyModal.name
             textAlignHorizontal = Alignment.CENTER
             color = DragonflyPalette.foreground
@@ -89,7 +91,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             y = this@EditHotkeyModal.y + (1.2 * padding)
             width = 80.0
             height = 55.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
+            fontRenderer = font(Typography.BASE)
             blockedKeys = listOf(1)
             exitKeys = listOf(1)
             label = "Key"
@@ -112,7 +114,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         "shift-text"<TextField> {
             x = shiftCheckBox.x + shiftCheckBox.width + 10.0
             y = shiftCheckBox.y + 2.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+            fontRenderer = font(Typography.BASE)
             staticText = "Shift"
             width = fontRenderer!!.getStringWidth(staticText + "...").toDouble()
             color = DragonflyPalette.foreground
@@ -128,7 +130,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         "ctrl-text"<TextField> {
             x = ctrlCheckBox.x + ctrlCheckBox.width + 10.0
             y = ctrlCheckBox.y + 2.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+            fontRenderer = font(Typography.BASE)
             staticText = "Ctrl"
             color = DragonflyPalette.foreground
         }!!
@@ -143,7 +145,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         "alt-text"<TextField> {
             x = altCheckBox.x + altCheckBox.width + 10.0
             y = altCheckBox.y + 2.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+            fontRenderer = font(Typography.BASE)
             staticText = "Alt"
             color = DragonflyPalette.foreground
         }!!
@@ -153,7 +155,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
             y = this@EditHotkeyModal.y + (2.05 * padding)
             width = 420.0
             height = 55.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
+            fontRenderer = font(Typography.BASE)
             label = "Message"
             labelScaleFactor = 0.9
             lineColor = DragonflyPalette.foreground
@@ -166,7 +168,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         "time-text"<TextField> {
             x = this@EditHotkeyModal.x + (0.5 * padding)
             y = this@EditHotkeyModal.y + (3.7 * padding) - 70.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+            fontRenderer = font(Typography.SMALL)
             staticText = "Time"
             color = DragonflyPalette.foreground
         }!!
@@ -188,7 +190,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         "delay-text"<TextField> {
             x = this@EditHotkeyModal.x + (2.9 * padding)
             y = this@EditHotkeyModal.y + (3.7 * padding) - 70.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+            fontRenderer = font(Typography.SMALL)
             staticText = "Delay"
             color = DragonflyPalette.foreground
         }
@@ -225,7 +227,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         "color-text"<TextField> {
             x = colorPicker.x + colorPicker.width + 15.0
             y = colorPicker.y + 2.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+            fontRenderer = font(Typography.BASE)
             staticText = "Color"
             width = fontRenderer!!.getStringWidth(staticText).toDouble()
             color = DragonflyPalette.foreground.altered { alphaDouble = 0.75 }
@@ -241,7 +243,7 @@ class EditHotkeyModal(val originalHotkey: Hotkey) : ModalWidget("Edit Hotkey", 5
         "send-text"<TextField> {
             x = sendInstantCheckBox.x + sendInstantCheckBox.width + 15.0
             y = sendInstantCheckBox.y
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 48, useScale = false)
+            fontRenderer = font(Typography.BASE)
             staticText = "Send instant"
             width = 200.0
             color = DragonflyPalette.foreground.altered { alphaDouble = 0.75 }

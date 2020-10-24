@@ -2,13 +2,11 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
-import net.inceptioncloud.dragonfly.engine.toWidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.audio.PositionedSoundRecord
@@ -65,7 +63,7 @@ class OutlineButton(
             outlineColor = this@OutlineButton.outlineColor
         }
 
-        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt(), useScale = false)
+        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt())
 
         "text"<TextField> {
             x = this@OutlineButton.x

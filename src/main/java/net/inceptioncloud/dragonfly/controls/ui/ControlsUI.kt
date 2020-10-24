@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.controls.ui
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.ControlElement
 import net.inceptioncloud.dragonfly.controls.ControlsManager
 import net.inceptioncloud.dragonfly.controls.sidebar.SidebarEntry
@@ -9,10 +8,11 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.switch
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.BackNavigation
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.utils.Keep
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
@@ -81,7 +81,7 @@ abstract class ControlsUI(val previousScreen: GuiScreen) : GuiScreen() {
             adaptHeight = true
             x = controlsX + controlsWidth / 2.0 - width / 2.0
             staticText = placeholderText ?: ""
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            fontRenderer = font(Typography.HEADING_2)
             color = DragonflyPalette.background
             textAlignHorizontal = Alignment.CENTER
             isVisible = placeholderImage != null && placeholderText != null

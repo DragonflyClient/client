@@ -1,12 +1,13 @@
 package net.inceptioncloud.dragonfly.controls.color
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.controls.OptionControlElement
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.utils.Either
 import kotlin.reflect.KMutableProperty0
 
@@ -43,7 +44,7 @@ class ColorControl(
             staticText = optionKey.get().toHexString()
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.END
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background.altered { alphaDouble = 0.6 }
         }
     }

@@ -12,6 +12,8 @@ import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 import kotlin.properties.Delegates
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 
 /**
  * ## Hot Action Assembled Widget
@@ -81,8 +83,8 @@ class HotActionWidget(
     override fun updateStructure() {
         initialTime = System.currentTimeMillis()
 
-        val messageFR = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
-        val titleFR = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 50, useScale = false)
+        val messageFR = font(Typography.SMALL)
+        val titleFR = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 50)
 
         val messageWidth = messageFR.getStringWidth(message)
         val titleWidth = titleFR.getStringWidth(title)

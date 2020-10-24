@@ -9,8 +9,6 @@ import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
-import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesMod
-import net.inceptioncloud.dragonfly.mods.keystrokes.KeystrokesMod.not
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 
@@ -72,13 +70,9 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
         if (overlayText != "") {
 
             val stringWidth =
-                Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt(), useScale = false)
+                Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt())
                     .getStringWidth(overlayText)
-            val stringHeight =
-                Dragonfly.fontManager.defaultFont.fontRenderer(
-                    size = overlaySize.toInt(),
-                    useScale = false
-                ).height.toDouble()
+            val stringHeight = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt()).height.toDouble()
             val screenWidth = ScaledResolution(Minecraft.getMinecraft()).scaledWidth
             val screenHeight = ScaledResolution(Minecraft.getMinecraft()).scaledHeight
 
@@ -131,7 +125,7 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
             staticText = overlayText
             color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             backgroundColor = WidgetColor(0.0, 0.0, 0.0, 0.0)
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt(), useScale = true)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = overlaySize.toInt())
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
         }

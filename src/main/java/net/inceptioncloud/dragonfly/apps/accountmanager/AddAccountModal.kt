@@ -13,6 +13,8 @@ import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.input.Keyboard
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 
 class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
 
@@ -63,7 +65,7 @@ class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
             y = image.y + image.height + 10.0
             width = this@AddAccountModal.width
             height = 60.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            fontRenderer = font(Typography.HEADING_2)
             staticText = "Authenticate Minecraft Account"
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
@@ -75,7 +77,7 @@ class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
             width = this@AddAccountModal.width - 2 * this@AddAccountModal.padding
             height = 50.0
             label = "Email"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
         }!!
 
         "password-field"<InputTextField> {
@@ -84,7 +86,7 @@ class AddAccountModal : ModalWidget("Add Account", 400.0, 500.0) {
             width = this@AddAccountModal.width - 2 * this@AddAccountModal.padding
             height = 50.0
             label = "Password"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
             isPassword = true
         }
 

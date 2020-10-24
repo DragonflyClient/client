@@ -1,19 +1,18 @@
 package net.inceptioncloud.dragonfly.apps.cosmetics
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.contains
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.ResponsiveImage
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.mc
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.*
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.util.ResourceLocation
 
 class PlayerPreview(
     initializerBlock: (PlayerPreview.() -> Unit)? = null
@@ -44,7 +43,7 @@ class PlayerPreview(
                         "§7Enter a world or join a server to enable the cosmetics preview for your current account."
             } else ""
 
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 56, useScale = false)
+            fontRenderer = font(Typography.LARGE)
             x = this@PlayerPreview.x
             y = this@PlayerPreview.y
             width = this@PlayerPreview.width

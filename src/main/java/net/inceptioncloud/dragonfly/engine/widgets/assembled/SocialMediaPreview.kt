@@ -46,7 +46,7 @@ class SocialMediaPreview(
             y = this@SocialMediaPreview.y - 2.0
             width = this@SocialMediaPreview.width - this@SocialMediaPreview.height - 10.0
             height = this@SocialMediaPreview.height - 2.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt(), useScale = false)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt())
             textAlignVertical = Alignment.CENTER
             staticText = text
             color = this@SocialMediaPreview.color

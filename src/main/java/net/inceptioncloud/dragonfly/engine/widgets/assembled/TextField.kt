@@ -184,10 +184,9 @@ class TextField(
     fun WidgetFont.bindFontRenderer(
         fontWeight: FontWeight = FontWeight.REGULAR,
         size: Int = 19,
-        letterSpacing: Double? = null,
-        useScale: Boolean = true
+        letterSpacing: Double? = null
     ) {
-        fontRendererAsync(fontWeight, size, letterSpacing, useScale) {
+        fontRendererAsync(fontWeight, size, letterSpacing) {
             this@TextField.fontRenderer = it
         }
     }

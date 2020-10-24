@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.overlay.toast
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
@@ -8,6 +7,8 @@ import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import kotlin.properties.Delegates
 
 /**
@@ -50,7 +51,7 @@ class ToastWidget(
     override fun updateStructure() {
         initialTime = System.currentTimeMillis()
 
-        val fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+        val fontRenderer = font(Typography.SMALL)
 
         val textField = updateWidget<TextField>("text") {
             width = (fontRenderer.getStringWidth(text).toDouble() + 8.0).coerceAtMost(ScreenOverlay.dimensions.width / 2.0)

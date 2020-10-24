@@ -1,9 +1,10 @@
 package net.inceptioncloud.dragonfly.controls
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import kotlin.properties.Delegates
 
 class TextControl(
@@ -25,7 +26,7 @@ class TextControl(
             y = this@TextControl.y
             width = this@TextControl.width * (2 / 3.0)
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
             staticText = text
         }!!.also { it.adaptHeight() }

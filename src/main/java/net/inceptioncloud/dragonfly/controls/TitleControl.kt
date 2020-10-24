@@ -2,7 +2,7 @@ package net.inceptioncloud.dragonfly.controls
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.font.FontWeight
+import net.inceptioncloud.dragonfly.engine.font.*
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
@@ -31,7 +31,7 @@ class TitleControl(
             y = this@TitleControl.y
             width = this@TitleControl.width * (2 / 3.0)
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false, fontWeight = FontWeight.MEDIUM)
+            fontRenderer = font(Typography.HEADING_2)
             color = DragonflyPalette.background
             staticText = name
         }!!.also { it.adaptHeight() }
@@ -52,7 +52,7 @@ class TitleControl(
                 y = nameWidget.y + nameWidget.height
                 width = this@TitleControl.width * (2 / 3.0)
                 adaptHeight = true
-                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
+                fontRenderer = font(Typography.SMALLEST)
                 color = DragonflyPalette.background.altered { alphaDouble = 0.4 }
                 staticText = description
             }!!.also { it.adaptHeight() }

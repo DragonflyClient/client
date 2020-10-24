@@ -8,8 +8,9 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.minecraft.util.ResourceLocation
-import org.lwjgl.input.Keyboard
 
 /**
  * A modal window that is used to ask the user whether he wants to send diagnostic
@@ -54,7 +55,7 @@ class DiagnosticsPermissionsModal : ModalWidget("Diagnostics Permissions", 400.0
             y = image.y + image.height + 10.0
             width = this@DiagnosticsPermissionsModal.width
             height = 60.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            fontRenderer = font(Typography.HEADING_2)
             staticText = "Send Diagnostic Data"
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
@@ -68,7 +69,7 @@ class DiagnosticsPermissionsModal : ModalWidget("Diagnostics Permissions", 400.0
             staticText = "To keep your game experience as convenient as possible, Dragonfly collects diagnostic data and sends them to our team. " +
                     "This data includes crash reports and other bug information. No personal data except the Dragonfly and Minecraft account name " +
                     "is collected. Information is not shared with third parties."
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+            fontRenderer = font(Typography.SMALL)
             textAlignHorizontal = Alignment.CENTER
         }!!
 

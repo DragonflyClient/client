@@ -2,6 +2,8 @@ package net.inceptioncloud.dragonfly.engine.tooltip
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
@@ -48,7 +50,7 @@ class TooltipWidget(
 
     var text: String by property("TooltipWidget")
     var alignment: TooltipAlignment by property(TooltipAlignment.ABOVE)
-    var fontRenderer: IFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
+    var fontRenderer: IFontRenderer = font(Typography.SMALL)
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
         "background" to RoundedRectangle(),

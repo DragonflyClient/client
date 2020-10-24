@@ -5,7 +5,6 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette.accentNormal
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
@@ -14,6 +13,8 @@ import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
 import net.inceptioncloud.dragonfly.options.ChangeListener
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.utils.*
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.minecraft.util.ResourceLocation
 import kotlin.properties.Delegates
 import kotlin.reflect.KMutableProperty0
@@ -61,7 +62,7 @@ abstract class OptionControlElement<T>(
             y = this@OptionControlElement.y
             width = this@OptionControlElement.width * (2 / 3.0)
             adaptHeight = true
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background
             staticText = name
         }!!.also { it.adaptHeight() }
@@ -82,7 +83,7 @@ abstract class OptionControlElement<T>(
                 y = nameWidget.y + nameWidget.height + 2.0
                 width = this@OptionControlElement.width * (2 / 3.0)
                 adaptHeight = true
-                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 35, useScale = false)
+                fontRenderer = font(Typography.SMALLEST)
                 color = DragonflyPalette.background.altered { alphaDouble = 0.4 }
                 staticText = description
             }!!.also { it.adaptHeight() }

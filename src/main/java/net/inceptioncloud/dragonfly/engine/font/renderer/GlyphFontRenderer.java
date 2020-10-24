@@ -245,19 +245,14 @@ public class GlyphFontRenderer implements IFontRenderer {
         y -= 3;
         GlStateManager.enableAlpha();
         this.resetStyles();
-        int i = 0;
+        int i;
 
         if (dropShadow) {
             i = this.renderString(text, x + 0.7F, y + 0.7F, rgb, true);
+            i = Math.max(i, this.renderString(text, x, y, rgb, false));
+        } else {
+            i = this.renderString(text, x, y, rgb, false);
         }
-
-        Color color = new Color(rgb);
-        Color shadowColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 30);
-
-        float aa = 0.50f;
-        i = this.renderString(text, x - aa, y - aa, shadowColor.getRGB(), false);
-        i = Math.max(i, this.renderString(text, x + aa, y + aa, shadowColor.getRGB(), false));
-        i = Math.max(i, this.renderString(text, x, y, rgb, false));
 
         return i;
     }

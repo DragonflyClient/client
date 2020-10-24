@@ -13,6 +13,8 @@ import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 import java.net.URI
@@ -46,7 +48,7 @@ class NoCosmeticsUI(
             positionBelow("vector", 10.0)
 
             staticText = "Nothing here..."
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 80, useScale = false)
+            fontRenderer = font(Typography.HEADING_1)
             textAlignHorizontal = Alignment.CENTER
             color = DragonflyPalette.background
 
@@ -64,7 +66,7 @@ class NoCosmeticsUI(
                     "Head over to the ${DragonflyPalette.accentNormal.chatCode}[Dragonfly Store]" +
                     "[https://store.playdragonfly.net]§r to purchase one of our many cosmetics. Don't worry - we have enough for everybody.\n\n" +
                     "If you just bought an item from our store, press the refresh button below to synchronize your cosmetics with our database."
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
             textAlignHorizontal = Alignment.CENTER
             color = DragonflyPalette.background
 

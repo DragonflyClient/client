@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 
@@ -44,7 +43,7 @@ class BackNavigation(
             height = this@BackNavigation.height
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = (height * 1.2).toInt(), useScale = false)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = (height * 1.2).toInt())
             color = this@BackNavigation.color
         }!!
 

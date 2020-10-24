@@ -13,6 +13,8 @@ import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.ui.modal.ConfirmModal
@@ -71,7 +73,7 @@ class IngameMenuUI : GuiScreen() {
             width = 300.0
             height = 50.0
             staticText = mc.session.username
-            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50, useScale = false)
+            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50)
             textAlignVertical = Alignment.CENTER
         } id "player-name"
 
@@ -86,7 +88,7 @@ class IngameMenuUI : GuiScreen() {
         } id "brand-icon"
 
         +LoginStatusWidget {
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
             width = fontRenderer!!.getStringWidth(Dragonfly.account?.username ?: "Login") + 50.0
             x = this@IngameMenuUI.width - width - 10.0
             y = 10.0

@@ -12,6 +12,8 @@ import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.ui.renderer.RenderUtils
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
@@ -76,7 +78,7 @@ open class ColorSlider(
             staticText = colorLetter
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.foreground
         }
 
@@ -89,7 +91,7 @@ open class ColorSlider(
             staticText = currentProgress.toString()
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.END
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.foreground
         }
     }

@@ -1,8 +1,8 @@
 package net.inceptioncloud.dragonfly.controls.sidebar
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.contains
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.IColor
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
@@ -10,8 +10,6 @@ import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
-import net.minecraft.client.gui.GuiScreen
-import java.net.URL
 
 class SidebarEntry(
     text: String,
@@ -81,7 +79,7 @@ class SidebarEntry(
             staticText = text
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.START
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 28 * 2, useScale = false)
+            fontRenderer = font(Typography.LARGE)
             color = DragonflyPalette.foreground
             dropShadow = true
             shadowDistance = 2.0

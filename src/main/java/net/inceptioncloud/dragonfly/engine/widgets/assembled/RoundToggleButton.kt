@@ -3,7 +3,6 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
-import net.inceptioncloud.dragonfly.engine.animation.post
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.*
@@ -49,7 +48,7 @@ class RoundToggleButton(
             arc = this@RoundToggleButton.arc
         }
 
-        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = textSize, useScale = false)
+        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = textSize)
 
         "text"<TextField> {
             x = this@RoundToggleButton.x

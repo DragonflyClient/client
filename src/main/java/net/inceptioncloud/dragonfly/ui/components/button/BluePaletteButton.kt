@@ -62,7 +62,7 @@ class BluePaletteButton : GuiButton {
      */
     override fun drawButton(mc: Minecraft, mouseX: Int, mouseY: Int) {
         if (visible) {
-            val fontrenderer = fontManager.defaultFont.fontRendererAsync(size = 19, fontWeight = FontWeight.MEDIUM)
+            val fontrenderer = fontManager.defaultFont.fontRendererAsync(fontWeight = FontWeight.MEDIUM, size = 19)
             val border = 1.0
             val left = xPosition + border
             val top = yPosition + border

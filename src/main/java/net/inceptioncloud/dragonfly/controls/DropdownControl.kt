@@ -14,6 +14,8 @@ import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.utils.Either
@@ -37,7 +39,7 @@ class DropdownElement(
     val allValues: List<Enum<*>> = optionKey.typeClass.enumConstants.toList()
 
     private val padding = 10.0
-    private val fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
+    private val fontRenderer = font(Typography.BASE)
 
     private val containerWidth by lazy {
         allValues.map { fontRenderer.getStringWidth(it.toPrettyString()) }.max()!!.coerceIn(100..controlWidth.toInt()) + padding * 2 + 50.0

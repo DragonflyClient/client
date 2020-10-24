@@ -5,6 +5,8 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.animation.post
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.structure.IDimension
@@ -89,7 +91,7 @@ class TaskbarAppWidget(
             text = app.name
             x = this@TaskbarAppWidget.originX + this@TaskbarAppWidget.originWidth / 2
             y = this@TaskbarAppWidget.originY - 50.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40)
+            fontRenderer = font(Typography.SMALL)
             padding = 3.0
             arc = 7.0
         }

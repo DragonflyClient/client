@@ -273,7 +273,7 @@ public class GuiPlayerTabOverlay extends Gui {
         if(OptionsSectionUI.getShowPingAsNumber().invoke()) {
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            IFontRenderer fontRenderer = Dragonfly.getFontManager().getDefaultFont().fontRenderer(FontWeight.REGULAR, 12);
+            IFontRenderer fontRenderer = Dragonfly.getFontManager().getDefaultFont().fontRenderer();
             this.mc.getTextureManager().bindTexture(icons);
 
             String pingText = "";

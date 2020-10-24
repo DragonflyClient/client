@@ -42,7 +42,7 @@ class RoundButton(
             arc = this@RoundButton.arc
         }
 
-        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = textSize, useScale = false)
+        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = textSize)
 
         "text"<TextField> {
             x = this@RoundButton.x

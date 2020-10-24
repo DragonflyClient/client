@@ -1,6 +1,5 @@
 package net.inceptioncloud.dragonfly.controls
 
-import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
@@ -12,6 +11,8 @@ import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.RoundedRectangle
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.utils.Either
 import org.apache.commons.lang3.StringUtils
@@ -88,7 +89,7 @@ class NumberControl(
             staticText = formatString(transformer(optionKey.get()))
             textAlignVertical = Alignment.CENTER
             textAlignHorizontal = Alignment.END
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 45, useScale = false)
+            fontRenderer = font(Typography.BASE)
             color = DragonflyPalette.background.altered { alphaDouble = 0.6 }
         }
     }

@@ -2,7 +2,6 @@ package net.inceptioncloud.dragonfly.engine.widgets.assembled
 
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
-import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
 import net.inceptioncloud.dragonfly.engine.internal.*
@@ -65,7 +64,7 @@ class DragonflyButton(
             color = this@DragonflyButton.backgroundColor
         }
 
-        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt(), useScale = useScale)
+        val buttonFontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = height.toInt())
         val stringWidth = buttonFontRenderer.getStringWidth(text)
         val iconMarginRight = height / 5.0
         val iconSize = this.iconSize ?: height - 6.0

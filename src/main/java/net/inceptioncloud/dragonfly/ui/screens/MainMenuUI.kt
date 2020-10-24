@@ -1,23 +1,22 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
 import com.google.gson.JsonParser
-import dev.decobr.mcgeforce.bindings.MCGeForceHelper
 import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
-import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
 import org.apache.logging.log4j.LogManager
-import java.lang.Double.min
 import java.net.URL
 import javax.imageio.ImageIO
 
@@ -54,7 +53,7 @@ class MainMenuUI : GuiScreen() {
             width = 300.0
             height = 50.0
             staticText = mc.session.username
-            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50, useScale = false)
+            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50)
             textAlignVertical = Alignment.CENTER
         } id "player-name"
 
@@ -69,7 +68,7 @@ class MainMenuUI : GuiScreen() {
         } id "brand-icon"
 
         +LoginStatusWidget {
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
             width = fontRenderer!!.getStringWidth(Dragonfly.account?.username ?: "Login") + 50.0
             x = this@MainMenuUI.width - width - 10.0
             y = 10.0

@@ -41,7 +41,7 @@ class EnterKeyUI(message: String? = null) : GuiScreen() {
 
     override fun initGui() {
         Keyboard.enableRepeatEvents(true)
-        val headerFR = Dragonfly.fontManager.defaultFont.fontRenderer(size = 30, fontWeight = FontWeight.MEDIUM)
+        val headerFR = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 30)
 
         val keyImage = +Image {
             x = this@EnterKeyUI.width / 2 - headerFR.getStringWidth("Activate Dragonfly") / 2 - 15.0

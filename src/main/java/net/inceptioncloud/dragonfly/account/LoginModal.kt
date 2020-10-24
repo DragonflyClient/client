@@ -15,6 +15,8 @@ import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.input.Keyboard
 import java.net.URL
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 
 /**
  * A modal window that is used to prompt the user for Dragonfly authentication.
@@ -75,7 +77,7 @@ class LoginModal(
             y = image.y + image.height + 10.0
             width = this@LoginModal.width
             height = 60.0
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            fontRenderer = font(Typography.HEADING_2)
             staticText = "Dragonfly Login"
             textAlignHorizontal = Alignment.CENTER
             textAlignVertical = Alignment.CENTER
@@ -87,7 +89,7 @@ class LoginModal(
             width = this@LoginModal.width - 2 * this@LoginModal.padding
             height = 50.0
             label = "Username"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
         }!!
 
         val password = "password-field"<InputTextField> {
@@ -96,7 +98,7 @@ class LoginModal(
             width = this@LoginModal.width - 2 * this@LoginModal.padding
             height = 50.0
             label = "Password"
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 50, useScale = false)
+            fontRenderer = font(Typography.BASE)
             isPassword = true
         }!!
 
@@ -130,7 +132,7 @@ class LoginModal(
                 width = this@LoginModal.width
                 height = 40.0
                 color = DragonflyPalette.background.brighter(0.5)
-                fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+                fontRenderer = font(Typography.SMALL)
                 staticText = "Don't ask again"
                 textAlignHorizontal = Alignment.CENTER
                 textAlignVertical = Alignment.CENTER

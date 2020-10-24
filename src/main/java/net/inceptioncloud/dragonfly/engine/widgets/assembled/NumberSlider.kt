@@ -90,7 +90,7 @@ class NumberSlider(
 
         "current-value"<TextField> {
             staticText = formatString(transformer(currentValue))
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = textSize, useScale = false)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = textSize)
             width = textWidth
             height = textHeight
             x = this@NumberSlider.x + this@NumberSlider.width + 15.0

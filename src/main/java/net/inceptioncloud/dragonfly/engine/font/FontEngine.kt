@@ -31,17 +31,17 @@ object FontEngine {
  */
 enum class Typography(val size: Int, val tracking: Double, val weight: FontWeight = FontWeight.REGULAR) {
 
-    HEADING_1(72, -0.02),
-    HEADING_2(60, -0.01),
-    HEADING_3(48, 0.0),
-    HEADING_4(36, 0.0),
-    BASE(24, 0.0),
-    SMALLEST(16, 0.04);
+    HEADING_1(40, -0.06, FontWeight.MEDIUM),
+    HEADING_2(32, -0.05, FontWeight.MEDIUM),
+    LARGE(28, -0.04),
+    BASE(24, -0.03),
+    SMALL(20, -0.02),
+    SMALLEST(18, -0.02);
 
     /**
      * Builds the font renderer based on the constructor properties.
      */
-    fun buildFontRenderer(): IFontRenderer = FontEngine.mainFont.fontRenderer(weight, size * 2, tracking, false)
+    fun buildFontRenderer(): IFontRenderer = FontEngine.mainFont.fontRenderer(weight, size * 2, tracking)
 }
 
 /**

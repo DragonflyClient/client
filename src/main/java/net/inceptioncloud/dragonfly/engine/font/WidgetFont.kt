@@ -61,10 +61,9 @@ class WidgetFont @JvmOverloads constructor(
     fun fontRenderer(
         fontWeight: FontWeight = FontWeight.REGULAR,
         size: Int = 19,
-        letterSpacing: Double? = null,
-        useScale: Boolean = true
+        letterSpacing: Double? = null
     ): IFontRenderer {
-        val fingerprint = FontRendererFingerprint(fontWeight, size, letterSpacing ?: this.letterSpacing, useScale)
+        val fingerprint = FontRendererFingerprint(fontWeight, size, letterSpacing ?: this.letterSpacing, false)
 
         return if (cachedFontRenderer.containsKey(fingerprint) && cachedFontRenderer[fingerprint] !is ScaledFontRenderer) {
             cachedFontRenderer[fingerprint]!!
@@ -90,10 +89,9 @@ class WidgetFont @JvmOverloads constructor(
         fontWeight: FontWeight = FontWeight.REGULAR,
         size: Int = 19,
         letterSpacing: Double? = null,
-        useScale: Boolean = true,
         callback: ((IFontRenderer) -> Unit)? = null
     ): IFontRenderer? {
-        val fingerprint = FontRendererFingerprint(fontWeight, size, letterSpacing ?: this.letterSpacing, useScale)
+        val fingerprint = FontRendererFingerprint(fontWeight, size, letterSpacing ?: this.letterSpacing, false)
 
         // if a cached version is available
         if (cachedFontRenderer.containsKey(fingerprint)) {
@@ -117,7 +115,7 @@ class WidgetFont @JvmOverloads constructor(
                 "${Thread.currentThread().name} is building font renderer for ${this@WidgetFont.familyName} with $fingerprint"
             )
 
-            val fontRenderer = fontRenderer(fontWeight, size, letterSpacing, useScale)
+            val fontRenderer = fontRenderer(fontWeight, size, letterSpacing)
             asyncBuilding.remove(fingerprint)
             cachedFontRenderer[fingerprint] = fontRenderer
             callback?.invoke(fontRenderer)

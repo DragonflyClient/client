@@ -5,10 +5,11 @@ import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
-import net.inceptioncloud.dragonfly.options.sections.StorageOptions
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.overlay.modal.ModalWidget
 import net.minecraft.util.ResourceLocation
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 
 /**
  * Reusable modal window to let the user confirm certain actions.
@@ -59,7 +60,7 @@ open class ConfirmModal(
             x = this@ConfirmModal.x + this@ConfirmModal.padding
             y = image.y + image.height + 35.0
             width = this@ConfirmModal.width - 2 * this@ConfirmModal.padding
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 60, useScale = false)
+            fontRenderer = font(Typography.HEADING_2)
             staticText = title
             textAlignHorizontal = Alignment.CENTER
             adaptHeight = true
@@ -71,7 +72,7 @@ open class ConfirmModal(
             y = title.y + title.height + 35.0
             width = this@ConfirmModal.width - 2 * this@ConfirmModal.padding
             staticText = description
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(size = 40, useScale = false)
+            fontRenderer = font(Typography.SMALL)
             textAlignHorizontal = Alignment.CENTER
             adaptHeight = true
             adaptHeight()
