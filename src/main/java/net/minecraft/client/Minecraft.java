@@ -1155,7 +1155,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
     public int getLimitFramerate() {
         // ICMM - Outgame GUI Framerate Limit (original 30)
-        return this.gameSettings.limitFramerate;
+        return this.theWorld == null && this.currentScreen != null ? 200 : this.gameSettings.limitFramerate;
     }
 
     public boolean isFramerateLimitBelowMax() {
