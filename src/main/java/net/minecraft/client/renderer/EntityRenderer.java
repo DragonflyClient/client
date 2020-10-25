@@ -1160,7 +1160,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                     }
                 }
 
-                this.mc.mcProfiler.endSection();
             } else {
                 GlStateManager.viewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
                 GlStateManager.matrixMode(5889);
@@ -1207,6 +1206,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
                     throw new ReportedException(crashreport);
                 }
             }
+            this.mc.mcProfiler.endSection();
 
             // EVENTBUS - PostRenderEvent
             final double scaleFactor = Math.min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0);

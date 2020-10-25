@@ -6,6 +6,7 @@ import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService
 import net.inceptioncloud.dragonfly.engine.inspector.InspectorService.platform
 import net.inceptioncloud.dragonfly.engine.structure.IDraw
+import net.inceptioncloud.dragonfly.mc
 import tornadofx.*
 
 /**
@@ -50,11 +51,13 @@ class WidgetStage(val name: String) {
      * to true. If it doesn't, the draw function won't be called.
      */
     fun render() = synchronized(this) {
+        mc.mcProfiler.startSection("stage:${name.toLowerCase().replace(" ", "-")}")
         content.values.toTypedArray()
             .sortedBy { it.stagePriority }
             .filter { it.isVisible }.forEach {
                 it.draw()
             }
+        mc.mcProfiler.endSection()
     }
 
     /**

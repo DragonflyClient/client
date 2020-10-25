@@ -45,12 +45,7 @@ public class Profiler
      * Current profiling section
      */
     private String profilingSection = "";
-    private boolean profilerLocalEnabled;
-
-    public Profiler ()
-    {
-        this.profilerLocalEnabled = this.profilerGlobalEnabled;
-    }
+    private boolean profilerLocalEnabled = true;
 
     /**
      * Clear profiling.
@@ -99,7 +94,7 @@ public class Profiler
 
                 this.profilingSection = this.profilingSection + name;
                 this.sectionList.add(this.profilingSection);
-                this.timestampList.add(Long.valueOf(System.nanoTime()));
+                this.timestampList.add(System.nanoTime());
             }
         }
     }
@@ -117,9 +112,9 @@ public class Profiler
                 long k = i - j;
 
                 if (this.profilingMap.containsKey(this.profilingSection)) {
-                    this.profilingMap.put(this.profilingSection, Long.valueOf((Long) this.profilingMap.get(this.profilingSection) + k));
+                    this.profilingMap.put(this.profilingSection, (Long) this.profilingMap.get(this.profilingSection) + k);
                 } else {
-                    this.profilingMap.put(this.profilingSection, Long.valueOf(k));
+                    this.profilingMap.put(this.profilingSection, k);
                 }
 
                 if (k > 100000000L) {
@@ -134,63 +129,61 @@ public class Profiler
     /**
      * Get profiling data
      */
-    public List getProfilingData (String p_76321_1_)
+    public List getProfilingData (String startSection)
     {
         this.profilerLocalEnabled = this.profilerGlobalEnabled;
 
         if (!this.profilerLocalEnabled) {
-            return new ArrayList(Arrays.asList(new Result("root", 0.0D, 0.0D)));
+            return new ArrayList(Collections.singletonList(new Result("root", 0.0D, 0.0D)));
         } else if (!this.profilingEnabled) {
             return null;
         } else {
-            long i = this.profilingMap.containsKey("root") ? (Long) this.profilingMap.get("root") : 0L;
-            long j = this.profilingMap.containsKey(p_76321_1_) ? (Long) this.profilingMap.get(p_76321_1_) : -1L;
+            long rootPercentage = this.profilingMap.containsKey("root") ? (Long) this.profilingMap.get("root") : 0L;
+            long startSectionPercentage = this.profilingMap.containsKey(startSection) ? (Long) this.profilingMap.get(startSection) : -1L;
             ArrayList arraylist = Lists.newArrayList();
 
-            if (p_76321_1_.length() > 0) {
-                p_76321_1_ = p_76321_1_ + ".";
+            if (startSection.length() > 0) {
+                startSection = startSection + ".";
             }
 
-            long k = 0L;
+            long fullSectionPercentage = 0L;
 
             for (Object s : this.profilingMap.keySet()) {
-                if (((String) s).length() > p_76321_1_.length() && ((String) s).startsWith(p_76321_1_) && ((String) s).indexOf(".", p_76321_1_.length() + 1) < 0) {
-                    k += (Long) this.profilingMap.get(s);
+                if (((String) s).length() > startSection.length() && ((String) s).startsWith(startSection) && ((String) s).indexOf(".", startSection.length() + 1) < 0) {
+                    fullSectionPercentage += (Long) this.profilingMap.get(s);
                 }
             }
 
-            float f = (float) k;
+            float f = (float) fullSectionPercentage;
 
-            if (k < j) {
-                k = j;
+            if (fullSectionPercentage < startSectionPercentage) {
+                fullSectionPercentage = startSectionPercentage;
             }
 
-            if (i < k) {
-                i = k;
+            if (rootPercentage < fullSectionPercentage) {
+                rootPercentage = fullSectionPercentage;
             }
 
             for (Object s10 : this.profilingMap.keySet()) {
                 String s1 = (String) s10;
 
-                if (s1.length() > p_76321_1_.length() && s1.startsWith(p_76321_1_) && s1.indexOf(".", p_76321_1_.length() + 1) < 0) {
-                    long l = (Long) this.profilingMap.get(s1);
-                    double d0 = (double) l * 100.0D / (double) k;
-                    double d1 = (double) l * 100.0D / (double) i;
-                    String s2 = s1.substring(p_76321_1_.length());
-                    arraylist.add(new Profiler.Result(s2, d0, d1));
+                if (s1.length() > startSection.length() && s1.startsWith(startSection) && s1.indexOf(".", startSection.length() + 1) < 0) {
+                    long subSectionPercentage = (Long) this.profilingMap.get(s1);
+                    double percentageOfStartSection = (double) subSectionPercentage * 100.0D / (double) fullSectionPercentage;
+                    double percentageOfRoot = (double) subSectionPercentage * 100.0D / (double) rootPercentage;
+                    String s2 = s1.substring(startSection.length());
+                    arraylist.add(new Profiler.Result(s2, percentageOfStartSection, percentageOfRoot));
                 }
             }
 
-            for (Object s3 : this.profilingMap.keySet()) {
-                this.profilingMap.put(s3, (Long) this.profilingMap.get(s3) * 950L / 1000L);
-            }
+            this.profilingMap.replaceAll((s, v) -> (Long) this.profilingMap.get(s) * 950L / 1000L);
 
-            if ((float) k > f) {
-                arraylist.add(new Profiler.Result("unspecified", (double) ((float) k - f) * 100.0D / (double) k, (double) ((float) k - f) * 100.0D / (double) i));
+            if ((float) fullSectionPercentage > f) {
+                arraylist.add(new Profiler.Result("unspecified", (double) ((float) fullSectionPercentage - f) * 100.0D / (double) fullSectionPercentage, (double) ((float) fullSectionPercentage - f) * 100.0D / (double) rootPercentage));
             }
 
             Collections.sort(arraylist);
-            arraylist.add(0, new Profiler.Result(p_76321_1_, 100.0D, (double) k * 100.0D / (double) i));
+            arraylist.add(0, new Profiler.Result(startSection, 100.0D, (double) fullSectionPercentage * 100.0D / (double) rootPercentage));
             return arraylist;
         }
     }
@@ -214,25 +207,26 @@ public class Profiler
     public static final class Result implements Comparable
     {
         private static final String __OBFID = "CL_00001498";
-        public double field_76332_a;
-        public double field_76330_b;
-        public String field_76331_c;
+        public double percentageOfStartSection;
+        public double percentageOfRoot;
+        public String sectionName;
 
-        public Result (String p_i1554_1_, double p_i1554_2_, double p_i1554_4_)
+        public Result (String sectionName, double percentageOfStartSection, double percentageOfRoot)
         {
-            this.field_76331_c = p_i1554_1_;
-            this.field_76332_a = p_i1554_2_;
-            this.field_76330_b = p_i1554_4_;
+            this.sectionName = sectionName;
+            this.percentageOfStartSection = percentageOfStartSection;
+            this.percentageOfRoot = percentageOfRoot;
         }
 
         public int compareTo (Profiler.Result p_compareTo_1_)
         {
-            return p_compareTo_1_.field_76332_a < this.field_76332_a ? -1 : (p_compareTo_1_.field_76332_a > this.field_76332_a ? 1 : p_compareTo_1_.field_76331_c.compareTo(this.field_76331_c));
+            return p_compareTo_1_.percentageOfStartSection < this.percentageOfStartSection ? -1 : (p_compareTo_1_.percentageOfStartSection > this.percentageOfStartSection ? 1 : p_compareTo_1_.sectionName
+                    .compareTo(this.sectionName));
         }
 
         public int func_76329_a ()
         {
-            return (this.field_76331_c.hashCode() & 11184810) + 4473924;
+            return (this.sectionName.hashCode() & 11184810) + 4473924;
         }
 
         public int compareTo (Object p_compareTo_1_)
