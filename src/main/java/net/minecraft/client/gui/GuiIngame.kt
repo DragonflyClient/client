@@ -1039,10 +1039,12 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
     fun initInGameOverlay() {
         stage.clear()
-        
-        for(keyStroke in KeystrokesManager.keystrokes) {
-            keyStroke.update()
-            stage.add(Pair("keystroke-${keyStroke.keyDesc}", keyStroke.textField))
+
+        if (KeystrokesMod.enabled) {
+            for (keyStroke in KeystrokesManager.keystrokes) {
+                keyStroke.update()
+                stage.add(Pair("keystroke-${keyStroke.keyDesc}", keyStroke.textField))
+            }
         }
 
         ToggleSneakMod.updateOverlay()
