@@ -472,6 +472,8 @@ public class GlyphFontRenderer implements IFontRenderer {
                         currentGreen = green;
                         currentBlue = blue;
                         GlStateManager.color(red, green, blue, this.alpha);
+                        ++charIndex;
+                        continue;
                     } else if (indexOf == 16) {
                         this.randomStyle = true;
                     } else if (indexOf == 17) {
@@ -488,12 +490,12 @@ public class GlyphFontRenderer implements IFontRenderer {
                         this.strikethroughStyle = false;
                         this.underlineStyle = false;
                         this.italicStyle = false;
-
-                        currentRed = this.red;
-                        currentGreen = this.green;
-                        currentBlue = this.blue;
-                        GlStateManager.color(this.red, this.green, this.blue, this.alpha);
                     }
+
+                    currentRed = this.red;
+                    currentGreen = this.green;
+                    currentBlue = this.blue;
+                    GlStateManager.color(this.red, this.green, this.blue, this.alpha);
 
                     ++charIndex;
                 }
@@ -567,8 +569,8 @@ public class GlyphFontRenderer implements IFontRenderer {
             int l = this.underlineStyle ? -1 : 0;
             worldRenderer.pos(this.posX + (float) l, this.posY + (float) glyphPage.getMaxFontHeight() - 1F, 0.0D).endVertex();
             worldRenderer.pos(this.posX + f, this.posY + (float) glyphPage.getMaxFontHeight() - 1F, 0.0D).endVertex();
-            worldRenderer.pos(this.posX + f, this.posY + (float) glyphPage.getMaxFontHeight() - 6F, 0.0D).endVertex();
-            worldRenderer.pos(this.posX + (float) l, this.posY + (float) glyphPage.getMaxFontHeight() - 6F, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + f, this.posY + (float) glyphPage.getMaxFontHeight() - 8F, 0.0D).endVertex();
+            worldRenderer.pos(this.posX + (float) l, this.posY + (float) glyphPage.getMaxFontHeight() - 8F, 0.0D).endVertex();
             tessellator.draw();
             GlStateManager.enableTexture2D();
         }
