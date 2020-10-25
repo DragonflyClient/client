@@ -6,11 +6,10 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.ScaledFontRenderer
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
-import net.minecraft.client.renderer.GlStateManager
 import java.awt.Color
 import java.lang.management.ManagementFactory
 import java.text.SimpleDateFormat
-import java.time.Instant
+import kotlin.math.roundToInt
 
 object DeveloperModeSubscriber {
 
@@ -18,6 +17,8 @@ object DeveloperModeSubscriber {
     fun postRender(event: PostRenderEvent) {
         if (!Dragonfly.isDeveloperMode)
             return
+
+        val frameTime = (100_000.0 / Minecraft.getDebugFPS()).roundToInt() / 100.0
 
         val asyncBuilding = Dragonfly.fontManager.defaultFont.asyncBuilding
         val cachedFontRenderer = Dragonfly.fontManager.defaultFont.cachedFontRenderer
@@ -27,13 +28,14 @@ object DeveloperModeSubscriber {
 
         val infos = listOf(
             "FPS: " to Minecraft.getDebugFPS().toString(),
+            "Render time: " to "${frameTime}ms",
             "TPS: " to Dragonfly.lastTPS.toString(),
             "GUI: " to (Minecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "null"),
-            "§nFont Renderers" to null,
+            "§nFont renderers" to null,
             "Building: " to asyncBuilding.size.toString(),
             "Cached: " to cachedFontRenderer.size.toString(),
             "Scaled: " to cachedFontRenderer.count { it.value is ScaledFontRenderer }.toString(),
-            "§nGarbage Collection" to null,
+            "§nGarbage collection" to null,
             "Count: " to stats.totalCount.toString(),
             "Duration: " to SimpleDateFormat(if (stats.totalTime < 10_000) "mm:ss.SSS" else "mm:ss").format(stats.totalTime) + "m",
             "Last: " to SimpleDateFormat(if (ago < 10_000) "mm:ss.SSS" else "mm:ss").format(ago) + "m ago"
@@ -41,15 +43,15 @@ object DeveloperModeSubscriber {
 
         var currentY = 2.0
         for (info in infos) {
-            if (info.second == null) currentY += 10.0
+            if (info.second == null) currentY += 8.0
 
             renderDeveloperInfo(info.first, info.second ?: "", event.scaledWidth, currentY)
-            currentY += if (info.second == null) 25.0 else 22.0
+            currentY += if (info.second == null) 18.0 else 16.0
         }
     }
 
     private fun renderDeveloperInfo(title: String, content: String, screenWidth: Double, y: Double) {
-        val fontRenderer = Dragonfly.fontManager.monospaceFont.fontRenderer(size = 38)
+        val fontRenderer = Dragonfly.fontManager.monospaceFont.fontRenderer(size = 30)
         val height = fontRenderer.height
         val framesTitleWidth = fontRenderer.getStringWidth(title)
         val framesWidth = framesTitleWidth + fontRenderer.getStringWidth(content)
