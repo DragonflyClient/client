@@ -4,6 +4,7 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.switch
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.minecraft.client.Minecraft
@@ -63,7 +64,7 @@ class BackNavigation(
 
     fun gui(gui: GuiScreen) {
         action = {
-            ScreenOverlay.displayGui(gui)
+            gui.switch()
         }
     }
 }
