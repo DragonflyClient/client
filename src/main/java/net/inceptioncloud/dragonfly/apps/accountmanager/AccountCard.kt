@@ -17,8 +17,7 @@ import net.inceptioncloud.dragonfly.engine.structure.IDimension
 import net.inceptioncloud.dragonfly.engine.structure.IPosition
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.OutlineButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
 import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.inceptioncloud.dragonfly.utils.Keep
 import net.minecraft.client.Minecraft
@@ -86,6 +85,7 @@ class AccountCard(
             x = this@AccountCard.x + (this@AccountCard.width - width) / 2.0f
             y = this@AccountCard.y + 30.0f
             resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/steve-skull.png")
+            bindLazyTexture { account.retrieveSkull()?.let { DynamicTexture(it) } }
         }!!
 
         "skull-shadow"<Rectangle> {
@@ -190,15 +190,6 @@ class AccountCard(
                     mc.addScheduledTask {
                         Minecraft.getMinecraft().currentScreen.refresh()
                     }
-                }
-            }
-        }
-
-        if (skull.dynamicTexture == null) {
-            GlobalScope.launch(Dispatchers.IO) {
-                val image = account.retrieveSkull() ?: return@launch
-                mc.addScheduledTask {
-                    skull.dynamicTexture = DynamicTexture(image)
                 }
             }
         }
