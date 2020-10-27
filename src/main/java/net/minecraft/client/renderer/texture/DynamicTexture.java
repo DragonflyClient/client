@@ -22,7 +22,6 @@ public class DynamicTexture extends AbstractTexture
     {
         this(bufferedImage.getWidth(), bufferedImage.getHeight());
         bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), this.dynamicTextureData, 0, bufferedImage.getWidth());
-        this.updateDynamicTexture();
     }
 
     public DynamicTexture(int textureWidth, int textureHeight)
@@ -37,10 +36,19 @@ public class DynamicTexture extends AbstractTexture
             ShadersTex.initDynamicTexture(this.getGlTextureId(), textureWidth, textureHeight, this);
             this.shadersInitialized = true;
         }
-        else
+    }
+
+    @Override
+    public int getGlTextureId() {
+
+        if (this.glTextureId == -1)
         {
-            TextureUtil.allocateTexture(this.getGlTextureId(), textureWidth, textureHeight);
+            this.glTextureId = TextureUtil.glGenTextures();
+            TextureUtil.allocateTexture(this.glTextureId, width, height);
+            this.updateDynamicTexture();
         }
+
+        return this.glTextureId;
     }
 
     public void loadTexture(IResourceManager resourceManager) throws IOException

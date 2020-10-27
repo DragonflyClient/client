@@ -1,7 +1,7 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
 import com.google.common.util.concurrent.ListenableFuture
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
@@ -11,10 +11,9 @@ import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
 import net.inceptioncloud.dragonfly.engine.tooltip.TooltipAlignment
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.*
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.inceptioncloud.dragonfly.engine.font.Typography
 import net.inceptioncloud.dragonfly.engine.font.font
+import net.inceptioncloud.dragonfly.engine.widgets.primitive.*
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient
 import net.inceptioncloud.dragonfly.overlay.modal.Modal
 import net.inceptioncloud.dragonfly.ui.modal.ConfirmModal
@@ -34,16 +33,6 @@ class IngameMenuUI : GuiScreen() {
     override var isNativeResolution: Boolean = true
 
     override fun initGui() {
-        val playerSkullTexture = runBlocking {
-            AccountManagerApp.selectedAccount?.retrieveSkull()?.let {
-                DynamicTexture(it)
-            } ?: kotlin.runCatching {
-                DynamicTexture(ImageIO.read(URL(
-                    "https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve"
-                )))
-            }.getOrNull()
-        }
-
         +Rectangle {
             val isOpenedFromIngame = mc.previousScreen == null
 
@@ -63,8 +52,10 @@ class IngameMenuUI : GuiScreen() {
             y = 10.0f
             width = 50.0f
             height = 50.0f
-            dynamicTexture = playerSkullTexture
             resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/steve-skull.png")
+            bindLazyTexture {
+                AccountManagerApp.selectedAccount?.retrieveSkull()?.let { DynamicTexture(it) }
+            }
         } id "player-skull"
 
         +TextField {

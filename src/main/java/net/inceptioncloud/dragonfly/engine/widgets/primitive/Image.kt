@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly.engine.widgets.primitive
 
+import kotlinx.coroutines.*
+import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine.popScale
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine.pushScale
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morphBetween
@@ -14,6 +16,9 @@ import net.minecraft.client.renderer.OpenGlHelper.glBlendFunc
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11.*
+import java.awt.image.BufferedImage
+import java.net.URL
+import javax.imageio.ImageIO
 
 /**
  * ## Image Widget
@@ -117,5 +122,15 @@ class Image(
             else -> return false
         }
         return true
+    }
+}
+
+/**
+ * Binds a lazy loading texture to the image which is fetched asynchronously
+ * and then added to the image.
+ */
+inline fun Image.bindLazyTexture(crossinline loader: suspend () -> DynamicTexture?) {
+    GlobalScope.launch(Dispatchers.IO) {
+        dynamicTexture = loader()
     }
 }
