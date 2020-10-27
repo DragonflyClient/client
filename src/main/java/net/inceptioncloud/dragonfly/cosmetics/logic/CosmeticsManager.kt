@@ -110,6 +110,7 @@ object CosmeticsManager {
                 ?.let { CosmeticDataList(it) }
             cache[uuid] = cosmetics
             callback.accept(cosmetics)
+            return
         }
 
         GlobalScope.launch(Dispatchers.IO) {

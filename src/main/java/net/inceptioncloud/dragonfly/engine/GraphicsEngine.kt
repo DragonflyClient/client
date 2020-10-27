@@ -5,12 +5,16 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.GlyphFontRenderer
 import net.inceptioncloud.dragonfly.engine.internal.MouseData
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.mc
 import net.inceptioncloud.dragonfly.overlay.ScreenOverlay
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.BufferUtils
+import org.lwjgl.input.Keyboard
+import org.lwjgl.input.Keyboard.KEY_LCONTROL
+import org.lwjgl.input.Keyboard.KEY_LSHIFT
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -148,7 +152,11 @@ object GraphicsEngine {
  * Switches to the screen using the switch overlay.
  */
 fun GuiScreen.switch() {
-    ScreenOverlay.displayGui(this)
+    if (Keyboard.isKeyDown(KEY_LCONTROL) && Keyboard.isKeyDown(KEY_LSHIFT)) {
+        mc.displayGuiScreen(this)
+    } else {
+        ScreenOverlay.displayGui(this)
+    }
 }
 
 /**
