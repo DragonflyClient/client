@@ -26,7 +26,7 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
     var overlayTextColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
     var overlaySize by option(16.0)
     var overlayPosition by option(EnumToggleSneakPosition.BOTTOM_RIGHT)
-    var animationSpeed by option(0.25)
+    var animationSpeed by option(0.25)  { it in 0.0..1.0 }
 
     var posX = 0.0
     var posY = 0.0
@@ -44,7 +44,7 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
         ColorControl(!ToggleSneakMod::overlayTextColor, "Text Color"),
         DropdownElement(::overlayPosition, "Position"),
         NumberControl(::overlaySize, "Font Size", min = 5.0, max = 25.0, decimalPlaces = 1),
-        NumberControl(!ToggleSneakMod::animationSpeed, "Animation Speed (seconds)", "Duration of the text fade-in animation", min = 0.0, max = 1.0, decimalPlaces = 2, liveUpdate = false)
+        NumberControl(!ToggleSneakMod::animationSpeed, "Animation Speed (seconds)", "Duration of the text fade-in animation", min = 0.0, max = 1.0, decimalPlaces = 2, liveUpdate = true)
     )
 
     fun updateOverlay() {
