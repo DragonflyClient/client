@@ -135,18 +135,20 @@ object ScreenOverlay {
      * Animates the switch overlay added by [startSwitchOverlay] out.
      */
     private fun finishSwitchOverlay() {
-        val overlay = stage["switch-overlay"] ?: return
-        val tail = stage["switch-overlay-tail"] ?: return
+        fun finalize() {
+            stage.remove("switch-overlay")
+            stage.remove("switch-overlay-tail")
+            inSwitchProgress = false
+        }
+
+        val overlay = stage["switch-overlay"] ?: return finalize()
+        val tail = stage["switch-overlay-tail"] ?: return finalize()
 
         overlay.detachAnimation<MorphAnimation>()
         tail.detachAnimation<MorphAnimation>()
 
         overlay.morph(75, null, Rectangle::x to dimensions.width.toDouble())?.start()
-        tail.morph(90, null, Rectangle::x to dimensions.width.toDouble())?.post { _, _ ->
-            stage.remove("switch-overlay")
-            stage.remove("switch-overlay-tail")
-            inSwitchProgress = false
-        }?.start()
+        tail.morph(90, null, Rectangle::x to dimensions.width.toDouble())?.post { _, _ -> finalize() }?.start()
     }
 
     /**
