@@ -4,7 +4,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.mojang.authlib.GameProfile;
 import net.inceptioncloud.dragonfly.Dragonfly;
-import net.inceptioncloud.dragonfly.engine.font.FontWeight;
+import net.inceptioncloud.dragonfly.engine.font.*;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
@@ -110,7 +110,7 @@ public class GuiPlayerTabOverlay extends Gui {
         for (NetworkPlayerInfo networkplayerinfo : list) {
 
             final String playerName = getPlayerName(networkplayerinfo);
-            int k = fontRenderer.getStringWidth(playerName);
+            int k = (int) (fontRenderer.getStringWidth(playerName));
             i = Math.max(i, k);
 
             if (scoreObjective != null && scoreObjective.getRenderType() != IScoreObjectiveCriteria.EnumRenderType.HEARTS) {
@@ -226,7 +226,7 @@ public class GuiPlayerTabOverlay extends Gui {
                     }
                 }
 
-                this.drawPing(columnWidth, x - (singleplayer ? 9 : 0) + 1, k2 - 1, playerInfo);
+                this.drawPing(columnWidth, x - (singleplayer ? 9 : 0) + 1, k2, playerInfo);
 
                 int indicatorX = x - 13;
 
@@ -272,8 +272,13 @@ public class GuiPlayerTabOverlay extends Gui {
     protected void drawPing(int param1, int param2, int param3, NetworkPlayerInfo networkPlayerInfoIn) {
         if(OptionsSectionUI.getShowPingAsNumber().invoke()) {
 
+            double f1 = 2/3.0;
+            double f2 = 3/2.0;
+
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(f1, f1, f1);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            IFontRenderer fontRenderer = Dragonfly.getFontManager().getDefaultFont().fontRenderer();
+            IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
             this.mc.getTextureManager().bindTexture(icons);
 
             String pingText = "";
@@ -299,9 +304,10 @@ public class GuiPlayerTabOverlay extends Gui {
             }
 
             this.zLevel += 100.0F;
-            int strWidth = fontRenderer.getStringWidth(pingText);
-            fontRenderer.drawStringWithShadow(pingText, param2 + param1 - strWidth - 3, param3 + 4, color);
+            int strWidth = (int) (fontRenderer.getStringWidth(pingText) * f1);
+            fontRenderer.drawStringWithShadow(pingText, (param2 + param1 - strWidth - 3) * (float) f2, (param3 + 1) * (float) f2, color);
             this.zLevel -= 100.0F;
+            GlStateManager.popMatrix();
 
         }else {
 
