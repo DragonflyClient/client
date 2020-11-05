@@ -29,7 +29,7 @@ class SpotifyManager {
         )
 
         if(response.statusCode == 200) {
-            LogManager.getLogger().info("$prefix ${action.route.toUpperCase()}Request was successful")
+            LogManager.getLogger().info("$prefix ${action.route.capitalize()}Request was successful")
         }else {
             throw Exception("${response.statusCode} ${response.text}")
         }
