@@ -9,7 +9,7 @@ class SpotifyManager {
     private val prefix = "[Spotify Manager]"
     private val account = Dragonfly.account
 
-    fun pausePlayback() {
+    fun performDoAction(action: SpotifyDoAction, parameter: String?) {
 
         if(account == null) {
             LogManager.getLogger().info("$prefix User is not logged in")
@@ -17,14 +17,19 @@ class SpotifyManager {
         }
 
         val response = get(
-            url = "http://127.0.0.1:8080/pause",
-            params = mapOf(
-                "token" to account.token!!
-            )
+            url = "http://127.0.0.1:8080/${action.route}",
+            params = if(action.parameterName != null) {
+                mapOf(
+                    "token" to account.token!!,
+                    action.parameterName to parameter!!
+                )
+            }else {
+                mapOf("token" to account.token!!)
+            }
         )
 
         if(response.statusCode == 200) {
-            LogManager.getLogger().info("$prefix PauseRequest was successful")
+            LogManager.getLogger().info("$prefix ${action.route.toUpperCase()}Request was successful")
         }else {
             throw Exception("${response.statusCode} ${response.text}")
         }
