@@ -24,7 +24,7 @@ object ToggleSneakMod : DragonflyMod("ToggleSneak") {
     var overlayTextColor by option(WidgetColor(1.0, 1.0, 1.0, 1.0))
     var overlaySize by option(16.0)
     var overlayPosition by option(EnumToggleSneakPosition.BOTTOM_RIGHT)
-    var animationSpeed by option(20.0)
+    var animationSpeed by option(20.0) { it in 1.0..20.0 }
 
     var posX = 0.0f
     var posY = 0.0f

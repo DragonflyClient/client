@@ -1214,7 +1214,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      */
     private void displayDebugInfo(long elapsedTicksTime) {
         if (this.mcProfiler.profilingEnabled) {
-            List<Profiler.Result> list = this.mcProfiler.getProfilingData("root.gameRenderer.gui");
+            List<Profiler.Result> list = this.mcProfiler.getProfilingData("root");
             Profiler.Result profiler$result = list.remove(0);
             GlStateManager.clear(256);
             GlStateManager.matrixMode(5889);
