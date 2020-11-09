@@ -8,8 +8,8 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import java.awt.Color
 import java.lang.management.ManagementFactory
-import java.text.SimpleDateFormat
-import kotlin.math.roundToInt
+import java.text.*
+import java.util.*
 
 object DeveloperModeSubscriber {
 
@@ -18,7 +18,9 @@ object DeveloperModeSubscriber {
         if (!Dragonfly.isDeveloperMode)
             return
 
-        val frameTime = (100_000.0 / Minecraft.getDebugFPS()).roundToInt() / 100.0
+        val frameTime = DecimalFormat("0.0").apply {
+            decimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        }.format(Minecraft.renderTime / 1000000.0)
 
         val asyncBuilding = Dragonfly.fontManager.defaultFont.asyncBuilding
         val cachedFontRenderer = Dragonfly.fontManager.defaultFont.cachedFontRenderer

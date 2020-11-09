@@ -148,6 +148,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      * This is set to fpsCounter every debug screen update, and is shown on the debug screen. It's also sent as part of the usage snooping.
      */
     private static int debugFPS;
+    private static long totalRenderTime;
+    public static long renderTime;
     public final File mcDataDir;
     public final FrameTimer frameTimer = new FrameTimer();
     /**
@@ -1057,7 +1059,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
         if (!this.skipRenderWorld) {
             this.mcProfiler.endStartSection("gameRenderer");
+
+            long start = System.nanoTime();
             this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks, i);
+            totalRenderTime += System.nanoTime() - start;
+
             this.mcProfiler.endSection();
         }
 
@@ -1103,6 +1109,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
 
         while (getSystemTime() >= this.debugUpdateTime + 1000L) {
             debugFPS = this.fpsCounter;
+            renderTime = debugFPS == 0 ? -1 : totalRenderTime / debugFPS;
+            totalRenderTime = 0;
             this.debug = String.format("%d fps (%d chunk update%s) T: %s%s%s%s%s", debugFPS, RenderChunk.renderChunksUpdated, RenderChunk.renderChunksUpdated != 1 ? "s" : "",
                     (float) this.gameSettings.limitFramerate == GameSettings.Options.FRAMERATE_LIMIT.getValueMax() ? "inf" : Integer.valueOf(this.gameSettings.limitFramerate), this.gameSettings.enableVsync ? " vsync" : "", this.gameSettings.fancyGraphics ? "" : " fast",
                     this.gameSettings.clouds == 0 ? "" : (this.gameSettings.clouds == 1 ? " fast-clouds" : " fancy-clouds"), OpenGlHelper.useVbo() ? " vbo" : "");
