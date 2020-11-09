@@ -2,10 +2,10 @@ package net.inceptioncloud.dragonfly.mods.keystrokes
 
 import net.inceptioncloud.dragonfly.controls.*
 import net.inceptioncloud.dragonfly.controls.color.ColorControl
+import net.inceptioncloud.dragonfly.engine.internal.PropertyListener
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.mods.core.DragonflyMod
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
-import net.inceptioncloud.dragonfly.options.ChangeListener
 import net.inceptioncloud.dragonfly.utils.Keep
 import net.minecraft.client.Minecraft
 import kotlin.reflect.jvm.isAccessible
@@ -92,8 +92,8 @@ object KeystrokesMod : DragonflyMod("Keystrokes") {
 }
 
 @Keep
-private class KeystrokesModListener : ChangeListener<Any?> {
-    override fun invoke(oldValue: Any?, newValue: Any?) {
+private class KeystrokesModListener : PropertyListener<Any?> {
+    override fun changed(old: Any?, new: Any?) {
         Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
     }
 }

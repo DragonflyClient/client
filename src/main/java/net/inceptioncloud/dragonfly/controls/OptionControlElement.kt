@@ -9,11 +9,11 @@ import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.mods.core.OptionDelegate
-import net.inceptioncloud.dragonfly.options.ChangeListener
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.utils.*
 import net.inceptioncloud.dragonfly.engine.font.Typography
 import net.inceptioncloud.dragonfly.engine.font.font
+import net.inceptioncloud.dragonfly.engine.internal.PropertyListener
 import net.minecraft.util.ResourceLocation
 import kotlin.properties.Delegates
 import kotlin.reflect.KMutableProperty0
@@ -143,8 +143,8 @@ abstract class OptionControlElement<T>(
 }
 
 @Keep
-private class OptionControlElementListener<T>(val elem: OptionControlElement<T>) : ChangeListener<T> {
-    override fun invoke(oldValue: T, newValue: T) {
-        elem.handleNewValue(newValue)
+private class OptionControlElementListener<T>(val elem: OptionControlElement<T>) : PropertyListener<T> {
+    override fun changed(old: T, new: T) {
+        elem.handleNewValue(new)
     }
 }

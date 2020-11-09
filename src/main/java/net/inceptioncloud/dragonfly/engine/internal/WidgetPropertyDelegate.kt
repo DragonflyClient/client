@@ -1,7 +1,5 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import javafx.beans.property.SimpleObjectProperty
-import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -20,44 +18,48 @@ class WidgetPropertyDelegate<T>(
 ) : ReadWriteProperty<Widget<*>, T> {
 
     /**
-     * The observable object property that holds the actual value of the delegated property and
-     * that listens for changes
+     * Listeners attached to this delegate that are fired when the value changes.
      */
-    val objectProperty = SimpleObjectProperty<T>(initialValue)
+    private val listeners = mutableListOf<PropertyListener<T>>()
 
     /**
-     * 'this'-reference to the widget that uses this delegate
+     * The current value that this delegate holds. When it changes, the [listeners] are fired.
      */
-    var thisRef: Widget<*> by Delegates.notNull()
+    var value: T = initialValue
+        private set(value) {
+            this.listeners.forEach { it.changed(field, value) }
+            field = value
+        }
 
     /**
-     * Reference to the property that is delegated using this property delegate
-     */
-    var property: KProperty<*> by Delegates.notNull()
-
-    /**
-     * Returns the value of the observable [objectProperty]
+     * Returns the [value] property as part of the delegation.
      */
     override fun getValue(thisRef: Widget<*>, property: KProperty<*>): T {
-        return objectProperty.get()
+        return value
     }
 
     /**
-     * Sets the value of the observable [objectProperty] and notifies all listeners
+     * Sets the [value] property as part of the delegation.
      */
     override fun setValue(thisRef: Widget<*>, property: KProperty<*>, value: T) {
-        return objectProperty.set(value)
+        this.value = value
     }
 
     /**
-     * Injects this delegate to the [Widget.propertyDelegates] map so it can be retrieved later and sets
-     * the [thisRef] and [property] properties.
+     * Provides the delegate (this) and puts it in the [Widget.propertyDelegates] map.
      */
     operator fun provideDelegate(thisRef: Widget<*>, prop: KProperty<*>): WidgetPropertyDelegate<T> {
-        this.thisRef = thisRef
-        this.property = prop
-
         thisRef.propertyDelegates[prop.name] = this
         return this
     }
+
+    /**
+     * Adds the [listener] to this delegate.
+     */
+    fun addListener(listener: PropertyListener<T>) = listeners.add(listener)
+
+    /**
+     * Removes the [listener] from this delegate.
+     */
+    fun destroyListener(listener: PropertyListener<T>) = listeners.remove(listener)
 }

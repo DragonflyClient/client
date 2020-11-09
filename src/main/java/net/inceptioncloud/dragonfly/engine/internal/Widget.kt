@@ -1,7 +1,5 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
@@ -320,7 +318,7 @@ abstract class Widget<W : Widget<W>>(
      */
     protected fun <T> property(initialValue: T): WidgetPropertyDelegate<T> {
         val delegate = WidgetPropertyDelegate(initialValue)
-        delegate.objectProperty.addListener(WidgetListener(this))
+        delegate.addListener(WidgetListener(this))
         return delegate
     }
 
@@ -418,9 +416,9 @@ abstract class Widget<W : Widget<W>>(
 }
 
 @Keep
-private class WidgetListener<T>(val widget: Widget<*>) : ChangeListener<T> {
-    override fun changed(observable: ObservableValue<out T>?, oldValue: T, newValue: T) {
-        if (oldValue != newValue) {
+private class WidgetListener<T>(val widget: Widget<*>) : PropertyListener<T> {
+    override fun changed(old: T, new: T) {
+        if (old != new) {
             if (!widget.isInStateUpdate) {
                 widget.notifyStateChanged()
             }

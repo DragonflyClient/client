@@ -18,7 +18,7 @@ class PseudoOptionKey<T>(
         val valid = validator(value)
         if (valid) {
             setter(value)
-            listeners.forEach { it(value, value) }
+            listeners.forEach { it.changed(value, value) }
         }
         return valid
     }

@@ -14,6 +14,7 @@ plugins {
     java
     idea
     kotlin("jvm") version "1.4.0"
+    id("org.openjfx.javafxplugin") version "0.0.9"
 }
 
 group = "net.inceptioncloud"
@@ -277,4 +278,9 @@ tasks {
     compileTestJava {
         options.encoding = "UTF-8"
     }
+}
+
+javafx {
+    version = "11.0.2"
+    modules = arrayListOf("javafx.controls")
 }

@@ -1,8 +1,7 @@
 package net.inceptioncloud.dragonfly.options
 
 import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
-
-typealias ChangeListener<T> = (oldValue: T, newValue: T) -> Unit
+import net.inceptioncloud.dragonfly.engine.internal.PropertyListener
 
 /**
  * Represents a value that is set in the options file for a specific key.
@@ -24,7 +23,7 @@ open class OptionKey<T>(
      * Contains all listeners that have been added to this option key that are notified
      * when its value changes.
      */
-    protected val listeners = mutableListOf<ChangeListener<T>>()
+    protected val listeners = mutableListOf<PropertyListener<in T>>()
 
     /**
      * @see OptionsBase.getValue
@@ -38,7 +37,7 @@ open class OptionKey<T>(
      */
     open fun set(value: T): Boolean {
         val success = optionsBase.setValue(this, value)
-        listeners.forEach { it(value, value) }
+        listeners.forEach { it.changed(value, value) }
         return success
     }
 
@@ -50,14 +49,14 @@ open class OptionKey<T>(
     /**
      * Adds a new [listener] to the option key.
      */
-    fun addListener(listener: ChangeListener<T>) {
+    fun addListener(listener: PropertyListener<in T>) {
         listeners.add(listener)
     }
 
     /**
      * Removes a [listener] from the option key.
      */
-    fun removeListener(listener: ChangeListener<T>) {
+    fun removeListener(listener: PropertyListener<in T>) {
         listeners.remove(listener)
     }
 

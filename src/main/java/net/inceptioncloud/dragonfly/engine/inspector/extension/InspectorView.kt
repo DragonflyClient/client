@@ -4,7 +4,6 @@ import javafx.animation.Transition
 import javafx.application.Platform
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.value.ChangeListener
 import javafx.scene.control.*
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
@@ -69,7 +68,7 @@ class InspectorView : View("Dragonfly Inspector") {
      * have been added by the inspector. When the [inspectedWidget] is changed, all previously
      * bound property listeners are unbound using [unbindPropertyListeners].
      */
-    private val propertyListeners = mutableMapOf<SimpleObjectProperty<out Any>, MutableList<ChangeListener<in Any>>>()
+    private val propertyListeners = mutableMapOf<WidgetPropertyDelegate<in Any?>, MutableList<PropertyListener<Any?>>>()
 
     /**
      * The color to which the background of a fieldset is changed when its property value changes.
@@ -218,7 +217,7 @@ class InspectorView : View("Dragonfly Inspector") {
     private fun unbindPropertyListeners() {
         propertyListeners.forEach { (prop, listeners) ->
             listeners.forEach {
-                prop.removeListener(it)
+                prop.destroyListener(it)
             }
         }
         propertyListeners.clear()
@@ -282,43 +281,46 @@ class InspectorView : View("Dragonfly Inspector") {
      * until the filed is re-created. To indicate this, a '*'-suffix is appended to the property name.
      */
     private fun Fieldset.createFieldForProperty(widget: Widget<*>, property: KProperty<*>) {
-        val objectProperty = widget.propertyDelegates[property.name]?.objectProperty
+        @Suppress("UNCHECKED_CAST") // unchecked cast required, won't cause runtime errors
+        val delegate: WidgetPropertyDelegate<in Any?>? = widget.propertyDelegates[property.name] as WidgetPropertyDelegate<in Any?>?
 
-        if (objectProperty != null) {
+        if (delegate != null) {
             val field = field(property.name)
-            val text = field.text(objectProperty.get().toString())
-            val changeListener = ChangeListener<Any?> { _, oldValue, newValue ->
-                if (oldValue != newValue) {
-                    Platform.runLater {
-                        text.text = newValue.toString()
-                        if (field.background != updatePropertyColor.asBackground()) {
-                            field.background = updatePropertyColor.asBackground()
+            val text = field.text(delegate.value.toString())
+            val changeListener = object : PropertyListener<Any?> {
+                override fun changed(old: Any?, new: Any?) {
+                    if (old != new) {
+                        Platform.runLater {
+                            text.text = new.toString()
+                            if (field.background != updatePropertyColor.asBackground()) {
+                                field.background = updatePropertyColor.asBackground()
 
-                            object : Transition() {
-                                init {
-                                    cycleDuration = 0.5.seconds
-                                }
+                                object : Transition() {
+                                    init {
+                                        cycleDuration = 0.5.seconds
+                                    }
 
-                                override fun interpolate(fracIn: Double) {
-                                    val frac = (1.0 - fracIn)
-                                    field.background = Color.color(
-                                        updatePropertyColor.red,
-                                        updatePropertyColor.green,
-                                        updatePropertyColor.blue,
-                                        updatePropertyColor.opacity * frac
-                                    ).asBackground()
-                                }
-                            }.play()
+                                    override fun interpolate(fracIn: Double) {
+                                        val frac = (1.0 - fracIn)
+                                        field.background = Color.color(
+                                            updatePropertyColor.red,
+                                            updatePropertyColor.green,
+                                            updatePropertyColor.blue,
+                                            updatePropertyColor.opacity * frac
+                                        ).asBackground()
+                                    }
+                                }.play()
+                            }
                         }
                     }
                 }
             }
 
-            objectProperty.addListener(changeListener)
+            delegate.addListener(changeListener)
 
-            val listeners = propertyListeners.getOrDefault(objectProperty, mutableListOf())
+            val listeners = propertyListeners[delegate] ?: mutableListOf()
             listeners.add(changeListener)
-            propertyListeners.put(objectProperty, listeners)
+            propertyListeners[delegate] = listeners
         } else {
             field(property.name + " *").text(property.getter.call(widget).toString())
         }

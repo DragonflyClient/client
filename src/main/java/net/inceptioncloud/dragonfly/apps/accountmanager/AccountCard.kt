@@ -1,7 +1,5 @@
 package net.inceptioncloud.dragonfly.apps.accountmanager
 
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.link.LinkBridge
@@ -39,8 +37,7 @@ class AccountCard(
     var accentColor: WidgetColor by property(foreground)
 
     init {
-        this::isSelected.getTypedWidgetDelegate<Boolean>()!!.objectProperty
-            .addListener(AccountCardChangeListener(this))
+        this::isSelected.getTypedWidgetDelegate<Boolean>()!!.addListener(AccountCardChangeListener(this))
     }
 
     override fun assemble(): Map<String, Widget<*>> = mapOf(
@@ -226,13 +223,13 @@ class AccountCard(
 }
 
 @Keep
-private class AccountCardChangeListener(val accountCard: AccountCard) : ChangeListener<Boolean> {
-    override fun changed(observable: ObservableValue<out Boolean>?, oldValue: Boolean, newValue: Boolean) {
-        if (oldValue == newValue) return
+private class AccountCardChangeListener(val accountCard: AccountCard) : PropertyListener<Boolean> {
+    override fun changed(old: Boolean, new: Boolean) {
+        if (old == new) return
 
         accountCard.morph(
             30, EaseQuad.IN_OUT,
-            AccountCard::accentColor to if (newValue) accentNormal else foreground
+            AccountCard::accentColor to if (new) accentNormal else foreground
         )?.start()
     }
 }
