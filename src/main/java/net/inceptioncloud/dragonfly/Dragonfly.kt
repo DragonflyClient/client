@@ -10,7 +10,7 @@ import net.inceptioncloud.dragonfly.engine.font.FontManager
 import net.inceptioncloud.dragonfly.event.*
 import net.inceptioncloud.dragonfly.event.client.*
 import net.inceptioncloud.dragonfly.apps.settings.DragonflyOptions
-import net.inceptioncloud.dragonfly.apps.spotifyintergration.SpotifyManager
+import net.inceptioncloud.dragonfly.apps.spotifyintergration.backend.SpotifyManager
 import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager
 import net.inceptioncloud.dragonfly.diagnostic.ui.DiagnosticsPermissionsModal
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor

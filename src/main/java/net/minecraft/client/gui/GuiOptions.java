@@ -1,5 +1,7 @@
 package net.minecraft.client.gui;
 
+import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.apps.spotifyintergration.backend.SpotifyGetAction;
 import net.minecraft.client.audio.*;
 import net.minecraft.client.gui.stream.GuiStreamOptions;
 import net.minecraft.client.gui.stream.GuiStreamUnavailable;
@@ -187,6 +189,9 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
             {
                 this.mc.gameSettings.saveOptions();
                 this.mc.displayGuiScreen(new GuiSnooper(this, this.gameSettings));
+
+                System.out.println(Dragonfly.getSpotifyManager().performGetAction(SpotifyGetAction.CURRENT, null));
+
             }
 
             if (button.id == 200)
@@ -233,4 +238,9 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback
         drawCenteredString(this.fontRendererObj, this.field_146442_a, this.width / 2, 15, 16777215);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
+
+    private void print(String text) {
+        System.out.println(text);
+    }
+
 }
