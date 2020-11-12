@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables
 import com.google.common.collect.Lists
 import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
+import net.inceptioncloud.dragonfly.apps.spotifyintergration.frontend.SpotifyOverlay
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
 import net.inceptioncloud.dragonfly.engine.internal.Widget
@@ -1082,6 +1083,10 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
         ToggleSneakMod.updateOverlay()
         stage.add(Pair("togglesneak-text", ToggleSneakMod.textField))
+
+        SpotifyOverlay.update()
+        stage.add(Pair("spotify-image", SpotifyOverlay.image))
+        stage.add(Pair("spotify-title", SpotifyOverlay.title))
 
     }
 
