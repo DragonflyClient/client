@@ -1086,7 +1086,11 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
 
         SpotifyOverlay.update()
         stage.add(Pair("spotify-image", SpotifyOverlay.image))
+        stage.add(Pair("spotify-imageOverlay", SpotifyOverlay.imageOverlay))
         stage.add(Pair("spotify-title", SpotifyOverlay.title))
+        stage.add(Pair("spotify-artist", SpotifyOverlay.artist))
+        stage.add(Pair("spotify-timeLine", SpotifyOverlay.timeLine))
+        stage.add(Pair("spotify-timeCur", SpotifyOverlay.timeCur))
 
     }
 
