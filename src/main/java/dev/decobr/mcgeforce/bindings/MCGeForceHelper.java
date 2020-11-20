@@ -45,7 +45,7 @@ public class MCGeForceHelper {
     private static long handlePtr;
 
     static {
-        isSystemValid = validateSystem();
+        isSystemValid = false; //validateSystem();
 
         if (isSystemValid) {
 

@@ -1061,6 +1061,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
             this.mcProfiler.endStartSection("gameRenderer");
 
             long start = System.nanoTime();
+            GlStateManager.pushMatrix();
             this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks, i);
             totalRenderTime += System.nanoTime() - start;
 

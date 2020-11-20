@@ -5,18 +5,23 @@ import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
+import net.inceptioncloud.dragonfly.engine.font.Typography
+import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.DragonflyButton
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
-import net.inceptioncloud.dragonfly.engine.font.Typography
-import net.inceptioncloud.dragonfly.engine.font.font
 import net.inceptioncloud.dragonfly.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
+import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.skija.*
+import org.jetbrains.skiko.*
+import org.jetbrains.skiko.Library
+import java.awt.Color
 import java.net.URL
 import javax.imageio.ImageIO
 
@@ -115,7 +120,114 @@ class MainMenuUI : GuiScreen() {
         Taskbar.initializeTaskbar(this)
     }
 
+    var renderer: SkiaRenderer? = object : SkiaRenderer {
+        override fun onRender(canvas: Canvas, width: Int, height: Int) {
+            GlStateManager.popMatrix()
+            try {
+                canvas.drawRect(
+                    Rect.makeXYWH(100f, 100f, width.toFloat(), height.toFloat()), Paint().setColor(Color.RED.rgb)
+                )
+
+                val i = 1
+                canvas.drawDRRect(
+                    RRect.makeLTRB(100f * i, 200f * i, 200f * i, 250f * i, 10f * i),
+                    RRect.makeLTRB(110f * i, 210f * i, 190f * i, 240f * i, 15f * i),
+                    Paint().setColor(Color.BLACK.rgb)
+                )
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+
+        override fun onInit() {}
+        override fun onDispose() {}
+        override fun onReshape(width: Int, height: Int) {}
+    }
+
+    private val skijaState: SkijaState = SkijaState()
+    private var inited: Boolean = false
+    private val hardwareLayer = object : HardwareLayer() {
+        override val contentScale: Float
+            get() = 1.0F
+    }
+
+    fun reinit() {
+        inited = false
+    }
+
+    override fun onGuiClosed() {
+        super.onGuiClosed()
+        renderer?.onDispose()
+    }
+
+    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        super.drawScreen(mouseX, mouseY, partialTicks)
+
+        if (!inited) {
+            if (skijaState.context == null) {
+                skijaState.context = makeGLContext()
+            }
+            renderer?.onInit()
+            inited = true
+            renderer?.onReshape(width, height)
+        }
+
+        initSkija()
+
+        skijaState.apply {
+            canvas!!.clear(-1)
+            renderer?.onRender(canvas!!, mc.displayWidth, mc.displayHeight)
+            context!!.flush()
+        }
+    }
+
+    private fun initSkija() {
+        val dpi = hardwareLayer.contentScale
+        initRenderTarget(dpi)
+        initSurface()
+        scaleCanvas(dpi)
+    }
+
+    private fun scaleCanvas(dpi: Float) {
+        skijaState.apply {
+            canvas!!.scale(dpi, dpi)
+        }
+    }
+
+    private fun initSurface() {
+        skijaState.apply {
+            surface = Surface.makeFromBackendRenderTarget(
+                context,
+                renderTarget,
+                SurfaceOrigin.BOTTOM_LEFT,
+                SurfaceColorFormat.RGBA_8888,
+                ColorSpace.getSRGB()
+            )
+            canvas = surface!!.canvas
+        }
+    }
+
+    private fun initRenderTarget(dpi: Float) {
+        skijaState.apply {
+            clear()
+            val gl = OpenGLApi.instance
+            val fbId = gl.glGetIntegerv(gl.GL_DRAW_FRAMEBUFFER_BINDING)
+            renderTarget = makeGLRenderTarget(
+                (width * dpi).toInt(),
+                (height * dpi).toInt(),
+                0,
+                8,
+                fbId,
+                FramebufferFormat.GR_GL_RGBA8
+            )
+        }
+    }
+
     companion object {
+
+        init {
+            Library.load("/", "skiko")
+        }
 
         /**
          * Load the splash image and its properties from the Dragonfly webserver and creates a [SizedImage]
