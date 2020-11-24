@@ -5,7 +5,10 @@ import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
+import net.inceptioncloud.dragonfly.apps.spotifyintergration.frontend.SpotifyOverlay
+import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
+import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.internal.*
 import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseQuad
 import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
@@ -31,14 +34,69 @@ class IngameMenuUI : GuiScreen() {
 
     override var isNativeResolution: Boolean = true
 
+    private fun addSpotifyOverlay() {
+        println("Initializing Spotify Overlay for IngameMenuUI")
+
+        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-image")
+        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-imageOverlay")
+        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-title")
+        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-artist")
+        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-timeLine")
+        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-timeCur")
+
+        SpotifyOverlay.update()
+
+        this.stage.add(Pair("spotify-background", Rectangle().apply {
+            width = 160.0
+            height = 160.0
+            x = this@IngameMenuUI.width - 30.0 - 160.0
+            y = 30.0
+            color = DragonflyPalette.background
+        }))
+        this.stage.add(Pair("spotify-image", Image().apply {
+            width = 160.0
+            height = 160.0
+            x = this@IngameMenuUI.width - 30.0 - 160.0
+            y = 30.0
+            resourceLocation =
+                ResourceLocation("dragonflyres/icons/spotifyintergration/costa_rica.png") // no-track-found
+        }))
+        this.stage.add(Pair("spotify-imageOverlay", Rectangle().apply {
+            width = 160.0
+            height = 160.0
+            x = this@IngameMenuUI.width - 30.0 - 160.0
+            y = 30.0
+            color = WidgetColor(0.0, 0.0, 0.0, 0.6)
+        }))
+        this.stage.add(Pair("spotify-title", TextField().apply {
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 59)
+            width = 500.0
+            x = this@IngameMenuUI.width - 7.5 - 175.0
+            y = 87.0
+            staticText = "Costa Rica"
+        }))
+        this.stage.add(Pair("spotify-artist", TextField().apply {
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 30)
+            width = 250.0
+            x = this@IngameMenuUI.width - 162.0
+            y = 118.0
+            staticText = "Bankrol Hayden"
+            color = DragonflyPalette.accentNormal
+        }))
+    }
+
     override fun initGui() {
         val playerSkullTexture = runBlocking {
             AccountManagerApp.selectedAccount?.retrieveSkull()?.let {
                 DynamicTexture(it)
             } ?: kotlin.runCatching {
-                DynamicTexture(ImageIO.read(URL(
-                    "https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve"
-                )))
+                DynamicTexture(
+                    ImageIO.read(
+                        URL(
+                            "https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve"
+                        )
+                    )
+                )
             }.getOrNull()
         }
 
@@ -162,6 +220,7 @@ class IngameMenuUI : GuiScreen() {
         }
 
         Taskbar.initializeTaskbar(this)
+        addSpotifyOverlay()
     }
 
     /**
