@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.realms.RealmsBridge
 import net.minecraft.util.ResourceLocation
 import java.net.URL
+import java.util.*
 import javax.imageio.ImageIO
 
 class IngameMenuUI : GuiScreen() {
@@ -83,6 +84,10 @@ class IngameMenuUI : GuiScreen() {
             staticText = "Bankrol Hayden"
             color = DragonflyPalette.accentNormal
         }))
+    }
+
+    private fun morphSpotifyOverlay() {
+        this.stage["spotify-background"]?.morph(200, EaseQuad.OUT, Rectangle::width to 600.0, Rectangle:: x to this@IngameMenuUI.width - 30.0 - 600.0)?.start()
     }
 
     override fun initGui() {
@@ -221,6 +226,13 @@ class IngameMenuUI : GuiScreen() {
 
         Taskbar.initializeTaskbar(this)
         addSpotifyOverlay()
+
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                morphSpotifyOverlay()
+            }
+
+        }, 10000)
     }
 
     /**
