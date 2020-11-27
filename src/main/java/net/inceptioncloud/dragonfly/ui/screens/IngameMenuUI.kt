@@ -36,7 +36,6 @@ class IngameMenuUI : GuiScreen() {
     override var isNativeResolution: Boolean = true
 
     private fun addSpotifyOverlay() {
-        println("Initializing Spotify Overlay for IngameMenuUI")
 
         Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-image")
         Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-imageOverlay")
@@ -70,24 +69,45 @@ class IngameMenuUI : GuiScreen() {
             color = WidgetColor(0.0, 0.0, 0.0, 0.6)
         }))
         this.stage.add(Pair("spotify-title", TextField().apply {
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 59)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 80)
             width = 500.0
             x = this@IngameMenuUI.width - 7.5 - 175.0
             y = 87.0
             staticText = "Costa Rica"
         }))
         this.stage.add(Pair("spotify-artist", TextField().apply {
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 30)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.REGULAR, size = 40)
             width = 250.0
             x = this@IngameMenuUI.width - 162.0
             y = 118.0
             staticText = "Bankrol Hayden"
             color = DragonflyPalette.accentNormal
         }))
+
+        morphSpotifyOverlay()
     }
 
     private fun morphSpotifyOverlay() {
-        this.stage["spotify-background"]?.morph(200, EaseQuad.OUT, Rectangle::width to 600.0, Rectangle:: x to this@IngameMenuUI.width - 30.0 - 600.0)?.start()
+        val duration = 100
+
+        this.stage["spotify-background"]?.morph(
+            duration,
+            EaseQuad.OUT,
+            Rectangle::width to 600.0,
+            Rectangle::x to this@IngameMenuUI.width - 630.0
+        )?.start()
+        this.stage["spotify-title"]?.morph(
+            duration,
+            EaseQuad.OUT,
+            TextField::x to this@IngameMenuUI.width - 500.0,
+            TextField::y to 35.0
+        )?.start()
+        this.stage["spotify-artist"]?.morph(
+            duration,
+            EaseQuad.OUT,
+            TextField::x to this@IngameMenuUI.width - 470.0,
+            TextField::y to 72.0
+        )?.start()
     }
 
     override fun initGui() {
@@ -226,13 +246,6 @@ class IngameMenuUI : GuiScreen() {
 
         Taskbar.initializeTaskbar(this)
         addSpotifyOverlay()
-
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                morphSpotifyOverlay()
-            }
-
-        }, 10000)
     }
 
     /**
