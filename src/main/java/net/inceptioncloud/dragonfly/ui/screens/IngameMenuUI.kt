@@ -83,6 +83,14 @@ class IngameMenuUI : GuiScreen() {
             staticText = "Bankrol Hayden"
             color = DragonflyPalette.accentNormal
         }))
+        this.stage.add(Pair("spotify-pause", Image().apply {
+            x = this@IngameMenuUI.width - 415.0
+            y = 130.0
+            width = 35.0
+            height = 35.0
+            resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/play.png")
+            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+        }))
 
         morphSpotifyOverlay()
     }
@@ -106,8 +114,18 @@ class IngameMenuUI : GuiScreen() {
             duration,
             EaseQuad.OUT,
             TextField::x to this@IngameMenuUI.width - 470.0,
-            TextField::y to 72.0
+            TextField::y to 75.0
         )?.start()
+
+        Thread {
+            Thread.sleep(duration * 3.toLong())
+            this.stage["spotify-pause"]?.morph(
+                duration,
+                EaseQuad.IN,
+                Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+            )?.start()
+        }.start()
+
     }
 
     override fun initGui() {
@@ -300,5 +318,12 @@ class IngameMenuUI : GuiScreen() {
         })
         return list
     }
+
+    override fun onGuiClosed() {
+        super.onGuiClosed()
+
+        Minecraft.getMinecraft().ingameGUI.initInGameOverlay() // Adding Spotify-InGameOverlay again
+    }
+
 }
 
