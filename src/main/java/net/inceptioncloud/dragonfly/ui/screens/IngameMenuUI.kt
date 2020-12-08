@@ -85,10 +85,42 @@ class IngameMenuUI : GuiScreen() {
         }))
         this.stage.add(Pair("spotify-pause", Image().apply {
             x = this@IngameMenuUI.width - 415.0
-            y = 130.0
+            y = 105.0
             width = 35.0
             height = 35.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/play.png")
+            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+        }))
+        this.stage.add(Pair("spotify-shuffle", Image().apply {
+            x = this@IngameMenuUI.width - 415.0 - 60.0
+            y = 105.0
+            width = 35.0
+            height = 35.0
+            resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/shuffle.png")
+            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+        }))
+        this.stage.add(Pair("spotify-loop", Image().apply {
+            x = this@IngameMenuUI.width - 415.0 + 60.0
+            y = 105.0
+            width = 35.0
+            height = 35.0
+            resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/loop.png")
+            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+        }))
+        this.stage.add(Pair("spotify-previous", Image().apply {
+            x = this@IngameMenuUI.width - 415.0 - 120.0
+            y = 105.0
+            width = 35.0
+            height = 35.0
+            resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/previous.png")
+            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+        }))
+        this.stage.add(Pair("spotify-skip", Image().apply {
+            x = this@IngameMenuUI.width - 415.0 + 120.0
+            y = 105.0
+            width = 35.0
+            height = 35.0
+            resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/skip.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
         }))
 
@@ -120,6 +152,26 @@ class IngameMenuUI : GuiScreen() {
         Thread {
             Thread.sleep(duration * 3.toLong())
             this.stage["spotify-pause"]?.morph(
+                duration,
+                EaseQuad.IN,
+                Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+            )?.start()
+            this.stage["spotify-shuffle"]?.morph(
+                duration,
+                EaseQuad.IN,
+            Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+            )?.start()
+            this.stage["spotify-loop"]?.morph(
+                duration,
+                EaseQuad.IN,
+                Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+            )?.start()
+            this.stage["spotify-previous"]?.morph(
+                duration,
+                EaseQuad.IN,
+                Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+            )?.start()
+            this.stage["spotify-skip"]?.morph(
                 duration,
                 EaseQuad.IN,
                 Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
