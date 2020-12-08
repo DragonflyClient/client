@@ -68,5 +68,9 @@ class SpotifyManager {
         thread.start()
     }
 
+    fun performDoAction(action: SpotifyDoAction) {}
+
+    var isPlaying = false
+
 }
 

@@ -5,6 +5,8 @@ import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
+import net.inceptioncloud.dragonfly.apps.spotifyintergration.backend.SpotifyDoAction
+import net.inceptioncloud.dragonfly.apps.spotifyintergration.backend.SpotifyManager
 import net.inceptioncloud.dragonfly.apps.spotifyintergration.frontend.SpotifyOverlay
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
@@ -90,6 +92,13 @@ class IngameMenuUI : GuiScreen() {
             height = 35.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/play.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            clickAction = {
+                if(Dragonfly.spotifyManager.isPlaying) {
+                    Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PAUSE, null)
+                }else {
+                    Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PLAY, null)
+                }
+            }
         }))
         this.stage.add(Pair("spotify-shuffle", Image().apply {
             x = this@IngameMenuUI.width - 415.0 - 60.0
@@ -98,6 +107,9 @@ class IngameMenuUI : GuiScreen() {
             height = 35.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/shuffle.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            clickAction = {
+                Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.SHUFFLE, null)
+            }
         }))
         this.stage.add(Pair("spotify-loop", Image().apply {
             x = this@IngameMenuUI.width - 415.0 + 60.0
@@ -114,6 +126,9 @@ class IngameMenuUI : GuiScreen() {
             height = 35.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/previous.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            clickAction = {
+                Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PREVIOUS, null)
+            }
         }))
         this.stage.add(Pair("spotify-skip", Image().apply {
             x = this@IngameMenuUI.width - 415.0 + 120.0
@@ -122,6 +137,9 @@ class IngameMenuUI : GuiScreen() {
             height = 35.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/skip.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            clickAction = {
+                Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.NEXT, null)
+            }
         }))
 
         morphSpotifyOverlay()
