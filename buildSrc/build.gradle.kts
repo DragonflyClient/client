@@ -4,7 +4,8 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven("https://repo.spring.io/libs-release/")
+    maven("https://jcenter.bintray.com/")
+    /*maven("https://repo.spring.io/libs-release/")*/
 }
 
 dependencies {
