@@ -75,14 +75,14 @@ class IngameMenuUI : GuiScreen() {
             width = 500.0
             x = this@IngameMenuUI.width - 7.5 - 175.0
             y = 87.0
-            staticText = "Costa Rica"
+            staticText = Dragonfly.spotifyManager.title
         }))
         this.stage.add(Pair("spotify-artist", TextField().apply {
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.REGULAR, size = 40)
             width = 250.0
             x = this@IngameMenuUI.width - 162.0
             y = 118.0
-            staticText = "Bankrol Hayden"
+            staticText = Dragonfly.spotifyManager.artist
             color = DragonflyPalette.accentNormal
         }))
         this.stage.add(Pair("spotify-pause", Image().apply {
@@ -118,6 +118,22 @@ class IngameMenuUI : GuiScreen() {
             height = 35.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/loop.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            clickAction = {
+                when (Dragonfly.spotifyManager.loop) {
+                    "OFF" -> {
+                        Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.LOOP, "CONTEXT")
+                        Dragonfly.spotifyManager.loop = "CONTEXT"
+                    }
+                    "CONTEXT" -> {
+                        Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.LOOP, "TRACK")
+                        Dragonfly.spotifyManager.loop = "TRACK"
+                    }
+                    "TRACK" -> {
+                        Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.LOOP, "OFF")
+                        Dragonfly.spotifyManager.loop = "OFF"
+                    }
+                }
+            }
         }))
         this.stage.add(Pair("spotify-previous", Image().apply {
             x = this@IngameMenuUI.width - 415.0 - 120.0

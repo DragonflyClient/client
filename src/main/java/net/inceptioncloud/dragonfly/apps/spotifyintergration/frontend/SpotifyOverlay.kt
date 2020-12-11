@@ -20,9 +20,6 @@ object SpotifyOverlay {
     lateinit var timeLine: Rectangle
     lateinit var timeCur: Rectangle
 
-    var songMax: Long = 216000L
-    var songCur: Long = 87000L
-
     fun update() {
 
         image = Image().apply {
@@ -46,7 +43,7 @@ object SpotifyOverlay {
             width = 50.0
             x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - width - 7.5
             y = 28.0
-            staticText = "Costa Rica"
+            staticText = Dragonfly.spotifyManager.title
         }
 
         artist = TextField().apply {
@@ -54,7 +51,7 @@ object SpotifyOverlay {
             width = 100.0
             x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - width + 46
             y = 37.0
-            staticText = "Bankrol Hayden"
+            staticText = Dragonfly.spotifyManager.artist
             color = DragonflyPalette.accentNormal
         }
 
@@ -67,7 +64,7 @@ object SpotifyOverlay {
         }
 
         timeCur = Rectangle().apply {
-            width = (timeLine.width / songMax) * songCur
+            width = (timeLine.width / Dragonfly.spotifyManager.songMax) * Dragonfly.spotifyManager.songCur
             height = timeLine.height
             x = timeLine.x
             y = timeLine.y
