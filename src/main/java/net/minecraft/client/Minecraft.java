@@ -208,6 +208,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      */
     public GuiAchievement guiAchievement;
     public GuiIngame ingameGUI;
+    public IngameMenuUI ingameMenuGUI;
     /**
      * Skip render world
      */
@@ -1352,7 +1353,8 @@ public class Minecraft implements IThreadListener, IPlayerUsage {
      */
     public void displayInGameMenu() {
         if (this.currentScreen == null) {
-            this.displayGuiScreen(new IngameMenuUI());
+            this.ingameMenuGUI = new IngameMenuUI();
+            this.displayGuiScreen(ingameMenuGUI);
 
             if (this.isSingleplayer() && !this.theIntegratedServer.getPublic()) {
                 this.mcSoundHandler.pauseSounds();
