@@ -6,7 +6,6 @@ import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
 import net.inceptioncloud.dragonfly.apps.spotifyintergration.backend.SpotifyDoAction
-import net.inceptioncloud.dragonfly.apps.spotifyintergration.backend.SpotifyManager
 import net.inceptioncloud.dragonfly.apps.spotifyintergration.frontend.SpotifyOverlay
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morph
@@ -37,7 +36,14 @@ class IngameMenuUI : GuiScreen() {
 
     override var isNativeResolution: Boolean = true
 
-    private fun addSpotifyOverlay() {
+    private var adding = true
+
+    fun reloadSpotifyOverlay() {
+        if (adding) {
+            println("Addding Spotify Overlay")
+        } else {
+            println("Reloading Spotify Overlay")
+        }
 
         Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-image")
         Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-imageOverlay")
@@ -61,7 +67,7 @@ class IngameMenuUI : GuiScreen() {
             x = this@IngameMenuUI.width - 30.0 - 160.0
             y = 30.0
             resourceLocation =
-                ResourceLocation("dragonflyres/icons/spotifyintergration/costa_rica.png") // no-track-found
+                ResourceLocation("dragonflyres/icons/spotifyintergration/costa_rica.png")
         }))
         this.stage.add(Pair("spotify-imageOverlay", Rectangle().apply {
             width = 160.0
@@ -93,9 +99,9 @@ class IngameMenuUI : GuiScreen() {
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/play.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
-                if(Dragonfly.spotifyManager.isPlaying) {
+                if (Dragonfly.spotifyManager.isPlaying) {
                     Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PAUSE, null)
-                }else {
+                } else {
                     Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PLAY, null)
                 }
             }
@@ -162,7 +168,10 @@ class IngameMenuUI : GuiScreen() {
     }
 
     private fun morphSpotifyOverlay() {
-        val duration = 100
+        var duration = 100
+        if (!adding) {
+            duration = 1
+        }
 
         this.stage["spotify-background"]?.morph(
             duration,
@@ -193,7 +202,7 @@ class IngameMenuUI : GuiScreen() {
             this.stage["spotify-shuffle"]?.morph(
                 duration,
                 EaseQuad.IN,
-            Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+                Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
             )?.start()
             this.stage["spotify-loop"]?.morph(
                 duration,
@@ -211,6 +220,8 @@ class IngameMenuUI : GuiScreen() {
                 Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
             )?.start()
         }.start()
+
+        adding = false
 
     }
 
@@ -349,7 +360,7 @@ class IngameMenuUI : GuiScreen() {
         }
 
         Taskbar.initializeTaskbar(this)
-        addSpotifyOverlay()
+        Dragonfly.spotifyManager.startUpdating()
     }
 
     /**

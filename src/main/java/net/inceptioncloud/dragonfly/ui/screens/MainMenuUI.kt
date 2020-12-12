@@ -4,6 +4,7 @@ import com.google.gson.JsonParser
 import dev.decobr.mcgeforce.bindings.MCGeForceHelper
 import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.Dragonfly.spotifyManager
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
 import net.inceptioncloud.dragonfly.apps.accountmanager.AccountManagerApp
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
