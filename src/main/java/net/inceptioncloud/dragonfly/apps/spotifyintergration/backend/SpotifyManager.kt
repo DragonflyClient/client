@@ -11,12 +11,12 @@ import java.util.*
 
 class SpotifyManager {
 
-    private val prefix = "[Spotify Manager]"
     private val url = "http://127.0.0.1:8080/"
     private val account = Dragonfly.account
 
     var isPlaying = false
     var loop = "OFF"
+    var shuffle = false
     var title = "Nothing playing"
     var artist = ""
     var imageUrl = ""
@@ -31,7 +31,7 @@ class SpotifyManager {
         val thread = Thread {
 
             if (account == null) {
-                LogManager.getLogger().info("$prefix User is not logged in")
+                LogManager.getLogger().info("User is not logged in")
                 Thread.currentThread().interrupt()
             } else {
                 val response = get(
@@ -47,7 +47,7 @@ class SpotifyManager {
                 )
 
                 if (response.statusCode == 200) {
-                    LogManager.getLogger().info("$prefix ${action.route.capitalize()}Request was successful")
+                    LogManager.getLogger().info("${action.route.capitalize()}Request was successful")
                     Thread.currentThread().interrupt()
                 } else {
                     throw Exception("${response.statusCode}: ${response.text}")
@@ -61,7 +61,7 @@ class SpotifyManager {
     fun performGetAction(action: SpotifyGetAction, parameter: String?, perform: (String?) -> Unit) {
         val thread = Thread {
             if (account == null) {
-                LogManager.getLogger().info("$prefix User is not logged in")
+                LogManager.getLogger().info("User is not logged in")
                 perform(null)
                 Thread.currentThread().interrupt()
             } else {
@@ -78,7 +78,7 @@ class SpotifyManager {
                 )
 
                 if (response.statusCode == 200) {
-                    LogManager.getLogger().info("$prefix ${action.route.capitalize()}Request was successful")
+                    LogManager.getLogger().info("${action.route.capitalize()}Request was successful")
                     perform(response.text)
                     Thread.currentThread().interrupt()
                 } else {
@@ -102,6 +102,12 @@ class SpotifyManager {
                 this.isPlaying = respond["isPlaying"].toString().toBoolean()
                 this.imageUrl = respond["imageUrl"].toString()
 
+                performGetAction(SpotifyGetAction.EXTRAS, null) {
+                    val respond2 = JSONParser().parse(it) as JSONObject
+                    this.shuffle = respond2["shuffle"].toString().toBoolean()
+                    this.loop = respond2["loop"].toString().toUpperCase()
+                }
+
                 SpotifyOverlay.update()
                 Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
 
@@ -114,7 +120,6 @@ class SpotifyManager {
 
     fun startUpdating() {
         if (!startedUpdating) {
-            println("Started Updating!")
 
             Thread {
                 while (true) {
@@ -126,6 +131,12 @@ class SpotifyManager {
                         this.songCur = respond["progress"].toString().toLong()
                         this.isPlaying = respond["isPlaying"].toString().toBoolean()
                         this.imageUrl = respond["imageUrl"].toString()
+
+                        performGetAction(SpotifyGetAction.EXTRAS, null) {
+                            val respond2 = JSONParser().parse(it) as JSONObject
+                            this.shuffle = respond2["shuffle"].toString().toBoolean()
+                            this.loop = respond2["loop"].toString().toUpperCase()
+                        }
 
                         if (!startedOverlayUpdating) {
                             Thread {
@@ -140,8 +151,6 @@ class SpotifyManager {
 
                                     SpotifyOverlay.update()
                                     Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
-
-                                    println("Updated!")
 
                                     Thread.sleep(1000)
                                 }

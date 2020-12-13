@@ -30,7 +30,8 @@ object SpotifyOverlay {
             height = 50.0
             x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - 10.0 - width
             y = 10.0
-            resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/costa_rica.png") // no-track-found
+            resourceLocation =
+                ResourceLocation("dragonflyres/icons/spotifyintergration/costa_rica.png") // no-track-found
         }
 
         imageOverlay = Rectangle().apply {
@@ -38,16 +39,31 @@ object SpotifyOverlay {
             height = image.height
             x = image.x
             y = image.y
-            color = WidgetColor(0.0,0.0,0.0,0.6)
+            color = WidgetColor(0.0, 0.0, 0.0, 0.6)
         }
+
+        var titleSize: Int
 
         title = TextField().apply {
             staticText = Dragonfly.spotifyManager.filterTrackName(Dragonfly.spotifyManager.title)
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = if(staticText.length > 10) {
-                14
-            }else {
-                20
-            })
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(
+                fontWeight = FontWeight.MEDIUM, size = if (Dragonfly.fontManager.defaultFont.fontRenderer(
+                        fontWeight = FontWeight.MEDIUM, size = 12
+                    ).getStringWidth(staticText) > 50.0
+                ) {
+                    titleSize = 8
+                    8
+                } else if (Dragonfly.fontManager.defaultFont.fontRenderer(
+                        fontWeight = FontWeight.MEDIUM, size = 20
+                    ).getStringWidth(staticText) > 50.0
+                ) {
+                    titleSize = 12
+                    12
+                } else {
+                    titleSize = 20
+                    20
+                }
+            )
             width = 50.0
             height = 50.0
             x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - 10.0 - width
@@ -56,11 +72,7 @@ object SpotifyOverlay {
         }
 
         artist = TextField().apply {
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = if(staticText.length > 10) {
-                9
-            }else {
-                12
-            })
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 12)
             width = 50.0
             height = 50.0
             x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - 10.0 - width
