@@ -68,7 +68,10 @@ class IngameMenuUI : GuiScreen() {
         this.stage.add(Pair("spotify-title", TextField().apply {
             staticText = Dragonfly.spotifyManager.filterTrackName(Dragonfly.spotifyManager.title)
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(
-                fontWeight = FontWeight.MEDIUM, size = if (staticText.length > 16) {
+                fontWeight = FontWeight.MEDIUM, size = if (Dragonfly.fontManager.defaultFont.fontRenderer(
+                        fontWeight = FontWeight.MEDIUM, size = 80
+                    ).getStringWidth(staticText) > 500.0
+                ) {
                     60
                 } else {
                     80
@@ -115,7 +118,7 @@ class IngameMenuUI : GuiScreen() {
                     Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PLAY, null)
                     Dragonfly.spotifyManager.isPlaying = true
                 }
-                Dragonfly.spotifyManager.manualUpdate()
+                reloadSpotifyOverlay()
             }
         }))
         this.stage.add(Pair("spotify-shuffle", Image().apply {
@@ -126,8 +129,10 @@ class IngameMenuUI : GuiScreen() {
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/shuffle.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
-                Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.SHUFFLE, null)
-                Dragonfly.spotifyManager.manualUpdate()
+                val value = !Dragonfly.spotifyManager.shuffle
+                Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.SHUFFLE, value.toString())
+                Dragonfly.spotifyManager.shuffle = value
+                morphSpotifyOverlay()
             }
         }))
         this.stage.add(Pair("spotify-loop", Image().apply {
@@ -135,7 +140,11 @@ class IngameMenuUI : GuiScreen() {
             y = 105.0
             width = 35.0
             height = 35.0
-            resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/loop.png")
+            resourceLocation = if (Dragonfly.spotifyManager.loop == "TRACK") {
+                ResourceLocation("dragonflyres/icons/spotifyintergration/loop_one.png")
+            } else {
+                ResourceLocation("dragonflyres/icons/spotifyintergration/loop.png")
+            }
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
                 when (Dragonfly.spotifyManager.loop) {
@@ -152,7 +161,7 @@ class IngameMenuUI : GuiScreen() {
                         Dragonfly.spotifyManager.loop = "OFF"
                     }
                 }
-                Dragonfly.spotifyManager.manualUpdate()
+                reloadSpotifyOverlay()
             }
         }))
         this.stage.add(Pair("spotify-previous", Image().apply {
@@ -229,12 +238,20 @@ class IngameMenuUI : GuiScreen() {
             this.stage["spotify-shuffle"]?.morph(
                 duration,
                 EaseQuad.IN,
-                Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+                Image::color to if (Dragonfly.spotifyManager.shuffle) {
+                    DragonflyPalette.accentNormal
+                } else {
+                    WidgetColor(1.0, 1.0, 1.0, 1.0)
+                }
             )?.start()
             this.stage["spotify-loop"]?.morph(
                 duration,
                 EaseQuad.IN,
-                Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+                Image::color to if (Dragonfly.spotifyManager.loop == "OFF" || Dragonfly.spotifyManager.loop == "TRACK") {
+                    WidgetColor(1.0, 1.0, 1.0, 1.0)
+                } else {
+                    DragonflyPalette.accentNormal
+                }
             )?.start()
             this.stage["spotify-previous"]?.morph(
                 duration,
