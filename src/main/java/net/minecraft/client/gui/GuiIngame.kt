@@ -2,8 +2,10 @@ package net.minecraft.client.gui
 
 import com.google.common.collect.Iterables
 import com.google.common.collect.Lists
+import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.Dragonfly.splashScreen
+import net.inceptioncloud.dragonfly.apps.spotifyintergration.backend.SpotifyManager
 import net.inceptioncloud.dragonfly.apps.spotifyintergration.frontend.SpotifyOverlay
 import net.inceptioncloud.dragonfly.design.color.GreyToneColor
 import net.inceptioncloud.dragonfly.design.color.RGB
@@ -1085,12 +1087,16 @@ class GuiIngame(private val mc: Minecraft) : Gui() {
         stage.add(Pair("togglesneak-text", ToggleSneakMod.textField))
 
         SpotifyOverlay.update()
-        stage.add(Pair("spotify-image", SpotifyOverlay.image))
-        stage.add(Pair("spotify-imageOverlay", SpotifyOverlay.imageOverlay))
-        stage.add(Pair("spotify-title", SpotifyOverlay.title))
-        stage.add(Pair("spotify-artist", SpotifyOverlay.artist))
-        stage.add(Pair("spotify-timeLine", SpotifyOverlay.timeLine))
-        stage.add(Pair("spotify-timeCur", SpotifyOverlay.timeCur))
+        if(!SpotifyOverlay.hide) {
+            stage.add(Pair("spotify-image", SpotifyOverlay.image))
+            stage.add(Pair("spotify-imageOverlay", SpotifyOverlay.imageOverlay))
+            stage.add(Pair("spotify-title", SpotifyOverlay.title))
+            stage.add(Pair("spotify-artist", SpotifyOverlay.artist))
+            stage.add(Pair("spotify-timeLine", SpotifyOverlay.timeLine))
+            stage.add(Pair("spotify-timeCur", SpotifyOverlay.timeCur))
+        }
+
+        Dragonfly.spotifyManager.startUpdating()
 
     }
 
