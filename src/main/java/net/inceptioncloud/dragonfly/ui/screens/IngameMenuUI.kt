@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.ui.screens
 
 import com.google.common.util.concurrent.ListenableFuture
+import javafx.scene.text.TextAlignment
 import kotlinx.coroutines.runBlocking
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.account.LoginStatusWidget
@@ -36,23 +37,11 @@ class IngameMenuUI : GuiScreen() {
 
     override var isNativeResolution: Boolean = true
 
-    private var adding = true
+    private var adding = true // Whether it is the first reload of the Spotify Overlay or not
+
+    var initialized = false // Whether this is gui is initialized or not
 
     fun reloadSpotifyOverlay() {
-        if (adding) {
-            println("Addding Spotify Overlay")
-        } else {
-            println("Reloading Spotify Overlay")
-        }
-
-        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-image")
-        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-imageOverlay")
-        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-title")
-        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-artist")
-        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-timeLine")
-        Minecraft.getMinecraft().ingameGUI.stage.remove("spotify-timeCur")
-
-        SpotifyOverlay.update()
 
         this.stage.add(Pair("spotify-background", Rectangle().apply {
             width = 160.0
@@ -77,37 +66,60 @@ class IngameMenuUI : GuiScreen() {
             color = WidgetColor(0.0, 0.0, 0.0, 0.6)
         }))
         this.stage.add(Pair("spotify-title", TextField().apply {
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 80)
+            staticText = Dragonfly.spotifyManager.filterTrackName(Dragonfly.spotifyManager.title)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(
+                fontWeight = FontWeight.MEDIUM, size = if (staticText.length > 16) {
+                    60
+                } else {
+                    80
+                }
+            )
             width = 500.0
+            height = 100.0
             x = this@IngameMenuUI.width - 7.5 - 175.0
             y = 87.0
-            staticText = Dragonfly.spotifyManager.title
+            textAlignHorizontal = Alignment.CENTER
         }))
         this.stage.add(Pair("spotify-artist", TextField().apply {
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.REGULAR, size = 40)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(
+                fontWeight = FontWeight.REGULAR, size = if (staticText.length > 20) {
+                    25
+                } else {
+                    35
+                }
+            )
             width = 250.0
+            height = 75.0
             x = this@IngameMenuUI.width - 162.0
             y = 118.0
             staticText = Dragonfly.spotifyManager.artist
             color = DragonflyPalette.accentNormal
+            textAlignHorizontal = Alignment.CENTER
         }))
         this.stage.add(Pair("spotify-pause", Image().apply {
-            x = this@IngameMenuUI.width - 415.0
+            x = this@IngameMenuUI.width - 425.0
             y = 105.0
             width = 35.0
             height = 35.0
-            resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/play.png")
+            resourceLocation = if (Dragonfly.spotifyManager.isPlaying) {
+                ResourceLocation("dragonflyres/icons/spotifyintergration/pause.png")
+            } else {
+                ResourceLocation("dragonflyres/icons/spotifyintergration/play.png")
+            }
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
                 if (Dragonfly.spotifyManager.isPlaying) {
                     Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PAUSE, null)
+                    Dragonfly.spotifyManager.isPlaying = false
                 } else {
                     Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PLAY, null)
+                    Dragonfly.spotifyManager.isPlaying = true
                 }
+                Dragonfly.spotifyManager.manualUpdate()
             }
         }))
         this.stage.add(Pair("spotify-shuffle", Image().apply {
-            x = this@IngameMenuUI.width - 415.0 - 60.0
+            x = this@IngameMenuUI.width - 415.0 - 70.0
             y = 105.0
             width = 35.0
             height = 35.0
@@ -115,10 +127,11 @@ class IngameMenuUI : GuiScreen() {
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
                 Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.SHUFFLE, null)
+                Dragonfly.spotifyManager.manualUpdate()
             }
         }))
         this.stage.add(Pair("spotify-loop", Image().apply {
-            x = this@IngameMenuUI.width - 415.0 + 60.0
+            x = this@IngameMenuUI.width - 415.0 + 50.0
             y = 105.0
             width = 35.0
             height = 35.0
@@ -139,10 +152,11 @@ class IngameMenuUI : GuiScreen() {
                         Dragonfly.spotifyManager.loop = "OFF"
                     }
                 }
+                Dragonfly.spotifyManager.manualUpdate()
             }
         }))
         this.stage.add(Pair("spotify-previous", Image().apply {
-            x = this@IngameMenuUI.width - 415.0 - 120.0
+            x = this@IngameMenuUI.width - 415.0 - 130.0
             y = 105.0
             width = 35.0
             height = 35.0
@@ -150,10 +164,11 @@ class IngameMenuUI : GuiScreen() {
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
                 Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PREVIOUS, null)
+                Dragonfly.spotifyManager.manualUpdate()
             }
         }))
         this.stage.add(Pair("spotify-skip", Image().apply {
-            x = this@IngameMenuUI.width - 415.0 + 120.0
+            x = this@IngameMenuUI.width - 415.0 + 110.0
             y = 105.0
             width = 35.0
             height = 35.0
@@ -161,6 +176,7 @@ class IngameMenuUI : GuiScreen() {
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
                 Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.NEXT, null)
+                Dragonfly.spotifyManager.manualUpdate()
             }
         }))
 
@@ -182,18 +198,29 @@ class IngameMenuUI : GuiScreen() {
         this.stage["spotify-title"]?.morph(
             duration,
             EaseQuad.OUT,
-            TextField::x to this@IngameMenuUI.width - 500.0,
-            TextField::y to 35.0
+            TextField::x to this@IngameMenuUI.width - 630.0,
+            TextField::y to 35.0,
+            TextField::width to 440.0,
+            TextField::height to 100.0
         )?.start()
         this.stage["spotify-artist"]?.morph(
             duration,
             EaseQuad.OUT,
-            TextField::x to this@IngameMenuUI.width - 470.0,
-            TextField::y to 75.0
+            TextField::x to this@IngameMenuUI.width - 630.0,
+            TextField::y to 75.0,
+            TextField::width to 440.0,
+            TextField::height to 75.0
         )?.start()
 
         Thread {
-            Thread.sleep(duration * 3.toLong())
+
+            val secondDuration = if (duration == 1) {
+                1
+            } else {
+                duration * 3
+            }
+
+            Thread.sleep(secondDuration.toLong())
             this.stage["spotify-pause"]?.morph(
                 duration,
                 EaseQuad.IN,
@@ -360,7 +387,11 @@ class IngameMenuUI : GuiScreen() {
         }
 
         Taskbar.initializeTaskbar(this)
-        Dragonfly.spotifyManager.startUpdating()
+        reloadSpotifyOverlay()
+
+        adding = true
+        initialized = true
+        SpotifyOverlay.hide = true
     }
 
     /**
@@ -419,7 +450,7 @@ class IngameMenuUI : GuiScreen() {
     override fun onGuiClosed() {
         super.onGuiClosed()
 
-        Minecraft.getMinecraft().ingameGUI.initInGameOverlay() // Adding Spotify-InGameOverlay again
+        SpotifyOverlay.hide = false
     }
 
 }
