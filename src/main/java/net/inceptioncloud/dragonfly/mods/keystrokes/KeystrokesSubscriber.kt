@@ -37,7 +37,9 @@ object KeystrokesSubscriber {
 
     @Subscribe
     fun resizeWindow(event: ResizeEvent) {
-        Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
+        try {
+            Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
+        }catch (e: Exception) {}
     }
 
     @Subscribe
