@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.apps.spotifyintergration.frontend
 import net.inceptioncloud.dragonfly.Dragonfly
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
+import net.inceptioncloud.dragonfly.engine.internal.Alignment
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
 import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
@@ -19,6 +20,8 @@ object SpotifyOverlay {
     lateinit var artist: TextField
     lateinit var timeLine: Rectangle
     lateinit var timeCur: Rectangle
+
+    var hide = false
 
     fun update() {
 
@@ -39,20 +42,32 @@ object SpotifyOverlay {
         }
 
         title = TextField().apply {
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 18)
+            staticText = Dragonfly.spotifyManager.filterTrackName(Dragonfly.spotifyManager.title)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = if(staticText.length > 10) {
+                14
+            }else {
+                20
+            })
             width = 50.0
-            x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - width - 7.5
+            height = 50.0
+            x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - 10.0 - width
             y = 28.0
-            staticText = Dragonfly.spotifyManager.title
+            textAlignHorizontal = Alignment.CENTER
         }
 
         artist = TextField().apply {
-            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = 10)
-            width = 100.0
-            x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - width + 46
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.MEDIUM, size = if(staticText.length > 10) {
+                9
+            }else {
+                12
+            })
+            width = 50.0
+            height = 50.0
+            x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - 10.0 - width
             y = 37.0
             staticText = Dragonfly.spotifyManager.artist
             color = DragonflyPalette.accentNormal
+            textAlignHorizontal = Alignment.CENTER
         }
 
         timeLine = Rectangle().apply {
