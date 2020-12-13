@@ -2,10 +2,12 @@ package net.inceptioncloud.dragonfly.apps.spotifyintergration.backend
 
 import khttp.get
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.apps.spotifyintergration.frontend.SpotifyOverlay
 import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+import java.util.*
 
 class SpotifyManager {
 
@@ -20,6 +22,10 @@ class SpotifyManager {
     var imageUrl = ""
     var songMax: Long = 0L
     var songCur: Long = 0L
+
+
+    var startedUpdating = false // Whether the updating of the spotify overlay of the IngameMenuUI is started or not
+    var startedOverlayUpdating = false // Whether the updating of the spotify overlay of GuiIngame is started or not
 
     fun performDoAction(action: SpotifyDoAction, parameter: String?) {
         val thread = Thread {
@@ -85,42 +91,60 @@ class SpotifyManager {
     }
 
     fun startUpdating() {
-        println("Started Updating!")
+        if (!startedUpdating) {
+            println("Started Updating!")
 
-        Thread {
-            while (true) {
-                performGetAction(SpotifyGetAction.CURRENT, null) {
-                    val respond = JSONParser().parse(it) as JSONObject
-                    this.title = respond["name"].toString()
-                    this.artist = (respond["artists"].toString().toList()).first().toString()
-                    this.songMax = respond["duration"].toString().toLong()
-                    this.songCur = respond["progress"].toString().toLong()
-                    this.isPlaying = respond["isPlaying"].toString().toBoolean()
-                    this.imageUrl = respond["imageUrl"].toString()
+            Thread {
+                while (true) {
+                    performGetAction(SpotifyGetAction.CURRENT, null) {
+                        val respond = JSONParser().parse(it) as JSONObject
+                        this.title = respond["name"].toString()
+                        this.artist = respond["artists"].toString().split(",")[0]
+                        this.songMax = respond["duration"].toString().toLong()
+                        this.songCur = respond["progress"].toString().toLong()
+                        this.isPlaying = respond["isPlaying"].toString().toBoolean()
+                        this.imageUrl = respond["imageUrl"].toString()
 
-                    var active = true
+                        if (!startedOverlayUpdating) {
+                            Thread {
+                                while (true) {
+                                    if (songCur < songMax) {
+                                        if (isPlaying) {
+                                            songCur += 1000
+                                        }
+                                    }else {
+                                        manualUpdate()
+                                    }
 
-                    Thread {
-                        do {
-                            if (songCur != songMax) {
-                                if (isPlaying) {
-                                    songCur++
+                                    SpotifyOverlay.update()
+                                    Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
+
+                                    println("Updated!")
+
+                                    Thread.sleep(1000)
                                 }
-                            } else {
-                                active = false
-                            }
-                            Thread.sleep(1000)
-                        } while (active)
-                    }.start()
+                            }.start()
+                            startedOverlayUpdating = true
+                        }
 
+                    }
+
+                    try {
+                        Minecraft.getMinecraft().ingameMenuGUI.reloadSpotifyOverlay()
+                    }catch (e: Exception) {}
+
+                    Thread.sleep(10000)
                 }
+            }.start()
+        }
 
-                Minecraft.getMinecraft().ingameMenuGUI.reloadSpotifyOverlay()
+        startedUpdating = true
+    }
 
-                Thread.sleep(3000)
-            }
-        }.start()
-
+    fun filterTrackName(original: String): String {
+        val first = original.split("(")[0]
+        val second = first.split("-")[0]
+        return second
     }
 
 }
