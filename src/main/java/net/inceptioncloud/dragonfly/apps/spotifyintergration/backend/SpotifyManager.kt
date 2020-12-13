@@ -90,6 +90,28 @@ class SpotifyManager {
         thread.start()
     }
 
+    fun manualUpdate() {
+        Thread {
+            Thread.sleep(3000)
+            performGetAction(SpotifyGetAction.CURRENT, null) {
+                val respond = JSONParser().parse(it) as JSONObject
+                this.title = respond["name"].toString()
+                this.artist = respond["artists"].toString().split(",")[0]
+                this.songMax = respond["duration"].toString().toLong()
+                this.songCur = respond["progress"].toString().toLong()
+                this.isPlaying = respond["isPlaying"].toString().toBoolean()
+                this.imageUrl = respond["imageUrl"].toString()
+
+                SpotifyOverlay.update()
+                Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
+
+                try {
+                    Minecraft.getMinecraft().ingameMenuGUI.reloadSpotifyOverlay()
+                }catch (e: Exception) {}
+            }
+        }.start()
+    }
+
     fun startUpdating() {
         if (!startedUpdating) {
             println("Started Updating!")
