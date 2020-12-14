@@ -77,7 +77,7 @@ object SpotifyOverlay {
             height = 50.0
             x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - 10.0 - width
             y = 37.0
-            staticText = Dragonfly.spotifyManager.artist
+            staticText = Dragonfly.spotifyManager.filterArtistName(Dragonfly.spotifyManager.artist)
             color = DragonflyPalette.accentNormal
             textAlignHorizontal = Alignment.CENTER
         }

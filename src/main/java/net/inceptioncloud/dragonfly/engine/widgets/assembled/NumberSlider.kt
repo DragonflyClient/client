@@ -128,6 +128,8 @@ class NumberSlider(
         "current-value"<TextField> {
             staticText = formatString(newValue)
         }
+
+        onChange(currentValue)
     }
 
     override fun update() {
@@ -193,4 +195,7 @@ class NumberSlider(
         else format.format(value)
         return formatter?.invoke(decimalFormatted) ?: decimalFormatted
     }
+
+    var onChange: (Double) -> Unit = {}
+
 }

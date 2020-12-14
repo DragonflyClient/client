@@ -7,7 +7,8 @@ enum class SpotifyDoAction(val route: String, val parameterName: String? = null)
     PAUSE("pause"),
     PLAY("play"),
     PREVIOUS("previous"),
-    SHUFFLE("shuffle","value")
+    SHUFFLE("shuffle","value"),
+    SEEK("seek","time")
 
 
 

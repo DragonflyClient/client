@@ -178,5 +178,10 @@ class SpotifyManager {
         return second
     }
 
+    fun filterArtistName(original: String): String {
+        val first = original.split("&")[0]
+        return first
+    }
+
 }
 

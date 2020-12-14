@@ -95,13 +95,13 @@ class IngameMenuUI : GuiScreen() {
             height = 75.0
             x = this@IngameMenuUI.width - 162.0
             y = 118.0
-            staticText = Dragonfly.spotifyManager.artist
+            staticText = Dragonfly.spotifyManager.filterArtistName(Dragonfly.spotifyManager.artist)
             color = DragonflyPalette.accentNormal
             textAlignHorizontal = Alignment.CENTER
         }))
         this.stage.add(Pair("spotify-pause", Image().apply {
             x = this@IngameMenuUI.width - 425.0
-            y = 105.0
+            y = 110.0
             width = 35.0
             height = 35.0
             resourceLocation = if (Dragonfly.spotifyManager.isPlaying) {
@@ -123,7 +123,7 @@ class IngameMenuUI : GuiScreen() {
         }))
         this.stage.add(Pair("spotify-shuffle", Image().apply {
             x = this@IngameMenuUI.width - 415.0 - 70.0
-            y = 105.0
+            y = 110.0
             width = 35.0
             height = 35.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/shuffle.png")
@@ -137,7 +137,7 @@ class IngameMenuUI : GuiScreen() {
         }))
         this.stage.add(Pair("spotify-loop", Image().apply {
             x = this@IngameMenuUI.width - 415.0 + 50.0
-            y = 105.0
+            y = 110.0
             width = 35.0
             height = 35.0
             resourceLocation = if (Dragonfly.spotifyManager.loop == "TRACK") {
@@ -166,7 +166,7 @@ class IngameMenuUI : GuiScreen() {
         }))
         this.stage.add(Pair("spotify-previous", Image().apply {
             x = this@IngameMenuUI.width - 415.0 - 130.0
-            y = 105.0
+            y = 110.0
             width = 35.0
             height = 35.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/previous.png")
@@ -178,7 +178,7 @@ class IngameMenuUI : GuiScreen() {
         }))
         this.stage.add(Pair("spotify-skip", Image().apply {
             x = this@IngameMenuUI.width - 415.0 + 110.0
-            y = 105.0
+            y = 110.0
             width = 35.0
             height = 35.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/skip.png")
@@ -187,6 +187,42 @@ class IngameMenuUI : GuiScreen() {
                 Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.NEXT, null)
                 Dragonfly.spotifyManager.manualUpdate()
             }
+        }))
+        this.stage.add(Pair("spotify-slider", NumberSlider().apply {
+            currentValue = Dragonfly.spotifyManager.songCur.toDouble()
+            x = this@IngameMenuUI.width - 415.0 - 130.0
+            y = 155.0
+            width = 275.0
+            height = 6.0
+            min = 0.0
+            max = Dragonfly.spotifyManager.songMax.toDouble()
+            liveUpdate = true
+            onChange = {
+                Dragonfly.spotifyManager.songCur = it.toLong()
+                Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.SEEK, it.toString())
+                reloadSpotifyOverlay()
+            }
+            color = if(adding) {
+                WidgetColor(1.0,1.0,1.0,0.0)
+            }else {
+                DragonflyPalette.foreground
+            }
+            lineColor = if(adding) {
+                WidgetColor(1.0,1.0,1.0,0.0)
+            }else {
+                DragonflyPalette.foreground
+            }
+            sliderInnerColor = if(adding) {
+                WidgetColor(1.0,1.0,1.0,0.0)
+            }else {
+                DragonflyPalette.accentNormal
+            }
+            sliderOuterColor = if(adding) {
+                WidgetColor(1.0,1.0,1.0,0.0)
+            }else {
+                DragonflyPalette.background
+            }
+            textColor = WidgetColor(1.0,1.0,1.0,0.0)
         }))
 
         morphSpotifyOverlay()
@@ -262,6 +298,14 @@ class IngameMenuUI : GuiScreen() {
                 duration,
                 EaseQuad.IN,
                 Image::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+            )?.start()
+            this.stage["spotify-slider"]?.morph(
+                duration,
+                EaseQuad.IN,
+                NumberSlider::color to DragonflyPalette.foreground,
+                NumberSlider::lineColor to DragonflyPalette.foreground,
+                NumberSlider::sliderInnerColor to DragonflyPalette.accentNormal,
+                NumberSlider::sliderOuterColor to DragonflyPalette.background
             )?.start()
         }.start()
 
