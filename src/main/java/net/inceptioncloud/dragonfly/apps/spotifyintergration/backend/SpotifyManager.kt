@@ -50,7 +50,7 @@ class SpotifyManager {
                     LogManager.getLogger().info("${action.route.capitalize()}Request was successful")
                     Thread.currentThread().interrupt()
                 } else {
-                    throw Exception("${response.statusCode}: ${response.text}")
+                    handleInternalServerError()
                 }
             }
         }
@@ -82,7 +82,7 @@ class SpotifyManager {
                     perform(response.text)
                     Thread.currentThread().interrupt()
                 } else {
-                    throw Exception("${response.statusCode}: ${response.text}")
+                    handleInternalServerError()
                 }
             }
         }
@@ -113,9 +113,21 @@ class SpotifyManager {
 
                 try {
                     Minecraft.getMinecraft().ingameMenuGUI.reloadSpotifyOverlay()
-                }catch (e: Exception) {}
+                } catch (e: Exception) {
+                }
             }
         }.start()
+    }
+
+    private fun handleInternalServerError() {
+        this.title = "Nothing playing"
+        this.artist = ""
+        this.songCur = 0L
+        this.songMax = 0L
+        this.imageUrl = ""
+        this.isPlaying = false
+        this.shuffle = false
+        this.loop = "OFF"
     }
 
     fun startUpdating() {
@@ -141,12 +153,12 @@ class SpotifyManager {
                         if (!startedOverlayUpdating) {
                             Thread {
                                 while (true) {
-                                    if (songCur < songMax) {
-                                        if (isPlaying) {
+                                    if (isPlaying) {
+                                        if (songCur < songMax) {
                                             songCur += 1000
+                                        } else {
+                                            manualUpdate()
                                         }
-                                    }else {
-                                        manualUpdate()
                                     }
 
                                     SpotifyOverlay.update()
@@ -154,7 +166,8 @@ class SpotifyManager {
 
                                     try {
                                         Minecraft.getMinecraft().ingameMenuGUI.reloadSpotifyOverlay()
-                                    }catch (e: Exception) {}
+                                    } catch (e: Exception) {
+                                    }
 
                                     Thread.sleep(1000)
                                 }

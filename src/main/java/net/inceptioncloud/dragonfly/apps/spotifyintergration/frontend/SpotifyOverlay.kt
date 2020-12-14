@@ -25,6 +25,8 @@ object SpotifyOverlay {
 
     fun update() {
 
+        hide = Dragonfly.spotifyManager.title == "Nothing playing"
+
         image = Image().apply {
             width = 50.0
             height = 50.0
