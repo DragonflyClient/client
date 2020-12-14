@@ -22,7 +22,7 @@ class SpotifyManager {
     var imageUrl = ""
     var songMax: Long = 0L
     var songCur: Long = 0L
-
+    var updateImage = false
 
     var startedUpdating = false // Whether the updating of the spotify overlay of the IngameMenuUI is started or not
     var startedOverlayUpdating = false // Whether the updating of the spotify overlay of GuiIngame is started or not
@@ -47,7 +47,6 @@ class SpotifyManager {
                 )
 
                 if (response.statusCode == 200) {
-                    LogManager.getLogger().info("${action.route.capitalize()}Request was successful")
                     Thread.currentThread().interrupt()
                 } else {
                     handleInternalServerError()
@@ -78,7 +77,6 @@ class SpotifyManager {
                 )
 
                 if (response.statusCode == 200) {
-                    LogManager.getLogger().info("${action.route.capitalize()}Request was successful")
                     perform(response.text)
                     Thread.currentThread().interrupt()
                 } else {
@@ -100,7 +98,13 @@ class SpotifyManager {
                 this.songMax = respond["duration"].toString().toLong()
                 this.songCur = respond["progress"].toString().toLong()
                 this.isPlaying = respond["isPlaying"].toString().toBoolean()
-                this.imageUrl = respond["imageUrl"].toString()
+                val newImageUrl = respond["imageUrl"].toString()
+
+                if(imageUrl != newImageUrl) {
+                    updateImage = true
+                }
+
+                this.imageUrl = newImageUrl
 
                 performGetAction(SpotifyGetAction.EXTRAS, null) {
                     val respond2 = JSONParser().parse(it) as JSONObject
@@ -119,17 +123,6 @@ class SpotifyManager {
         }.start()
     }
 
-    private fun handleInternalServerError() {
-        this.title = "Nothing playing"
-        this.artist = ""
-        this.songCur = 0L
-        this.songMax = 0L
-        this.imageUrl = ""
-        this.isPlaying = false
-        this.shuffle = false
-        this.loop = "OFF"
-    }
-
     fun startUpdating() {
         if (!startedUpdating) {
 
@@ -142,7 +135,13 @@ class SpotifyManager {
                         this.songMax = respond["duration"].toString().toLong()
                         this.songCur = respond["progress"].toString().toLong()
                         this.isPlaying = respond["isPlaying"].toString().toBoolean()
-                        this.imageUrl = respond["imageUrl"].toString()
+                        val newImageUrl = respond["imageUrl"].toString()
+
+                        if(imageUrl != newImageUrl) {
+                            updateImage = true
+                        }
+
+                        this.imageUrl = newImageUrl
 
                         performGetAction(SpotifyGetAction.EXTRAS, null) {
                             val respond2 = JSONParser().parse(it) as JSONObject
@@ -183,6 +182,17 @@ class SpotifyManager {
         }
 
         startedUpdating = true
+    }
+
+    private fun handleInternalServerError() {
+        this.title = "Nothing playing"
+        this.artist = ""
+        this.songCur = 0L
+        this.songMax = 0L
+        this.imageUrl = ""
+        this.isPlaying = false
+        this.shuffle = false
+        this.loop = "OFF"
     }
 
     fun filterTrackName(original: String): String {

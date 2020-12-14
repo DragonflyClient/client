@@ -56,8 +56,7 @@ class IngameMenuUI : GuiScreen() {
             height = 160.0
             x = this@IngameMenuUI.width - 30.0 - 160.0
             y = 30.0
-            resourceLocation =
-                ResourceLocation("dragonflyres/icons/spotifyintergration/costa_rica.png")
+            resourceLocation = SpotifyOverlay.coverLocation
         }))
         this.stage.add(Pair("spotify-imageOverlay", Rectangle().apply {
             width = 160.0

@@ -1,6 +1,10 @@
 package net.inceptioncloud.dragonfly.apps.spotifyintergration.frontend
 
+import com.google.common.hash.Hashing
+import com.google.gson.JsonParser
+import com.sun.org.apache.bcel.internal.util.SecuritySupport
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.cosmetics.types.capes.CapeManager
 import net.inceptioncloud.dragonfly.design.color.DragonflyPalette
 import net.inceptioncloud.dragonfly.engine.font.FontWeight
 import net.inceptioncloud.dragonfly.engine.internal.Alignment
@@ -10,7 +14,20 @@ import net.inceptioncloud.dragonfly.engine.widgets.primitive.Image
 import net.inceptioncloud.dragonfly.engine.widgets.primitive.Rectangle
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
+import net.minecraft.client.renderer.IImageBuffer
+import net.minecraft.client.renderer.ThreadDownloadImageData
 import net.minecraft.util.ResourceLocation
+import org.apache.logging.log4j.LogManager
+import java.awt.image.BufferedImage
+import java.io.File
+import java.net.URL
+import java.io.FileOutputStream
+
+import java.io.InputStream
+import java.io.OutputStream
+import java.lang.IllegalArgumentException
+import java.nio.charset.Charset
+
 
 object SpotifyOverlay {
 
@@ -22,8 +39,23 @@ object SpotifyOverlay {
     lateinit var timeCur: Rectangle
 
     var hide = false
+    var adding = true
+
+    var coverLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/no-track-found.png")
+
+    private fun updateCoverTexture() {
+        if(Dragonfly.spotifyManager.imageUrl != "") {
+            downloadSongCoverResource(Dragonfly.spotifyManager.imageUrl)
+        }
+    }
 
     fun update() {
+
+        if (Dragonfly.spotifyManager.updateImage || adding) {
+            updateCoverTexture()
+            Dragonfly.spotifyManager.updateImage = false
+            adding = false
+        }
 
         hide = Dragonfly.spotifyManager.title == "Nothing playing"
 
@@ -32,8 +64,7 @@ object SpotifyOverlay {
             height = 50.0
             x = ScaledResolution(Minecraft.getMinecraft()).scaledWidth - 10.0 - width
             y = 10.0
-            resourceLocation =
-                ResourceLocation("dragonflyres/icons/spotifyintergration/costa_rica.png") // no-track-found
+            resourceLocation = coverLocation
         }
 
         imageOverlay = Rectangle().apply {
@@ -44,8 +75,6 @@ object SpotifyOverlay {
             color = WidgetColor(0.0, 0.0, 0.0, 0.6)
         }
 
-        var titleSize: Int
-
         title = TextField().apply {
             staticText = Dragonfly.spotifyManager.filterTrackName(Dragonfly.spotifyManager.title)
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(
@@ -53,16 +82,13 @@ object SpotifyOverlay {
                         fontWeight = FontWeight.MEDIUM, size = 12
                     ).getStringWidth(staticText) > 50.0
                 ) {
-                    titleSize = 8
                     8
                 } else if (Dragonfly.fontManager.defaultFont.fontRenderer(
                         fontWeight = FontWeight.MEDIUM, size = 20
                     ).getStringWidth(staticText) > 50.0
                 ) {
-                    titleSize = 12
                     12
                 } else {
-                    titleSize = 20
                     20
                 }
             )
@@ -100,6 +126,43 @@ object SpotifyOverlay {
             color = DragonflyPalette.accentNormal
         }
 
+    }
+
+    private fun downloadSongCoverResource(imageUrl: String) {
+        @Suppress("UnstableApiUsage")
+        val urlHash = Hashing.goodFastHash(3).hashString(imageUrl, Charset.defaultCharset()).toString()
+        val resourceLocation = ResourceLocation("spotify/cover/$urlHash")
+        val textureManager = Minecraft.getMinecraft().textureManager
+        val texture = textureManager.getTexture(resourceLocation)
+        val titleToDownload = Dragonfly.spotifyManager.title
+
+        coverLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/no-track-found.png")
+
+        if (texture is ThreadDownloadImageData) {
+            if (texture.imageFound != null) {
+                if (texture.imageFound && Dragonfly.spotifyManager.title == titleToDownload) {
+                    coverLocation = resourceLocation
+                }
+                return
+            }
+        }
+
+        val imageBuffer: IImageBuffer = object : IImageBuffer {
+            override fun parseUserSkin(image: BufferedImage): BufferedImage {
+                return image
+            }
+
+            override fun skinAvailable() {
+                if (Dragonfly.spotifyManager.title == titleToDownload) {
+                    LogManager.getLogger().info("Downloaded song cover of '${Dragonfly.spotifyManager.title}'")
+                    coverLocation = resourceLocation
+                }
+            }
+        }
+
+        val download = ThreadDownloadImageData(null, imageUrl, null, imageBuffer)
+        download.pipeline = true
+        textureManager.loadTexture(resourceLocation, download)
     }
 
 }
