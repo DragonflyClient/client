@@ -1,8 +1,6 @@
 package net.minecraft.client.gui
 
 import net.inceptioncloud.dragonfly.Dragonfly
-import net.inceptioncloud.dragonfly.apps.spotifyintergration.backend.SpotifyGetAction
-import net.inceptioncloud.dragonfly.apps.spotifyintergration.backend.SpotifyManager
 import net.minecraft.client.settings.GameSettings
 import net.minecraft.world.EnumDifficulty
 import net.minecraft.client.audio.SoundHandler
@@ -11,7 +9,6 @@ import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.util.IChatComponent
 import net.minecraft.util.ChatComponentText
 import net.minecraft.util.ChatComponentTranslation
-import java.io.IOException
 import net.minecraft.client.gui.stream.GuiStreamOptions
 import net.minecraft.client.gui.stream.GuiStreamUnavailable
 import net.minecraft.client.resources.I18n
