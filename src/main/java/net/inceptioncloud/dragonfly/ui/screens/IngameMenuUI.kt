@@ -30,6 +30,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.realms.RealmsBridge
 import net.minecraft.util.ResourceLocation
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.imageio.ImageIO
 
@@ -101,7 +102,7 @@ class IngameMenuUI : GuiScreen() {
         }))
         this.stage.add(Pair("spotify-pause", Image().apply {
             x = this@IngameMenuUI.width - 425.0
-            y = 110.0
+            y = 102.5
             width = 35.0
             height = 35.0
             resourceLocation = if (Dragonfly.spotifyManager.isPlaying) {
@@ -124,8 +125,8 @@ class IngameMenuUI : GuiScreen() {
         this.stage.add(Pair("spotify-shuffle", Image().apply {
             x = this@IngameMenuUI.width - 415.0 - 70.0
             y = 110.0
-            width = 35.0
-            height = 35.0
+            width = 25.0
+            height = 25.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/shuffle.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
@@ -138,8 +139,8 @@ class IngameMenuUI : GuiScreen() {
         this.stage.add(Pair("spotify-loop", Image().apply {
             x = this@IngameMenuUI.width - 415.0 + 50.0
             y = 110.0
-            width = 35.0
-            height = 35.0
+            width = 25.0
+            height = 25.0
             resourceLocation = if (Dragonfly.spotifyManager.loop == "TRACK") {
                 ResourceLocation("dragonflyres/icons/spotifyintergration/loop_one.png")
             } else {
@@ -167,8 +168,8 @@ class IngameMenuUI : GuiScreen() {
         this.stage.add(Pair("spotify-previous", Image().apply {
             x = this@IngameMenuUI.width - 415.0 - 130.0
             y = 110.0
-            width = 35.0
-            height = 35.0
+            width = 22.5
+            height = 22.5
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/previous.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
@@ -179,8 +180,8 @@ class IngameMenuUI : GuiScreen() {
         this.stage.add(Pair("spotify-skip", Image().apply {
             x = this@IngameMenuUI.width - 415.0 + 110.0
             y = 110.0
-            width = 35.0
-            height = 35.0
+            width = 22.5
+            height = 22.5
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/skip.png")
             this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
             clickAction = {
@@ -190,9 +191,9 @@ class IngameMenuUI : GuiScreen() {
         }))
         this.stage.add(Pair("spotify-slider", NumberSlider().apply {
             currentValue = Dragonfly.spotifyManager.songCur.toDouble()
-            x = this@IngameMenuUI.width - 415.0 - 130.0
+            x = this@IngameMenuUI.width - 415.0 - 125.0
             y = 155.0
-            width = 275.0
+            width = 270.0
             height = 6.0
             min = 0.0
             max = Dragonfly.spotifyManager.songMax.toDouble()
@@ -202,27 +203,43 @@ class IngameMenuUI : GuiScreen() {
                 Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.SEEK, it.toString())
                 reloadSpotifyOverlay()
             }
-            color = if(adding) {
-                WidgetColor(1.0,1.0,1.0,0.0)
-            }else {
+            color = if (adding) {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            } else {
                 DragonflyPalette.foreground
             }
-            lineColor = if(adding) {
-                WidgetColor(1.0,1.0,1.0,0.0)
-            }else {
+            lineColor = if (adding) {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            } else {
                 DragonflyPalette.foreground
             }
-            sliderInnerColor = if(adding) {
-                WidgetColor(1.0,1.0,1.0,0.0)
-            }else {
+            sliderInnerColor = if (adding) {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            } else {
                 DragonflyPalette.accentNormal
             }
-            sliderOuterColor = if(adding) {
-                WidgetColor(1.0,1.0,1.0,0.0)
-            }else {
+            sliderOuterColor = if (adding) {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            } else {
                 DragonflyPalette.background
             }
-            textColor = WidgetColor(1.0,1.0,1.0,0.0)
+            textColor = WidgetColor(1.0, 1.0, 1.0, 0.0)
+        }))
+        this.stage.add(Pair("spotify-songCur", TextField().apply {
+            x = this@IngameMenuUI.width - 415.0 - 195.0
+            y = 142.0
+            width = 75.0
+            staticText = SimpleDateFormat("mm:ss").format(Dragonfly.spotifyManager.songCur)
+            color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.LIGHT, size = 50)
+        }))
+        this.stage.add(Pair("spotify-songMax", TextField().apply {
+            x = this@IngameMenuUI.width - 415.0 - 75.0 + 233.0
+            y = 142.0
+            width = 75.0
+            staticText = SimpleDateFormat("mm:ss").format(Dragonfly.spotifyManager.songMax)
+            color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.LIGHT, size = 50)
         }))
 
         morphSpotifyOverlay()
@@ -306,6 +323,16 @@ class IngameMenuUI : GuiScreen() {
                 NumberSlider::lineColor to DragonflyPalette.foreground,
                 NumberSlider::sliderInnerColor to DragonflyPalette.accentNormal,
                 NumberSlider::sliderOuterColor to DragonflyPalette.background
+            )?.start()
+            this.stage["spotify-songCur"]?.morph(
+                duration,
+                EaseQuad.IN,
+                TextField::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
+            )?.start()
+            this.stage["spotify-songMax"]?.morph(
+                duration,
+                EaseQuad.IN,
+                TextField::color to WidgetColor(1.0, 1.0, 1.0, 1.0)
             )?.start()
         }.start()
 

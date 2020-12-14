@@ -152,6 +152,10 @@ class SpotifyManager {
                                     SpotifyOverlay.update()
                                     Minecraft.getMinecraft().ingameGUI.initInGameOverlay()
 
+                                    try {
+                                        Minecraft.getMinecraft().ingameMenuGUI.reloadSpotifyOverlay()
+                                    }catch (e: Exception) {}
+
                                     Thread.sleep(1000)
                                 }
                             }.start()
@@ -159,10 +163,6 @@ class SpotifyManager {
                         }
 
                     }
-
-                    try {
-                        Minecraft.getMinecraft().ingameMenuGUI.reloadSpotifyOverlay()
-                    }catch (e: Exception) {}
 
                     Thread.sleep(10000)
                 }
