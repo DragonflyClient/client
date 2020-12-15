@@ -6,11 +6,9 @@ import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer
 import net.minecraft.client.gui.Gui
 import java.awt.event.KeyEvent
 
-object HotkeyRenderer
-{
+object HotkeyRenderer {
     @JvmStatic
-    fun render(fontRenderer: IFontRenderer, keycode: Int, description: String, x: Int, y: Int)
-    {
+    fun render(fontRenderer: IFontRenderer, keycode: Int, description: String, x: Int, y: Int) {
         val keyString = KeyEvent.getKeyText(keycode)
         val height = fontRenderer.height + 4
         val length = fontRenderer.getStringWidth(keyString).coerceAtLeast(height) + 4

@@ -2,11 +2,10 @@ package net.inceptioncloud.dragonfly.screenshot
 
 import kotlinx.coroutines.*
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionClient
+import net.inceptioncloud.dragonfly.overlay.hotaction.Action
+import net.inceptioncloud.dragonfly.overlay.hotaction.HotAction
+import net.inceptioncloud.dragonfly.overlay.toast.Toast
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiNewChat
-import net.minecraft.event.ClickEvent
-import net.minecraft.util.ChatComponentText
-import net.minecraft.util.ChatStyle
 import java.awt.Desktop
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
@@ -37,20 +36,18 @@ object ScreenshotUtilities {
         if (!isUtilitiesEnabled)
             return false
 
-        val chatGUI = Minecraft.getMinecraft().ingameGUI.chatGUI
-        with(chatGUI) {
-            printChatMessage("§8·•● §6Dragonfly §8» §7Your screenshot has been saved§8!")
-            printChatMessage(
-                ChatComponentText("§8·•● §6Dragonfly §8» ")
-                    .appendSibling(callbackMessage("§8[§eSave§8]") { savePermanently(image, file) })
-                    .appendText(" ")
-                    .appendSibling(callbackMessage("§8[§9Open§8]") { open(image, file) })
-                    .appendText(" ")
-                    .appendSibling(callbackMessage("§8[§aCopy§8]") { copy(image) })
-                    .appendText(" ")
-                    .appendSibling(callbackMessage("§8[§cUpload§8]") { upload(image) })
-            )
-        }
+        HotAction.queue(
+            title = "Screenshot Utilities",
+            message = "A screenshot has been created. Do you wish to take further actions?",
+            duration = 1500,
+            actions = listOf(
+                Action("Save") { savePermanently(image, file) },
+                Action("Open") { open(image, file) },
+                Action("Copy") { copy(image) },
+                Action("Upload") { upload(image) }
+            ),
+            allowMultipleActions = true
+        )
 
         return true
     }
@@ -59,8 +56,8 @@ object ScreenshotUtilities {
      * Uploads the given [image] to Imgur via their API.
      */
     private fun upload(image: BufferedImage) {
+        Toast.queue("Uploading screenshot...", 400)
         GlobalScope.launch(Dispatchers.IO) {
-            val chatGUI = Minecraft.getMinecraft().ingameGUI.chatGUI
             val bos = ByteArrayOutputStream().also { ImageIO.write(image, "png", it) }
             val bytes = bos.toByteArray()
             val result = khttp.post(
@@ -69,7 +66,7 @@ object ScreenshotUtilities {
                     "Authorization" to "Client-ID c78854cfb8f4e5d"
                 ),
                 data = mapOf(
-                    "image" to Base64.getEncoder().encodeToString(bytes).also { println("==> $it") }
+                    "image" to Base64.getEncoder().encodeToString(bytes)
                 )
             )
 
@@ -79,11 +76,9 @@ object ScreenshotUtilities {
                     StringSelection(result.jsonObject.getJSONObject("data").getString("link")),
                     null
                 )
-                chatGUI.printChatMessage("§8·•● §6Dragonfly §8» §7Your screenshot has been successfully " +
-                        "uploaded and the link has been copied to your clipboard.")
+                Toast.queue("Upload successful! Link copied to clipboard.", 1000)
             } else {
-                chatGUI.printChatMessage("§8·•● §6Dragonfly §8» §7Failed to upload screenshot to Imgur§8: " +
-                        "§cHTTP status code ${result.statusCode}")
+                Toast.queue("Upload failed! HTTP status code: ${result.statusCode}", 1000)
             }
         }
     }
@@ -93,11 +88,10 @@ object ScreenshotUtilities {
      */
     private fun copy(image: BufferedImage) {
         GlobalScope.launch(Dispatchers.IO) {
-            val chatGUI = Minecraft.getMinecraft().ingameGUI.chatGUI
             val trans = TransferableImage(image)
             val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
             clipboard.setContents(trans, null)
-            chatGUI.printChatMessage("§8·•● §6Dragonfly §8» §7Your screenshot has been copied to your clipboard.")
+            Toast.queue("Screenshot copied to clipboard", 1000)
         }
     }
 
@@ -121,9 +115,8 @@ object ScreenshotUtilities {
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun savePermanently(image: BufferedImage, file: File) {
         GlobalScope.launch(Dispatchers.IO) {
-            val chatGUI = Minecraft.getMinecraft().ingameGUI.chatGUI
             ImageIO.write(image, "png", file)
-            chatGUI.printChatMessage("§8·•● §6Dragonfly §8» §7Your screenshot has been saved to your device.")
+            Toast.queue("Screenshot saved to device", 1000)
         }
     }
 
@@ -142,36 +135,5 @@ object ScreenshotUtilities {
 
             temp
         }
-    }
-
-    /**
-     * A convenient function for creating a chat component using a click event action of
-     * [ClickEvent.Action.RUN_CALLBACK].
-     */
-    private fun callbackMessage(message: String, callback: () -> Unit) =
-        ChatComponentText(message).setChatStyle(ChatStyle().setChatClickEvent(ClickEvent(callback)))
-
-    /**
-     * Convenient function for printing a [message] to the chat.
-     */
-    private fun GuiNewChat.printChatMessage(message: String) {
-        val split = message.split(" ")
-        var colorCode = ""
-        val total = split.joinToString(" ") {
-            var unformatted = it
-            if (unformatted.startsWith("§")) {
-                colorCode = ""
-                while (unformatted.startsWith("§")) {
-                    colorCode += unformatted.substring(0..1)
-                    unformatted = unformatted.substring(2)
-                }
-
-                colorCode + unformatted
-            } else {
-                colorCode + it
-            }
-        }
-
-        printChatMessage(ChatComponentText(total))
     }
 }

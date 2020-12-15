@@ -7,8 +7,7 @@ import kotlin.math.pow
  *
  * Provides easing functions using the exponent 3.
  */
-object EaseCubic
-{
+object EaseCubic {
     /**
      * ## Ease In Cubic
      * Calculates the easing the following way:

@@ -3,10 +3,10 @@ package net.minecraft.client.renderer;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.engine.GraphicsEngine;
 import net.inceptioncloud.dragonfly.event.client.PostRenderEvent;
 import net.inceptioncloud.dragonfly.event.control.ZoomEvent;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockBed;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -14,27 +14,18 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EffectRenderer;
-import net.minecraft.client.renderer.culling.ClippingHelperImpl;
-import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.culling.*;
+import net.minecraft.client.renderer.texture.*;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.shader.ShaderGroup;
-import net.minecraft.client.shader.ShaderLinkHelper;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.client.resources.*;
+import net.minecraft.client.shader.*;
+import net.minecraft.crash.*;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.*;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntitySpider;
+import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -43,29 +34,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.*;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
 import optifine.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.util.glu.GLU;
-import org.lwjgl.util.glu.Project;
-import shadersmod.client.Shaders;
-import shadersmod.client.ShadersRender;
+import org.lwjgl.opengl.*;
+import org.lwjgl.util.glu.*;
+import shadersmod.client.*;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 public class EntityRenderer implements IResourceManagerReloadListener
@@ -1187,7 +1167,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 GlStateManager.loadIdentity();
                 GlStateManager.matrixMode(5888);
                 GlStateManager.loadIdentity();
-                this.setupOverlayRendering();
+                this.setupOverlayRendering(true);
                 this.renderEndNanoTime = System.nanoTime();
                 TileEntityRendererDispatcher.instance.renderEngine = this.mc.getTextureManager();
             }
@@ -1228,9 +1208,12 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 }
             }
 
-
             // EVENTBUS - PostRenderEvent
-            Dragonfly.getEventBus().post(new PostRenderEvent(scaledWidth, scaledHeight, scaledMouseX, scaledMouseY));
+            final double scaleFactor = Math.min(mc.displayWidth / 1920.0, mc.displayHeight / 1080.0);
+            this.setupOverlayRendering(scaleFactor);
+            Dragonfly.getEventBus().post(new PostRenderEvent(
+                    mc.displayWidth / scaleFactor, mc.displayHeight / scaleFactor, GraphicsEngine.getMouseX(), GraphicsEngine.getMouseY()
+            ));
         }
 
         this.frameFinish();
@@ -1244,7 +1227,7 @@ public class EntityRenderer implements IResourceManagerReloadListener
 
     public void renderStreamIndicator (float partialTicks)
     {
-        this.setupOverlayRendering();
+        this.setupOverlayRendering(false);
         this.mc.ingameGUI.renderStreamIndicator(new ScaledResolution(this.mc));
     }
 
@@ -1904,11 +1887,25 @@ public class EntityRenderer implements IResourceManagerReloadListener
     /**
      * Setup orthogonal projection for rendering GUI screen overlays
      */
-    public void setupOverlayRendering ()
+    public void setupOverlayRendering (boolean useCustomScale)
     {
+        if (mc.currentScreen != null && useCustomScale) {
+            Double customScaleFactor = mc.currentScreen.getCustomScaleFactor();
+            setupOverlayRendering(customScaleFactor);
+        } else {
+            setupOverlayRendering(null);
+        }
+    }
+
+    public void setupOverlayRendering(Double scale) {
         ScaledResolution scaledresolution = new ScaledResolution(this.mc);
         double scaledWidth = scaledresolution.getScaledWidth_double();
         double scaledHeight = scaledresolution.getScaledHeight_double();
+
+        if (scale != null) {
+            scaledWidth = mc.displayWidth / scale;
+            scaledHeight = mc.displayHeight / scale;
+        }
 
         GlStateManager.clear(256);
         GlStateManager.matrixMode(5889);
@@ -1922,12 +1919,11 @@ public class EntityRenderer implements IResourceManagerReloadListener
     /**
      * calculates fog and calls glClearColor
      */
-    private void updateFogColor (float partialTicks)
-    {
+    private void updateFogColor(float partialTicks) {
         WorldClient worldclient = this.mc.theWorld;
         Entity entity = this.mc.getRenderViewEntity();
-        float f = 0.25F + 0.75F * ( float ) this.mc.gameSettings.renderDistanceChunks / 32.0F;
-        f = 1.0F - ( float ) Math.pow(f, 0.25D);
+        float f = 0.25F + 0.75F * (float) this.mc.gameSettings.renderDistanceChunks / 32.0F;
+        f = 1.0F - (float) Math.pow(f, 0.25D);
         Vec3 vec3 = worldclient.getSkyColor(this.mc.getRenderViewEntity(), partialTicks);
         vec3 = CustomColors.getWorldSkyColor(vec3, worldclient, this.mc.getRenderViewEntity(), partialTicks);
         float f1 = ( float ) vec3.xCoord;
@@ -2332,10 +2328,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
             }
         }
 
-        if (this.mc.currentScreen instanceof GuiMainMenu) {
-            this.updateMainMenu(( GuiMainMenu ) this.mc.currentScreen);
-        }
-
         if (this.updatedWorld != world) {
             RandomMobs.worldChanged(this.updatedWorld, world);
             Config.updateThreadPriorities();
@@ -2364,40 +2356,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
                     this.mc.ingameGUI.getChatGUI().printChatMessage(chatcomponenttext);
                 }
             }
-        }
-    }
-
-    private void updateMainMenu (GuiMainMenu p_updateMainMenu_1_)
-    {
-        try {
-            String s = null;
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            int i = calendar.get(5);
-            int j = calendar.get(2) + 1;
-
-            if (i == 8 && j == 4) {
-                s = "Happy birthday, OptiFine!";
-            }
-
-            if (i == 14 && j == 8) {
-                s = "Happy birthday, sp614x!";
-            }
-
-            if (s == null) {
-                return;
-            }
-
-            Field[] afield = GuiMainMenu.class.getDeclaredFields();
-
-            for (int k = 0 ; k < afield.length ; ++k) {
-                if (afield[k].getType() == String.class) {
-                    afield[k].setAccessible(true);
-                    afield[k].set(p_updateMainMenu_1_, s);
-                    break;
-                }
-            }
-        } catch (Throwable var8) {
         }
     }
 

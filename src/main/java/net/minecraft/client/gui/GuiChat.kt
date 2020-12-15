@@ -1,12 +1,15 @@
 package net.minecraft.client.gui
 
 import com.google.common.collect.Lists
-import net.inceptioncloud.dragonfly.Dragonfly.fontDesign
+import net.inceptioncloud.dragonfly.Dragonfly.fontManager
 import net.inceptioncloud.dragonfly.options.sections.OptionsSectionChat
 import net.inceptioncloud.dragonfly.transition.number.DoubleTransition
 import net.minecraft.client.Minecraft
 import net.minecraft.network.play.client.C14PacketTabComplete
-import net.minecraft.util.*
+import net.minecraft.util.BlockPos
+import net.minecraft.util.ChatComponentText
+import net.minecraft.util.MathHelper
+import net.minecraft.util.MovingObjectPosition
 import org.apache.commons.lang3.StringUtils
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.input.Keyboard
@@ -54,6 +57,8 @@ open class GuiChat : GuiScreen {
         defaultInputFieldText = defaultText
     }
 
+    var deactivatedTyping = false
+
     /**
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
      * window resizes, the buttonList is cleared beforehand.
@@ -64,7 +69,7 @@ open class GuiChat : GuiScreen {
         sentHistoryCursor = mc.ingameGUI.chatGUI.sentMessages.size
 
         inputField = GuiTextField(
-            0, fontDesign.regular, 5,
+            0, fontManager.regular, 5,
             height - 13, GuiNewChat.calculateChatboxWidth(mc.gameSettings.chatWidth) - 10, 12
         )
         inputField!!.maxStringLength = 100
@@ -119,7 +124,8 @@ open class GuiChat : GuiScreen {
      * [messageRestoreMode][OptionsSectionChat.messageRestoreMode].
      */
     private fun shouldCacheMessage() = !messageSent && inputField!!.text.let { it.isNotEmpty() && it != "/" }
-            && OptionsSectionChat.messageRestoreMode.key.get().let { it != 0 && ((it == 1 && !manuallyClosed) || it == 2) }
+            && OptionsSectionChat.messageRestoreMode.key.get()
+        .let { it != 0 && ((it == 1 && !manuallyClosed) || it == 2) }
 
     /**
      * Called from the main game loop to update the screen.
@@ -128,37 +134,45 @@ open class GuiChat : GuiScreen {
         inputField!!.updateCursorCounter()
     }
 
+    fun typeMessage(text: String) {
+        for (char in text) {
+            keyTyped(char, Keyboard.getKeyIndex(char.toString()))
+        }
+    }
+
     /**
      * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
      * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
     @Throws(IOException::class)
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        waitingOnAutocomplete = false
-        if (keyCode == 15) {
-            autocompletePlayerNames()
-        } else {
-            playerNamesFound = false
-        }
-        if (keyCode == 1) {
-            manuallyClosed = true
-            transition.setBackward()
-        } else if (keyCode != 28 && keyCode != 156) {
-            when (keyCode) {
-                200 -> getSentHistory(-1)
-                208 -> getSentHistory(1)
-                201 -> mc.ingameGUI.chatGUI.scroll(mc.ingameGUI.chatGUI.lineCount - 1)
-                209 -> mc.ingameGUI.chatGUI.scroll(-mc.ingameGUI.chatGUI.lineCount + 1)
-                else -> inputField!!.textboxKeyTyped(typedChar, keyCode)
+        if (!deactivatedTyping) {
+            waitingOnAutocomplete = false
+            if (keyCode == 15) {
+                autocompletePlayerNames()
+            } else {
+                playerNamesFound = false
             }
-        } else {
-            val s = inputField!!.text.trim { it <= ' ' }
-            if (s.isNotEmpty()) {
-                messageToSend = s
+            if (keyCode == 1) {
+                manuallyClosed = true
+                transition.setBackward()
+            } else if (keyCode != 28 && keyCode != 156) {
+                when (keyCode) {
+                    200 -> getSentHistory(-1)
+                    208 -> getSentHistory(1)
+                    201 -> mc.ingameGUI.chatGUI.scroll(mc.ingameGUI.chatGUI.lineCount - 1)
+                    209 -> mc.ingameGUI.chatGUI.scroll(-mc.ingameGUI.chatGUI.lineCount + 1)
+                    else -> inputField!!.textboxKeyTyped(typedChar, keyCode)
+                }
+            } else {
+                val s = inputField!!.text.trim { it <= ' ' }
+                if (s.isNotEmpty()) {
+                    messageToSend = s
+                }
+                manuallyClosed = true
+                messageSent = true
+                transition.setBackward()
             }
-            manuallyClosed = true
-            messageSent = true
-            transition.setBackward()
         }
     }
 
@@ -188,6 +202,7 @@ open class GuiChat : GuiScreen {
      */
     @Throws(IOException::class)
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
+
         if (mouseButton == 0) {
             val iChatComponent = mc.ingameGUI.chatGUI.getChatComponent(Mouse.getX(), Mouse.getY())
             if (handleComponentClick(iChatComponent)) {
@@ -323,13 +338,14 @@ open class GuiChat : GuiScreen {
          */
         private var messageCache: String? = null
         private var messageToSend: String? = null
-        var transition: DoubleTransition = DoubleTransition.builder().start(0.0).end(22.0).amountOfSteps(15).reachStart {
-            Minecraft.getMinecraft().displayGuiScreen(null)
-            if (messageToSend != null) {
-                sendChatMessage(messageToSend)
-                messageToSend = null
-            }
-        }.build()
+        var transition: DoubleTransition =
+            DoubleTransition.builder().start(0.0).end(22.0).amountOfSteps(15).reachStart {
+                Minecraft.getMinecraft().displayGuiScreen(null)
+                if (messageToSend != null) {
+                    sendChatMessage(messageToSend)
+                    messageToSend = null
+                }
+            }.build()
 
         @JvmStatic
         val direction: Int

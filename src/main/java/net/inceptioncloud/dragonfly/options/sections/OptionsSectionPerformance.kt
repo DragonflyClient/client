@@ -3,10 +3,11 @@
 package net.inceptioncloud.dragonfly.options.sections
 
 import net.inceptioncloud.dragonfly.Dragonfly
+import net.inceptioncloud.dragonfly.engine.font.WidgetFont
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryBooleanFactory.Companion.optionEntryBoolean
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryMultipleChoiceFactory.Companion.optionEntryMultipleChoice
-import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryRangeDoubleFactory
+import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryRangeDoubleFactory.Companion.optionEntryRangeDouble
 import net.inceptioncloud.dragonfly.options.entries.util.OptionChoice
 import net.inceptioncloud.dragonfly.options.sections.OptionSectionFactory.Companion.optionSection
 import net.minecraft.client.renderer.chunk.ChunkRenderWorker
@@ -20,14 +21,13 @@ import kotlin.math.roundToInt
  *
  * This object contains all options that have an impact on the performance of the client.
  */
-object OptionsSectionPerformance
-{
+object OptionsSectionPerformance {
     /**
      * ## Font Quality
      * The factor that is applied on the original resolution to improve the font quality.
      */
     @JvmStatic
-    val fontQuality = OptionEntryRangeDoubleFactory.optionEntryRangeDouble {
+    val fontQuality = optionEntryRangeDouble {
         name = "Font quality"
         description = "In order to improve the font quality, the glyphs are rendered in a higher resolution (multiplied by this factor) " +
                 "and are then scaled down. Note that a higher quality has a big impact on the performance in the user interface!"
@@ -84,8 +84,8 @@ object OptionsSectionPerformance
     @JvmStatic
     val useScaledFontRenderers = optionEntryBoolean {
         name = "Use scaled font renderers"
-        description = "Improves the performance by re-using already created font renderers and adapting the font size by " +
-                "applying a scale while rendering. Note that this can cause some animations to be less smooth!"
+        description = "Improves the ui loading time by re-using already created font renderers and adapting the font size by " +
+                "applying a scale while rendering until an actual new font renderer has been created."
         key {
             fileKey = "useScaledFontRenderers"
             default = { true }
@@ -108,11 +108,24 @@ object OptionsSectionPerformance
     }
 
     /**
+     * Whether some commonly used font renderers should be preloaded on startup ([WidgetFont.preload])
+     */
+    @JvmStatic
+    val preloadFontRenderers = optionEntryBoolean {
+        name = "Preload font renderers"
+        description = "If this option is enabled, some commonly used font renderers are preloaded on game startup so they don't have " +
+                "to be created lazily by the ui screens."
+        key {
+            fileKey = "preloadFontRenderers"
+            default = { true }
+        }
+    }
+
+    /**
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
-    fun init()
-    {
+    fun init() {
         optionSection {
             title = "Performance"
 
@@ -120,6 +133,7 @@ object OptionsSectionPerformance
             +chunkUpdateSpeed
             +useScaledFontRenderers
             +saveGlyphs
+            +preloadFontRenderers
         }
     }
 }

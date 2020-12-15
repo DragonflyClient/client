@@ -3,6 +3,7 @@ package net.inceptioncloud.dragonfly.versioning.updater
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion
 import net.inceptioncloud.dragonfly.versioning.DragonflyVersion.update
 import org.apache.logging.log4j.LogManager
+import java.io.File
 
 /**
  * A bridge to the Dragonfly auto updater.
@@ -41,7 +42,7 @@ object AutoUpdater {
      * Launches the updater from the Dragonfly local storage.
      */
     fun update() {
-        val updater = System.getenv("appdata") + "\\Dragonfly\\Dragonfly-Updater.jar"
+        val updater = getFolder() + "Dragonfly${File.separator}Dragonfly-Updater.jar"
         val programArguments = mutableListOf("--version=${DragonflyVersion.remoteVersion.toString()}")
 
         if (update?.requiresInstaller == true) {
@@ -59,4 +60,20 @@ object AutoUpdater {
 
         LogManager.getLogger().info("Updater finished with exit code " + process.waitFor())
     }
+
+    private fun getFolder(): String {
+        when {
+            System.getProperty("os.name").toLowerCase().contains("windows") -> {
+                return System.getenv("appdata") + File.separator
+            }
+            System.getProperty("os.name").toLowerCase().contains("linux") -> {
+                return System.getProperty("user.home") + File.separator
+            }
+            System.getProperty("os.name").toLowerCase().contains("os") -> {
+                return "/Users/" + System.getProperty("user.name") + "/Library/Application Support/"
+            }
+        }
+        return "ERROR"
+    }
+
 }

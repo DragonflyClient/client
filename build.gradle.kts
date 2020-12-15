@@ -1,14 +1,26 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath("com.guardsquare:proguard-gradle:7.0.0")
+    }
+}
+
 plugins {
     application
     java
     idea
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.0"
 }
 
 group = "net.inceptioncloud"
-version = "1.1.0.0"
+version = "1.1.5.1"
 
-val outputName = "${project.name}-fat-${project.version}.jar"
+val outputName
+    get() = "${project.name}-${project.version}-full.jar"
 
 repositories {
     mavenCentral()
@@ -18,8 +30,14 @@ dependencies {
     testImplementation("junit:junit:4.13")
 
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.0")
+    implementation("com.squareup.okhttp3:okhttp:4.3.1")
+    implementation("com.esotericsoftware:kryonet:2.22.0-RC1")
+    implementation("org.javassist:javassist:3.15.0-GA")
+
+    // only required for inspector extension
+    implementation("no.tornado:tornadofx:1.7.20")
 
     implementation(fileTree("libraries"))
     implementation(fileTree("libraries-minecraft"))
@@ -66,9 +84,11 @@ sourceSets {
     main {
         java {
             srcDirs("src/main/resources")
+            exclude("net/inceptioncloud/dragonfly/engine/inspector/extension/**")
         }
         resources {
             srcDirs("resources/")
+            exclude("resources/Dragonfly-1.8.8.json")
         }
     }
 }
@@ -77,18 +97,117 @@ sourceSets {
 tasks {
     register<net.inceptioncloud.build.update.VersionTask>("version")
     register<net.inceptioncloud.build.update.PublishTask>("publish") {
-        dependsOn("fatJar")
+        dependsOn("fullJar", "obfuscateJar")
     }
 
-    register<Jar>("fatJar") {
-        baseName = "${project.name}-fat"
+    register<proguard.gradle.ProGuardTask>("obfuscateJar") {
+        verbose()
+        dontwarn()
+        dontoptimize()
+        dontshrink()
+
+        injars("build/libs/$outputName")
+        outjars("build/libs/${project.name}-${project.version}-obfuscated.jar")
+
+        libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
+
+        obfuscationdictionary("obfuscation/dictionary.txt")
+        classobfuscationdictionary("obfuscation/dictionary.txt")
+        packageobfuscationdictionary("obfuscation/dictionary.txt")
+
+        overloadaggressively()
+        flattenpackagehierarchy()
+        repackageclasses()
+
+        File("libraries-minecraft").listFiles()!!.forEach { libraryjars(it.absolutePath) }
+        File("libraries").listFiles()!!.forEach { libraryjars(it.absolutePath) }
+
+        printmapping("obfuscation/${project.name}-${project.version}.map")
+        renamesourcefileattribute("~")
+        keepattributes("SourceFile,LineNumberTable")
+
+        dontnote("kotlin.internal.PlatformImplementationsKt")
+        dontnote("kotlin.reflect.jvm.internal.**")
+
+        keep("class com.** { *; }")
+        keep("class darwin.** { *; }")
+        keep("class io.** { *; }")
+        keep("class javax.** { *; }")
+        keep("class khttp.** { *; }")
+        keep("class kotlin.** { *; }")
+        keep("class kotlinx.** { *; }")
+        keep("class linux.** { *; }")
+        keep("class net.arikia.** { *; }")
+        keep("class net.minecraftforge.** { *; }")
+        keep("class optifine.** { *; }")
+        keep("class org.** { *; }")
+        keep("class oshi.** { *; }")
+
+        keep("@net.inceptioncloud.dragonfly.utils.Keep class * { *; }")
+        keep("class net.inceptioncloud.dragonfly.utils.Keep")
+        keep("class net.inceptioncloud.dragonfly.ui.taskbar.** { *; }")
+        keep("class net.inceptioncloud.dragonfly.engine.internal.** { *; }")
+        keep("class net.inceptioncloud.dragonfly.engine.structure.** { *; }")
+        keep("class * extends net.inceptioncloud.dragonfly.engine.internal.Widget { *; }")
+        keep("class * extends net.inceptioncloud.dragonfly.engine.internal.AssembledWidget { *; }")
+        keep("class * extends net.inceptioncloud.dragonfly.mods.core.DragonflyMod { *; }")
+        keep("class net.inceptioncloud.dragonfly.mods.core.DragonflyMod { *; }")
+        keep("class net.dragonfly.kernel.packets.Packet { *; }")
+        keep("class * implements net.dragonfly.kernel.packets.Packet { *; }")
+
+        keep("class net.minecraft.entity.** { *; }")
+        keep("class net.minecraft.village.** { *; }")
+        keep("class net.minecraft.block.** { *; }")
+        keep("class net.minecraft.realms.** { *; }")
+        keep("class net.minecraft.client.ClientBrandRetriever { *; }")
+        keep("class net.minecraft.client.gui.Gui { *; }")
+        keep("class net.minecraft.client.gui.GuiScreen { *; }")
+        keep("class net.minecraft.client.gui.GuiYesNoCallback { *; }")
+        keep("class net.minecraft.server.MinecraftServer { *; }")
+
+        keepattributes("*Annotation*")
+
+        keepclasseswithmembers("""public class * {
+        public static void main(java.lang.String[]);
+        }""")
+
+        keepclasseswithmembernames("""class * {
+            native <methods>;
+        }""")
+
+        keepclassmembers(mapOf(
+            "allowoptimization" to true
+        ), """enum * {
+        public static **[] values();
+        public static ** valueOf(java.lang.String);
+        }""")
+
+        keepclassmembers("""class * implements java.io.Serializable {
+        static final long serialVersionUID;
+        static final java.io.ObjectStreamField[] serialPersistentFields;
+        private void writeObject(java.io.ObjectOutputStream);
+        private void readObject(java.io.ObjectInputStream);
+        java.lang.Object writeReplace();
+        java.lang.Object readResolve();
+        }""")
+    }
+
+    register<Jar>("fullJar") {
+        archiveClassifier.set("full")
+
         manifest {
             attributes["Main-Class"] = "net.minecraft.client.main.Main"
         }
+
         from(configurations.runtimeClasspath.get()
             .filter { !it.absolutePath.contains("libraries-minecraft") || it.absolutePath.contains("netty-all") }
+            .filter { "tornadofx" !in it.absolutePath } // exclude tornadofx
+            .filter { "reflections" !in it.absolutePath } // exclude org.reflections but not kotlin-reflect
             .map { if (it.isDirectory) it else zipTree(it) }
-        )
+        ) {
+            exclude { it.name == "module-info.class" || it.name == "icon_inspector.png" }
+        }
+
         with(jar.get() as CopySpec)
     }
 
@@ -97,26 +216,36 @@ tasks {
     }
 
     register<Copy>("copyJar") {
-        dependsOn("fatJar")
+        dependsOn("fullJar")
 
         from("build/libs/")
         include(outputName)
 
-        destinationDir = file("C:\\Users\\user\\AppData\\Roaming\\.minecraft\\versions\\Dragonfly-1.8.8")
+        destinationDir = file("${System.getenv("APPDATA")}\\.minecraft\\versions\\Dragonfly-1.8.8")
         rename(outputName, "Dragonfly-1.8.8.jar")
+    }
+
+    register<Copy>("copyObfuscated") {
+        dependsOn("fullJar", "obfuscateJar")
+
+        from("build/libs")
+        include("${project.name}-${project.version}-obfuscated.jar")
+
+        destinationDir = file("${System.getenv("APPDATA")}\\.minecraft\\versions\\Dragonfly-1.8.8")
+        rename("${project.name}-${project.version}-obfuscated.jar", "Dragonfly-1.8.8.jar")
     }
 
     register<Copy>("copyJson") {
         from("resources/")
         include("Dragonfly-1.8.8.json")
-        into("C:\\Users\\user\\AppData\\Roaming\\.minecraft\\versions\\Dragonfly-1.8.8\\")
+        into("${System.getenv("APPDATA")}\\.minecraft\\versions\\Dragonfly-1.8.8\\")
     }
 }
 
 // tasks configurations
 tasks {
     build.configure {
-        dependsOn("fatJar")
+        dependsOn("fullJar")
     }
 
     run.configure {

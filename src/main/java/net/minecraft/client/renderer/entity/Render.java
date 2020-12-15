@@ -2,9 +2,11 @@ package net.minecraft.client.renderer.entity;
 
 import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
+import net.inceptioncloud.dragonfly.kernel.KernelClient;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -23,6 +25,8 @@ import net.minecraft.world.World;
 import optifine.Config;
 import org.lwjgl.opengl.GL11;
 import shadersmod.client.Shaders;
+
+import java.util.Arrays;
 
 public abstract class Render<T extends Entity>
 {
@@ -349,7 +353,7 @@ public abstract class Render<T extends Entity>
         double d0 = entityIn.getDistanceSqToEntity(this.renderManager.livingPlayer);
 
         if (d0 <= (double) (maxDistance * maxDistance)) {
-            IFontRenderer fontrenderer = Dragonfly.getFontDesign().getRegular();
+            IFontRenderer fontrenderer = Dragonfly.getFontManager().getRegular();
             float f = 1.6F;
             float f1 = 0.016666668F * f;
             GlStateManager.pushMatrix();
@@ -357,8 +361,8 @@ public abstract class Render<T extends Entity>
             GL11.glNormal3f(0.0F, 1.0F, 0.0F);
 
             // ICMM: Fixed nametag rendering for thirdPersonView == 2
-            final float playerViewX = Minecraft
-                    .getMinecraft().gameSettings.thirdPersonView != 2 ? this.renderManager.playerViewX : -this.renderManager.playerViewX;
+            final float playerViewX = Minecraft.getMinecraft().gameSettings.thirdPersonView != 2 ?
+                    this.renderManager.playerViewX : -this.renderManager.playerViewX;
             final float playerViewY = -this.renderManager.playerViewY;
 
             GlStateManager.rotate(playerViewY, 0.0F, 1.0F, 0.0F);
@@ -386,11 +390,34 @@ public abstract class Render<T extends Entity>
             worldrenderer.pos(i + 1, 7 + b0, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
             worldrenderer.pos(i + 1, -1 + b0, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
             tessellator.draw();
+            final int textX = -fontrenderer.getStringWidth(str) / 2;
             GlStateManager.enableTexture2D();
-            fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2, b0, 553648127);
             GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
-            fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2, b0, -1);
+
+            if (entityIn instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) entityIn;
+
+                boolean onlineWithDragonfly = str.equals(player.getDisplayName().getFormattedText())
+                        && Arrays.stream(KernelClient.INSTANCE.getOnlineAccounts()).anyMatch(
+                                (it) -> player.getGameProfile().getId().toString().equals(it)
+                );
+
+                if (onlineWithDragonfly) {
+                    final ResourceLocation resourceLocation = new ResourceLocation("dragonflyres/logos/128x.png");
+                    final int size = 8;
+                    final int logoX = textX - size - 3;
+                    Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+                    Gui.drawModalRectWithCustomSizedTexture(logoX, b0 - 1, 0F, 0F, size, size, size, size);
+                }
+            }
+
+            GlStateManager.disableDepth();
+            fontrenderer.drawString(str, textX, b0, 553648127);
+
+            GlStateManager.enableDepth();
+            GlStateManager.depthMask(true);
+            fontrenderer.drawString(str, textX, b0, -1);
             GlStateManager.enableLighting();
             GlStateManager.disableBlend();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);

@@ -9,14 +9,12 @@ import org.apache.logging.log4j.LogManager;
 /**
  * Listens to the {@link ServerLoggedInEvent} and saves the last server.
  */
-public class LastServerSaveSubscriber
-{
+public class LastServerSaveSubscriber {
     /**
      * {@link ServerLoggedInEvent} Subscriber
      */
     @Subscribe
-    public void serverLoggedIn (ServerLoggedInEvent event)
-    {
+    public void serverLoggedIn(ServerLoggedInEvent event) {
         if (event.getServerData().isLan())
             return;
 

@@ -54,6 +54,16 @@ public class Session
         }
     }
 
+    @Override
+    public String toString() {
+        return "Session{" +
+                "username='" + username + '\'' +
+                ", playerID='" + playerID + '\'' +
+                ", token='" + token + '\'' +
+                ", sessionType=" + sessionType +
+                '}';
+    }
+
     /**
      * Returns either 'legacy' or 'mojang' whether the account is migrated or not
      */

@@ -10,20 +10,18 @@ import net.minecraft.client.Minecraft;
 /**
  * The subscriber that performs the changing to the {@link MenuState}.
  */
-public class MenuSubscriber
-{
+public class MenuSubscriber {
     /**
      * Updates the current Game State to {@link MenuState} if the user is not in-game and if the previous
      * screen was an {@link PlayingState}.
      */
     @Subscribe
-    public void guiScreenDisplay (GuiScreenDisplayEvent event)
-    {
-        if(Minecraft.getMinecraft().theWorld != null)
+    public void guiScreenDisplay(GuiScreenDisplayEvent event) {
+        if (Minecraft.getMinecraft().theWorld != null)
             return;
 
         Dragonfly.getGameStateManager().getCurrent().ifPlaying(playingState ->
-            Dragonfly.getGameStateManager().updateState(new MenuState())
+                Dragonfly.getGameStateManager().updateState(new MenuState())
         );
     }
 }

@@ -6,6 +6,8 @@ import com.mojang.authlib.GameProfile;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+
+import net.inceptioncloud.dragonfly.cosmetics.logic.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDirectional;
@@ -74,6 +76,7 @@ import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.LockCode;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("incomplete-switch")
 public abstract class EntityPlayer extends EntityLivingBase
@@ -172,6 +175,8 @@ public abstract class EntityPlayer extends EntityLivingBase
      * An instance of a fishing rod's hook. If this isn't null, the icon image of the fishing rod is slightly different
      */
     public EntityFishHook fishEntity;
+
+    protected CosmeticDataList cosmetics = null;
 
     public EntityPlayer(World worldIn, GameProfile gameProfileIn)
     {
@@ -1466,6 +1471,16 @@ public abstract class EntityPlayer extends EntityLivingBase
             this.openContainer.onContainerClosed(this);
         }
     }
+
+    @Nullable
+    public CosmeticDataList getCosmetics() {
+        return cosmetics;
+    }
+
+    /**
+     * Called when the cosmetics for the player were loaded.
+     */
+    public void onCosmeticsLoaded() {}
 
     /**
      * Checks if this entity is inside of an opaque block

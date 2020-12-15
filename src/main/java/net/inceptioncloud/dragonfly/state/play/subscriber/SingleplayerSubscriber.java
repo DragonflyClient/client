@@ -5,19 +5,17 @@ import net.inceptioncloud.dragonfly.Dragonfly;
 import net.inceptioncloud.dragonfly.event.gui.GuiScreenDisplayEvent;
 import net.inceptioncloud.dragonfly.event.play.IntegratedServerLoggedInEvent;
 import net.inceptioncloud.dragonfly.state.play.SingleplayerState;
-import net.minecraft.client.gui.GuiIngameMenu;
+import net.inceptioncloud.dragonfly.ui.screens.MainMenuUI;
 
 /**
  * The subscriber that performs the changing to the {@link SingleplayerState}.
  */
-public class SingleplayerSubscriber
-{
+public class SingleplayerSubscriber {
     /**
      * Updates the Game State to {@link SingleplayerState} when an integrated server was successfully started.
      */
     @Subscribe
-    public void integratedServerStartup (IntegratedServerLoggedInEvent event)
-    {
+    public void integratedServerStartup(IntegratedServerLoggedInEvent event) {
         Dragonfly.getGameStateManager().updateState(new SingleplayerState(false, System.currentTimeMillis(), event.getIntegratedServer()));
     }
 
@@ -26,10 +24,9 @@ public class SingleplayerSubscriber
      * new screen is <code>null</code> or not.
      */
     @Subscribe
-    public void guiScreenDisplay (GuiScreenDisplayEvent event)
-    {
+    public void guiScreenDisplay(GuiScreenDisplayEvent event) {
         if (event.isCancelled()) return;
-        boolean paused = event.getNewScreen() instanceof GuiIngameMenu;
+        boolean paused = event.getNewScreen() instanceof MainMenuUI;
 
         Dragonfly.getGameStateManager().getCurrent().ifSingleplayer(state ->
         {

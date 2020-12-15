@@ -1373,6 +1373,10 @@ public abstract class World implements IBlockAccess
      */
     public Vec3 getSkyColor (Entity entityIn, float partialTicks)
     {
+        if (entityIn == null) {
+            return new Vec3(0.0, 0.0, 0.0);
+        }
+
         float f = this.getCelestialAngle(partialTicks);
         float f1 = MathHelper.cos(f * (float) Math.PI * 2.0F) * 2.0F + 0.5F;
         f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);

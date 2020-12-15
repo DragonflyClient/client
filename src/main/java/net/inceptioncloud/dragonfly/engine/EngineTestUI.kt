@@ -1,9 +1,6 @@
 package net.inceptioncloud.dragonfly.engine
 
-import net.inceptioncloud.dragonfly.engine.animation.alter.MorphAnimation.Companion.morphBetween
-import net.inceptioncloud.dragonfly.engine.sequence.easing.EaseBack
-import net.inceptioncloud.dragonfly.engine.widgets.assembled.InputTextField
-import net.inceptioncloud.dragonfly.engine.widgets.primitive.FilledCircle
+import net.inceptioncloud.dragonfly.engine.widgets.assembled.TextField
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
 import java.awt.Color
@@ -11,41 +8,26 @@ import java.awt.Color
 class EngineTestUI : GuiScreen() {
     override fun initGui() {
         Keyboard.enableRepeatEvents(true)
-        +InputTextField(
-            x = 100.0,
-            y = 100.0,
-            width = 200.0,
-            label = "Hotkey Message",
-            maxStringLength = 300
-        ) id "text-input"
 
-        +FilledCircle(
-            x = 30.0,
-            y = 30.0,
-            size = 20.0,
-            color = Color.BLUE.toWidgetColor()
-        ) id "circle"
-    }
+        +TextField {
+            x = 50.0
+            y = 50.0
+            width = 185.0
+            staticText = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore " +
+                    "magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, " +
+                    "no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" +
+                    " nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo " +
+                    "duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+            adaptHeight = true
+        } id "test"
 
-    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        getWidget<FilledCircle>("circle")?.morphBetween(easing = EaseBack.IN_OUT, first = {
-            x = 15.0
-            y = 15.0
-            size = 50.0
-            color = Color.RED.toWidgetColor()
-        }, second = {
-            x = 30.0
-            y = 30.0
-            size = 20.0
-            color = Color.BLUE.toWidgetColor()
-        })
-
-        super.mouseClicked(mouseX, mouseY, mouseButton)
+        GraphicsEngine.runAfter(10_000) {
+            getWidget<TextField>("test")!!.x = 100.0
+        }
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        drawRect(0, 0, width, height, Color(255, 255, 255).rgb)
-        drawRect(width / 2, 0, width, height, Color(0, 0, 0).rgb)
+        drawRect(0, 0, width, height, Color(0x1c1f2b).rgb)
         super.drawScreen(mouseX, mouseY, partialTicks)
     }
 }

@@ -1,7 +1,6 @@
 package net.inceptioncloud.dragonfly.engine.sequence.easing
 
-object EaseBounce
-{
+object EaseBounce {
     /**
      * ## Ease In Bounce
      * Calculates the easing the following way:
@@ -40,24 +39,19 @@ object EaseBounce
         val d1 = 2.75
         var x = it
 
-        when
-        {
-            x < 1 / d1 ->
-            {
+        when {
+            x < 1 / d1 -> {
                 n1 * x * x
             }
-            x < 2 / d1 ->
-            {
+            x < 2 / d1 -> {
                 x -= 1.5 / d1
                 n1 * it * it + 0.75
             }
-            x < 2.5 / d1 ->
-            {
+            x < 2.5 / d1 -> {
                 x -= 2.25 / d1
                 n1 * x * x + 0.9375
             }
-            else ->
-            {
+            else -> {
                 x -= 2.625 / d1
                 n1 * x * x + 0.984375
             }

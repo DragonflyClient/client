@@ -6,8 +6,7 @@ package net.inceptioncloud.dragonfly.engine.structure
  * The Dimension Interface lets the inheriting class define a value for the width and height.
  * Every object that has a width and height should implement this interface.
  */
-interface IDimension
-{
+interface IDimension {
     /**
      * The width of the object.
      *

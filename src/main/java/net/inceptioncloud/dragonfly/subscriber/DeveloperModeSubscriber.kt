@@ -7,58 +7,58 @@ import net.inceptioncloud.dragonfly.event.client.PostRenderEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import java.awt.Color
-import java.awt.Font
 
 object DeveloperModeSubscriber {
+
     @Subscribe
     fun postRender(event: PostRenderEvent) {
         if (!Dragonfly.isDeveloperMode)
             return
 
-        renderDebugInfo(
+        renderDeveloperInfo(
             "FPS: ",
             Minecraft.getDebugFPS().toString(),
-            event.scaledWidth, 2
+            event.scaledWidth, 2.0
         )
-        renderDebugInfo(
+        renderDeveloperInfo(
             "TPS: ",
             Dragonfly.lastTPS.toString(),
-            event.scaledWidth, 10
+            event.scaledWidth, 22.0
         )
-        renderDebugInfo(
+        renderDeveloperInfo(
             "GUI: ",
             Minecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "null",
-            event.scaledWidth, 18
+            event.scaledWidth, 42.0
         )
 
-        val asyncBuilding = Dragonfly.fontDesign.defaultFont.asyncBuilding
-        val cachedFontRenderer = Dragonfly.fontDesign.defaultFont.cachedFontRenderer
+        val asyncBuilding = Dragonfly.fontManager.defaultFont.asyncBuilding
+        val cachedFontRenderer = Dragonfly.fontManager.defaultFont.cachedFontRenderer
 
-        renderDebugInfo(
+        renderDeveloperInfo(
             "Building: ",
             asyncBuilding.size.toString(),
-            event.scaledWidth, 28
+            event.scaledWidth, 62.0
         )
-        renderDebugInfo(
+        renderDeveloperInfo(
             "Cached: ",
             cachedFontRenderer.size.toString(),
-            event.scaledWidth, 36
+            event.scaledWidth, 82.0
         )
-        renderDebugInfo(
+        renderDeveloperInfo(
             "Scaled: ",
             cachedFontRenderer.count { it.value is ScaledFontRenderer }.toString(),
-            event.scaledWidth, 44
+            event.scaledWidth, 102.0
         )
     }
 
-    private fun renderDebugInfo(title: String, content: String, screenWidth: Int, y: Int) {
-        val fontRenderer = Dragonfly.fontDesign.retrieveOrBuild("JetBrains Mono", Font.PLAIN, 14)
+    private fun renderDeveloperInfo(title: String, content: String, screenWidth: Double, y: Double) {
+        val fontRenderer = Dragonfly.fontManager.monospaceFont.fontRenderer(size = 38, useScale = false)
         val height = fontRenderer.height
         val framesTitleWidth = fontRenderer.getStringWidth(title)
         val framesWidth = framesTitleWidth + fontRenderer.getStringWidth(content)
 
         Gui.drawRect(screenWidth - 2 - framesWidth - 2, y, screenWidth - 2, y + height, Color(0, 0, 0, 150).rgb)
-        fontRenderer.drawString(title, screenWidth - 3 - framesWidth, y + 2, Color.WHITE.rgb)
-        fontRenderer.drawString(content, screenWidth - 3 - framesWidth + framesTitleWidth, y + 2, Color.YELLOW.rgb)
+        fontRenderer.drawString(title, (screenWidth - 3 - framesWidth).toInt(), (y + 2).toInt(), Color.WHITE.rgb)
+        fontRenderer.drawString(content, (screenWidth - 3 - framesWidth + framesTitleWidth).toInt(), (y + 2).toInt(), Color.YELLOW.rgb)
     }
 }

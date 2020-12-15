@@ -79,7 +79,7 @@ class ScaledFontRenderer(
         return (base.getCharWidth(c) / scale).toInt()
     }
 
-    private fun pushScale() = GraphicsEngine.pushScale(1 / scale to 1 / scale)
+    private fun pushScale() = GraphicsEngine.pushScale(1 / scale)
 
     private fun popScale(i: Int) = GraphicsEngine.popScale()
 }

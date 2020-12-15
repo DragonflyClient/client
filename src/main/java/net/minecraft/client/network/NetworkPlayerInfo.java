@@ -54,6 +54,7 @@ public class NetworkPlayerInfo
         this.gameType = addPlayerData.getGameMode();
         this.responseTime = addPlayerData.getPing();
         this.displayName = addPlayerData.getDisplayName();
+
     }
 
     /**

@@ -1,7 +1,7 @@
 package net.minecraft.client.gui.inventory;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.renderer.*;
@@ -116,6 +116,7 @@ public class GuiInventory extends InventoryEffectRenderer
     @Override
     public void drawScreen (int mouseX, int mouseY, float partialTicks)
     {
+
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.oldMouseX = ( float ) mouseX;
         this.oldMouseY = ( float ) mouseY;
@@ -139,6 +140,7 @@ public class GuiInventory extends InventoryEffectRenderer
      */
     protected void actionPerformed (GuiButton button) throws IOException
     {
+
         if (button.id == 0) {
             this.mc.displayGuiScreen(new GuiAchievements(this, this.mc.thePlayer.getStatFileWriter()));
         }

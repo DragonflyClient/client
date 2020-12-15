@@ -1,14 +1,19 @@
 package net.inceptioncloud.dragonfly.engine.internal
 
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import net.inceptioncloud.dragonfly.engine.GraphicsEngine
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.animation.AttachmentBuilder
-import net.inceptioncloud.dragonfly.engine.internal.annotations.*
-import net.inceptioncloud.dragonfly.engine.structure.IDraw
+import net.inceptioncloud.dragonfly.engine.structure.*
+import net.inceptioncloud.dragonfly.engine.tooltip.Tooltip
+import net.inceptioncloud.dragonfly.mc
+import net.inceptioncloud.dragonfly.overlay.modal.Modal
+import net.inceptioncloud.dragonfly.utils.Keep
+import net.minecraft.client.gui.Gui
+import net.minecraft.client.renderer.GlStateManager
 import java.util.*
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.KProperty
 
 /**
  * ## Widget
@@ -21,11 +26,14 @@ import kotlin.reflect.jvm.isAccessible
  * in the interface. This allows it to return it's instance without forcing the user to use casts.
  *
  * @see IDraw
- *
+ * @param initializerBlock the block that initializes the widget and so replaces the constructor (called in
+ * [WidgetIdBuilder.build])
  * @property W the type of the implementing class
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-abstract class Widget<W : Widget<W>> : IDraw {
+abstract class Widget<W : Widget<W>>(
+    val initializerBlock: (W.() -> Unit)? = null
+) : IDraw {
 
     /**
      * An object on which some operations are synchronized to provide thread-safety.
@@ -43,27 +51,105 @@ abstract class Widget<W : Widget<W>> : IDraw {
     var isInAssembled = false
 
     /**
-     * Whether the widget is currently hovered by the mouse.
+     * Whether the widget is part of a modal widget. This property is overwritten by
+     * [AssembledWidget] to also change the value of it's children.
      */
-    var isHovered = false
+    open var isModal = false
+
+    /**
+     * Whether this widget ignores the [FocusHandler] of the current screen.
+     */
+    open var overrideFocusHandler = false
+
+    /**
+     * The assembled widget that this widget is part of. This value is only non-null if the widget is
+     * part of an assembled widget and thus if [isInAssembled] is true.
+     */
+    var parentAssembled: AssembledWidget<*>? = null
+        set(value) {
+            if (value != null) {
+                handleAssembledAdd(value)
+            }
+            field = value
+        }
+
+    /**
+     * The buffer that this widget is rendered with. This value is only non-null if the widget is directly
+     * rendered by a stage and not by an assembled widget (if [isInAssembled] is false).
+     */
+    var parentStage: WidgetStage? = null
+        set(value) {
+            if (value != null) {
+                handleStageAdd(value)
+            }
+            field = value
+        }
+
+    /**
+     * The id that has been assigned to this widget when it was added to the [parentStage] or to its
+     * [parentAssembled] widget.
+     */
+    var widgetId: String? = null
 
     /**
      * Whether the widget is currently visible. If this flag is set to false, the [drawNative] method
-     * won't be called by the parent [WidgetBuffer] that contains the widget.
+     * won't be called by the parent [WidgetStage] that contains the widget.
      */
     var isVisible = true
 
     /**
-     * The factor with which the widget is scaled when drawing.
+     * Whether the widget is currently in a state update. This means that changes to the properties
+     * will NOT result in the widget's [stateChanged] method being fired.
      */
-    @Interpolate
-    var scaleFactorX: Double = 1.0
+    var isInStateUpdate = false
+
+    /**
+     * Whether the widget is currently being inspected.
+     */
+    var isInspected = false
+
+    /**
+     * The priority of the widget on the stage. Defines the order in which the widgets are drawn
+     * and in which events are passed to them. Ascending order.
+     */
+    var stagePriority: Int = 0
 
     /**
      * The factor with which the widget is scaled when drawing.
      */
-    @Interpolate
-    var scaleFactorY: Double = 1.0
+    var scaleFactor: Double = 1.0
+
+    /**
+     * Whether the widget is currently hovered.
+     */
+    var isHovered: Boolean = false
+
+    /**
+     * The default action that is executed when the widget is clicked.
+     */
+    var clickAction: () -> Unit = {}
+
+    /**
+     * The default action that is executed when the widget is hovered.
+     */
+    var hoverAction: (Boolean) -> Unit = {}
+
+    /**
+     * An optional tooltip that is shown when the widget is hovered to provide additional information
+     * about its behavior to the user.
+     */
+    var tooltip: Tooltip? = null
+        set(value) {
+            if (field != null) {
+                parentStage?.remove("$value::tooltip")
+                parentAssembled?.structure?.remove("$value::tooltip")
+            }
+            field = value
+            if (value != null) {
+                value.host = this
+                value.prepare()
+            }
+        }
 
     /**
      * A stacking list with all animations that are currently being applied to the widget.
@@ -75,16 +161,10 @@ abstract class Widget<W : Widget<W>> : IDraw {
     val animationStack: MutableList<Animation> = Collections.synchronizedList(mutableListOf<Animation>())
 
     /**
-     * The animation scratchpad of this object.
-     *
-     * Every widget object that contains animation has a scratchpad. The animations will be applied to
-     * the scratchpad, but the base widget will still be available to support relative value updates.
-     *
-     * The scratchpad is created or deleted in the [update] function depending on whether the
-     * [animationStack] is empty or not. When a scratchpad is available, the [draw]
-     * function will draw it instead.
+     * A map that contains all the names of all properties delegated by a [WidgetPropertyDelegate] and
+     * their corresponding instances.
      */
-    var scratchpad: Widget<*>? = null
+    val propertyDelegates = mutableMapOf<String, WidgetPropertyDelegate<*>>()
 
     /**
      * A simple method that uses the widget as a receiver in order to allow changes to it during lifetime.
@@ -111,27 +191,19 @@ abstract class Widget<W : Widget<W>> : IDraw {
      * It performs things like state- and dynamic updates and allows the use of animations.
      */
     open fun update() {
-        val before = clone()
-
         if (updateDynamic != null) {
             updateDynamic?.invoke(this as W)
         }
 
         if (!animationStack.isNullOrEmpty()) {
-            scratchpad = clone().apply { isInternalClone = true }
             synchronized(mutex) {
                 animationStack.removeAll { it.finished }
                 animationStack.toTypedArray().forEach { it.tick() }
-                animationStack.toTypedArray().forEach { it.applyToShape(scratchpad = scratchpad!!, base = this) }
+                animationStack.toTypedArray().forEach {
+                    it.applyToShape(this)
+                    it.companions.forEach { lambda -> lambda(this) }
+                }
             }
-
-            if (!isStateEqual(scratchpad as W)) {
-                stateChanged(scratchpad as W)
-            }
-        } else scratchpad = null
-
-        if (!isStateEqual(before)) {
-            stateChanged(this)
         }
     }
 
@@ -146,15 +218,47 @@ abstract class Widget<W : Widget<W>> : IDraw {
      */
     @Suppress("DEPRECATION")
     fun draw() {
-        GraphicsEngine.pushScale(scaleFactorX to scaleFactorY)
+        GlStateManager.pushMatrix()
+        GlStateManager.scale(scaleFactor)
 
-        if (scratchpad != null) {
-            scratchpad?.drawNative()
-        } else {
-            drawNative()
+        if (this is IPosition && mc.currentScreen != null) {
+            GlStateManager.translate(x * (1 / scaleFactor) - x, y * (1 / scaleFactor) - y, 0.0)
         }
 
-        GraphicsEngine.popScale()
+        drawNative()
+
+        if (isInspected && this is IPosition && (this is IDimension || this is ISize)) {
+            val (width, height) = Defaults.getSizeOrDimension(this)
+            Gui.drawRect(x, y, x + width, y + height, WidgetColor(0x1abc9c).apply { alphaDouble = 0.5 }.rgb)
+        }
+
+        GlStateManager.popMatrix()
+
+        val focusHandler = mc.currentScreen?.takeIf { parentStage == it.stage }?.focusHandler
+        val mouseX = GraphicsEngine.getMouseX()
+        val mouseY = GraphicsEngine.getMouseY()
+        val data = MouseData(mouseX.toInt(), mouseY.toInt())
+
+        if (canUpdateHoverState() && !(Modal.isModalPresent() && !isModal)
+            && (focusHandler?.captureMouseFocus(data) != true || overrideFocusHandler)
+            && this is IPosition && (this is IDimension || this is ISize)
+        ) {
+            val (width, height) = Defaults.getSizeOrDimension(this)
+
+            if (mouseX in x..x + width && mouseY in y..y + height) {
+                if (isHovered)
+                    return
+
+                isHovered = true
+                handleHoverStateUpdate()
+            } else {
+                if (!isHovered)
+                    return
+
+                isHovered = false
+                handleHoverStateUpdate()
+            }
+        }
     }
 
     /**
@@ -198,77 +302,46 @@ abstract class Widget<W : Widget<W>> : IDraw {
     }
 
     /**
-     * Returns whether the state of the widget has been changed by a dynamic update or by an animation.
-     *
-     * Every widget should implement this function and adjust it to its structure, in particular the
-     * properties annotated with @[Interpolate].
-     *
-     * @param clone the clone which the base widget should be compared to
-     */
-    fun isStateEqual(clone: W) = this::class.memberProperties
-        .filter { it.hasAnnotation<Interpolate>() || it.hasAnnotation<State>() }
-        .none { it.getter.call(this) != it.getter.call(clone) }
-
-    /**
      * Notifies the widget that its state has been changed by a dynamic update or by an animation.
-     * This is called when [isStateEqual] evaluates to false.
      */
-    open fun stateChanged(new: Widget<*>) {
+    protected open fun stateChanged() {
         /* can be implemented by a subclass */
     }
 
     /**
-     * Clones the graphics object.
-     *
-     * @return an identical copy of the object that the function was called on
+     * Calls the [stateChanged] function while taking care of setting the [isInStateUpdate] boolean.
      */
-    abstract fun clone(): W
+    fun notifyStateChanged() {
+        isInStateUpdate = true
+        try {
+            stateChanged()
+            tooltip?.prepare()
+        } finally {
+            isInStateUpdate = false
+        }
+    }
 
     /**
-     * Clones the graphics object and adds a padding.
-     *
-     * By adding a padding, the cloned object will get smaller. It stays in the center of the original
-     * object, and the distance between the outline of the cloned object and the outline of the original
-     * object is equal to the padding size.
-     *
-     * @see cloneWithMargin
-     * @return a congruent copy of the object with the given padding to the original object
+     * Creates a new [WidgetPropertyDelegate] using the specified type and [initialValue]
      */
-    open fun cloneWithPadding(amount: Double): W = Defaults.cloneWithPadding(this as W, amount)
+    protected fun <T> property(initialValue: T): WidgetPropertyDelegate<T> {
+        val delegate = WidgetPropertyDelegate(initialValue)
+        delegate.objectProperty.addListener(WidgetListener(this))
+        return delegate
+    }
 
     /**
-     * Clones the graphics object and adds a margin.
-     *
-     * By adding a padding, the cloned object will get greater. It stays in the center of the original
-     * object, and the distance between the outline of the original object and the outline of the cloned
-     * object is equal to the padding size.
-     *
-     * @see cloneWithPadding
-     * @return a congruent copy of the object with the given margin to the original object
+     * Convenient function to access the [WidgetPropertyDelegate] of a property. If the receiver
+     * property isn't delegated by the a [WidgetPropertyDelegate] (its name is therefore not in
+     * [propertyDelegates]) this function will return null.
      */
-    open fun cloneWithMargin(amount: Double): W = Defaults.cloneWithMargin(this as W, amount)
+    fun KProperty<*>.getWidgetDelegate(): WidgetPropertyDelegate<*>? = propertyDelegates[this.name]
 
     /**
-     * Creates a new clone that can be modified with the [block] and will be returned from
-     * the function. This is a shorthand for `clone().apply { ... }`.
+     * Convenient function to access the [WidgetPropertyDelegate] of a property with a specified
+     * type. Will return null if the type cast fails. See [getWidgetDelegate] for more information.
      */
-    fun altered(block: W.() -> Unit): W = clone().apply(block)
-
-    /**
-     * Used to create a new instance of the subclass as [W] is the type of the subclass.
-     */
-    abstract fun newInstance(): W
-
-    /**
-     * Generates an info string for the widget that is used for debugging.
-     */
-    open fun toInfo(): List<String> = this::class.memberProperties
-        .filter { it.hasAnnotation<State>() || it.hasAnnotation<Interpolate>() || it.hasAnnotation<Info>() }
-        .sortedByDescending { if (it.hasAnnotation<State>()) 3 else if (it.hasAnnotation<Interpolate>()) 2 else 1 }
-        .joinToString("\n") {
-            it.isAccessible = true
-            (if (it.hasAnnotation<State>()) "--state" else "") + "${it.name} = ${it.getter.call(this)}"
-        }.split("\n")
+    fun <T> KProperty<*>.getTypedWidgetDelegate(): WidgetPropertyDelegate<T>? = propertyDelegates[this.name] as? WidgetPropertyDelegate<T>
 
     /**
      * Notifies the widget when the mouse is moved.
@@ -282,6 +355,9 @@ abstract class Widget<W : Widget<W>> : IDraw {
      */
     open fun handleMousePress(data: MouseData) {
         /* can be implemented by a subclass */
+        if (isHovered) {
+            clickAction()
+        }
     }
 
     /**
@@ -305,13 +381,55 @@ abstract class Widget<W : Widget<W>> : IDraw {
         /* can be implemented by a subclass */
     }
 
+    /**
+     * Notifies the widget when it is added to a stage after the [initializerBlock] has been called.
+     */
+    open fun handleStageAdd(stage: WidgetStage) {
+        tooltip?.let { stage.add("$widgetId::tooltip" to it.widget) }
+    }
+
+    /**
+     * Notifies the widget when it is added to an assembled widget.
+     */
+    open fun handleAssembledAdd(parent: AssembledWidget<*>) {
+        tooltip?.let { parent.structure.put("$widgetId::tooltip", it.widget) }
+    }
+
+    /**
+     * Called when the hover state of a widget changes.
+     */
+    open fun handleHoverStateUpdate() {
+        hoverAction(isHovered)
+        tooltip?.animateTooltip(isHovered)
+    }
+
+    /**
+     * Called when the widget searches for changes in the hover state. When this evaluates to
+     * true, the hover state can be changed, otherwise changes are ignored.
+     */
+    open fun canUpdateHoverState(): Boolean {
+        /* can be implemented by a subclass */
+        return true
+    }
+
     // This function is only implemented to deprecate it in this context.
     @Deprecated(
         "This function won't render animations!",
-        ReplaceWith("draw()", "net.inceptioncloud.minecraftmod.engine.internal.Widget"),
+        ReplaceWith("draw()", "net.inceptioncloud.dragonfly.engine.internal.Widget"),
         DeprecationLevel.WARNING
     )
     override fun drawNative() {
         super.drawNative()
+    }
+}
+
+@Keep
+private class WidgetListener<T>(val widget: Widget<*>) : ChangeListener<T> {
+    override fun changed(observable: ObservableValue<out T>?, oldValue: T, newValue: T) {
+        if (oldValue != newValue) {
+            if (!widget.isInStateUpdate) {
+                widget.notifyStateChanged()
+            }
+        }
     }
 }

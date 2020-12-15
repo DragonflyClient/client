@@ -393,9 +393,14 @@ public class ConnectedParser
         return null;
     }
 
-    public static Comparable parseValue(String p_parseValue_0_, Class p_parseValue_1_)
-    {
-        return (Comparable)(p_parseValue_1_ == String.class ? p_parseValue_0_ : (p_parseValue_1_ == Boolean.class ? Boolean.valueOf(p_parseValue_0_) : (p_parseValue_1_ == Float.class ? Float.valueOf(p_parseValue_0_) : (p_parseValue_1_ == Double.class ? Double.valueOf(p_parseValue_0_) : (p_parseValue_1_ == Integer.class ? Integer.valueOf(p_parseValue_0_) : (p_parseValue_1_ == Long.class ? Long.valueOf(p_parseValue_0_) : null))))));
+    public static Comparable parseValue(String string, Class clazz) {
+        if (clazz == String.class) return string;
+        if (clazz == Boolean.class) return Boolean.valueOf(string);
+        if (clazz == Float.class) return Float.parseFloat(string);
+        if (clazz == Double.class) return Double.parseDouble(string);
+        if (clazz == Integer.class) return Integer.parseInt(string);
+        if (clazz == Long.class) return Long.valueOf(string);
+        return null;
     }
 
     public boolean matchState(IBlockState p_matchState_1_, Map<IProperty, List<Comparable>> p_matchState_2_)

@@ -6,8 +6,7 @@ import net.inceptioncloud.dragonfly.versioning.DragonflyVersion;
 /**
  * The superclass of any game status that is displayed in the Discord Rich Presence.
  */
-public class RichPresenceAdapter
-{
+public class RichPresenceAdapter {
     /**
      * The status string that is being displayed.
      */
@@ -50,56 +49,48 @@ public class RichPresenceAdapter
 
     /**
      * Builds the Rich Presence that will display this status.
+     *
      * @return The built instance
      */
-    public DiscordRichPresence buildRichPresence ()
-    {
+    public DiscordRichPresence buildRichPresence() {
         return new DiscordRichPresence.Builder(extra)
-            .setDetails(title)
-            .setStartTimestamps(startMillis)
-            .setEndTimestamp(endMillis)
-            .setBigImage(bigImageKey, bigImageText)
-            .setSmallImage(smallImageKey, smallImageText)
-            .build();
+                .setDetails(title)
+                .setStartTimestamps(startMillis)
+                .setEndTimestamp(endMillis)
+                .setBigImage(bigImageKey, bigImageText)
+                .setSmallImage(smallImageKey, smallImageText)
+                .build();
     }
 
-    public void setTitle (final String title)
-    {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
-    public void setExtra (final String extra)
-    {
+    public void setExtra(final String extra) {
         this.extra = extra;
     }
 
-    public void setStartMillis (final long startMillis)
-    {
+    public void setStartMillis(final long startMillis) {
         this.startMillis = startMillis;
     }
 
-    public void setEndMillis (final long endMillis)
-    {
+    public void setEndMillis(final long endMillis) {
         this.endMillis = endMillis;
     }
 
-    public void setBigImageKey (final String bigImageKey)
-    {
+    public void setBigImageKey(final String bigImageKey) {
         this.bigImageKey = bigImageKey;
     }
 
-    public void setBigImageText (final String bigImageText)
-    {
+    public void setBigImageText(final String bigImageText) {
         this.bigImageText = bigImageText;
     }
 
-    public void setSmallImageKey (final String smallImageKey)
-    {
+    public void setSmallImageKey(final String smallImageKey) {
         this.smallImageKey = smallImageKey;
     }
 
-    public void setSmallImageText (final String smallImageText)
-    {
+    public void setSmallImageText(final String smallImageText) {
         this.smallImageText = smallImageText;
     }
 }

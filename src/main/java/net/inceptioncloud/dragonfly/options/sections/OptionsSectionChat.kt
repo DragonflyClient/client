@@ -1,5 +1,7 @@
 package net.inceptioncloud.dragonfly.options.sections
 
+import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryBooleanFactory
+import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryBooleanFactory.Companion.optionEntryBoolean
 import net.inceptioncloud.dragonfly.options.entries.factories.OptionEntryMultipleChoiceFactory.Companion.optionEntryMultipleChoice
 import net.inceptioncloud.dragonfly.options.entries.util.OptionChoice
 import net.inceptioncloud.dragonfly.options.sections.OptionSectionFactory.Companion.optionSection
@@ -32,6 +34,21 @@ object OptionsSectionChat {
     }
 
     /**
+     * Whether empty chat messages should not be displayed in the chat.
+     */
+    @JvmStatic
+    val ignoreEmptyChatMessages = optionEntryBoolean {
+        name = "Ignore empty chat messages"
+        description = "When receiving chat messages from the server that have no content, these messages are not " +
+                "displayed in the chat."
+
+        key {
+            fileKey = "ignoreEmptyChatMessages"
+            default = { false }
+        }
+    }
+
+    /**
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
@@ -40,6 +57,7 @@ object OptionsSectionChat {
             title = "Chat"
 
             +messageRestoreMode
+            +ignoreEmptyChatMessages
         }
     }
 }

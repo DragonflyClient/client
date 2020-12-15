@@ -48,7 +48,7 @@ public class RenderManager
      * lists the various player skin types with their associated Renderer class instances.
      */
     private final Map skinMap = Maps.newHashMap();
-    private final RenderPlayer playerRenderer;
+    public final RenderPlayer playerRenderer;
 
     /** Renders fonts */
     private FontRenderer textRenderer;

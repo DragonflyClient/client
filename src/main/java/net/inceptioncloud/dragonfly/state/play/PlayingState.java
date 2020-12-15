@@ -8,8 +8,7 @@ import java.util.Objects;
  * The superclass of any Game State in which the user is playing.
  * These are {@link SingleplayerState} and {@link MultiplayerState}.
  */
-public abstract class PlayingState extends GameState
-{
+public abstract class PlayingState extends GameState {
     /**
      * Whether the game is currently paused.
      */
@@ -23,44 +22,38 @@ public abstract class PlayingState extends GameState
     /**
      * Default Constructor
      */
-    PlayingState (final boolean paused, final long joinTime)
-    {
+    PlayingState(final boolean paused, final long joinTime) {
         this.paused = paused;
         this.joinTime = joinTime;
     }
 
     @Override
-    public boolean equals (final Object o)
-    {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final PlayingState that = (PlayingState) o;
         return paused == that.paused &&
-               joinTime == that.joinTime;
+                joinTime == that.joinTime;
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return "PlayingState{" +
-               "paused=" + paused +
-               ", joinTime=" + joinTime +
-               '}';
+                "paused=" + paused +
+                ", joinTime=" + joinTime +
+                '}';
     }
 
     @Override
-    public int hashCode ()
-    {
+    public int hashCode() {
         return Objects.hash(paused, joinTime);
     }
 
-    public boolean isPaused ()
-    {
+    public boolean isPaused() {
         return paused;
     }
 
-    public long getJoinTime ()
-    {
+    public long getJoinTime() {
         return joinTime;
     }
 }

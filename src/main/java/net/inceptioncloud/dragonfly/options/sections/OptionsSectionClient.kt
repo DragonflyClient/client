@@ -51,6 +51,22 @@ object OptionsSectionClient {
     }
 
     /**
+     * ## Confirm disconnect
+     *
+     * Forces the user to confirm if he wants to disconnect from a multiplayer server.
+     */
+    @JvmStatic
+    val confirmDisconnect = optionEntryBoolean {
+        name = "Confirm disconnect"
+        description = "Opens a popup when trying to disconnect from a multiplayer server to confirm your " +
+                "intention. This prevents accidentally disconnecting."
+        key {
+            fileKey = "confirmDisconnect"
+            default = { true }
+        }
+    }
+
+    /**
      * The init block creates the option section and adds all elements to it.
      */
     @JvmStatic
@@ -60,6 +76,7 @@ object OptionsSectionClient {
 
             +windowedFullscreen
             +screenshotUtilities
+            +confirmDisconnect
         }
     }
 }

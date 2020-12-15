@@ -6,12 +6,11 @@ package net.inceptioncloud.dragonfly.options.entries.factories
  * This class contains general factory functions that apply on every type of option entry.
  * The parent factory sets the type parameter to the type that it needs (eg. `Boolean` for [OptionEntryBooleanFactory]).
  */
-open class OptionEntryFactory<T>
-{
+open class OptionEntryFactory<T> {
     /**
      * The name of the option that this entry belongs to.
      *
-     * This value is displayed on the left of the entry when it's rendered in the Mod Options UI. It is **not** the key
+     * This value is displayed on the left of the entry when it's rendered in the Dragonfly Settings UI. It is **not** the key
      * that is used in the config file to store the value! This value **must** be set as it is null by default.
      */
     var name: String? = null
@@ -37,8 +36,7 @@ open class OptionEntryFactory<T>
      * ```
      * in the [key] function.
      */
-    class KeyFactory<T>
-    {
+    class KeyFactory<T> {
         /**
          * The key that is used to store the value in the JSON file.
          *
@@ -67,8 +65,7 @@ open class OptionEntryFactory<T>
      *
      * The parameter is a lower-order-function
      */
-    fun key (init: KeyFactory<T>.() -> Unit): KeyFactory<T>
-    {
+    fun key(init: KeyFactory<T>.() -> Unit): KeyFactory<T> {
         keyFactory.init()
         return keyFactory
     }

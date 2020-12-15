@@ -4,11 +4,9 @@ import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
 import java.awt.Color
 
-object RectangleRenderer
-{
+object RectangleRenderer {
     @JvmStatic
-    fun renderInline(left: Int, top: Int, right: Int, bottom: Int, color: Color, width: Int)
-    {
+    fun renderInline(left: Int, top: Int, right: Int, bottom: Int, color: Color, width: Int) {
         // left:
         Gui.drawRect(left, top, left + width, bottom, color.rgb)
 
@@ -23,8 +21,7 @@ object RectangleRenderer
     }
 
     @JvmStatic
-    fun renderOutline(left: Double, top: Double, right: Double, bottom: Double, color: Color, width: Double = 1.0)
-    {
+    fun renderOutline(left: Double, top: Double, right: Double, bottom: Double, color: Color, width: Double = 1.0) {
         // left:
         Gui.drawRect(left - width, top, left, bottom, color.rgb)
 
@@ -39,8 +36,7 @@ object RectangleRenderer
     }
 
     @JvmStatic
-    fun drawOutline(left: Double, top: Double, right: Double, bottom: Double, color: Color)
-    {
+    fun drawOutline(left: Double, top: Double, right: Double, bottom: Double, color: Color) {
         GlStateManager.scale(0.5, 0.5, 0.5)
 
         // top:
@@ -59,11 +55,14 @@ object RectangleRenderer
     }
 
     @JvmStatic
-    fun renderInline(left: Double, top: Double, right: Double, bottom: Double, color: Color, width: Double) = renderInline(left.toInt(), top.toInt(), right.toInt(), bottom.toInt(), color, width.toInt())
+    fun renderInline(left: Double, top: Double, right: Double, bottom: Double, color: Color, width: Double) =
+        renderInline(left.toInt(), top.toInt(), right.toInt(), bottom.toInt(), color, width.toInt())
 
     @JvmStatic
-    fun renderOutline(left: Int, top: Int, right: Int, bottom: Int, color: Color, width: Int) = renderOutline(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble(), color, width.toDouble())
+    fun renderOutline(left: Int, top: Int, right: Int, bottom: Int, color: Color, width: Int) =
+        renderOutline(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble(), color, width.toDouble())
 
     @JvmStatic
-    fun drawOutline(left: Int, top: Int, right: Int, bottom: Int, color: Color) = drawOutline(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble(), color)
+    fun drawOutline(left: Int, top: Int, right: Int, bottom: Int, color: Color) =
+        drawOutline(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble(), color)
 }

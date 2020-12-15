@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import khttp.get
 import java.io.File
-import java.lang.IllegalStateException
 
 /**
  * Stores the local and remote version of Dragonfly and compares them considering the selected
@@ -15,7 +14,7 @@ object DragonflyVersion {
     /**
      * The version of this client.
      */
-    val localVersion = Version(1, 1, 0, 0)
+    val localVersion = Version(1, 1, 5, 1)
 
     /**
      * The version that is specified as the latest one, fetched lazily from the Inception Cloud
@@ -28,7 +27,7 @@ object DragonflyVersion {
      */
     val update: Update? by lazy {
         val result: String = get(
-            "https://api.inceptioncloud.net/updates" +
+            "https://api.playdragonfly.net/v1/version/updates" +
                     "?channel=${getChannel()?.identifier ?: "stable"}" +
                     "&since=$localVersion"
         ).text
@@ -44,7 +43,7 @@ object DragonflyVersion {
     /**
      * The location of the Dragonfly local storage in the appdata directory.
      */
-    private val localStorage = System.getenv("appdata") + "\\Dragonfly"
+    private val localStorage = getStorageFolder() + "Dragonfly"
 
     /**
      * Compares the [first] version to the [second] version based on the [channel][getChannel].
@@ -106,7 +105,7 @@ object DragonflyVersion {
      * null, if the file doesn't exist or if the identifier is invalid.
      */
     fun getChannel(): UpdateChannel? {
-        val properties = File("${localStorage}\\installation_properties.json")
+        val properties = File("${localStorage}${File.separator}installation_properties.json")
         return properties.takeIf { it.exists() }?.reader()?.use {
             val json = JsonParser().parse(it)?.asJsonObject
             json?.get("channel")?.asString?.let { channel -> UpdateChannel.getByIdentifier(channel) }
@@ -117,4 +116,20 @@ object DragonflyVersion {
      * Returns the version from the [update].
      */
     private fun getRemoteVersionString(): String? = update?.version
+
+    private fun getStorageFolder(): String {
+        when {
+            System.getProperty("os.name").toLowerCase().contains("windows") -> {
+                return System.getenv("appdata") + File.separator
+            }
+            System.getProperty("os.name").toLowerCase().contains("linux") -> {
+                return System.getProperty("user.home") + File.separator
+            }
+            System.getProperty("os.name").toLowerCase().contains("os") -> {
+                return "/Users/" + System.getProperty("user.name") + "/Library/Application Support/"
+            }
+        }
+        return "ERROR"
+    }
+
 }

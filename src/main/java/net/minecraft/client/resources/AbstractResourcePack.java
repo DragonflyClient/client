@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+
+import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.data.IMetadataSection;
 import net.minecraft.client.resources.data.IMetadataSerializer;
@@ -88,7 +90,11 @@ public abstract class AbstractResourcePack implements IResourcePack
 
     public BufferedImage getPackImage() throws IOException
     {
-        return TextureUtil.readBufferedImage(this.getInputStreamByName("pack.png"));
+        BufferedImage bufferedImage = TextureUtil.readBufferedImage(this.getInputStreamByName("pack.png"));
+        if (EnhancedGameExperienceMod.getScaleResourcePackIcons()) {
+            bufferedImage = EnhancedGameExperienceMod.scalePackIcon(bufferedImage);
+        }
+        return bufferedImage;
     }
 
     public String getPackName()

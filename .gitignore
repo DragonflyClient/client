@@ -8,12 +8,11 @@ gradle.properties
 /gradle/
 /.idea/
 /.gradle/
+/.run/
 
 # Runtime
-/runtime/resourcepacks
 /runtime/saves
-/runtime/shaderpacks
-/runtime/authetication.txt
+/runtime/authentication.txt
 /runtime/options.txt
 /runtime/optionsof.txt
 /runtime/optionsshaders.txt
@@ -23,7 +22,24 @@ gradle.properties
 /runtime/transition-tracker
 /runtime/assets/skins
 /runtime/logs
+/runtime/screenshots
+/runtime/launcher_profiles.json
 
 # Runtime Dragonfly
 /runtime/dragonfly/options.json
 /runtime/dragonfly/glyphs
+/runtime/dragonfly/mods/hotkeys/hotkeysDB.json
+/runtime/dragonfly/keystrokes.json
+
+# Dragonfly Secrets
+/runtime/dragonfly/.secrets/
+/runtime/resourcepacks/
+/runtime/shaderpacks/
+/runtime/dragonfly/accounts.json
+
+/runtime/dragonfly/alpha.key
+/runtime/crash-reports/
+/runtime/assets/objects/
+/runtime/dragonfly/mods/keystrokes/keystrokes.json
+/runtime/dragonfly/mods/hotkeys/hotkeys.json
+/runtime/dragonfly/mods/

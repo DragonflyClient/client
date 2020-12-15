@@ -1,5 +1,8 @@
 package net.minecraft.client.renderer.entity;
 
+import net.inceptioncloud.dragonfly.cosmetics.logic.CosmeticsManager;
+import net.inceptioncloud.dragonfly.cosmetics.types.wings.CosmeticWings;
+import net.inceptioncloud.dragonfly.mods.ege.EnhancedGameExperienceMod;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelPlayer;
@@ -30,8 +33,10 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
         this.addLayer(new LayerHeldItem(this));
         this.addLayer(new LayerArrow(this));
         this.addLayer(new LayerDeadmau5Head(this));
-        this.addLayer(new LayerCape(this));
         this.addLayer(new LayerCustomHead(this.getMainModel().bipedHead));
+
+        this.addLayer(new LayerCape(this));
+        CosmeticsManager.getCosmetics().forEach(this::addLayer);
     }
 
     public ModelPlayer getMainModel()
@@ -170,6 +175,11 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
         this.setModelVisibilities(clientPlayer);
         modelplayer.swingProgress = 0.0F;
         modelplayer.isSneak = false;
+
+        if (EnhancedGameExperienceMod.getFixRidingHand()) {
+            modelplayer.isRiding = false;
+        }
+
         modelplayer.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, clientPlayer);
         modelplayer.renderRightArm();
     }

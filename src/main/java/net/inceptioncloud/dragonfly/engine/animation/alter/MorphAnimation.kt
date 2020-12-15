@@ -2,11 +2,14 @@ package net.inceptioncloud.dragonfly.engine.animation.alter
 
 import net.inceptioncloud.dragonfly.engine.animation.Animation
 import net.inceptioncloud.dragonfly.engine.internal.Widget
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.sequence.Sequence
-import kotlin.reflect.*
+import org.apache.logging.log4j.LogManager
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
+
+typealias PropertyUpdate = Pair<KProperty<*>, Any?>
 
 /**
  * ## Morph Animation (Alter)
@@ -14,20 +17,15 @@ import kotlin.reflect.full.memberProperties
  * A morph animation provides a smooth transition from one state (or instance) of a widget to another one.
  * It interpolates all dynamic properties and also modifies the base of the widget instead of only the scratchpad widget.
  *
- * @param destination the target state (or instance) of the widget
+ * @param updates the property updates that lead to the target state of the widget
  * @param duration the amount of mod ticks (200 ^= 1s) that the animation should take to finish
  * @param easing an optional easing function
  */
 class MorphAnimation(
-    val destination: Widget<*>,
+    val updates: List<PropertyUpdate>,
     val duration: Int = 100,
     val easing: ((Double) -> Double)? = null
 ) : Animation() {
-
-    /**
-     * Simple extension function to easily find a property by its name.
-     */
-    private fun KClass<*>.getPropertyByName(name: String): KProperty<*> = memberProperties.first { it.name == name }
 
     /**
      * Saves all dynamic properties of the parent widget with its corresponding sequences
@@ -37,26 +35,22 @@ class MorphAnimation(
 
     override fun initAnimation(parent: Widget<*>): Boolean {
         return if (super.initAnimation(parent)) {
-            parent::class.memberProperties
-                .filter { it.hasAnnotation<Interpolate>() && it is KMutableProperty<*> }
-                .filter { it.getter.call(parent) != it.getter.call(destination) }
-                .forEach {
-                    val initialValue = it.getter.call(parent)
-                    val destinationValue = destination::class.getPropertyByName(it.name).getter.call(destination)
-                    val sequence = Sequence.generateSequence(initialValue, destinationValue, duration)
-                        .withEasing(easing)
+            updates.forEach { (generalProp, destination) ->
+                val prop = getPropertyIn(generalProp, parent)
+                val initialValue = prop.getter.call(parent)
+                val sequence = Sequence.generateSequence(initialValue, destination, duration)
+                    .withEasing(easing)
 
-                    propertySequences[it as KMutableProperty<*>] = sequence
-                }
+                propertySequences[prop as KMutableProperty<*>] = sequence
+            }
 
             true
         } else false
     }
 
-    override fun applyToShape(scratchpad: Widget<*>, base: Widget<*>) {
+    override fun applyToShape(base: Widget<*>) {
         for ((property, sequence) in propertySequences) {
             property.setter.call(base, sequence.current)
-            property.setter.call(scratchpad, sequence.current)
         }
 
         if (propertySequences.values.any { it.isAtEnd }) {
@@ -71,7 +65,7 @@ class MorphAnimation(
         propertySequences.values.forEach { it.next() }
     }
 
-    override fun isApplicable(widget: Widget<*>) = widget::class == destination::class
+    override fun isApplicable(widget: Widget<*>) = true
 
     /**
      * Defines only the [morph] function.
@@ -82,39 +76,78 @@ class MorphAnimation(
          * A convenient function for morphing from one widget. This function alters the original widget
          * instead of accepting a destination widget for the animation.
          */
-        fun <W : Widget<W>> Widget<W>.morph(
+        fun Widget<*>.morph(
             duration: Int = 100,
             easing: ((Double) -> Double)? = null,
-            alter: W.() -> Unit
+            vararg updates: PropertyUpdate
         ): Animation? {
-            val altered = altered(alter)
+            validateDuration(duration)
+            val filteredUpdates = filter(updates.toList())
 
-            if (isStateEqual(altered))
+            if (findAnimation<MorphAnimation>() != null || !doesModifyState(filteredUpdates))
                 return null
 
-            return MorphAnimation(altered, duration, easing).also { attachAnimation(it) }
+            return MorphAnimation(filteredUpdates, duration, easing).also { attachAnimation(it) }
         }
 
         /**
          * A convenient function for morphing between multiple states of a widget.
          */
-        fun <W : Widget<W>> Widget<W>.morphBetween(
+        fun Widget<*>.morphBetween(
             duration: Int = 100,
             easing: ((Double) -> Double)? = null,
-            first: W.() -> Unit,
-            second: W.() -> Unit
+            first: List<PropertyUpdate>,
+            second: List<PropertyUpdate>
         ) {
+            validateDuration(duration)
             if (findAnimation<MorphAnimation>() != null)
                 return
 
-            val alteredFirst = altered(first)
-            val alteredSecond = altered(second)
-            val destination = if (isStateEqual(alteredSecond)) alteredFirst else alteredSecond
+            val filteredFirst = filter(first)
+            val filteredSecond = filter(second)
+            val destination = if (doesModifyState(filteredSecond)) filteredSecond else filteredFirst
 
             attachAnimation(MorphAnimation(destination, duration, easing)) {
                 start()
                 post { _, widget -> widget.detachAnimation<MorphAnimation>() }
             }
         }
+
+        /**
+         * Validates the [duration] input by throwing an exception if it makes no sense.
+         */
+        private fun validateDuration(duration: Int) {
+            if (duration <= 0) throw IllegalArgumentException("The duration for an animation must be at least 1!")
+        }
+
+        /**
+         * Checks if the [updates] would modify the state of the [widget].
+         */
+        private fun Widget<*>.doesModifyState(updates: List<PropertyUpdate>) =
+            updates.any { (prop, value) ->
+                this::class.memberProperties.any { it.name == prop.name }
+                        && getPropertyIn(prop, this).getter.call(this) != value
+            }
+
+        /**
+         * Builds a map out of the given array of [updates] and filters out all unsuitable properties.
+         */
+        private fun Widget<*>.filter(updates: List<PropertyUpdate>): List<PropertyUpdate> {
+            val suitable = updates
+                .map { it.first }
+                .filter { this::class.memberProperties.any { that -> it.name == that.name } }
+                .filterIsInstance<KMutableProperty<*>>()
+
+            if (suitable.size != updates.size) {
+                LogManager.getLogger("Morph Transition").warn(
+                    "${updates.size - suitable.size} propert${if (updates.size - suitable.size == 1) "y is" else "ies are"} unsuitable on ${javaClass.simpleName}!"
+                )
+            }
+
+            return updates.filter { it.first in suitable }
+        }
+
+        private fun getPropertyIn(prop: KProperty<*>, obj: Any) =
+            obj::class.memberProperties.first { it.name == prop.name }
     }
 }

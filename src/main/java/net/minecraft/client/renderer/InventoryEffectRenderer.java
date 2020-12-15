@@ -1,11 +1,15 @@
 package net.minecraft.client.renderer;
 
 import java.util.Collection;
+
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class InventoryEffectRenderer extends GuiContainer
 {

@@ -1,9 +1,11 @@
 package net.minecraft.client.multiplayer;
 
+import net.inceptioncloud.dragonfly.utils.Keep;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 
+@Keep
 public class ServerData
 {
     public String serverName;

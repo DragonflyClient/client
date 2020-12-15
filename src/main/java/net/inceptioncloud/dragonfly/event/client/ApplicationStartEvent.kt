@@ -1,6 +1,7 @@
 package net.inceptioncloud.dragonfly.event.client
 
 import net.inceptioncloud.dragonfly.event.Cancellable
+import net.inceptioncloud.dragonfly.event.Event
 import net.minecraft.client.main.Main
 
 /**
@@ -8,4 +9,4 @@ import net.minecraft.client.main.Main
  *
  * @param isDeveloperMode whether the developer mode is activated via command line arguments
  */
-class ApplicationStartEvent(val isDeveloperMode: Boolean) : Cancellable()
+class ApplicationStartEvent(val isDeveloperMode: Boolean) : Cancellable(), Event

@@ -1,39 +1,36 @@
 package net.inceptioncloud.dragonfly.design.color
 
-import java.awt.Color
-
 /**
  * A blue palette for the client design.
  */
-object BluePalette
-{
+object BluePalette {
     /**
      * For writing text on either the background or the primary color.
      */
     @JvmStatic
-    val FOREGROUND = Color(0xEFEFEF)
+    val FOREGROUND = DragonflyPalette.foreground.base
 
     /**
      * For the UI background.
      */
     @JvmStatic
-    val BACKGROUND = Color(0x1C3E5B)
+    val BACKGROUND = DragonflyPalette.background.base
 
     /**
      * Darker accent of the primary color.
      */
     @JvmStatic
-    val PRIMARY_DARK = Color(0x027BCE)
+    val PRIMARY_DARK = DragonflyPalette.accentDark.base
 
     /**
      * The primary blue color.
      */
     @JvmStatic
-    val PRIMARY = Color(0x0496FF)
+    val PRIMARY = DragonflyPalette.accentNormal.base
 
     /**
      * Lighter accent of the primary color.
      */
     @JvmStatic
-    val PRIMARY_LIGHT = Color(0x4BB3FD)
+    val PRIMARY_LIGHT = DragonflyPalette.accentBright.base
 }

@@ -4,15 +4,12 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.mojang.authlib.GameProfile;
 import net.inceptioncloud.dragonfly.Dragonfly;
+import net.inceptioncloud.dragonfly.engine.font.FontWeight;
 import net.inceptioncloud.dragonfly.engine.font.renderer.IFontRenderer;
-import net.inceptioncloud.dragonfly.transition.number.DoubleTransition;
+import net.inceptioncloud.dragonfly.options.sections.OptionsSectionUI;
 import net.inceptioncloud.dragonfly.transition.number.SmoothDoubleTransition;
 import net.inceptioncloud.dragonfly.transition.supplier.ForwardBackward;
-import net.inceptioncloud.dragonfly.ui.playerlist.indicators.Indicator;
-import net.inceptioncloud.dragonfly.ui.playerlist.indicators.IndicatorKt;
-import net.inceptioncloud.dragonfly.ui.playerlist.indicators.SamePartyIndicator;
-import net.inceptioncloud.dragonfly.ui.playerlist.indicators.ThePlayerIndicator;
-import net.inceptioncloud.dragonfly.ui.renderer.HotkeyRenderer;
+import net.inceptioncloud.dragonfly.ui.playerlist.indicators.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -29,13 +26,11 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldSettings;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GuiPlayerTabOverlay extends Gui
-{
+public class GuiPlayerTabOverlay extends Gui {
     private static final Ordering<NetworkPlayerInfo> ENTRY_ORDERING = Ordering.from(new GuiPlayerTabOverlay.PlayerComparator());
     private final Minecraft mc;
     private final GuiIngame guiIngame;
@@ -52,29 +47,17 @@ public class GuiPlayerTabOverlay extends Gui
      */
     private boolean isBeingRendered;
 
-    private final DoubleTransition hotkeyFlyIn = DoubleTransition.builder().start(-10).end(130).amountOfSteps(30).autoTransformator(new ForwardBackward()
-    {
-        @Override
-        public boolean getAsBoolean ()
-        {
-            return isBeingRendered && ( Minecraft.getSystemTime() - lastTimeOpened ) > 5000;
-        }
-    }).build();
-
     private final SmoothDoubleTransition tablistFlyIn = SmoothDoubleTransition.builder()
-        .start(1).end(0)
-        .fadeIn(5).stay(15).fadeOut(10)
-        .autoTransformator(new ForwardBackward()
-        {
-            @Override
-            public boolean getAsBoolean ()
-            {
-                return isBeingRendered;
-            }
-        }).build();
+            .start(1).end(0)
+            .fadeIn(5).stay(15).fadeOut(10)
+            .autoTransformator(new ForwardBackward() {
+                @Override
+                public boolean getAsBoolean() {
+                    return isBeingRendered;
+                }
+            }).build();
 
-    public GuiPlayerTabOverlay (Minecraft mcIn, GuiIngame guiIngameIn)
-    {
+    public GuiPlayerTabOverlay(Minecraft mcIn, GuiIngame guiIngameIn) {
         this.mc = mcIn;
         this.guiIngame = guiIngameIn;
     }
@@ -82,11 +65,10 @@ public class GuiPlayerTabOverlay extends Gui
     /**
      * Returns the name that should be rendered for the player supplied
      */
-    public static String getPlayerName (NetworkPlayerInfo playerInfo)
-    {
+    public static String getPlayerName(NetworkPlayerInfo playerInfo) {
         String displayName = playerInfo.getDisplayName() != null ? playerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(playerInfo.getPlayerTeam(), playerInfo.getGameProfile().getName());
 
-        playerInfo.updateIndicator(ThePlayerIndicator.class);
+        playerInfo.updateIndicator(PlayingDragonflyIndicator.class);
         if (playerInfo.updateIndicator(SamePartyIndicator.class)) {
             displayName = displayName.substring(0, displayName.length() - 12);
         }
@@ -98,31 +80,22 @@ public class GuiPlayerTabOverlay extends Gui
      * Called by GuiIngame to update the information stored in the playerlist, does not actually render the list,
      * however.
      */
-    public void updatePlayerList (boolean willBeRendered)
-    {
+    public void updatePlayerList(boolean willBeRendered) {
         if (willBeRendered && !this.isBeingRendered) {
             this.lastTimeOpened = Minecraft.getSystemTime();
         }
 
         this.isBeingRendered = willBeRendered;
-
-        // ICMM - Hotkey Display
-
-        int x = mc.displayWidth / 2 - hotkeyFlyIn.castToInt();
-        int y = mc.displayHeight / 2 - 50;
-        drawRect(x - 3, y - 3, mc.displayWidth / 2, y + 20, new Color(0, 0, 0, 50).getRGB());
-        HotkeyRenderer.render(Dragonfly.getFontDesign().retrieveOrBuild("", 20), KeyEvent.VK_P, "Open Indicator Menu", x, y);
     }
 
     /**
      * Renders the playerlist, its background, headers and footers.
      */
-    public void renderPlayerlist (int width, Scoreboard scoreboard, ScoreObjective scoreObjective)
-    {
-        final IFontRenderer fontRenderer = Dragonfly.getFontDesign().getRegular();
+    public void renderPlayerlist(int width, Scoreboard scoreboard, ScoreObjective scoreObjective) {
+        final IFontRenderer fontRenderer = Dragonfly.getFontManager().getRegular();
         final double modifier = Math.max(1 - tablistFlyIn.get(), 0.1);
-        final int offset = ( int ) ( tablistFlyIn.get() * estimatePlayerListHeight(fontRenderer, width) );
-        final int backgroundColor = new Color(0, 0, 0, ( int ) ( 120 * modifier )).getRGB();
+        final int offset = (int) (tablistFlyIn.get() * estimatePlayerListHeight(fontRenderer, width));
+        final int backgroundColor = new Color(0, 0, 0, (int) (120 * modifier)).getRGB();
 
         if (tablistFlyIn.isAtStart())
             return;
@@ -152,7 +125,7 @@ public class GuiPlayerTabOverlay extends Gui
         int i4 = l3;
         int amountOfColumns;
 
-        for (amountOfColumns = 1; i4 > 20 ; i4 = ( l3 + amountOfColumns - 1 ) / amountOfColumns) {
+        for (amountOfColumns = 1; i4 > 20; i4 = (l3 + amountOfColumns - 1) / amountOfColumns) {
             ++amountOfColumns;
         }
 
@@ -162,10 +135,10 @@ public class GuiPlayerTabOverlay extends Gui
 
         boolean singleplayer = this.mc.isIntegratedServerRunning() || this.mc.getNetHandler().getNetworkManager().getIsencrypted();
         int l = scoreObjective != null ? scoreObjective.getRenderType() == IScoreObjectiveCriteria.EnumRenderType.HEARTS ? 90 : j : 0;
-        int columnWidth = Math.min(amountOfColumns * ( ( singleplayer ? 9 : 0 ) + i + l + 13 ), width - 50) / amountOfColumns;
-        int defaultX = width / 2 - ( columnWidth * amountOfColumns + ( amountOfColumns - 1 ) * horizontalColumnSpace ) / 2;
+        int columnWidth = Math.min(amountOfColumns * ((singleplayer ? 9 : 0) + i + l + 13), width - 50) / amountOfColumns;
+        int defaultX = width / 2 - (columnWidth * amountOfColumns + (amountOfColumns - 1) * horizontalColumnSpace) / 2;
         int k1 = 10;
-        int listWidth = columnWidth * amountOfColumns + amountOfColumns * ( horizontalColumnSpace );
+        int listWidth = columnWidth * amountOfColumns + amountOfColumns * (horizontalColumnSpace);
         List<String> headerList = null;
         List<String> footerList = null;
 
@@ -191,7 +164,7 @@ public class GuiPlayerTabOverlay extends Gui
 
             for (String s3 : headerList) {
                 int i2 = fontRenderer.getStringWidth(s3);
-                fontRenderer.drawStringWithShadow(s3, ( float ) ( width / 2 - i2 / 2 ), ( float ) k1, new Color(255, 255, 255, ( int ) ( 255 * modifier )).getRGB());
+                fontRenderer.drawStringWithShadow(s3, (float) (width / 2 - i2 / 2), (float) k1, new Color(255, 255, 255, (int) (255 * modifier)).getRGB());
                 k1 += fontRenderer.getHeight();
             }
 
@@ -200,10 +173,10 @@ public class GuiPlayerTabOverlay extends Gui
 
         drawRect(width / 2 - listWidth / 2 - 1, k1 - 1, width / 2 + listWidth / 2 + 1, k1 + i4 * 9, backgroundColor);
 
-        for (int k4 = 0 ; k4 < l3 ; ++k4) {
+        for (int k4 = 0; k4 < l3; ++k4) {
             int columnIndex = k4 / i4;
             int i5 = k4 % i4;
-            int x = defaultX + ( columnIndex * columnWidth ) + ( columnIndex * horizontalColumnSpace );
+            int x = defaultX + (columnIndex * columnWidth) + (columnIndex * horizontalColumnSpace);
 
             int k2 = k1 + i5 * 9;
             drawRect(x, k2, x + columnWidth, k2 + 8, new Color(255, 255, 255, 30).getRGB());
@@ -214,21 +187,22 @@ public class GuiPlayerTabOverlay extends Gui
 
             if (k4 < list.size()) {
                 NetworkPlayerInfo playerInfo = list.get(k4);
-                String s1 = getPlayerName(playerInfo);
+                String playerName = getPlayerName(playerInfo);
                 GameProfile gameprofile = playerInfo.getGameProfile();
 
                 if (singleplayer) {
                     EntityPlayer entityplayer = this.mc.theWorld.getPlayerEntityByUUID(gameprofile.getId());
-                    boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE) && ( gameprofile.getName().equals("Dinnerbone") || gameprofile.getName().equals("Grumm") );
+                    boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE)
+                            && (gameprofile.getName().equals("Dinnerbone") || gameprofile.getName().equals("Grumm"));
                     this.mc.getTextureManager().bindTexture(playerInfo.getLocationSkin());
-                    int l2 = 8 + ( flag1 ? 8 : 0 );
-                    int i3 = 8 * ( flag1 ? -1 : 1 );
-                    Gui.drawScaledCustomSizeModalRect(x, k2, 8.0F, ( float ) l2, 8, i3, 8, 8, 64.0F, 64.0F);
+                    int l2 = 8 + (flag1 ? 8 : 0);
+                    int i3 = 8 * (flag1 ? -1 : 1);
+                    Gui.drawScaledCustomSizeModalRect(x, k2, 8.0F, (float) l2, 8, i3, 8, 8, 64.0F, 64.0F);
 
                     if (entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.HAT)) {
-                        int j3 = 8 + ( flag1 ? 8 : 0 );
-                        int k3 = 8 * ( flag1 ? -1 : 1 );
-                        Gui.drawScaledCustomSizeModalRect(x, k2, 40.0F, ( float ) j3, 8, k3, 8, 8, 64.0F, 64.0F);
+                        int j3 = 8 + (flag1 ? 8 : 0);
+                        int k3 = 8 * (flag1 ? -1 : 1);
+                        Gui.drawScaledCustomSizeModalRect(x, k2, 40.0F, (float) j3, 8, k3, 8, 8, 64.0F, 64.0F);
                     }
 
                     x += 9;
@@ -237,10 +211,10 @@ public class GuiPlayerTabOverlay extends Gui
                 k2 += 1;
 
                 if (playerInfo.getGameType() == WorldSettings.GameType.SPECTATOR) {
-                    s1 = EnumChatFormatting.ITALIC + s1;
-                    fontRenderer.drawStringWithShadow(s1, ( float ) x, ( float ) k2, new Color(0, 0, 0, 120).getRGB());
+                    playerName = EnumChatFormatting.ITALIC + playerName;
+                    fontRenderer.drawStringWithShadow(playerName, (float) x, (float) k2, new Color(0, 0, 0, 120).getRGB());
                 } else {
-                    fontRenderer.drawStringWithShadow(s1, ( float ) x, ( float ) k2, -1);
+                    fontRenderer.drawStringWithShadow(playerName, (float) x, (float) k2, -1);
                 }
 
                 if (scoreObjective != null && playerInfo.getGameType() != WorldSettings.GameType.SPECTATOR) {
@@ -252,12 +226,12 @@ public class GuiPlayerTabOverlay extends Gui
                     }
                 }
 
-                this.drawPing(columnWidth, x - ( singleplayer ? 9 : 0 ) + 1, k2 - 1, playerInfo);
+                this.drawPing(columnWidth, x - (singleplayer ? 9 : 0) + 1, k2 - 1, playerInfo);
 
                 int indicatorX = x - 13;
 
                 for (Indicator indicator : playerInfo.getActiveIndicators().stream()
-                    .sorted(Comparator.comparingInt(Indicator::getXIndex)).collect(Collectors.toList())) {
+                        .sorted(Comparator.comparingInt(Indicator::getXIndex)).collect(Collectors.toList())) {
 
                     indicator.draw(indicatorX - 8, k2 - 1);
                     indicatorX -= 10;
@@ -271,7 +245,7 @@ public class GuiPlayerTabOverlay extends Gui
 
             for (String s4 : footerList) {
                 int j5 = fontRenderer.getStringWidth(s4);
-                fontRenderer.drawStringWithShadow(s4, ( float ) ( width / 2 - j5 / 2 ), ( float ) k1, new Color(255, 255, 255, ( int ) ( 255 * modifier )).getRGB());
+                fontRenderer.drawStringWithShadow(s4, (float) (width / 2 - j5 / 2), (float) k1, new Color(255, 255, 255, (int) (255 * modifier)).getRGB());
                 k1 += fontRenderer.getHeight();
             }
         }
@@ -279,8 +253,7 @@ public class GuiPlayerTabOverlay extends Gui
         GlStateManager.translate(0, offset, 0);
     }
 
-    public int estimatePlayerListHeight (IFontRenderer fontRenderer, int width)
-    {
+    public int estimatePlayerListHeight(IFontRenderer fontRenderer, int width) {
         NetHandlerPlayClient netHandler = this.mc.thePlayer.sendQueue;
         List<NetworkPlayerInfo> list = ENTRY_ORDERING.sortedCopy(netHandler.getPlayerInfoMap());
 
@@ -293,36 +266,71 @@ public class GuiPlayerTabOverlay extends Gui
         if (this.footer != null)
             height += fontRenderer.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50).size() * fontRenderer.getHeight();
 
-        return ( int ) ( height * 1.2 );
+        return (int) (height * 1.2);
     }
 
-    protected void drawPing (int param1, int param2, int param3, NetworkPlayerInfo networkPlayerInfoIn)
-    {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(icons);
-        int pingLevel;
+    protected void drawPing(int param1, int param2, int param3, NetworkPlayerInfo networkPlayerInfoIn) {
+        if(OptionsSectionUI.getShowPingAsNumber().invoke()) {
 
-        if (networkPlayerInfoIn.getResponseTime() < 0) {
-            pingLevel = 5;
-        } else if (networkPlayerInfoIn.getResponseTime() < 150) {
-            pingLevel = 0;
-        } else if (networkPlayerInfoIn.getResponseTime() < 300) {
-            pingLevel = 1;
-        } else if (networkPlayerInfoIn.getResponseTime() < 600) {
-            pingLevel = 2;
-        } else if (networkPlayerInfoIn.getResponseTime() < 1000) {
-            pingLevel = 3;
-        } else {
-            pingLevel = 4;
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            IFontRenderer fontRenderer = Dragonfly.getFontManager().getDefaultFont().fontRenderer(FontWeight.REGULAR, 12);
+            this.mc.getTextureManager().bindTexture(icons);
+
+            String pingText = "";
+            int ping = networkPlayerInfoIn.getResponseTime();
+            int color = -1;
+
+            if (ping <= 0) {
+                color = Color.decode("#a6a6a6").hashCode();
+                pingText = "?";
+            } else if (ping < 50) {
+                color = Color.green.hashCode();
+                pingText = String.valueOf(ping);
+            } else if (ping > 50 && ping < 100) {
+                color = Color.orange.hashCode();
+                pingText = String.valueOf(ping);
+            }else if(ping >= 1000) {
+                ping = 999;
+                color = Color.red.hashCode();
+                pingText = String.valueOf(ping);
+            }else {
+                color = Color.red.hashCode();
+                pingText = String.valueOf(ping);
+            }
+
+            this.zLevel += 100.0F;
+            int strWidth = fontRenderer.getStringWidth(pingText);
+            fontRenderer.drawStringWithShadow(pingText, param2 + param1 - strWidth - 3, param3 + 4, color);
+            this.zLevel -= 100.0F;
+
+        }else {
+
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            this.mc.getTextureManager().bindTexture(icons);
+            int pingLevel;
+
+            if (networkPlayerInfoIn.getResponseTime() < 0) {
+                pingLevel = 5;
+            } else if (networkPlayerInfoIn.getResponseTime() < 150) {
+                pingLevel = 0;
+            } else if (networkPlayerInfoIn.getResponseTime() < 300) {
+                pingLevel = 1;
+            } else if (networkPlayerInfoIn.getResponseTime() < 600) {
+                pingLevel = 2;
+            } else if (networkPlayerInfoIn.getResponseTime() < 1000) {
+                pingLevel = 3;
+            } else {
+                pingLevel = 4;
+            }
+
+            this.zLevel += 100.0F;
+            this.drawTexturedModalRect(param2 + param1 - 11, param3, 0, 176 + pingLevel * 8, 10, 8);
+            this.zLevel -= 100.0F;
+
         }
-
-        this.zLevel += 100.0F;
-        this.drawTexturedModalRect(param2 + param1 - 11, param3, 0, 176 + pingLevel * 8, 10, 8);
-        this.zLevel -= 100.0F;
     }
 
-    private void drawScoreboardValues (ScoreObjective objective, int paramInt1, String name, int paramInt2, int paramInt3, NetworkPlayerInfo playerInfo)
-    {
+    private void drawScoreboardValues(ScoreObjective objective, int paramInt1, String name, int paramInt2, int paramInt3, NetworkPlayerInfo playerInfo) {
         int i = objective.getScoreboard().getValueFromObjective(name, objective).getScorePoints();
 
         if (objective.getRenderType() == IScoreObjectiveCriteria.EnumRenderType.HEARTS) {
@@ -346,81 +354,75 @@ public class GuiPlayerTabOverlay extends Gui
 
             playerInfo.setRenderVisibiltyId(this.lastTimeOpened);
             playerInfo.setLastHealth(i);
-            int j = MathHelper.ceiling_float_int(( float ) Math.max(i, playerInfo.getDisplayHealth()) / 2.0F);
-            int k = Math.max(MathHelper.ceiling_float_int(( float ) ( i / 2 )), Math.max(MathHelper.ceiling_float_int(( float ) ( playerInfo.getDisplayHealth() / 2 )), 10));
-            boolean flag = playerInfo.getHealthBlinkTime() > ( long ) this.guiIngame.getUpdateCounter() && ( playerInfo.getHealthBlinkTime() - ( long ) this.guiIngame.getUpdateCounter() ) / 3L % 2L == 1L;
+            int j = MathHelper.ceiling_float_int((float) Math.max(i, playerInfo.getDisplayHealth()) / 2.0F);
+            int k = Math.max(MathHelper.ceiling_float_int((float) (i / 2)), Math.max(MathHelper.ceiling_float_int((float) (playerInfo.getDisplayHealth() / 2)), 10));
+            boolean flag = playerInfo.getHealthBlinkTime() > (long) this.guiIngame.getUpdateCounter() && (playerInfo.getHealthBlinkTime() - (long) this.guiIngame.getUpdateCounter()) / 3L % 2L == 1L;
 
             if (j > 0) {
-                float f = Math.min(( float ) ( paramInt3 - paramInt2 - 4 ) / ( float ) k, 9.0F);
+                float f = Math.min((float) (paramInt3 - paramInt2 - 4) / (float) k, 9.0F);
 
                 if (f > 3.0F) {
-                    for (int l = j ; l < k ; ++l) {
-                        this.drawTexturedModalRect(( float ) paramInt2 + ( float ) l * f, ( float ) paramInt1, flag ? 25 : 16, 0, 9, 9);
+                    for (int l = j; l < k; ++l) {
+                        this.drawTexturedModalRect((float) paramInt2 + (float) l * f, (float) paramInt1, flag ? 25 : 16, 0, 9, 9);
                     }
 
-                    for (int j1 = 0 ; j1 < j ; ++j1) {
-                        this.drawTexturedModalRect(( float ) paramInt2 + ( float ) j1 * f, ( float ) paramInt1, flag ? 25 : 16, 0, 9, 9);
+                    for (int j1 = 0; j1 < j; ++j1) {
+                        this.drawTexturedModalRect((float) paramInt2 + (float) j1 * f, (float) paramInt1, flag ? 25 : 16, 0, 9, 9);
 
                         if (flag) {
                             if (j1 * 2 + 1 < playerInfo.getDisplayHealth()) {
-                                this.drawTexturedModalRect(( float ) paramInt2 + ( float ) j1 * f, ( float ) paramInt1, 70, 0, 9, 9);
+                                this.drawTexturedModalRect((float) paramInt2 + (float) j1 * f, (float) paramInt1, 70, 0, 9, 9);
                             }
 
                             if (j1 * 2 + 1 == playerInfo.getDisplayHealth()) {
-                                this.drawTexturedModalRect(( float ) paramInt2 + ( float ) j1 * f, ( float ) paramInt1, 79, 0, 9, 9);
+                                this.drawTexturedModalRect((float) paramInt2 + (float) j1 * f, (float) paramInt1, 79, 0, 9, 9);
                             }
                         }
 
                         if (j1 * 2 + 1 < i) {
-                            this.drawTexturedModalRect(( float ) paramInt2 + ( float ) j1 * f, ( float ) paramInt1, j1 >= 10 ? 160 : 52, 0, 9, 9);
+                            this.drawTexturedModalRect((float) paramInt2 + (float) j1 * f, (float) paramInt1, j1 >= 10 ? 160 : 52, 0, 9, 9);
                         }
 
                         if (j1 * 2 + 1 == i) {
-                            this.drawTexturedModalRect(( float ) paramInt2 + ( float ) j1 * f, ( float ) paramInt1, j1 >= 10 ? 169 : 61, 0, 9, 9);
+                            this.drawTexturedModalRect((float) paramInt2 + (float) j1 * f, (float) paramInt1, j1 >= 10 ? 169 : 61, 0, 9, 9);
                         }
                     }
                 } else {
-                    float f1 = MathHelper.clamp_float(( float ) i / 20.0F, 0.0F, 1.0F);
-                    int i1 = ( int ) ( ( 1.0F - f1 ) * 255.0F ) << 16 | ( int ) ( f1 * 255.0F ) << 8;
-                    String s = "" + ( float ) i / 2.0F;
+                    float f1 = MathHelper.clamp_float((float) i / 20.0F, 0.0F, 1.0F);
+                    int i1 = (int) ((1.0F - f1) * 255.0F) << 16 | (int) (f1 * 255.0F) << 8;
+                    String s = "" + (float) i / 2.0F;
 
                     if (paramInt3 - this.mc.fontRendererObj.getStringWidth(s + "hp") >= paramInt2) {
                         s = s + "hp";
                     }
 
-                    this.mc.fontRendererObj.drawStringWithShadow(s, ( float ) ( ( paramInt3 + paramInt2 ) / 2 - this.mc.fontRendererObj.getStringWidth(s) / 2 ), ( float ) paramInt1, i1);
+                    this.mc.fontRendererObj.drawStringWithShadow(s, (float) ((paramInt3 + paramInt2) / 2 - this.mc.fontRendererObj.getStringWidth(s) / 2), (float) paramInt1, i1);
                 }
             }
         } else {
             String s1 = EnumChatFormatting.YELLOW + "" + i;
-            this.mc.fontRendererObj.drawStringWithShadow(s1, ( float ) ( paramInt3 - this.mc.fontRendererObj.getStringWidth(s1) ), ( float ) paramInt1, 16777215);
+            this.mc.fontRendererObj.drawStringWithShadow(s1, (float) (paramInt3 - this.mc.fontRendererObj.getStringWidth(s1)), (float) paramInt1, 16777215);
         }
     }
 
-    public void setFooter (IChatComponent footerIn)
-    {
+    public void setFooter(IChatComponent footerIn) {
         this.footer = footerIn;
     }
 
-    public void setHeader (IChatComponent headerIn)
-    {
+    public void setHeader(IChatComponent headerIn) {
         this.header = headerIn;
     }
 
-    public void func_181030_a ()
-    {
+    public void func_181030_a() {
         this.header = null;
         this.footer = null;
     }
 
-    static class PlayerComparator implements Comparator<NetworkPlayerInfo>
-    {
-        private PlayerComparator ()
-        {
+    static class PlayerComparator implements Comparator<NetworkPlayerInfo> {
+        private PlayerComparator() {
         }
 
-        public int compare (NetworkPlayerInfo p_compare_1_, NetworkPlayerInfo p_compare_2_)
-        {
+        public int compare(NetworkPlayerInfo p_compare_1_, NetworkPlayerInfo p_compare_2_) {
             ScorePlayerTeam scoreplayerteam = p_compare_1_.getPlayerTeam();
             ScorePlayerTeam scoreplayerteam1 = p_compare_2_.getPlayerTeam();
             return ComparisonChain.start().compareTrueFirst(p_compare_1_.getGameType() != WorldSettings.GameType.SPECTATOR, p_compare_2_.getGameType() != WorldSettings.GameType.SPECTATOR).compare(scoreplayerteam != null ? scoreplayerteam.getRegisteredName() : "", scoreplayerteam1 != null ? scoreplayerteam1.getRegisteredName() : "").compare(p_compare_1_.getGameProfile().getName(), p_compare_2_.getGameProfile().getName()).result();

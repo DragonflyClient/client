@@ -16,39 +16,31 @@ import net.inceptioncloud.dragonfly.engine.sequence.types.DoubleSequence
  */
 class ScaleAnimation(
     private val targetFactorX: Double = 1.5,
-    private val targetFactorY: Double = 1.5,
     val duration: Int = 100,
     val easing: ((Double) -> Double)? = null
 ) : Animation() {
 
-    private lateinit var sequenceFactorX: Sequence<Double>
-
-    private lateinit var sequenceFactorY: Sequence<Double>
+    private lateinit var sequenceFactor: Sequence<Double>
 
     override fun initAnimation(parent: Widget<*>): Boolean {
         return if (super.initAnimation(parent)) {
-            sequenceFactorX = DoubleSequence(widget.scaleFactorX, targetFactorX, duration)
+            sequenceFactor = DoubleSequence(widget.scaleFactor, targetFactorX, duration)
                 .withEasing(easing)
                 .withEndHook { finish() }
-
-            sequenceFactorY = DoubleSequence(widget.scaleFactorY, targetFactorY, duration)
-                .withEasing(easing)
 
             true
         } else false
     }
 
-    override fun applyToShape(scratchpad: Widget<*>, base: Widget<*>) {
-        scratchpad.scaleFactorX = sequenceFactorX.current
-        scratchpad.scaleFactorY = sequenceFactorY.current
+    override fun applyToShape(base: Widget<*>) {
+        base.scaleFactor = sequenceFactor.current
     }
 
     override fun tick() {
         if (!running)
             return
 
-        sequenceFactorX.next()
-        sequenceFactorY.next()
+        sequenceFactor.next()
     }
 
     override fun isApplicable(widget: Widget<*>) = true

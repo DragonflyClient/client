@@ -2,21 +2,30 @@ package net.inceptioncloud.dragonfly.engine.widgets.primitive
 
 import net.inceptioncloud.dragonfly.engine.internal.Widget
 import net.inceptioncloud.dragonfly.engine.internal.WidgetColor
-import net.inceptioncloud.dragonfly.engine.internal.annotations.Interpolate
 import net.inceptioncloud.dragonfly.engine.structure.*
 import net.inceptioncloud.dragonfly.utils.TimeUtils
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.opengl.GL11.*
 
 class Line(
-    @property:Interpolate override var x: Double = 0.0,
-    @property:Interpolate override var y: Double = 0.0,
-    @property:Interpolate override var color: WidgetColor = WidgetColor.DEFAULT,
+    initializerBlock: (Line.() -> Unit)? = null
+) : Widget<Line>(initializerBlock), IPosition, IColor, IDimension {
 
-    @property:Interpolate var endX: Double = 10.0,
-    @property:Interpolate var endY: Double = 10.0,
-    @property:Interpolate var lineWidth: Double = 1.0
-) : Widget<Line>(), IPosition, IColor, IDimension {
+    override var x: Double by property(0.0)
+    override var y: Double by property(0.0)
+    override var color: WidgetColor by property(WidgetColor.DEFAULT)
+
+    var endX: Double by property(10.0)
+    var endY: Double by property(10.0)
+    var lineWidth: Double by property(1.0)
+
+    override var width: Double
+        get() = (endX - x).also { supplyDimensionWarning() }
+        set(value) {}
+
+    override var height: Double
+        get() = (endY - y).also { supplyDimensionWarning() }
+        set(value) {}
 
     override fun render() {
         color.glBindColor()
@@ -30,10 +39,6 @@ class Line(
         glEnd()
     }
 
-    override fun clone() = Line(x, y, color.clone(), endX, endY, lineWidth)
-
-    override fun newInstance() = Line()
-
     /**
      * Checks if the two points are able to create a dimension.
      * If this isn't possible, a warning will be sent to the console.
@@ -46,12 +51,4 @@ class Line(
             LogManager.getLogger().warn("[Line] The endY should be greater than the y value, but $y > $endY")
         }
     }
-
-    override var width: Double
-        get() = (endX - x).also { supplyDimensionWarning() }
-        set(value) {}
-
-    override var height: Double
-        get() = (endY - y).also { supplyDimensionWarning() }
-        set(value) {}
 }

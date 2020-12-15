@@ -2,15 +2,14 @@ package net.inceptioncloud.dragonfly.options.entries.factories
 
 import net.inceptioncloud.dragonfly.options.OptionKey
 import net.inceptioncloud.dragonfly.options.entries.OptionEntryBoolean
-import net.inceptioncloud.dragonfly.ui.screens.ModOptionsUI
+import net.inceptioncloud.dragonfly.apps.settings.DragonflySettingsUI
 
 /**
  * A factory class for the [OptionEntryBoolean].
  *
  * It doesn't extend the [OptionEntryFactory] but specifies the type (`Boolean`).
  */
-class OptionEntryBooleanFactory : OptionEntryFactory<Boolean>()
-{
+class OptionEntryBooleanFactory : OptionEntryFactory<Boolean>() {
     /**
      * An external apply function.
      *
@@ -18,15 +17,14 @@ class OptionEntryBooleanFactory : OptionEntryFactory<Boolean>()
      * entry value is modified. Instead, it will be saved when the "Save and Exit" button
      * in the options screen is pressed.
      *
-     * @see ModOptionsUI
+     * @see DragonflySettingsUI
      */
     var externalApply: ((Boolean, OptionKey<Boolean>) -> Unit)? = null
 
     /**
      * A companion object that makes the function [optionEntryBoolean] available for static access.
      */
-    companion object
-    {
+    companion object {
         /**
          * The initialization function of the [OptionEntryBooleanFactory].
          *
@@ -34,8 +32,7 @@ class OptionEntryBooleanFactory : OptionEntryFactory<Boolean>()
          * In that function, more steps can be made and values can be assigned to build an [OptionEntryBoolean].
          */
         @JvmStatic
-        fun optionEntryBoolean(init: OptionEntryBooleanFactory.() -> Unit): OptionEntryBoolean
-        {
+        fun optionEntryBoolean(init: OptionEntryBooleanFactory.() -> Unit): OptionEntryBoolean {
             val factory = OptionEntryBooleanFactory()
             factory.init()
             return factory.finish()
@@ -47,19 +44,18 @@ class OptionEntryBooleanFactory : OptionEntryFactory<Boolean>()
      *
      * This method is called after function in [optionEntryBoolean] was executed, so you don't need to call it explicitly.
      */
-    private fun finish (): OptionEntryBoolean
-    {
+    private fun finish(): OptionEntryBoolean {
         val key = OptionKey(
-                Boolean::class.java,
-                keyFactory.fileKey,
-                keyFactory.validator ?: { true },
-                keyFactory.default
+            Boolean::class.java,
+            keyFactory.fileKey!!,
+            keyFactory.validator ?: { true },
+            keyFactory.default ?: { false }
         )
         return OptionEntryBoolean(
-                name ?: "boolean value",
-                description ?: "description not set",
-                key,
-                externalApply
+            name ?: "boolean value",
+            description ?: "description not set",
+            key,
+            externalApply
         )
     }
 }

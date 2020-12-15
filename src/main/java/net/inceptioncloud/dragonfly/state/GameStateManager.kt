@@ -5,7 +5,6 @@ import net.inceptioncloud.dragonfly.event.client.GameStateUpdateEvent
 import net.inceptioncloud.dragonfly.state.menu.subscriber.MenuSubscriber
 import net.inceptioncloud.dragonfly.state.play.subscriber.MultiplayerSubscriber
 import net.inceptioncloud.dragonfly.state.play.subscriber.SingleplayerSubscriber
-import org.apache.logging.log4j.LogManager
 
 /**
  * Holds the current Game State and allows to change it.
