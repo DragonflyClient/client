@@ -11,7 +11,7 @@ import java.util.*
 
 class SpotifyManager {
 
-    private val url = "http://127.0.0.1:8080/"
+    private val url = "https://spotify.playdragonfly.net/"
     private val account = Dragonfly.account
 
     var isPlaying = false

@@ -28,7 +28,6 @@ import java.io.OutputStream
 import java.lang.IllegalArgumentException
 import java.nio.charset.Charset
 
-
 object SpotifyOverlay {
 
     lateinit var image: Image
