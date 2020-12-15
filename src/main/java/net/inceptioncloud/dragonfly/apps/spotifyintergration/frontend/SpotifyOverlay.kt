@@ -45,12 +45,14 @@ object SpotifyOverlay {
     private fun updateCoverTexture() {
         if(Dragonfly.spotifyManager.imageUrl != "") {
             downloadSongCoverResource(Dragonfly.spotifyManager.imageUrl)
+        }else {
+            coverLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/no-track-found.png")
         }
     }
 
     fun update() {
 
-        if (Dragonfly.spotifyManager.updateImage || adding) {
+        if (Dragonfly.spotifyManager.updateImage || adding || Dragonfly.spotifyManager.imageUrl == "") {
             updateCoverTexture()
             Dragonfly.spotifyManager.updateImage = false
             adding = false
