@@ -45,9 +45,17 @@ class IngameMenuUI : GuiScreen() {
     fun reloadSpotifyOverlay() {
 
         this.stage.add(Pair("spotify-background", Rectangle().apply {
-            width = 160.0
+            width = if(!adding) {
+                600.0
+            }else {
+                160.0
+            }
             height = 160.0
-            x = this@IngameMenuUI.width - 30.0 - 160.0
+            x = if(!adding) {
+                this@IngameMenuUI.width - 630.0
+            }else {
+                this@IngameMenuUI.width - 30.0 - 160.0
+            }
             y = 30.0
             color = DragonflyPalette.background
         }))
@@ -77,10 +85,26 @@ class IngameMenuUI : GuiScreen() {
                     80
                 }
             )
-            width = 500.0
-            height = 100.0
-            x = this@IngameMenuUI.width - 7.5 - 175.0
-            y = 87.0
+            width = if(!adding) {
+                440.0
+            }else {
+                500.0
+            }
+            height = if(!adding) {
+                75.0
+            }else {
+                100.0
+            }
+            x = if(!adding) {
+                this@IngameMenuUI.width - 630.0
+            }else {
+                this@IngameMenuUI.width - 7.5 - 175.0
+            }
+            y = if(!adding) {
+                35.0
+            }else {
+                87.0
+            }
             textAlignHorizontal = Alignment.CENTER
         }))
         this.stage.add(Pair("spotify-artist", TextField().apply {
@@ -91,10 +115,22 @@ class IngameMenuUI : GuiScreen() {
                     35
                 }
             )
-            width = 250.0
+            width = if(!adding) {
+                440.0
+            }else {
+                250.0
+            }
             height = 75.0
-            x = this@IngameMenuUI.width - 162.0
-            y = 118.0
+            x = if(!adding) {
+                this@IngameMenuUI.width - 630.0
+            }else {
+                this@IngameMenuUI.width - 162.0
+            }
+            y = if(!adding) {
+                75.0
+            }else {
+                118.0
+            }
             staticText = Dragonfly.spotifyManager.filterArtistName(Dragonfly.spotifyManager.artist)
             color = DragonflyPalette.accentNormal
             textAlignHorizontal = Alignment.CENTER
@@ -109,7 +145,11 @@ class IngameMenuUI : GuiScreen() {
             } else {
                 ResourceLocation("dragonflyres/icons/spotifyintergration/play.png")
             }
-            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            this.color = if(!adding) {
+                WidgetColor(1.0, 1.0, 1.0, 1.0)
+            }else {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            }
             clickAction = {
                 if (Dragonfly.spotifyManager.isPlaying) {
                     Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PAUSE, null)
@@ -127,7 +167,15 @@ class IngameMenuUI : GuiScreen() {
             width = 25.0
             height = 25.0
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/shuffle.png")
-            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            this.color = if(!adding) {
+                if (Dragonfly.spotifyManager.shuffle) {
+                    DragonflyPalette.accentNormal
+                } else {
+                    WidgetColor(1.0, 1.0, 1.0, 1.0)
+                }
+            }else {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            }
             clickAction = {
                 val value = !Dragonfly.spotifyManager.shuffle
                 Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.SHUFFLE, value.toString())
@@ -145,7 +193,15 @@ class IngameMenuUI : GuiScreen() {
             } else {
                 ResourceLocation("dragonflyres/icons/spotifyintergration/loop.png")
             }
-            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            this.color = if(!adding) {
+                if (Dragonfly.spotifyManager.loop == "OFF" || Dragonfly.spotifyManager.loop == "TRACK") {
+                    WidgetColor(1.0, 1.0, 1.0, 1.0)
+                } else {
+                    DragonflyPalette.accentNormal
+                }
+            }else {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            }
             clickAction = {
                 when (Dragonfly.spotifyManager.loop) {
                     "OFF" -> {
@@ -170,7 +226,11 @@ class IngameMenuUI : GuiScreen() {
             width = 22.5
             height = 22.5
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/previous.png")
-            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            this.color = if(!adding) {
+                WidgetColor(1.0, 1.0, 1.0, 1.0)
+            }else {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            }
             clickAction = {
                 Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.PREVIOUS, null)
                 Dragonfly.spotifyManager.manualUpdate()
@@ -182,7 +242,11 @@ class IngameMenuUI : GuiScreen() {
             width = 22.5
             height = 22.5
             resourceLocation = ResourceLocation("dragonflyres/icons/spotifyintergration/skip.png")
-            this.color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            this.color = if(!adding) {
+                WidgetColor(1.0, 1.0, 1.0, 1.0)
+            }else {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            }
             clickAction = {
                 Dragonfly.spotifyManager.performDoAction(SpotifyDoAction.NEXT, null)
                 Dragonfly.spotifyManager.manualUpdate()
@@ -229,7 +293,11 @@ class IngameMenuUI : GuiScreen() {
             y = 142.0
             width = 75.0
             staticText = SimpleDateFormat("mm:ss").format(Dragonfly.spotifyManager.songCur)
-            color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            color = if(!adding) {
+                WidgetColor(1.0, 1.0, 1.0, 1.0)
+            }else {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            }
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.LIGHT, size = 50)
         }))
         this.stage.add(Pair("spotify-songMax", TextField().apply {
@@ -237,18 +305,21 @@ class IngameMenuUI : GuiScreen() {
             y = 142.0
             width = 75.0
             staticText = SimpleDateFormat("mm:ss").format(Dragonfly.spotifyManager.songMax)
-            color = WidgetColor(1.0, 1.0, 1.0, 0.0)
+            color = if(!adding) {
+                WidgetColor(1.0, 1.0, 1.0, 1.0)
+            }else {
+                WidgetColor(1.0, 1.0, 1.0, 0.0)
+            }
             fontRenderer = Dragonfly.fontManager.defaultFont.fontRenderer(fontWeight = FontWeight.LIGHT, size = 50)
         }))
 
-        morphSpotifyOverlay()
+        if(adding) {
+            morphSpotifyOverlay()
+        }
     }
 
     private fun morphSpotifyOverlay() {
-        var duration = 100
-        if (!adding) {
-            duration = 1
-        }
+        val duration = 100
 
         this.stage["spotify-background"]?.morph(
             duration,
@@ -269,17 +340,11 @@ class IngameMenuUI : GuiScreen() {
             EaseQuad.OUT,
             TextField::x to this@IngameMenuUI.width - 630.0,
             TextField::y to 75.0,
-            TextField::width to 440.0,
-            TextField::height to 75.0
+            TextField::width to 440.0
         )?.start()
 
         Thread {
-
-            val secondDuration = if (duration == 1) {
-                1
-            } else {
-                duration * 3
-            }
+            val secondDuration = duration * 3
 
             Thread.sleep(secondDuration.toLong())
             this.stage["spotify-pause"]?.morph(
@@ -336,7 +401,6 @@ class IngameMenuUI : GuiScreen() {
         }.start()
 
         adding = false
-
     }
 
     override fun initGui() {
