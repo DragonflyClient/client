@@ -155,7 +155,7 @@ object SpotifyOverlay {
 
             override fun skinAvailable() {
                 if (Dragonfly.spotifyManager.title == titleToDownload) {
-                    LogManager.getLogger().info("Downloaded song cover of '${Dragonfly.spotifyManager.title}'")
+                    LogManager.getLogger().info("Downloaded song cover of '${Dragonfly.spotifyManager.filterTrackName(Dragonfly.spotifyManager.title)}'")
                     coverLocation = resourceLocation
                 }
             }
