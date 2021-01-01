@@ -28,11 +28,7 @@ import net.minecraft.client.Minecraft
 import okhttp3.OkHttpClient
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.jetbrains.skija.*
-import org.jetbrains.skiko.SkiaRenderer
-import org.jetbrains.skiko.SkiaWindow
 import org.lwjgl.opengl.Display
-import java.awt.Color
 import java.io.File
 import java.nio.file.*
 import java.nio.file.Path

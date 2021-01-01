@@ -32,120 +32,34 @@ class MainMenuUI : GuiScreen() {
     override var isNativeResolution: Boolean = true
 
     override fun initGui() {
-
-        val playerSkullTexture = runBlocking {
-            AccountManagerApp.selectedAccount?.retrieveSkull()?.let {
-                DynamicTexture(it)
-            } ?: kotlin.runCatching {
-                DynamicTexture(ImageIO.read(URL(
-                    "https://crafatar.com/avatars/${Minecraft.getMinecraft().session.playerID}?size=200&default=MHF_Steve"
-                )))
-            }.getOrNull()
-        }
-
-        +Image {
-            x = 10.0f
-            y = 10.0f
-            width = 50.0f
-            height = 50.0f
-            dynamicTexture = playerSkullTexture
-            resourceLocation = ResourceLocation("dragonflyres/icons/mainmenu/steve-skull.png")
-        } id "player-skull"
-
-        +TextField {
-            x = 75.0f
-            y = 10.0f
-            width = 300.0f
-            height = 50.0f
-            staticText = mc.session.username
-            Dragonfly.fontManager.defaultFont.bindFontRenderer(size = 50)
-            textAlignVertical = Alignment.CENTER
-        } id "player-name"
-
-        +Image {
-            val aspectRatio = 1118 / 406.0f
-
-            resourceLocation = ResourceLocation("dragonflyres/logos/branded-name.png")
-            height = 200.0f
-            width = height * aspectRatio
-            x = this@MainMenuUI.width / 2 - width / 2
-            y = 70.0f
-        } id "brand-icon"
-
-        +LoginStatusWidget {
-            fontRenderer = font(Typography.BASE)
-            width = fontRenderer!!.getStringWidth(Dragonfly.account?.username ?: "Login") + 50.0f
-            x = this@MainMenuUI.width - width - 10.0f
-            y = 10.0f
-        } id "login-status"
-
-        +DragonflyButton {
-            width = 620.0f
-            height = 60.0f
-            x = this@MainMenuUI.width / 2 - width / 2
-            y = 500.0f
-            text = "Singleplayer"
-            icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/singleplayer.png"))
-            useScale = false
-
-            onClick {
-                mc.displayGuiScreen(GuiSelectWorld(this@MainMenuUI))
-            }
-        } id "singleplayer-button"
-
-        +DragonflyButton {
-            positionBelow("singleplayer-button", 10.0f)
-
-            text = "Multiplayer"
-            icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/multiplayer.png"))
-            useScale = false
-
-            onClick {
-                mc.displayGuiScreen(GuiMultiplayer(this@MainMenuUI))
-            }
-        } id "multiplayer-button"
-
-        +DragonflyButton {
-            positionBelow("multiplayer-button", 10.0f)
-
-            text = "Options"
-            icon = ImageResource(ResourceLocation("dragonflyres/icons/mainmenu/options.png"))
-            useScale = false
-
-            onClick {
-                mc.displayGuiScreen(GuiOptions(this@MainMenuUI, mc.gameSettings))
-            }
-        } id "options-button"
-
-        Taskbar.initializeTaskbar(this)
+        inited = false
     }
 
-    var renderer: SkiaRenderer? = object : SkiaRenderer {
-        override fun onRender(canvas: Canvas, width: Int, height: Int) {
-            GlStateManager.popMatrix()
-            try {
-                canvas.drawRect(
-                    Rect.makeXYWH(100f, 100f, width.toFloat(), height.toFloat()), Paint().setColor(Color.RED.rgb)
-                )
+    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        drawRect(0, 0, width, height, Color.BLUE.rgb)
 
-                val i = 1
-                canvas.drawDRRect(
-                    RRect.makeLTRB(100f * i, 200f * i, 200f * i, 250f * i, 10f * i),
-                    RRect.makeLTRB(110f * i, 210f * i, 190f * i, 240f * i, 15f * i),
-                    Paint().setColor(Color.BLACK.rgb)
-                )
-            } catch (e: Throwable) {
-                e.printStackTrace()
+        if (!inited) {
+            println("> Init & render")
+            if (skijaState.context == null) {
+                skijaState.context = makeGLContext()
+            }
+            inited = true
+            TestRenderer.onInit()
+            TestRenderer.onReshape(mc.displayWidth, mc.displayHeight)
+
+            initSkija()
+
+            skijaState.apply {
+                canvas!!.clear(Color.PINK.rgb)
+                TestRenderer.onRender(canvas!!, mc.displayWidth, mc.displayHeight)
+                context!!.flush()
             }
         }
-
-        override fun onInit() {}
-        override fun onDispose() {}
-        override fun onReshape(width: Int, height: Int) {}
     }
 
     private val skijaState: SkijaState = SkijaState()
     private var inited: Boolean = false
+
     private val hardwareLayer = object : HardwareLayer() {
         override val contentScale: Float
             get() = 1.0F
@@ -157,28 +71,7 @@ class MainMenuUI : GuiScreen() {
 
     override fun onGuiClosed() {
         super.onGuiClosed()
-        renderer?.onDispose()
-    }
-
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.drawScreen(mouseX, mouseY, partialTicks)
-
-        if (!inited) {
-            if (skijaState.context == null) {
-                skijaState.context = makeGLContext()
-            }
-            renderer?.onInit()
-            inited = true
-            renderer?.onReshape(width, height)
-        }
-
-        initSkija()
-
-        skijaState.apply {
-            canvas!!.clear(-1)
-            renderer?.onRender(canvas!!, mc.displayWidth, mc.displayHeight)
-            context!!.flush()
-        }
+        TestRenderer.onDispose()
     }
 
     private fun initSkija() {
@@ -211,12 +104,13 @@ class MainMenuUI : GuiScreen() {
         skijaState.apply {
             clear()
             val gl = OpenGLApi.instance
+            println("render target")
             val fbId = gl.glGetIntegerv(gl.GL_DRAW_FRAMEBUFFER_BINDING)
             renderTarget = makeGLRenderTarget(
-                (width * dpi).toInt(),
-                (height * dpi).toInt(),
+                mc.displayWidth,
+                mc.displayHeight,
                 0,
-                8,
+                0,
                 fbId,
                 FramebufferFormat.GR_GL_RGBA8
             )
